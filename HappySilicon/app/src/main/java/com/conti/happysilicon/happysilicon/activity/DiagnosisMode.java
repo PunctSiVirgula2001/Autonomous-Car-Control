@@ -67,7 +67,7 @@ public class DiagnosisMode extends AppCompatActivity {
             }
             @Override
             public void run() {
-                this.handler.postDelayed(this, 100);
+                this.handler.postDelayed(this, 10);
 
                 carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
                 carTemperatureTextView.setText(String.valueOf(carModel.getTemperature()));

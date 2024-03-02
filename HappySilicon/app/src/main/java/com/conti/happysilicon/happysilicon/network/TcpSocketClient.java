@@ -12,6 +12,8 @@ import java.net.InetAddress;
 import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,6 +59,7 @@ public class TcpSocketClient {
         new Thread(() -> {
             try {
                 if (socket != null && outputStream != null) {
+                    Log.d("Ceva","Trimis");
                     outputStream.write((message + "\n").getBytes());
                     outputStream.flush();
                 }
