@@ -19,58 +19,77 @@ public class AutonomousMode extends AppCompatActivity {
     private TcpSocketClient tcpClient;
     private Button startButton;
     private Button stopButton;
+    private TextView carBatteryTextView;
+    private TextView carTemperatureTextView;
+    private TextView carChargingTextView;
+    private TextView carSpeedTextView;
+    private TextView carDistanceTextView;
+    private Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Get the car model instance
-        carModel = Car.getInstance();
-
-        MyApp app = (MyApp) getApplicationContext();
-        TcpSocketClient instance = app.getTcpSocketClient();
-
         setContentView(R.layout.activity_autonomous_mode);
-        startButton = (Button)findViewById(R.id.button);
-        stopButton = (Button)findViewById(R.id.button2);
-        final TextView carBatteryTextView = (TextView) findViewById(R.id.textViewBattery);
-        final TextView carTemperatureTextView = (TextView) findViewById(R.id.textViewTemp);
-        final TextView carChargingTextView = (TextView) findViewById(R.id.textViewCharging);
-        final TextView carSpeedTextView = (TextView) findViewById(R.id.textViewCarSpeed);
-        final TextView carDistanceTextView = (TextView) findViewById(R.id.textViewDistance);
 
-        final Handler handler = new Handler();
-        class MyRunnable implements Runnable {
-            private final Handler handler;
-            public MyRunnable(Handler handler) {
-                this.handler = handler;
-            }
+        carModel = Car.getInstance();
+        MyApp app = (MyApp) getApplicationContext();
+        tcpClient = app.getTcpSocketClient();
+
+        startButton = findViewById(R.id.button);
+        stopButton = findViewById(R.id.button2);
+        carBatteryTextView = findViewById(R.id.textViewBattery);
+        carTemperatureTextView = findViewById(R.id.textViewTemp);
+        carChargingTextView = findViewById(R.id.textViewCharging);
+        carSpeedTextView = findViewById(R.id.textViewCarSpeed);
+        carDistanceTextView = findViewById(R.id.textViewDistance);
+
+        // Set up button listeners
+        startButton.setOnClickListener(view -> {
+            carModel.setCarCommand(Car.CarCommands.START);
+            tcpClient.sendMessage("07");
+        });
+
+        stopButton.setOnClickListener(view -> {
+            carModel.setCarCommand(Car.CarCommands.STOP);
+            tcpClient.sendMessage("00");
+        });
+
+        // Start the Runnable for updating UI
+
+
+        // Setup listener for receiving messages
+        tcpClient.receiveMessage(new TcpSocketClient.OnMessageReceived() {
             @Override
-            public void run() {
-                this.handler.postDelayed(this, 100);
-
-                carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
-                carTemperatureTextView.setText(String.valueOf(carModel.getTemperature()));
-                carChargingTextView.setText(String.valueOf(carModel.getChargingState()));
-                carSpeedTextView.setText(String.valueOf(carModel.getCarSpeed()));
-                carDistanceTextView.setText(String.valueOf(carModel.getDistanceTraveled()));
-
-                startButton.setOnClickListener(view -> {
-                    carModel.setCarCommand(Car.CarCommands.START);
-                    instance.sendMessage("07");
-                });
-                stopButton.setOnClickListener(view -> {
-                    carModel.setCarCommand(Car.CarCommands.STOP);
-                    instance.sendMessage("00");
-                });
-
-                instance.receiveMessage(new TcpSocketClient.OnMessageReceived() {
+            public void onMessage(final String message) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onMessage(String message) {
-                        // Handle the received message
+                    public void run() {
+                        //
                     }
                 });
             }
+        });
+    }
+
+    private class MyRunnable implements Runnable {
+        @Override
+        public void run() {
+            // Update UI elements with data from carModel
+            carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
+            carTemperatureTextView.setText(String.valueOf(carModel.getTemperature()));
+            carChargingTextView.setText(String.valueOf(carModel.getChargingState()));
+            carSpeedTextView.setText(String.valueOf(carModel.getCarSpeed()));
+            carDistanceTextView.setText(String.valueOf(carModel.getDistanceTraveled()));
+
+            // Schedule the next update
+            handler.postDelayed(this, 100); // Update every second instead of every 100ms
         }
-        handler.post(new MyRunnable(handler));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null); // Stop the handler callbacks when the activity is destroyed
+        // Consider disconnecting from the TCP client if the app is closing
     }
 }
