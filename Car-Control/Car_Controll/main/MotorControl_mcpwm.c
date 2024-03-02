@@ -1,4 +1,4 @@
-#include "MotorControl.h"
+#include "MotorControl_mcpwm.h"
 
 mcpwm_handles_t init_mcpwm(uint32_t frequency, uint32_t dead_time, int gpio_a, int gpio_b) {
     uint32_t timer_resolution = 10000000;  // 10MHz
@@ -69,7 +69,7 @@ mcpwm_handles_t init_mcpwm(uint32_t frequency, uint32_t dead_time, int gpio_a, i
     mcpwm_timer_start_stop(timer, MCPWM_TIMER_START_NO_STOP);
 
     mcpwm_handles_t handles = { timer, comparator_a, comparator_b };
-        return handles;
+    return handles;
 }
 
 
@@ -106,7 +106,7 @@ void control_mcpwm(mcpwm_handles_t handler, float duty_cycle, uint32_t frequency
 
 
 
-void motorControl(unsigned char dir, float speed, mcpwm_handles_t handler1, mcpwm_handles_t handler2) {
+void motorControl_mcpwm(unsigned char dir, float speed, mcpwm_handles_t handler1, mcpwm_handles_t handler2) {
     switch (dir) {
         case FORWARD:
             // Stop MCPWM for backward direction
@@ -158,7 +158,7 @@ void motorControl(unsigned char dir, float speed, mcpwm_handles_t handler1, mcpw
 
 void init_adc() {
     adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11);  // GPIO33 is ADC1_CHANNEL_5
+    adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_12);  // GPIO33 is ADC1_CHANNEL_5
 }
 
 int read_analog_value() {

@@ -2,50 +2,52 @@
 
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
-    pid->setpoint = 0;
-    pid->measured = 0;
-    pid->previous_error = 0;
-    pid->integral = 0;
-    pid->Kp = Kp;
-    pid->Ki = Ki;
-    pid->Kd = Kd;
+	pid->setpoint = 0;
+	pid->measured = 0;
+	pid->previous_error = 0;
+	pid->integral = 0;
+	pid->Kp = Kp;
+	pid->Ki = Ki;
+	pid->Kd = Kd;
 }
 
 // Compute PID
 float PID_Compute(PID_t *pid, float deltaTime) {
-    float error = pid->setpoint - pid->measured;
-    pid->integral += error * deltaTime;  // Integral is accumulated error over time
-    float derivative = (error - pid->previous_error) / deltaTime;
-    float output = pid->Kp * error + pid->Ki * pid->integral + pid->Kd * derivative;
-    pid->previous_error = error;
+	float error = pid->setpoint - pid->measured;
+	pid->integral += error * deltaTime; // Integral is accumulated error over time
+	float derivative = (error - pid->previous_error) / deltaTime;
+	float output = pid->Kp * error + pid->Ki * pid->integral
+			+ pid->Kd * derivative;
+	pid->previous_error = error;
 
-    return output;  // This is the manipulated variable (e.g., motor speed, heater power)
+	return output; // This is the manipulated variable (e.g., motor speed, heater power)
 }
-
 
 int mapValue_pid(int input_value) { //200 -----> 1024
-    int min_source = 0;
-    int max_source = 200;
-    int min_target = -1024;
-    int max_target = 1024;
+	int min_source = 0;
+	int max_source = 200;
+	int min_target = -1024;
+	int max_target = 1024;
 
-    int mapped_value = min_target + ((input_value - min_source) * (max_target - min_target)) / (max_source - min_source);
+	int mapped_value = min_target
+			+ ((input_value - min_source) * (max_target - min_target))
+					/ (max_source - min_source);
 
-    return mapped_value;
+	return mapped_value;
 }
-
 
 int reverseMapValue_pid(int input_value) { //1024 ---> 200
-    int min_source = -1024;
-    int max_source = 1024;
-    int min_target = 0;
-    int max_target = 200;
+	int min_source = -1024;
+	int max_source = 1024;
+	int min_target = 0;
+	int max_target = 200;
 
-    int reverse_mapped_value = min_target + ((input_value - min_source) * (max_target - min_target)) / (max_source - min_source);
+	int reverse_mapped_value = min_target
+			+ ((input_value - min_source) * (max_target - min_target))
+					/ (max_source - min_source);
 
-    return reverse_mapped_value;
+	return reverse_mapped_value;
 }
-
 
 //void app_main() {
 //    PID_t motorPID;

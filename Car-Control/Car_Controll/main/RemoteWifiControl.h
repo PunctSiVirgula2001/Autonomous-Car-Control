@@ -53,31 +53,5 @@ typedef struct {
 
 
 
-typedef struct Node {
-	commandReceived data;
-    struct Node* next;
-} Node;
-
-typedef struct {
-    Node* front;
-    Node* rear;
-} Queue;
-
-
-
-
-commandReceived getTwoValues(const char* buffer, int len);
-void initialize_udp_client();
-static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
-void wifi_connection();
-void enqueue(Queue* q, commandReceived data);
-commandReceived dequeue(Queue* q);
-commandReceived getTwoValues_2(const char *buffer, int len);
-commandReceived_jetson getMultipleValues(const char *buffer, int len);
-
-
-//void wifi_connection();
-//static void wifi_event_handler(void *event_handler_arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
-//void initialize_udp_client();
 
 #endif
