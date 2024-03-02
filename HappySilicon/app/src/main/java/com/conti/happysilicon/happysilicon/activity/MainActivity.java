@@ -9,21 +9,17 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
-import com.conti.happysilicon.happysilicon.network.SocketClient;
+import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class MainActivity extends AppCompatActivity {
-    private SocketClient socketClient;
     private Button diagnosis_mode_button;
     private Button autonomous_mode_button;
-
-    private DatagramSocket udpSocket;
-    private InetAddress serverAddr;
-    private int udpPort = 4240;  // The port you're sending to
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_page);
 
         // Initialize TCP Socket Client
-        socketClient = SocketClient.getInstance();
-        socketClient.startListening();
-       // socketClient.startConnection("10.0.2.2", 65432);
-
-        // Initialize UDP Socket
+        MyApp app = (MyApp) getApplicationContext();
+        TcpSocketClient instance = app.getTcpSocketClient();
+        instance.connect();
 
 
         diagnosis_mode_button = findViewById(R.id.diagnosis_button);
@@ -56,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     public void openDiagnosisMode() {
         Intent intent = new Intent(MainActivity.this, DiagnosisMode.class);
         startActivity(intent);

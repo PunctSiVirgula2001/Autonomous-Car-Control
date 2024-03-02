@@ -9,7 +9,7 @@ public class Car {
         BACKWARD,
         LEFT,
         RIGHT
-    };
+    }
     public enum CarCommands{
         START,
         STOP,
@@ -76,18 +76,12 @@ public class Car {
     public void setTimeElapsed(int timeElapsed){
         this.timeElapsed = timeElapsed;
     }
-    public void setDistanceTraveled(float distanceTraveled){
-        this.distanceTraveled = distanceTraveled;
-    }
-    public void setMovingDirection(CarDirectionStatus movingDirection) {
-        this.movingDirection = movingDirection;
-    }
+    public void setDistanceTraveled(float distanceTraveled){ this.distanceTraveled = distanceTraveled;}
+    public void setMovingDirection(CarDirectionStatus movingDirection) { this.movingDirection = movingDirection;}
     public void setTemperature(float temperature) {
         this.temperature = temperature;
     }
-    public void setChargingStationVoltage(float chargingStationVoltage) {
-        this.chargingStationVoltage = chargingStationVoltage;
-    }
+    public void setChargingStationVoltage(float chargingStationVoltage) {this.chargingStationVoltage = chargingStationVoltage;}
     public void setChargingTime(int chargingTime) {
         this.chargingTime = chargingTime;
     }

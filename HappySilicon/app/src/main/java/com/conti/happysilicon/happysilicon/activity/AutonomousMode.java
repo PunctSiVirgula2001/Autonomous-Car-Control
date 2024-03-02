@@ -7,15 +7,16 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;  // Updated import
 
+import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.R;
-import com.conti.happysilicon.happysilicon.network.SocketClient;
+import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 
 import java.nio.charset.StandardCharsets;
 
 public class AutonomousMode extends AppCompatActivity {
     private Car carModel;
-    private SocketClient socketClient;
+    private TcpSocketClient tcpClient;
     private Button startButton;
     private Button stopButton;
     @Override
@@ -24,7 +25,10 @@ public class AutonomousMode extends AppCompatActivity {
 
         // Get the car model instance
         carModel = Car.getInstance();
-        socketClient=SocketClient.getInstance();
+
+        MyApp app = (MyApp) getApplicationContext();
+        TcpSocketClient instance = app.getTcpSocketClient();
+
         setContentView(R.layout.activity_autonomous_mode);
         startButton = (Button)findViewById(R.id.button);
         stopButton = (Button)findViewById(R.id.button2);
@@ -36,9 +40,7 @@ public class AutonomousMode extends AppCompatActivity {
 
         final Handler handler = new Handler();
         class MyRunnable implements Runnable {
-
             private final Handler handler;
-
             public MyRunnable(Handler handler) {
                 this.handler = handler;
             }
@@ -54,11 +56,18 @@ public class AutonomousMode extends AppCompatActivity {
 
                 startButton.setOnClickListener(view -> {
                     carModel.setCarCommand(Car.CarCommands.START);
-                    socketClient.sendString("07");
+                    instance.sendMessage("07");
                 });
                 stopButton.setOnClickListener(view -> {
                     carModel.setCarCommand(Car.CarCommands.STOP);
-                    socketClient.sendString("00");
+                    instance.sendMessage("00");
+                });
+
+                instance.receiveMessage(new TcpSocketClient.OnMessageReceived() {
+                    @Override
+                    public void onMessage(String message) {
+                        // Handle the received message
+                    }
                 });
             }
         }
