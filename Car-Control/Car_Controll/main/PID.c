@@ -20,7 +20,7 @@ float PID_Compute(PID_t *pid, float deltaTime) {
 			+ pid->Kd * derivative;
 	pid->previous_error = error;
 
-	return output; // This is the manipulated variable (e.g., motor speed, heater power)
+	return output; // This is the manipulated variable (e.g., motor speed, servo speed/control)
 }
 
 int mapValue_pid(int input_value) { //200 -----> 1024

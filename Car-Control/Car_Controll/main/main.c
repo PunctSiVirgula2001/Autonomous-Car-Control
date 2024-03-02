@@ -22,7 +22,6 @@
 #include "esp_log.h"
 #include "esp_sleep.h"
 #include "esp_timer.h"
-
 #include "MotorControl_mcpwm.h"
 #include "PID.h"
 
@@ -44,8 +43,6 @@ float deltaTime = 0.02;  // 20 ms = 0.02 seconds
 
 QueueHandle_t queue;
 pcnt_unit_handle_t pcnt_unit = NULL;
-
-#define BUF_SIZE (1024)
 
 void setPIDParameters() { // function for reading from keyboard
 	char buffer[256];
@@ -82,7 +79,7 @@ mcpwm_handles_t handler2; // MOSFET DRIVER 2
 TaskHandle_t controlMotorHandle = NULL;
 TaskHandle_t controlSteerHandle = NULL;
 
-commandReceived mainCommand;
+commandReceived_app mainCommand;
 
 void controlMotor_mcpwm(void *pvParameters) {
 	uint32_t notificationValue;
@@ -100,7 +97,7 @@ void controlMotor_mcpwm(void *pvParameters) {
 	}
 }
 
-//encoder
+/* Encoder */
 static bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
 		const pcnt_watch_event_data_t *edata, void *user_ctx) {
 	BaseType_t high_task_wakeup;
@@ -109,7 +106,6 @@ static bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
 	xQueueSendFromISR(queue, &(edata->watch_point_value), &high_task_wakeup);
 	return (high_task_wakeup == pdTRUE);
 }
-
 void configureEncoderInterrupts() {
 
 	queue = xQueueCreate(10, sizeof(int));

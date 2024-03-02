@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AutonomousMode">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="61dp"
+                android:layout_height="wrap_content"
+                android:text="@string/textViewStepperMotorLabel"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewStepperMotorTxt"
+                android:layout_width="32dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewEnd" />
+
+            <SeekBar
+                android:id="@+id/seekBarDcMotor"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:max="99"
+                android:progress="1" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="2dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_width="114dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewVoltageLabel"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewVoltage"
+                android:layout_width="83dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="129dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewCurrentLabel"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewCurrent"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+        </LinearLayout>
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="2dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="2dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="279dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewTimeElapsed"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewTimeElapsed"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+                <TextView
+                    android:id="@+id/textView16"
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewCarSpeed"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewCarSpeed"
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="23dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView13"
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewChargingState"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewCharging"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewDistanceTraveled"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewDistance"
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewBattery"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewBattery"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+                <TextView
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewTemp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewTemp"
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/responseTextView1"
+                android:layout_width="match_parent"
+                android:layout_height="226dp"
+                android:layout_marginBottom="1dp"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="113dp"
+            android:orientation="vertical">
+
+            <SeekBar
+                android:id="@+id/seekBarDirection"
+                style="@style/seekBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="112dp"
+                android:max="98"
+                android:min="2"
+                android:progress="50" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="265dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/buttonForward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/buttonForwardLabel"
+                android:theme="@style/ButtonStyle"
+                app:layout_constraintBottom_toTopOf="@+id/buttonRightLight"
+                tools:layout_editor_absoluteX="112dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="39dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonLeftLight"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/buttonLeftLight"
+                    android:theme="@style/ButtonStyle"
+                    app:layout_constraintBottom_toTopOf="@+id/buttonBackward"
+                    tools:layout_editor_absoluteX="112dp" />
+
+                <Button
+                    android:id="@+id/buttonStop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.7"
+                    android:text="@string/buttonStopLabel"
+                    android:theme="@style/ButtonStyle"
+                    app:layout_constraintBottom_toTopOf="@+id/buttonBackward"
+                    tools:layout_editor_absoluteX="112dp"
+                     />
+
+                <Button
+                    android:id="@+id/buttonRightLight"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/buttonRightLight"
+                    android:theme="@style/ButtonStyle"
+                    app:layout_constraintBottom_toTopOf="@+id/buttonBackward"
+                    tools:layout_editor_absoluteX="112dp"
+                   />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonBackward"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/buttonBackwardLabel"
+                android:theme="@style/ButtonStyle"
+                tools:layout_editor_absoluteX="112dp"
+                tools:layout_editor_absoluteY="480dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

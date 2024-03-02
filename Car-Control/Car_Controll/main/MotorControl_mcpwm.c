@@ -156,20 +156,20 @@ void motorControl_mcpwm(unsigned char dir, float speed, mcpwm_handles_t handler1
 }
 
 
-void init_adc() {
-    adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_12);  // GPIO33 is ADC1_CHANNEL_5
-}
-
-int read_analog_value() {
-	static int ema = 0;
-    int val = adc1_get_raw(ADC1_CHANNEL_5);
-    ema = (int)((1.0 - ALPHA) * ema + ALPHA * val);
-
-    // Map 0-4095 to 0-100
-    int speed = (ema * 100) / 4095;
-
-    vTaskDelay(pdMS_TO_TICKS(1));
-    return speed;
-}
+//void init_adc() {
+//    adc1_config_width(ADC_WIDTH_BIT_12);
+//    adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_12);  // GPIO33 is ADC1_CHANNEL_5
+//}
+//
+//int read_analog_value() {
+//	static int ema = 0;
+//    int val = adc1_get_raw(ADC1_CHANNEL_5);
+//    ema = (int)((1.0 - ALPHA) * ema + ALPHA * val);
+//
+//    // Map 0-4095 to 0-100
+//    int speed = (ema * 100) / 4095;
+//
+//    vTaskDelay(pdMS_TO_TICKS(1));
+//    return speed;
+//}
 

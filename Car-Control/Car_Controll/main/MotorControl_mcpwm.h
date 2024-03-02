@@ -70,8 +70,8 @@ mcpwm_handles_t init_mcpwm(uint32_t frequency, uint32_t dead_time, int gpio_a, i
 
 
 
-void init_adc();
-int read_analog_value();
+//void init_adc();
+//int read_analog_value();
 
 
 #endif

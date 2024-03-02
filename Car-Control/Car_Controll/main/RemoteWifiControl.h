@@ -38,7 +38,7 @@ typedef enum {
 typedef struct {
     unsigned long state;
     unsigned long SteerOrSpeed;
-} commandReceived;
+} commandReceived_app;
 
 typedef struct {
     unsigned long state;

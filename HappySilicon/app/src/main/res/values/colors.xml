@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2A0048</color>
+    <color name="colorPrimaryDark">#2A0048</color>
+    <color name="colorAccent">#00CECE</color>
+    <color name="colorSplash">#2A0048</color>
+    <color name="black">#dbdbdb</color>
+    <color name="blackButtonColor">#70B5ED</color>
+    <color name="textColor">#000000</color>
+    <color name="kratosBlack">#1b1b1b</color>
+    <color name="kratosGray">#a9a9a9</color>
+    <color name="kratosWhite">#f2f3f4</color>
+    <color name="kratosLightRed">#922929</color>
+    <color name="kratosRed">#660000</color>
+</resources>

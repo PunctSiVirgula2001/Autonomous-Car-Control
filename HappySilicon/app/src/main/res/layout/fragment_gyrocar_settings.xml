@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAlignment="textStart"
+    tools:context=".activity.DiagnosisModeConnectionTab">
+
+
+    <EditText
+        android:id="@+id/addressEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/portEditText"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-63dp"
+        android:hint="Server ip address"
+        android:inputType="number"
+        android:text="192.168.222.208"
+        android:textColor="@color/textColor" />
+
+    <EditText
+        android:id="@+id/portEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="63dp"
+        android:hint="Server port number"
+        android:inputType="number"
+        android:text="80"
+        android:textColor="@color/textColor" />
+
+    <Button
+        android:id="@+id/buttonConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/portEditText"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:text="@string/buttonConnectLabel"
+        android:textAlignment="center"
+        android:textColor="@color/textColor"
+        android:textColorHint="#000000"
+        android:theme="@style/ButtonStyle" />
+
+    <Button
+        android:id="@+id/buttonClean"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="165dp"
+        android:text="@string/buttonClearLabel"
+        android:textColor="@color/textColor"
+        android:theme="@style/ButtonStyle" />
+
+    <TextView
+        android:id="@+id/responseTextView"
+        android:layout_width="match_parent"
+        android:layout_height="351dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1dp"
+        android:textSize="9sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="222dp"
+            android:orientation="vertical"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="417dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Distance Treshold(>25)"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/textViewDistanceTreshold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/portEditText"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="-63dp"
+                    android:layout_weight="1"
+                    android:inputType="number"
+                    android:text="250"
+                    android:textColor="@color/textColor" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AutonomousMode">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="114dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewTimeElapsed"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewTimeElapsed"
+                android:layout_width="83dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="129dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewCarSpeed"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewCarSpeed"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="114dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewChargingState"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewCharging"
+                android:layout_width="83dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="129dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewDistanceTraveled"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewDistance"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="114dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewBattery"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewBattery"
+                android:layout_width="83dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+            <TextView
+                android:layout_width="129dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/textViewTemp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewTemp"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/responseTextView1"
+            android:layout_width="match_parent"
+            android:layout_height="226dp"
+            android:layout_marginBottom="1dp"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="411dp"
+        android:layout_height="410dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/button"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:text="Start"
+            android:textColor="@color/textColor"
+            android:theme="@style/ButtonStyle" />
+
+        <Button
+            android:id="@+id/button2"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:text="Stop"
+            android:textColor="@color/textColor"
+            android:theme="@style/ButtonStyle" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

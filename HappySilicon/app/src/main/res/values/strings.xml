@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Car Control</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="buttonStopLabel">STOP</string>
+    <string name="buttonForwardLabel">FORWARD</string>
+    <string name="buttonBackwardLabel">BACKWARD</string>
+    <string name="buttonLeftLight">LEFT LIGHT</string>
+    <string name="buttonRightLight">RIGHT LIGHT</string>
+
+    <string name="textViewVoltageLabel">Voltage [V]:</string>
+    <string name="textViewCurrentLabel">Current [mA]:</string>
+
+    <string name="textViewPwmDutyLabel">PwmDuty [%]:</string>
+
+    <string name="textViewPwmHddProcentLabel">GyroPwm</string>
+    <string name="textViewStepperMotorLabel">Motor Power</string>
+
+    <string name="textViewTimeElapsed">Time elapsed [s]:</string>
+    <string name="textViewChargingState">Charging:</string>
+    <string name="textViewCarSpeed">Speed:</string>
+    <string name="textViewDistanceTraveled">Distance [cm]:</string>
+
+    <string name="buttonConnectLabel">CONNECT</string>
+    <string name="buttonClearLabel">CLEAR</string>
+
+    <string name="textViewTemp"> Temperature [C]:</string>
+    <string name="textViewBattery"> Battery:</string>
+</resources>
