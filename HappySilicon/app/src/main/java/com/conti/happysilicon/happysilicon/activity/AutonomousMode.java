@@ -11,12 +11,14 @@ import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
+import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
 import java.nio.charset.StandardCharsets;
 
 public class AutonomousMode extends AppCompatActivity {
     private Car carModel;
     private TcpSocketClient tcpClient;
+    private UdpSocketClient udpClient;
     private Button startButton;
     private Button stopButton;
     private TextView carBatteryTextView;
@@ -32,7 +34,7 @@ public class AutonomousMode extends AppCompatActivity {
         setContentView(R.layout.activity_autonomous_mode);
 
         MyApp app = (MyApp) getApplicationContext();
-        tcpClient = app.getTcpSocketClient();
+        udpClient = app.getUdpSocketClient();
         carModel = Car.getInstance();
 
         //reference to buttons
@@ -48,11 +50,11 @@ public class AutonomousMode extends AppCompatActivity {
         // Set up button listeners
         startButton.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.START);
-            tcpClient.sendMessage("07");
+            udpClient.sendMessage("07");
         });
         stopButton.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.STOP);
-            tcpClient.sendMessage("00");
+            udpClient.sendMessage("00");
         });
 
         // Start the Runnable for updating UI
@@ -60,7 +62,7 @@ public class AutonomousMode extends AppCompatActivity {
         handler.post(myRunnable);
 
         // Setup listener for receiving messages
-        tcpClient.receiveMessage(new TcpSocketClient.OnMessageReceived() {
+        udpClient.receiveMessage(new UdpSocketClient.OnMessageReceived() {
             @Override
             public void onMessage(final String message) {
                 runOnUiThread(new Runnable() {

@@ -12,11 +12,13 @@ import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
+import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
 public class DiagnosisMode extends AppCompatActivity {
     int progressDCSeekBar = 0;
     private Car carModel;
     private TcpSocketClient tcpClient;
+    private UdpSocketClient udpClient;
     private Button buttonStop;
     private Button buttonForward;
     private Button buttonBackward;
@@ -43,7 +45,7 @@ public class DiagnosisMode extends AppCompatActivity {
         setContentView(R.layout.activity_diagnosis_mode);
 
         MyApp app = (MyApp) getApplicationContext();
-        tcpClient = app.getTcpSocketClient();
+        udpClient = app.getUdpSocketClient();
         carModel = Car.getInstance();
         //reference to buttons
         buttonStop = (Button)findViewById(R.id.buttonStop);
@@ -68,21 +70,21 @@ public class DiagnosisMode extends AppCompatActivity {
         // Set up button listeners
         buttonStop.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.STOP);
-            tcpClient.sendMessage("00");
+            udpClient.sendMessage("00");
         });
         buttonForward.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.FORWARD);
-            tcpClient.sendMessage("01");
+            udpClient.sendMessage("01");
         });
         buttonBackward.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.BACKWARD);
-            tcpClient.sendMessage("02");
+            udpClient.sendMessage("02");
         });
         buttonLeftLight.setOnClickListener(view -> {
-            tcpClient.sendMessage("03");
+            udpClient.sendMessage("03");
         });
         buttonRightLight.setOnClickListener(view -> {
-            tcpClient.sendMessage("04");
+            udpClient.sendMessage("04");
         });
 
         // Set up seekbar listeners
@@ -91,7 +93,7 @@ public class DiagnosisMode extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 progressDCSeekBar = progressValue;
-                tcpClient.sendMessage("05"+progressValue);
+                udpClient.sendMessage("05"+progressValue);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -106,7 +108,7 @@ public class DiagnosisMode extends AppCompatActivity {
             int progressDirection = 0;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean b) {
-                tcpClient.sendMessage("06"+progressValue);
+                udpClient.sendMessage("06"+progressValue);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -123,7 +125,7 @@ public class DiagnosisMode extends AppCompatActivity {
         handler.post(myRunnable);
 
         // Setup listener for receiving messages
-        tcpClient.receiveMessage(new TcpSocketClient.OnMessageReceived() {
+        udpClient.receiveMessage(new UdpSocketClient.OnMessageReceived() {
             @Override
             public void onMessage(final String message) {
                 runOnUiThread(new Runnable() {

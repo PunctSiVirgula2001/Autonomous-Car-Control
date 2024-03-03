@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
+import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -28,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
-        TcpSocketClient instance = app.getTcpSocketClient();
-        instance.connect();
+        UdpSocketClient instance = app.getUdpSocketClient();
+        instance.init();
 
         //reference to buttons
         diagnosis_mode_button = findViewById(R.id.diagnosis_button);

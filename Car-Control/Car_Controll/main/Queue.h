@@ -27,3 +27,6 @@ void queue_clear(Queue* q, void (*free_data)(void*));
 void enqueue_word(Queue* q, const char* start, size_t length);
 // Function to enqueue every word that ends with a newline
 void enqueue_words_with_newline(Queue* q, const char* str);
+
+void enqueue_words(Queue* q, const char* str);
+

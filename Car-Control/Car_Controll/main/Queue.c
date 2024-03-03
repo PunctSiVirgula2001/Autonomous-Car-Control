@@ -84,3 +84,18 @@ void enqueue_words_with_newline(Queue* q, const char* str) {
         current++;
     }
 }
+
+void enqueue_words(Queue* q, const char* str) {
+    if (str == NULL) return; // Safety check
+
+    char* word = (char*)malloc(strlen(str) + 1); // Allocate memory for the string
+    if (word == NULL) {
+        perror("Failed to allocate memory for word");
+        return;
+    }
+    strcpy(word, str); // Copy the string into the newly allocated memory
+    queue_enqueue(q, word); // Enqueue the copied string
+}
+
+
+

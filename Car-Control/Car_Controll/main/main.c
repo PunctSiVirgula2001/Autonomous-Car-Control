@@ -213,57 +213,120 @@ void wifi_init_softap()
 
 #define PORT 80
 
-static void tcp_server_task(void *pvParameters)
+//static void tcp_server_task(void *pvParameters)
+//{
+//	queue_init(&Queue_receive_from_app);
+//
+//    char addr_str[128];
+//    int addr_family;
+//    int ip_protocol;
+//
+//    struct sockaddr_in dest_addr;
+//    dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+//    dest_addr.sin_family = AF_INET;
+//    dest_addr.sin_port = htons(PORT);
+//    addr_family = AF_INET;
+//    ip_protocol = IPPROTO_IP;
+//    inet_ntoa_r(dest_addr.sin_addr, addr_str, sizeof(addr_str) - 1);
+//
+//    int listen_sock = socket(addr_family, SOCK_STREAM, ip_protocol);
+//    bind(listen_sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+//    listen(listen_sock, 1);
+//
+//    while (1) {
+//        struct sockaddr_in source_addr;
+//        unsigned int addr_len = sizeof(source_addr);
+//        int sock = accept(listen_sock, (struct sockaddr *)&source_addr, &addr_len);
+//
+//        while (1) {
+//            int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
+//            // Error or connection closed by client
+//            if (len < 0) {
+//                ESP_LOGE(TAG, "recv failed: errno %d", errno);
+//                break;
+//            }
+//            // Data received
+//            else {
+//                rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
+//                char *rx_buffer_pointer = (char *)malloc(strlen(rx_buffer) + 1);
+//                strcpy(rx_buffer_pointer, rx_buffer);
+//                enqueue_words_with_newline(&Queue_receive_from_app, rx_buffer_pointer);
+//                free(rx_buffer_pointer);
+//                //ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
+//                // Here, you can handle the received data
+//            }
+//        }
+//
+//        if (sock != -1) {
+//            ESP_LOGE(TAG, "Shutting down socket and restarting...");
+//            shutdown(sock, 0);
+//            close(sock);
+//        }
+//    }
+//}
+
+static void udp_server_task(void *pvParameters)
 {
-	queue_init(&Queue_receive_from_app);
+    queue_init(&Queue_receive_from_app);
 
     char addr_str[128];
-    int addr_family;
-    int ip_protocol;
+    int addr_family = AF_INET;
+    int ip_protocol = IPPROTO_UDP;
 
     struct sockaddr_in dest_addr;
-    dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    dest_addr.sin_addr.s_addr = htonl(INADDR_ANY); // Bind to any address
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(PORT);
-    addr_family = AF_INET;
-    ip_protocol = IPPROTO_IP;
+
     inet_ntoa_r(dest_addr.sin_addr, addr_str, sizeof(addr_str) - 1);
 
-    int listen_sock = socket(addr_family, SOCK_STREAM, ip_protocol);
-    bind(listen_sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
-    listen(listen_sock, 1);
+    int sock = socket(addr_family, SOCK_DGRAM, ip_protocol);
+    if (sock < 0) {
+        ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
+        vTaskDelete(NULL);
+        return;
+    }
+    ESP_LOGI(TAG, "Socket created");
+
+    int err = bind(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    if (err < 0) {
+        ESP_LOGE(TAG, "Socket unable to bind: errno %d", errno);
+    }
+    ESP_LOGI(TAG, "Socket bound, port %d", PORT);
 
     while (1) {
-        struct sockaddr_in source_addr;
-        unsigned int addr_len = sizeof(source_addr);
-        int sock = accept(listen_sock, (struct sockaddr *)&source_addr, &addr_len);
+        struct sockaddr_in6 source_addr; // Large enough for both IPv4 or IPv6
+        socklen_t addr_len = sizeof(source_addr);
+        int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0, (struct sockaddr *)&source_addr, &addr_len);
 
-        while (1) {
-            int len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
-            // Error or connection closed by client
-            if (len < 0) {
-                ESP_LOGE(TAG, "recv failed: errno %d", errno);
-                break;
-            }
+        // Check for errors or no data read
+        if (len < 0) {
+            ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
+            break;
+        } else {
             // Data received
-            else {
-                rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
-                char *rx_buffer_pointer = (char *)malloc(strlen(rx_buffer) + 1);
+            rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
+            char *rx_buffer_pointer = (char *)malloc(strlen(rx_buffer) + 1);
+            if (rx_buffer_pointer != NULL) {
                 strcpy(rx_buffer_pointer, rx_buffer);
-                enqueue_words_with_newline(&Queue_receive_from_app, rx_buffer_pointer);
+                // ESP_LOGI(TAG, "%s", rx_buffer);
+                enqueue_words(&Queue_receive_from_app, rx_buffer_pointer);
                 free(rx_buffer_pointer);
-                //ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
-                // Here, you can handle the received data
+            } else {
+                ESP_LOGE(TAG, "Failed to allocate memory for rx_buffer_pointer");
             }
         }
 
-        if (sock != -1) {
-            ESP_LOGE(TAG, "Shutting down socket and restarting...");
-            shutdown(sock, 0);
-            close(sock);
-        }
+        // Optional: Implement a way to break out of this loop or handle socket closure.
+    }
+
+    if (sock != -1) {
+        ESP_LOGI(TAG, "Shutting down socket");
+        shutdown(sock, 0);
+        close(sock);
     }
 }
+
 
 static void read_buffer_task(void *pvParameters) {
 	// Dequeue and print each word
@@ -273,7 +336,7 @@ static void read_buffer_task(void *pvParameters) {
 			ESP_LOGI(TAG, "Received %s", word);
 			//free(word); //free the dequeued words
 		}
-		vTaskDelay(pdMS_TO_TICKS(10));
+		else vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }
 //#define ESP_LOGI(a,b) printf(b);
@@ -288,7 +351,7 @@ void app_main(void) {
 
 	    ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
 	    wifi_init_softap();
-	    xTaskCreate(tcp_server_task, "tcp_server", 4096, NULL, 5, NULL);
+	    xTaskCreate(udp_server_task, "tcp_server", 4096, NULL, 5, NULL);
 	    xTaskCreate(read_buffer_task, "read_buffer", 4096, NULL, 6, NULL);
 
 //	nvs_flash_init();
