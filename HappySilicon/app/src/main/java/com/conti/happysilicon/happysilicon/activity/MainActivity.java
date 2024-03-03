@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         TcpSocketClient instance = app.getTcpSocketClient();
         instance.connect();
 
-
+        //reference to buttons
         diagnosis_mode_button = findViewById(R.id.diagnosis_button);
         diagnosis_mode_button.setOnClickListener(new View.OnClickListener() {
             @Override

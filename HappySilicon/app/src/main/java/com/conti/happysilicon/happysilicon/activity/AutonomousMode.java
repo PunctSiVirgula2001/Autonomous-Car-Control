@@ -24,19 +24,21 @@ public class AutonomousMode extends AppCompatActivity {
     private TextView carChargingTextView;
     private TextView carSpeedTextView;
     private TextView carDistanceTextView;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_autonomous_mode);
 
-        carModel = Car.getInstance();
         MyApp app = (MyApp) getApplicationContext();
         tcpClient = app.getTcpSocketClient();
+        carModel = Car.getInstance();
 
+        //reference to buttons
         startButton = findViewById(R.id.button);
         stopButton = findViewById(R.id.button2);
+        //reference to textViews.
         carBatteryTextView = findViewById(R.id.textViewBattery);
         carTemperatureTextView = findViewById(R.id.textViewTemp);
         carChargingTextView = findViewById(R.id.textViewCharging);
@@ -48,14 +50,14 @@ public class AutonomousMode extends AppCompatActivity {
             carModel.setCarCommand(Car.CarCommands.START);
             tcpClient.sendMessage("07");
         });
-
         stopButton.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.STOP);
             tcpClient.sendMessage("00");
         });
 
         // Start the Runnable for updating UI
-
+        MyRunnable myRunnable = new MyRunnable(handler);
+        handler.post(myRunnable);
 
         // Setup listener for receiving messages
         tcpClient.receiveMessage(new TcpSocketClient.OnMessageReceived() {
@@ -72,17 +74,22 @@ public class AutonomousMode extends AppCompatActivity {
     }
 
     private class MyRunnable implements Runnable {
+        private final Handler handler;
+
+        MyRunnable(Handler handler) {
+            this.handler = handler;
+        }
+
         @Override
         public void run() {
+            // Schedule next update with a delay
+            handler.postDelayed(this, 10); // Update every second might be enough
             // Update UI elements with data from carModel
             carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
             carTemperatureTextView.setText(String.valueOf(carModel.getTemperature()));
             carChargingTextView.setText(String.valueOf(carModel.getChargingState()));
             carSpeedTextView.setText(String.valueOf(carModel.getCarSpeed()));
             carDistanceTextView.setText(String.valueOf(carModel.getDistanceTraveled()));
-
-            // Schedule the next update
-            handler.postDelayed(this, 100); // Update every second instead of every 100ms
         }
     }
 

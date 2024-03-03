@@ -24,7 +24,8 @@
 #include "esp_timer.h"
 #include "MotorControl_mcpwm.h"
 #include "PID.h"
-
+#include "Queue.h"
+Queue Queue_receive_from_app;
 
 //Autonomous + diagnostic modes
 TaskHandle_t myTaskHandle_Autonomous = NULL;
@@ -160,7 +161,7 @@ void configureEncoderInterrupts() {
 }
 
 
-
+char rx_buffer[128];
 #define WIFI_SSID "ESP32-Access-Point"
 #define WIFI_PASS "123456789"
 #define MAX_STA_CONN 4
@@ -214,7 +215,8 @@ void wifi_init_softap()
 
 static void tcp_server_task(void *pvParameters)
 {
-    char rx_buffer[128];
+	queue_init(&Queue_receive_from_app);
+
     char addr_str[128];
     int addr_family;
     int ip_protocol;
@@ -233,7 +235,7 @@ static void tcp_server_task(void *pvParameters)
 
     while (1) {
         struct sockaddr_in source_addr;
-        uint addr_len = sizeof(source_addr);
+        unsigned int addr_len = sizeof(source_addr);
         int sock = accept(listen_sock, (struct sockaddr *)&source_addr, &addr_len);
 
         while (1) {
@@ -246,7 +248,11 @@ static void tcp_server_task(void *pvParameters)
             // Data received
             else {
                 rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
-                ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
+                char *rx_buffer_pointer = (char *)malloc(strlen(rx_buffer) + 1);
+                strcpy(rx_buffer_pointer, rx_buffer);
+                enqueue_words_with_newline(&Queue_receive_from_app, rx_buffer_pointer);
+                free(rx_buffer_pointer);
+                //ESP_LOGI(TAG, "Received %d bytes: %s", len, rx_buffer);
                 // Here, you can handle the received data
             }
         }
@@ -257,6 +263,18 @@ static void tcp_server_task(void *pvParameters)
             close(sock);
         }
     }
+}
+
+static void read_buffer_task(void *pvParameters) {
+	// Dequeue and print each word
+	while (1) {
+		if (!queue_is_empty(&Queue_receive_from_app)) {
+			char *word = (char*) queue_dequeue(&Queue_receive_from_app);
+			ESP_LOGI(TAG, "Received %s", word);
+			//free(word); //free the dequeued words
+		}
+		vTaskDelay(pdMS_TO_TICKS(10));
+	}
 }
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
@@ -271,6 +289,7 @@ void app_main(void) {
 	    ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
 	    wifi_init_softap();
 	    xTaskCreate(tcp_server_task, "tcp_server", 4096, NULL, 5, NULL);
+	    xTaskCreate(read_buffer_task, "read_buffer", 4096, NULL, 6, NULL);
 
 //	nvs_flash_init();
 //	init_servo_pwm();
@@ -317,4 +336,5 @@ void app_main(void) {
 //			NULL);
 
 }
+
 
