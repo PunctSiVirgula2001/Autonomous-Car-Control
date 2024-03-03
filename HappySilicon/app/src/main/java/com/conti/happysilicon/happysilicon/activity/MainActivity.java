@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,6 +22,7 @@ import java.net.InetAddress;
 public class MainActivity extends AppCompatActivity {
     private Button diagnosis_mode_button;
     private Button autonomous_mode_button;
+    private Button connect_to_esp_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,16 @@ public class MainActivity extends AppCompatActivity {
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
         UdpSocketClient instance = app.getUdpSocketClient();
-        instance.init();
+
+        connect_to_esp_button = findViewById(R.id.connectESP);
+        connect_to_esp_button.setOnClickListener(view -> {
+            instance.init();
+            runOnUiThread(() -> {
+                TextView ack = findViewById(R.id.textACK); // Replace with your actual TextView ID
+                ack.setText(instance.STATUS);
+            });
+        });
+
 
         //reference to buttons
         diagnosis_mode_button = findViewById(R.id.diagnosis_button);

@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 
@@ -16,6 +17,7 @@ public class UdpSocketClient {
     private DatagramSocket socket;
     private InetAddress serverAddress;
     private int serverPort = 80; // Default port, change as needed
+    public String STATUS;
 
     public UdpSocketClient(Context context) {
         this.context = context;
@@ -30,6 +32,25 @@ public class UdpSocketClient {
                     serverAddress = InetAddress.getByName(serverIP);
                     socket = new DatagramSocket(); // UDP socket
                     System.out.println("UDP Socket initialized for server at " + serverIP);
+                    this.sendMessage("ACK 9999");
+                    // await for a incomming message to confirm that there is a connection
+                    // Prepare buffer for receiving confirmation
+                    byte[] buf = new byte[1024];
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+
+                    try {
+                        // Attempt to receive the confirmation packet
+                        socket.receive(packet);
+                        String received = new String(packet.getData(), 0, packet.getLength());
+                        // Handle the received confirmation
+                        if(received.equals("YES"))
+                            STATUS = "UDP Socket initialized for server at " + serverIP;
+                        else STATUS = "Not ACKNOWLEDGED";
+                    } catch (SocketTimeoutException e) {
+                        System.err.println("Timeout: No confirmation received.");
+                        // Handle timeout here
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -108,4 +129,5 @@ public class UdpSocketClient {
     public interface OnMessageReceived {
         void onMessage(String message);
     }
+
 }

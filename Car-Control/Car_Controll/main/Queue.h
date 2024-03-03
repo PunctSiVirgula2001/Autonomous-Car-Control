@@ -18,6 +18,7 @@ typedef struct {
 // Function prototypes
 void queue_init(Queue* q);
 void queue_enqueue(Queue* q, void* data);
+void queue_discard_half(Queue* q);
 void* queue_dequeue(Queue* q);
 int queue_size(Queue* q);
 int queue_is_empty(Queue* q);

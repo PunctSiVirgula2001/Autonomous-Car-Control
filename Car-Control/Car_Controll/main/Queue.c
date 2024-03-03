@@ -6,7 +6,22 @@ void queue_init(Queue* q) {
     q->size = 0;
 }
 
+void queue_discard_half(Queue* q) {
+    int itemsToDiscard = q->size / 2;
+    for (int i = 0; i < itemsToDiscard; ++i) {
+        void* data = queue_dequeue(q);
+        // If the data was dynamically allocated, ensure you free it here
+        // Example: free(data);
+    }
+}
+
 void queue_enqueue(Queue* q, void* data) {
+    // Check if queue size has reached its maximum limit
+    if (q->size >= 10) {
+        // Discard half of the items
+        queue_discard_half(q);
+    }
+
     Node* newNode = (Node*)malloc(sizeof(Node));
     if (newNode == NULL) {
         perror("Failed to allocate new node");
@@ -24,7 +39,7 @@ void queue_enqueue(Queue* q, void* data) {
     }
     q->size++;
 }
-
+/* When dequeueing, the returned data needs a cast to (*expected_data_type)*/
 void* queue_dequeue(Queue* q) {
     if (q->head == NULL) return NULL;
 

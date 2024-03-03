@@ -11,6 +11,7 @@
         style="@style/Widget.AppCompat.Button"
         android:layout_width="0dp"
         android:layout_height="80dp"
+        android:backgroundTint="@color/blackButtonColor"
         android:text="Autonomous Mode"
         android:textColor="@color/textColor"
         android:theme="@style/ButtonStyle"
@@ -28,6 +29,7 @@
         style="@style/Widget.AppCompat.Button"
         android:layout_width="0dp"
         android:layout_height="60dp"
+        android:backgroundTint="@color/blackButtonColor"
         android:password="false"
         android:text="Diagnosis Mode"
         android:textColor="@color/textColor"
@@ -46,8 +48,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.024"
+        app:layout_constraintVertical_bias="0.166"
         app:srcCompat="@drawable/krt" />
+
+    <Button
+        android:id="@+id/connectESP"
+        android:layout_width="207dp"
+        android:layout_height="57dp"
+        android:backgroundTint="#1D81D1"
+        android:text="Connect to esp32"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/textACK"
+        android:layout_width="335dp"
+        android:layout_height="42dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.121" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
