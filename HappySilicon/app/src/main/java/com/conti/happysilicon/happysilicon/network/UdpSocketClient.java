@@ -18,44 +18,56 @@ public class UdpSocketClient {
     private InetAddress serverAddress;
     private int serverPort = 80; // Default port, change as needed
     public String STATUS;
+    public Integer rx = 0;
+    public Integer tx = 0;
 
     public UdpSocketClient(Context context) {
         this.context = context;
     }
 
     // Initialize the UDP socket and server address
-    public void init() {
+    public void init(OnInitializationComplete onInitializationComplete) {
         new Thread(() -> {
             try {
+                tx =0;
+                rx =0;
                 String serverIP = getGatewayIpAddress();
                 if (serverIP != null) {
                     serverAddress = InetAddress.getByName(serverIP);
                     socket = new DatagramSocket(); // UDP socket
                     System.out.println("UDP Socket initialized for server at " + serverIP);
                     this.sendMessage("ACK 9999");
-                    // await for a incomming message to confirm that there is a connection
                     // Prepare buffer for receiving confirmation
                     byte[] buf = new byte[1024];
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
-                    try {
-                        // Attempt to receive the confirmation packet
-                        socket.receive(packet);
-                        String received = new String(packet.getData(), 0, packet.getLength());
-                        // Handle the received confirmation
-                        if(received.equals("YES"))
-                            STATUS = "UDP Socket initialized for server at " + serverIP;
-                        else STATUS = "Not ACKNOWLEDGED";
-                    } catch (SocketTimeoutException e) {
-                        System.err.println("Timeout: No confirmation received.");
-                        // Handle timeout here
+                    // Attempt to receive the confirmation packet
+                    socket.receive(packet);
+                    String received = new String(packet.getData(), 0, packet.getLength());
+                    // Handle the received confirmation
+                    if (received.equals("YES")) {
+                        STATUS = "UDP Socket initialized for server at " + serverIP;
+                    } else {
+                        STATUS = "Not ACKNOWLEDGED";
                     }
-
+                    // Callback for successful initialization
+                    if (onInitializationComplete != null) {
+                        onInitializationComplete.onComplete();
+                    }
                 }
+            } catch (SocketTimeoutException e) {
+                System.err.println("Timeout: No confirmation received.");
+                STATUS = "Timeout: No confirmation received.";
             } catch (Exception e) {
                 e.printStackTrace();
+                STATUS = "Initialization Failed";
             }
         }).start();
+    }
+
+    // Interface for initialization completion callback
+    public interface OnInitializationComplete {
+        void onComplete();
     }
 
     // Send a message to the server

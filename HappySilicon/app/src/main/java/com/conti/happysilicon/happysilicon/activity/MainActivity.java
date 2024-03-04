@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Button autonomous_mode_button;
     private Button connect_to_esp_button;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,12 +36,22 @@ public class MainActivity extends AppCompatActivity {
 
         connect_to_esp_button = findViewById(R.id.connectESP);
         connect_to_esp_button.setOnClickListener(view -> {
-            instance.init();
-            runOnUiThread(() -> {
-                TextView ack = findViewById(R.id.textACK); // Replace with your actual TextView ID
-                ack.setText(instance.STATUS);
+            instance.init(() -> {
+                runOnUiThread(() -> {
+                    TextView ack = findViewById(R.id.textACK);
+                    ack.setText(instance.STATUS);
+                    instance.tx++;
+                });
+                // Start listening for messages after initialization
+                instance.receiveMessage(message -> {
+                    // Update UI with the received message
+                    runOnUiThread(() -> {
+                        instance.rx++;
+                    });
+                });
             });
         });
+
 
 
         //reference to buttons

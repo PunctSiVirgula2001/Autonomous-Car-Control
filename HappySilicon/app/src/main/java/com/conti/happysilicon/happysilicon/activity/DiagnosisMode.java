@@ -37,6 +37,8 @@ public class DiagnosisMode extends AppCompatActivity {
     private TextView carCurrentTextView ;
     private TextView carMotorPwmDutyTextView ;
     private TextView carTimeElapsedTextView ;
+    private TextView RxTextView;
+    private TextView TxTextView;
     private final Handler handler = new Handler();
 
     @Override
@@ -63,6 +65,8 @@ public class DiagnosisMode extends AppCompatActivity {
         carCurrentTextView = (TextView) findViewById(R.id.textViewCurrent);
         carMotorPwmDutyTextView = (TextView) findViewById(R.id.textViewStepperMotorTxt);
         carTimeElapsedTextView = (TextView) findViewById(R.id.textViewTimeElapsed);
+        RxTextView = (TextView) findViewById(R.id.rxTextView);
+        TxTextView = (TextView) findViewById(R.id.txTextView);
         //reference to seekbars
         seekBarServoDirection = (SeekBar) findViewById(R.id.seekBarDirection);
         seekBarDcMotor = (SeekBar) findViewById(R.id.seekBarDcMotor);
@@ -71,20 +75,25 @@ public class DiagnosisMode extends AppCompatActivity {
         buttonStop.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
+            udpClient.tx++;
         });
         buttonForward.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.FORWARD);
             udpClient.sendMessage("01");
+            udpClient.tx++;
         });
         buttonBackward.setOnClickListener(view -> {
             carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage("02");
+            udpClient.tx++;
         });
         buttonLeftLight.setOnClickListener(view -> {
             udpClient.sendMessage("03");
+            udpClient.tx++;
         });
         buttonRightLight.setOnClickListener(view -> {
             udpClient.sendMessage("04");
+            udpClient.tx++;
         });
 
         // Set up seekbar listeners
@@ -92,8 +101,10 @@ public class DiagnosisMode extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
+                udpClient.tx++;
                 progressDCSeekBar = progressValue;
                 udpClient.sendMessage("05"+progressValue);
+
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -108,7 +119,9 @@ public class DiagnosisMode extends AppCompatActivity {
             int progressDirection = 0;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean b) {
+                udpClient.tx++;
                 udpClient.sendMessage("06"+progressValue);
+
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -159,6 +172,9 @@ public class DiagnosisMode extends AppCompatActivity {
             carCurrentTextView.setText(String.valueOf(carModel.getCurrentDraw()));
             carMotorPwmDutyTextView.setText(progressDCSeekBar+"%");
             carTimeElapsedTextView.setText(String.valueOf(carModel.getTimeElapsed()));
+            RxTextView.setText(String.valueOf(udpClient.rx));
+            TxTextView.setText(String.valueOf(udpClient.tx));
+
         }
     }
     @Override

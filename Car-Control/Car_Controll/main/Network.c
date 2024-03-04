@@ -117,40 +117,48 @@ static void udp_server_task(void *pvParameters)
 }
 
 static void read_buffer_task(void *pvParameters) {
-    // Dequeue and print each word
     while (1) {
         if (!queue_is_empty(&Queue_receive_from_app)) {
             char *word = (char*)queue_dequeue(&Queue_receive_from_app);
             if (word != NULL) {
-                ESP_LOGI(TAG, "Received %s", word);
-                // Check for the specific message "9999" and send an acknowledgment
-                if (strcmp(word, "ACK 9999") == 0) {
-                    const char* ackMessage = "YES";
-                    // Send acknowledgment back to the sender
-                    if (sendto(sock_global, ackMessage, strlen(ackMessage), 0, (struct sockaddr*)&source_addr_global, addr_len_global) < 0) {
-                        ESP_LOGE(TAG, "Failed to send ACK: errno %d", errno);
-                    } else {
-                        ESP_LOGI(TAG, "ACK sent for %s", word);
-                    }
-                }
-                else
-                {
-					const char *ackMessage = "NO";
-					if (sendto(sock_global, ackMessage, strlen(ackMessage), 0,
-							(struct sockaddr*) &source_addr_global,
-							addr_len_global) < 0) {
+                ESP_LOGI(TAG, "%s", word);
 
-					}
+                // Prepare a pointer for the acknowledgment message
+                const char* ackMessage = NULL;
+
+                // Check for the specific message "ACK 9999" and prepare an acknowledgment
+                if (strcmp(word, "ACK 9999") == 0) {
+                    ackMessage = "YES"; // Specific acknowledgment for "ACK 9999"
+                } else {
+                    ackMessage = "NO"; // Default acknowledgment for other messages
                 }
+
+                // Send the prepared acknowledgment back to the sender
+                if (ackMessage && sendto(sock_global, ackMessage, strlen(ackMessage), 0, (struct sockaddr*)&source_addr_global, addr_len_global) < 0) {
+                    ESP_LOGE(TAG, "Failed to send ACK: errno %d", errno);
+                } else if (strcmp(ackMessage,"YES")==0){
+                    ESP_LOGI(TAG, "ACK sent: %s", ackMessage);
+                }
+
+                // Always send a "Received" confirmation for every message
+                const char* receivedMessage = "Received";
+                if (sendto(sock_global, receivedMessage, strlen(receivedMessage), 0, (struct sockaddr*)&source_addr_global, addr_len_global) < 0) {
+                    ESP_LOGE(TAG, "Failed to send confirmation: errno %d", errno);
+                } else {
+                   // ESP_LOGI(TAG, "Confirmation sent for %s", word);
+                }
+
                 free(word); // Free the dequeued word
             } else {
                 ESP_LOGI(TAG, "No word received or queue is empty.");
+                queue_init(&Queue_receive_from_app);
             }
         } else {
             vTaskDelay(pdMS_TO_TICKS(50));
         }
     }
 }
+
 
 
 void init_and_start_network_tasks()
@@ -165,5 +173,5 @@ void init_and_start_network_tasks()
 	ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
 	wifi_init_softap();
 	xTaskCreate(udp_server_task, "tcp_server", 4096, NULL, 5, NULL);
-	xTaskCreate(read_buffer_task, "read_buffer", 4096, NULL, 6, NULL);
+	xTaskCreate(read_buffer_task, "read_buffer", 4096, NULL, 5, NULL);
 }
