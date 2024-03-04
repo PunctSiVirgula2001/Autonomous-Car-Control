@@ -93,22 +93,13 @@ static void udp_server_task(void *pvParameters)
             ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
             break;
         } else {
+        	 //ESP_LOGI(TAG, "%s", rx_buffer);
             // Data received
             rx_buffer[len] = 0; // Null-terminate whatever is received and treat it like a string
-            char *rx_buffer_pointer = (char *)malloc(strlen(rx_buffer) + 1);
-            if (rx_buffer_pointer != NULL) {
-                strcpy(rx_buffer_pointer, rx_buffer);
-               // ESP_LOGI(TAG, "%s", rx_buffer);
-                enqueue_words(&Queue_receive_from_app, rx_buffer_pointer);
-                free(rx_buffer_pointer);
-            } else {
-                ESP_LOGE(TAG, "Failed to allocate memory for rx_buffer_pointer");
-            }
+            enqueue_words(&Queue_receive_from_app, (char *)rx_buffer);
         }
-
         // Optional: Implement a way to break out of this loop or handle socket closure.
     }
-
     if (sock != -1) {
         ESP_LOGI(TAG, "Shutting down socket");
         shutdown(sock, 0);
@@ -154,7 +145,7 @@ static void read_buffer_task(void *pvParameters) {
                 queue_init(&Queue_receive_from_app);
             }
         } else {
-            vTaskDelay(pdMS_TO_TICKS(50));
+            vTaskDelay(pdMS_TO_TICKS(20));
         }
     }
 }

@@ -11,13 +11,13 @@ void queue_discard_half(Queue* q) {
     for (int i = 0; i < itemsToDiscard; ++i) {
         void* data = queue_dequeue(q);
         // If the data was dynamically allocated, ensure you free it here
-        // Example: free(data);
+        free(data);
     }
 }
 
 void queue_enqueue(Queue* q, void* data) {
     // Check if queue size has reached its maximum limit
-    if (q->size >= 10) {
+    if (q->size >= 20) {
         // Discard half of the items
         queue_discard_half(q);
     }
