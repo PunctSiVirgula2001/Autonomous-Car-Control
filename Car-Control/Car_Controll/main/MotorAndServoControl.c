@@ -201,83 +201,38 @@ CarCommand parseCommand(const char *commandStr) {
 QueueHandle_t carControlQueue = NULL;
 
 void carControl_Task(void *pvParameters) {
-	CarCommand cmd = { StopReceived, 0, false }; // Assuming StopReceived is an idle or default state
+	CarCommand cmd = { StopReceived, 0, false };
 	char *command;
-	bool commandReceived = false;
-
 	while (1) {
 		if (carControlQueue != NULL) {
 			if (xQueueReceive(carControlQueue, &command,
 			portMAX_DELAY) == pdPASS) {
 				cmd = parseCommand(command);
-				commandReceived = true; // Mark that a new command has been received
-				ESP_LOGI("CarControl", "New Command: %d, Value: %d",
-						cmd.command, cmd.command_value);
-				free(command); // Free the command once it's no longer needed
-			}
-
-			// Perform actions based on the last command received
-			if (commandReceived || continuousActionRequired(cmd.command)) {
+				ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
+				free(command);
 				switch (cmd.command) {
 				case StopReceived:
-					if (commandReceived) {
-						ESP_LOGI("CarControl", "Executing Stop");
-						// Execute stop command action here
-					}
+					//ESP_LOGI(" ", "StopReceived");
 					break;
 				case ForwardReceived:
-					if (commandReceived) {
-						ESP_LOGI("CarControl", "Executing Forward");
-						// Execute forward command action here
-					}
+					//ESP_LOGI(" ", "ForwardReceived");
 					break;
 				case BackwardReceived:
-					if (commandReceived) {
-						ESP_LOGI("CarControl", "Executing BackwardReceived");
-						// Execute forward command action here
-					}
+					//ESP_LOGI(" ", "BackwardReceived");
 					break;
 				case SpeedReceived:
-					if (commandReceived) {
-						ESP_LOGI("CarControl", "Executing SpeedReceived");
-						// Execute forward command action here
-					}
+					//ESP_LOGI(" ", "SpeedReceived");
 					break;
 				case SteerReceived:
-					if (commandReceived) {
-						ESP_LOGI("CarControl", "Executing SteerReceived");
-						// Execute forward command action here
-					}
+					//ESP_LOGI(" ", "SteerReceived");
 					break;
 				case AutonomousReceived:
-					if (commandReceived) {
-						ESP_LOGI("CarControl", "Executing AutonomousReceived");
-						// Execute forward command action here
-					}
+					//ESP_LOGI(" ", "AutonomousReceived");
 					break;
-					// Handle other cases similarly
 				}
-				commandReceived = false; // Reset the flag after handling the command
 			}
-		} else {
-			vTaskDelay(pdMS_TO_TICKS(500)); // Longer delay if the queue is unexpectedly NULL
-			ESP_LOGI("CarControl", "Executing AutonomousReceived");
-		}
-		vTaskDelay(pdMS_TO_TICKS(10)); // Short delay to yield to other tasks
-	}
-}
-
-bool continuousActionRequired(int command) {
-	// Determine if a command requires continuous action
-	// For example, moving forward/backward might need continuous execution
-	switch (command) {
-	case ForwardReceived:
-	case BackwardReceived:
-	case SpeedReceived:
-	case SteerReceived:
-		return true;
-	default:
-		return false;
+		} else
+			vTaskDelay(pdMS_TO_TICKS(500));
 	}
 }
 

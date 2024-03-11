@@ -64,7 +64,7 @@ typedef struct {
 void carControl_Task(void *pvParameters);
 void carControl_init();
 CarCommand parseCommand(const char* commandStr);
-bool continuousActionRequired(int command);
+
 
 
 #endif
