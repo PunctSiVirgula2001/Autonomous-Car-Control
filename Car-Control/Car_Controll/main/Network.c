@@ -6,19 +6,9 @@ static const char *TAG = "wifi_softAP";
 Queue Queue_receive_from_app;
 struct sockaddr_in6 source_addr_global; // For IPv4 or IPv6
 socklen_t addr_len_global;
-int sock_global; // Socket descriptor
+int sock_global; 						// Socket descriptor
+char *word = NULL;						// Words extracted from data buffer from app.
 
-static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-                                int32_t event_id, void* event_data)
-{
-    if (event_id == WIFI_EVENT_AP_STACONNECTED) {
-        wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
-        ESP_LOGI(TAG, "station MACSTR join, AID=");
-    } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
-        wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
-        ESP_LOGI(TAG, "station MACSTR leave, AID=");
-    }
-}
 
 void wifi_init_softap()
 {
@@ -51,7 +41,7 @@ void wifi_init_softap()
              WIFI_SSID, WIFI_PASS);
 }
 
-static void udp_server_task(void *pvParameters)
+void udp_server_task(void *pvParameters)
 {
     queue_init(&Queue_receive_from_app);
 
@@ -107,12 +97,20 @@ static void udp_server_task(void *pvParameters)
     }
 }
 
-static void read_buffer_task(void *pvParameters) {
+extern QueueHandle_t carControlQueue;
+
+void read_buffer_task(void *pvParameters) {
     while (1) {
         if (!queue_is_empty(&Queue_receive_from_app)) {
-            char *word = (char*)queue_dequeue(&Queue_receive_from_app);
+            word = (char*)queue_dequeue(&Queue_receive_from_app);
             if (word != NULL) {
-                ESP_LOGI(TAG, "%s", word);
+                //ESP_LOGI(TAG, "%s", word);
+
+                if (xQueueSend(carControlQueue, &word, portMAX_DELAY) != pdPASS) {
+					ESP_LOGE(TAG,
+							"Failed to send command to car control queue");
+					free(word); // Free word here only if sending fails.
+				}
 
                 // Prepare a pointer for the acknowledgment message
                 const char* ackMessage = NULL;
@@ -139,7 +137,7 @@ static void read_buffer_task(void *pvParameters) {
                    // ESP_LOGI(TAG, "Confirmation sent for %s", word);
                 }
 
-                free(word); // Free the dequeued word
+                //free(word); // Free the dequeued word in carControlTask
             } else {
                 ESP_LOGI(TAG, "No word received or queue is empty.");
                 queue_init(&Queue_receive_from_app);
@@ -151,8 +149,7 @@ static void read_buffer_task(void *pvParameters) {
 }
 
 
-
-void init_and_start_network_tasks()
+void start_network_readBuffer_tasks()
 {
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -163,6 +160,22 @@ void init_and_start_network_tasks()
 
 	ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
 	wifi_init_softap();
-	xTaskCreate(udp_server_task, "tcp_server", 4096, NULL, 5, NULL);
-	xTaskCreate(read_buffer_task, "read_buffer", 4096, NULL, 5, NULL);
+	xTaskCreatePinnedToCore(udp_server_task, "tcp_server",4096, NULL, 5, NULL,0U);
+	xTaskCreatePinnedToCore(read_buffer_task, "read_buffer", 4096, NULL, 5, NULL, 1U);
 }
+
+
+
+//static void wifi_event_handler(void* arg, esp_event_base_t event_base,
+//                                int32_t event_id, void* event_data)
+//{
+//    if (event_id == WIFI_EVENT_AP_STACONNECTED) {
+//        wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
+//        ESP_LOGI(TAG, "station MACSTR join, AID=");
+//    } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
+//        wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
+//        ESP_LOGI(TAG, "station MACSTR leave, AID=");
+//    }
+//}
+
+

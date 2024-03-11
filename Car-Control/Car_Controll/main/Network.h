@@ -24,11 +24,11 @@
 
 #define WIFI_SSID "ESP32-Access-Point"
 #define WIFI_PASS "123456789"
-#define MAX_STA_CONN 4
-#define PORT 80
+#define MAX_STA_CONN 4  /*Number of maximum connections allowed on access point. */
+#define PORT 80 		/*Port at which the access point has been started. */
 
-static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+//static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 void wifi_init_softap();
-static void udp_server_task(void *pvParameters);
-static void read_buffer_task(void *pvParameters);
-void init_and_start_network_tasks();
+void udp_server_task(void *pvParameters);
+void read_buffer_task(void *pvParameters);
+void start_network_readBuffer_tasks();

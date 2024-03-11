@@ -1,5 +1,9 @@
 #include "PID.h"
 
+//PID
+PID_t motorPID;
+float deltaTime = 0.02;  // 20 ms = 0.02 seconds
+
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
 	pid->setpoint = 0;
@@ -49,6 +53,30 @@ int reverseMapValue_pid(int input_value) { //1024 ---> 200
 
 	return reverse_mapped_value;
 }
+
+void setPIDParameters() { // function for reading from keyboard
+	char buffer[256];
+
+	if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+		char *command = strtok(buffer, " ");
+		if (strcmp(command, "set") == 0) {
+			float kp = atof(strtok(NULL, " "));
+			float ki = atof(strtok(NULL, " "));
+			float kd = atof(strtok(NULL, " "));
+
+			// Update the PID parameters
+			motorPID.Kp = kp;
+			motorPID.Ki = ki;
+			motorPID.Kd = kd;
+
+			printf("PID parameters updated: Kp=%.2f, Ki=%.2f, Kd=%.2f\n", kp, ki, kd);
+		}
+	}
+}
+
+
+
+
 
 //void app_main() {
 //    PID_t motorPID;

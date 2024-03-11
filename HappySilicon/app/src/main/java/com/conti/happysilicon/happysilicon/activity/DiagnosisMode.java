@@ -72,32 +72,32 @@ public class DiagnosisMode extends AppCompatActivity {
         seekBarDcMotor = (SeekBar) findViewById(R.id.seekBarDcMotor);
 
         // Set up button listeners
-        buttonStop.setOnClickListener(view -> {
+        buttonStop.setOnClickListener(view -> {   // STOP BUTTON
             carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
             udpClient.tx++;
         });
-        buttonForward.setOnClickListener(view -> {
+        buttonForward.setOnClickListener(view -> {  // FORWARD BUTTON
             carModel.setCarCommand(Car.CarCommands.FORWARD);
             udpClient.sendMessage("01");
             udpClient.tx++;
         });
-        buttonBackward.setOnClickListener(view -> {
+        buttonBackward.setOnClickListener(view -> { // BACKWARD BUTTON
             carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage("02");
             udpClient.tx++;
         });
-        buttonLeftLight.setOnClickListener(view -> {
+        buttonLeftLight.setOnClickListener(view -> { // LEFT LIGHT BUTTON
             udpClient.sendMessage("03");
             udpClient.tx++;
         });
-        buttonRightLight.setOnClickListener(view -> {
+        buttonRightLight.setOnClickListener(view -> { // RIGHT LIGHT BUTTON
             udpClient.sendMessage("04");
             udpClient.tx++;
         });
 
         // Set up seekbar listeners
-        seekBarDcMotor.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarDcMotor.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {   // SEEKBAR MOTOR SPEED
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
@@ -115,7 +115,7 @@ public class DiagnosisMode extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Stopped tracking seekbar", Toast.LENGTH_SHORT).show();
             }
         });
-        seekBarServoDirection.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarServoDirection.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { // SEEKBAR SERVO DIRECTION
             int progressDirection = 0;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean b) {

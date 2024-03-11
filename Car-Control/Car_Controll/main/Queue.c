@@ -17,7 +17,7 @@ void queue_discard_half(Queue* q) {
 
 void queue_enqueue(Queue* q, void* data) {
     // Check if queue size has reached its maximum limit
-    if (q->size >= 20) {
+    if (q->size >= 30) {
         // Discard half of the items
         queue_discard_half(q);
     }

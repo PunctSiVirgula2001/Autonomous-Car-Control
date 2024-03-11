@@ -15,14 +15,7 @@
 #define PASSWORD "123456789"
 
 
-typedef enum {
-    StopReceived = 0,      // 00
-    ForwardReceived = 1,      // 01
-    BackwardReceived = 2,     // 02
-    SpeedReceived = 5,    // 05
-    SteerReceived = 6,   // 06
-	AutonomousReceived = 7
-} ReceivedState_app;
+
 
 typedef enum {
 	StopJetson = 0,

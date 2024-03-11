@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <string.h>
 
 // PID Structure
 typedef struct {
@@ -21,3 +25,4 @@ float PID_Compute(PID_t *pid, float deltaTime) ;
 
 int mapValue_pid(int value);
 int reverseMapValue_pid(int input_value);
+void setPIDParameters(); // set parameters through keyboard

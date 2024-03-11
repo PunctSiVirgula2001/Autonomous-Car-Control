@@ -69,7 +69,29 @@ mcpwm_handles_t init_mcpwm(uint32_t frequency, uint32_t dead_time, int gpio_a, i
 
 
 
-
+//mcpwm_handles_t handler1; // MOSFET DRIVER 1
+//mcpwm_handles_t handler2; // MOSFET DRIVER 2
+//
+//TaskHandle_t controlMotorHandle = NULL;
+//TaskHandle_t controlSteerHandle = NULL;
+//
+//commandReceived_app mainCommand;
+//
+//void controlMotor_mcpwm(void *pvParameters) {
+//	uint32_t notificationValue;
+//	while (1) {
+//		notificationValue = ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+//		if (notificationValue == FORWARD) {
+//			motorControl_mcpwm(FORWARD, 100 - SPEED, handler1, handler2);
+//		} else if (notificationValue == BACKWARD) {
+//			motorControl_mcpwm(BACKWARD, 100 - SPEED, handler1, handler2);
+//		} else if (notificationValue == BREAKING) {
+//			motorControl_mcpwm(BREAKING, 100, handler1, handler2);
+//		} else if (notificationValue == STOP) {
+//			motorControl_mcpwm(STOP, 100, handler1, handler2);
+//		}
+//	}
+//}
 //void init_adc();
 //int read_analog_value();
 
