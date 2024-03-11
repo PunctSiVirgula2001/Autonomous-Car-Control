@@ -1,4 +1,4 @@
-#include "ServoControl.h"
+#include "MotorAndServoControl.h"
 
 // Initialize PWM for SERVO
 void init_servo_pwm() {
@@ -48,7 +48,7 @@ void init_motor_pwm() {
     // Timer configuration, same as before
     ledc_timer_config_t ledc_timer = {
         .speed_mode = LEDC_Motor_And_Servo_MODE,
-        .duty_resolution = LEDC_TIMER_16_BIT,
+        .duty_resolution = LEDC_MOTOR_DUTY_RESOLUTION,
         .timer_num = LEDC_MOTOR_TIMER,  // Different timer for motor
         .freq_hz = LEDC_Motor_And_Servo_FREQ,
     };
@@ -67,7 +67,7 @@ void init_motor_pwm() {
 
 // Update the PWM for Motor, similar to update_servo_pwm function
 void update_motor_pwm(unsigned int pulse_width_us) {
-    uint32_t duty = (pulse_width_us * ((1 << LEDC_TIMER_16_BIT) - 1)) / 20000;
+    uint32_t duty = (pulse_width_us * ((1 << LEDC_MOTOR_DUTY_RESOLUTION) - 1)) / 20000;
     ledc_set_duty(LEDC_Motor_And_Servo_MODE, LEDC_MOTOR_CH1_CHANNEL, duty);
     ledc_update_duty(LEDC_Motor_And_Servo_MODE, LEDC_MOTOR_CH1_CHANNEL);
 }

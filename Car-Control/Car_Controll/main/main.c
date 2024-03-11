@@ -6,7 +6,6 @@
 #include "freertos/semphr.h"  // Required for mutex
 #include "driver/adc.h"
 #include "RemoteWifiControl.h"
-#include "ServoControl.h"
 #include "esp_task_wdt.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +21,8 @@
 #include "esp_log.h"
 #include "esp_sleep.h"
 #include "esp_timer.h"
+
+#include "MotorAndServoControl.h"
 #include "MotorControl_mcpwm.h"
 #include "PID.h"
 #include "Queue.h"
