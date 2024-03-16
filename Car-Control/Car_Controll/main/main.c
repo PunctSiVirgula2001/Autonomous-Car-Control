@@ -21,10 +21,10 @@ extern char bufferReceived[128];
 
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
-	//start_network_readBuffer_tasks();
-	//carControl_init();
+	start_network_readBuffer_tasks();
+	carControl_init();
 	configureEncoderInterrupts();
-	//xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL,0U);
+	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL,1U);
 
 
 }

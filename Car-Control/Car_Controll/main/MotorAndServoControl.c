@@ -104,8 +104,8 @@ void configureEncoderInterrupts() {
 			.max_glitch_ns = 1000, };
 	ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit, &filter_config));
 
-	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, 1)); // watch point which will trigger the callback function when
-	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, -1)); // a pulse is generated
+	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, 6)); // watch point which will trigger the callback function when
+	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, -6)); // a pulse is generated
 
 	pcnt_chan_config_t chan_a_config = { .edge_gpio_num = encoderGPIO_B,
 			.level_gpio_num = encoderGPIO_A, };
@@ -141,15 +141,15 @@ void configureEncoderInterrupts() {
 	ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
-	ESP_LOGI("PulseCounter", "Aici");
+	//ESP_LOGI("PulseCounter", "Aici");
 
 	// Report counter value
-	int event_count = 0;
-	while (1) {
-		if (xQueueReceive(queuePulseCnt, &event_count, pdMS_TO_TICKS(1000))) {
-			ESP_LOGI("", "Watch point event, count: %d", event_count);
-		}
-	}
+//	int event_count = 0;
+//	while (1) {
+//		if (xQueueReceive(queuePulseCnt, &event_count, pdMS_TO_TICKS(1000))) {
+//			ESP_LOGI("", "Watch point event, count: %d", event_count);
+//		}
+//	}
 
 }
 
@@ -246,7 +246,7 @@ void carControl_Task(void *pvParameters) {
 }
 
 void carControl_init() {
-
+	carControlQueue = xQueueCreate(10,sizeof(char*));
 	init_servo_pwm();
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init

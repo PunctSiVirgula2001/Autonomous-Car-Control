@@ -74,21 +74,26 @@ void setPIDParameters() { // function for reading from keyboard
 	}
 }
 
-extern QueueHandle_t queuePulseCnt;
+/*CONFIG_FREERTOS_HZ is set to 100, this means the operating system tick rate is 100 ticks per second. Each tick would
+therefore represent 10 milliseconds (since 1000 milliseconds / 100 ticks = 10 milliseconds per tick).
+To convert a tick count to milliseconds, you can multiply the number of ticks by 10*/
 
+extern QueueHandle_t queuePulseCnt;
+TickType_t xLastWakeTime =0U;
+TickType_t xNewWakeTime =0U;
+uint32_t pulse_time_ms=0U;
 void PIDTask(void *pvParameters)
 {
 	 int pulseCount=0;
-	 ESP_LOGI("PulseCounter", "Pulse Count");
+	 //ESP_LOGI("PulseCounter", "Pulse Count");
 	    while (1) {
-	    	ESP_LOGI("PulseCounter", "Pulse Count");
+	    	//ESP_LOGI("PulseCounter", "Pulse Count");
 	        if (xQueueReceive(queuePulseCnt, &pulseCount, portMAX_DELAY)) {
 	            // Process the pulse count here (e.g., log it)
-	            ESP_LOGI("PulseCounter", "Pulse Count: %d", pulseCount);
-	        }
-	        else {
-	        	ESP_LOGI("PulseCounter", "Pulse Count");
-	        	vTaskDelay(pdMS_TO_TICKS(50));
+	        	xNewWakeTime = xTaskGetTickCount();
+	        	pulse_time_ms =(xNewWakeTime - xLastWakeTime)*10U;
+	            ESP_LOGI("PulseCounter", "Pulse time: %lu ms", pulse_time_ms);
+	            xLastWakeTime = xNewWakeTime;
 	        }
 
 	    }
