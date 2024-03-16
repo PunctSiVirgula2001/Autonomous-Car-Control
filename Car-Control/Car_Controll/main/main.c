@@ -3,19 +3,7 @@
 #include <unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/semphr.h"  // Required for mutex
-#include "driver/adc.h"
-#include "RemoteWifiControl.h"
-#include "esp_task_wdt.h"
-#include <stdlib.h>
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "driver/uart.h"
-#include "driver/gpio.h"
-#include "sdkconfig.h"
-#include "freertos/queue.h"
-#include "driver/gpio.h"
+
 #include "esp_log.h"
 
 #include "MotorAndServoControl.h"
@@ -33,8 +21,10 @@ extern char bufferReceived[128];
 
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
-	start_network_readBuffer_tasks();
-	carControl_init();
+	//start_network_readBuffer_tasks();
+	//carControl_init();
+	configureEncoderInterrupts();
+	//xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL,0U);
 
 
 }

@@ -10,17 +10,19 @@
 #include <string.h> // For strlen function
 
 
-/*Settings for LEDC */
+/*Pwm settings for servo */
 #define LEDC_SERVO_TIMER          	LEDC_TIMER_0
 #define LEDC_SERVO_GPIO       	  	(27)
 #define LEDC_SERVO_CH0_CHANNEL    	LEDC_CHANNEL_0
 #define LEDC_SERVO_DUTY_RESOLUTION  LEDC_TIMER_10_BIT
 
+/*Pwm settings for dc motor */
 #define LEDC_MOTOR_TIMER 			LEDC_TIMER_1
 #define LEDC_MOTOR_CH1_CHANNEL 		LEDC_CHANNEL_1
 #define LEDC_MOTOR_GPIO 			(4)
 #define LEDC_MOTOR_DUTY_RESOLUTION 	LEDC_TIMER_16_BIT
 
+/*Pwm settings that are shared between servo and dc motor */
 #define LEDC_Motor_And_Servo_MODE  LEDC_HIGH_SPEED_MODE
 #define LEDC_Motor_And_Servo_FREQ  50   // 50Hz
 
@@ -35,8 +37,8 @@ void update_motor_pwm(unsigned int pulse_width_us);
 void changeMotorSpeed(int value);
 
 /*Encoder*/
-#define EXAMPLE_PCNT_HIGH_LIMIT 2000000000
-#define EXAMPLE_PCNT_LOW_LIMIT  -2000000000
+#define EXAMPLE_PCNT_HIGH_LIMIT 20000
+#define EXAMPLE_PCNT_LOW_LIMIT  -20000
 #define encoderGPIO_A 35
 #define encoderGPIO_B 14
 

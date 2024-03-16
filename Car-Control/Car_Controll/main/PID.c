@@ -74,9 +74,25 @@ void setPIDParameters() { // function for reading from keyboard
 	}
 }
 
+extern QueueHandle_t queuePulseCnt;
 
+void PIDTask(void *pvParameters)
+{
+	 int pulseCount=0;
+	 ESP_LOGI("PulseCounter", "Pulse Count");
+	    while (1) {
+	    	ESP_LOGI("PulseCounter", "Pulse Count");
+	        if (xQueueReceive(queuePulseCnt, &pulseCount, portMAX_DELAY)) {
+	            // Process the pulse count here (e.g., log it)
+	            ESP_LOGI("PulseCounter", "Pulse Count: %d", pulseCount);
+	        }
+	        else {
+	        	ESP_LOGI("PulseCounter", "Pulse Count");
+	        	vTaskDelay(pdMS_TO_TICKS(50));
+	        }
 
-
+	    }
+}
 
 //void app_main() {
 //    PID_t motorPID;

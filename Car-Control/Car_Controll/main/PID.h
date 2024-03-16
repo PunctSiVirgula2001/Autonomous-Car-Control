@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include "esp_log.h"
+#include "MotorAndServoControl.h"
 
 // PID Structure
 typedef struct {
@@ -26,3 +28,4 @@ float PID_Compute(PID_t *pid, float deltaTime) ;
 int mapValue_pid(int value);
 int reverseMapValue_pid(int input_value);
 void setPIDParameters(); // set parameters through keyboard
+void PIDTask(void *pvParameters);

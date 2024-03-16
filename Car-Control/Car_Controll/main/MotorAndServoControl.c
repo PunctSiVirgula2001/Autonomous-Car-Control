@@ -31,7 +31,9 @@ void changeSTEER(int value) {
 		value = 100;
 	}
 	// Scale the value to fit between 1000 and 2000
-	int scaled_value = 950 + (value * 10);
+	int scaled_value = 1300
+			+ (int) (((1.0f - (100.0f - (float) value) / 100.0f) * 400.0f)); // scaled value will be between 1300 and 1300+400
+	ESP_LOGI("", "pwm_us %d", scaled_value);
 	update_servo_pwm(scaled_value);
 }
 
@@ -62,46 +64,24 @@ void update_motor_pwm(unsigned int pulse_width_us) {
 }
 
 // Change Motor Speed, similar to changeSTEER function
-
-static int reverse_mode_activated = 0;  // Flag to track reverse mode activation
-static int last_value = 100;  // Variable to keep track of the last value
-
 void changeMotorSpeed(int value) {
-	// Check if the value is within the expected range
-	if (value < 0) {
-		value = 0;
-	} else if (value > 200) {
-		value = 200;
-	}
-
 	int pulse_width_us;
-
-	if (value >= 100) { // FORWARD
+	ESP_LOGI("", "value %d", value);
+	if (value == 0)
+		pulse_width_us = 1500;
+	else if (value >= 1) { // FORWARD
 		// Forward mode: Scale between 1545 and 1700
-		pulse_width_us = 1545 + ((value - 100) * (1700 - 1545) / (200 - 100));
+		pulse_width_us = 1545 + (value * (1700 - 1545) / 100);
+		ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	} else { 			// BACKWARD
-		if (reverse_mode_activated == 0) { // Activate reverse mode sequence only once
-			update_motor_pwm(1500);
-			vTaskDelay(pdMS_TO_TICKS(20));
-
-			update_motor_pwm(1445);
-			vTaskDelay(pdMS_TO_TICKS(20));
-
-			update_motor_pwm(1500);
-			vTaskDelay(pdMS_TO_TICKS(20));
-
-			reverse_mode_activated = 1;  // Set the flag
-		}
-		// Reverse mode: Scale between 1455 and 1240
-		pulse_width_us = 1455 - ((100 - value) * (1455 - 1240) / (100 - 0));
+		pulse_width_us = 1455 - ((-value) * (1455 - 1240) / 100);
+		ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	}
-
 	update_motor_pwm(pulse_width_us);
-	last_value = value;  // Update the last value for the next function call
 }
 
 /* Encoder */
-QueueHandle_t queue;
+QueueHandle_t queuePulseCnt;
 pcnt_unit_handle_t pcnt_unit = NULL;
 
 bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
@@ -110,23 +90,28 @@ bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
 	QueueHandle_t queue = (QueueHandle_t) user_ctx;
 	// send event data to queue, from this interrupt callback
 	xQueueSendFromISR(queue, &(edata->watch_point_value), &high_task_wakeup);
+	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	return (high_task_wakeup == pdTRUE);
 }
 void configureEncoderInterrupts() {
-
-	queue = xQueueCreate(10, sizeof(int));
+	queuePulseCnt = xQueueCreate(10, sizeof(int));
 	pcnt_unit_config_t unit_config = { .high_limit = EXAMPLE_PCNT_HIGH_LIMIT,
 			.low_limit = EXAMPLE_PCNT_LOW_LIMIT, };
 
 	ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &pcnt_unit));
 
-	pcnt_glitch_filter_config_t filter_config = { .max_glitch_ns = 1000, };
+	pcnt_glitch_filter_config_t filter_config = { // debouncer
+			.max_glitch_ns = 1000, };
 	ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit, &filter_config));
+
+	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, 1)); // watch point which will trigger the callback function when
+	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, -1)); // a pulse is generated
 
 	pcnt_chan_config_t chan_a_config = { .edge_gpio_num = encoderGPIO_B,
 			.level_gpio_num = encoderGPIO_A, };
 	pcnt_channel_handle_t pcnt_chan_a = NULL;
 	ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit, &chan_a_config, &pcnt_chan_a));
+
 	pcnt_chan_config_t chan_b_config = { .edge_gpio_num = encoderGPIO_A,
 			.level_gpio_num = encoderGPIO_B, };
 	pcnt_channel_handle_t pcnt_chan_b = NULL;
@@ -151,17 +136,20 @@ void configureEncoderInterrupts() {
 
 	pcnt_event_callbacks_t cbs = { .on_reach = example_pcnt_on_reach, };
 
-	ESP_ERROR_CHECK(pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, queue));
+	ESP_ERROR_CHECK(
+			pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, queuePulseCnt));
 	ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
+	ESP_LOGI("PulseCounter", "Aici");
 
-#if CONFIG_EXAMPLE_WAKE_UP_LIGHT_SLEEP
-		       // EC11 channel output high level in normal state, so we set "low level" to wake up the chip
-		       ESP_ERROR_CHECK(gpio_wakeup_enable(encoderGPIO_B, GPIO_INTR_LOW_LEVEL));
-		       ESP_ERROR_CHECK(esp_sleep_enable_gpio_wakeup());
-		       ESP_ERROR_CHECK(esp_light_sleep_start());
-#endif
+	// Report counter value
+	int event_count = 0;
+	while (1) {
+		if (xQueueReceive(queuePulseCnt, &event_count, pdMS_TO_TICKS(1000))) {
+			ESP_LOGI("", "Watch point event, count: %d", event_count);
+		}
+	}
 
 }
 
@@ -202,6 +190,8 @@ QueueHandle_t carControlQueue = NULL;
 
 void carControl_Task(void *pvParameters) {
 	CarCommand cmd = { StopReceived, 0, false };
+	int last_motor_speed = 0;
+	int speed_multiplier = 0;
 	char *command;
 	while (1) {
 		if (carControlQueue != NULL) {
@@ -212,18 +202,37 @@ void carControl_Task(void *pvParameters) {
 				free(command);
 				switch (cmd.command) {
 				case StopReceived:
-					//ESP_LOGI(" ", "StopReceived");
+					changeMotorSpeed(0); // to be changed
+					speed_multiplier = 0;
+					// if the car is moving forward : logic for breaking.
+					// if the car is moving backward : logic for breaking.
+					// if the car is not moving but there are very small changes in speed(like pushing it a bit), don't apply any change
 					break;
 				case ForwardReceived:
-					//ESP_LOGI(" ", "ForwardReceived");
+					ESP_LOGI(" ", "ForwardReceived");
+					speed_multiplier = 1;
+					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
 					break;
 				case BackwardReceived:
-					//ESP_LOGI(" ", "BackwardReceived");
+					ESP_LOGI(" ", "BackwardReceived");
+					speed_multiplier = -1;
+					changeMotorSpeed(0);
+					vTaskDelay(pdMS_TO_TICKS(50));
+					changeMotorSpeed(-15);
+					vTaskDelay(pdMS_TO_TICKS(50));
+					changeMotorSpeed(0);
+//					vTaskDelay(pdMS_TO_TICKS(50));
+//					changeMotorSpeed(-15);
+					vTaskDelay(pdMS_TO_TICKS(50));
+					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
 					break;
 				case SpeedReceived:
-					//ESP_LOGI(" ", "SpeedReceived");
+					changeMotorSpeed(speed_multiplier * cmd.command_value);
+					last_motor_speed = cmd.command_value;
+					ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier); // to be replaced with notify task PID.
 					break;
 				case SteerReceived:
+					changeSTEER(cmd.command_value);
 					//ESP_LOGI(" ", "SteerReceived");
 					break;
 				case AutonomousReceived:
@@ -237,11 +246,13 @@ void carControl_Task(void *pvParameters) {
 }
 
 void carControl_init() {
-	carControlQueue = xQueueCreate(10, sizeof(char*));
+
 	init_servo_pwm();
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init
-	vTaskDelay(pdMS_TO_TICKS(2000)); // wait for init to complete
+	update_motor_pwm(1500);
+	//configureEncoderInterrupts();
+	vTaskDelay(pdMS_TO_TICKS(500)); // wait for init to complete
 	xTaskCreatePinnedToCore(carControl_Task, "carControl_task", 4096, NULL, 6,
 	NULL, 0U);
 
