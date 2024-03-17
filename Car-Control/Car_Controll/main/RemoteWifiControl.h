@@ -14,9 +14,6 @@
 #define SSID "Mi 10T"
 #define PASSWORD "123456789"
 
-
-
-
 typedef enum {
 	StopJetson = 0,
 	GreenJetson = 6,

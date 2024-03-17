@@ -277,6 +277,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/blackButtonColor"
                 android:text="@string/buttonForwardLabel"
                 android:theme="@style/ButtonStyle"
                 app:layout_constraintBottom_toTopOf="@+id/buttonRightLight"
@@ -293,6 +294,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/blackButtonColor"
                     android:text="@string/buttonLeftLight"
                     android:theme="@style/ButtonStyle"
                     app:layout_constraintBottom_toTopOf="@+id/buttonBackward"
@@ -303,22 +305,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
+                    android:backgroundTint="@color/blackButtonColor"
                     android:text="@string/buttonStopLabel"
                     android:theme="@style/ButtonStyle"
                     app:layout_constraintBottom_toTopOf="@+id/buttonBackward"
-                    tools:layout_editor_absoluteX="112dp"
-                     />
+                    tools:layout_editor_absoluteX="112dp" />
 
                 <Button
                     android:id="@+id/buttonRightLight"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/blackButtonColor"
                     android:text="@string/buttonRightLight"
                     android:theme="@style/ButtonStyle"
                     app:layout_constraintBottom_toTopOf="@+id/buttonBackward"
-                    tools:layout_editor_absoluteX="112dp"
-                   />
+                    tools:layout_editor_absoluteX="112dp" />
             </LinearLayout>
 
             <Button
@@ -326,6 +328,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/blackButtonColor"
                 android:text="@string/buttonBackwardLabel"
                 android:theme="@style/ButtonStyle"
                 tools:layout_editor_absoluteX="112dp"

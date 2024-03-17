@@ -99,6 +99,6 @@ public class AutonomousMode extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null); // Stop the handler callbacks when the activity is destroyed
-        // Consider disconnecting from the TCP client if the app is closing
+
     }
 }

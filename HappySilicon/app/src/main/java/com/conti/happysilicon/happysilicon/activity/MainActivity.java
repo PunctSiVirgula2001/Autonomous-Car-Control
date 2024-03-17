@@ -23,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private Button diagnosis_mode_button;
     private Button autonomous_mode_button;
     private Button connect_to_esp_button;
-
-
+    private Button pid_settings_button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 openDiagnosisMode();
             }
         });
-
         autonomous_mode_button = findViewById(R.id.autonomous_button);
         autonomous_mode_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
                 openAutonomousMode();
             }
         });
+
+        pid_settings_button = findViewById(R.id.pid_settings);
+        pid_settings_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //sendUDPMessage("Entering Autonomous Mode");
+                openPIDSettings();
+            }
+        });
+
     }
     public void openDiagnosisMode() {
         Intent intent = new Intent(MainActivity.this, DiagnosisMode.class);
@@ -83,5 +91,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openPIDSettings() {
+        Intent intent = new Intent(MainActivity.this, PIDConfig.class);
+        startActivity(intent);
+    }
 
 }

@@ -98,7 +98,6 @@ void udp_server_task(void *pvParameters)
 }
 
 extern QueueHandle_t carControlQueue;
-
 void read_buffer_task(void *pvParameters) {
     while (1) {
         if (!queue_is_empty(&Queue_receive_from_app)) {
@@ -111,33 +110,14 @@ void read_buffer_task(void *pvParameters) {
 							"Failed to send command to car control queue");
 					free(word); // Free word here only if sending fails.
 				}
-
                 // Prepare a pointer for the acknowledgment message
                 const char* ackMessage = NULL;
-
                 // Check for the specific message "ACK 9999" and prepare an acknowledgment
                 if (strcmp(word, "ACK 9999") == 0) {
                     ackMessage = "YES"; // Specific acknowledgment for "ACK 9999"
-                } else {
-                    ackMessage = "NO"; // Default acknowledgment for other messages
+                    HLD_SendMessage(ackMessage);
                 }
 
-                // Send the prepared acknowledgment back to the sender
-                if (ackMessage && sendto(sock_global, ackMessage, strlen(ackMessage), 0, (struct sockaddr*)&source_addr_global, addr_len_global) < 0) {
-                    ESP_LOGE(TAG, "Failed to send ACK: errno %d", errno);
-                } else if (strcmp(ackMessage,"YES")==0){
-                    ESP_LOGI(TAG, "ACK sent: %s", ackMessage);
-                }
-
-                // Always send a "Received" confirmation for every message
-                const char* receivedMessage = "Received";
-                if (sendto(sock_global, receivedMessage, strlen(receivedMessage), 0, (struct sockaddr*)&source_addr_global, addr_len_global) < 0) {
-                    ESP_LOGE(TAG, "Failed to send confirmation: errno %d", errno);
-                } else {
-                   // ESP_LOGI(TAG, "Confirmation sent for %s", word);
-                }
-
-                //free(word); // Free the dequeued word in carControlTask
             } else {
                 ESP_LOGI(TAG, "No word received or queue is empty.");
                 queue_init(&Queue_receive_from_app);
@@ -146,6 +126,18 @@ void read_buffer_task(void *pvParameters) {
             vTaskDelay(pdMS_TO_TICKS(20));
         }
     }
+}
+
+// Function to send a message over a socket
+void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr, socklen_t addr_len) {
+    if (sendto(sock, message, strlen(message), 0, (struct sockaddr*) addr, addr_len) < 0) {
+        ESP_LOGE(TAG, "Failed to send message: %s, errno %d", message, errno);
+    }
+}
+
+void HLD_SendMessage(const char* message)
+{
+	sendMessage(sock_global, message, &source_addr_global, addr_len_global);
 }
 
 

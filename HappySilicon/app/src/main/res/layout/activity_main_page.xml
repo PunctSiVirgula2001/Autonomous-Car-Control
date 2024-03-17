@@ -10,7 +10,7 @@
         android:id="@+id/autonomous_button"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="60dp"
         android:backgroundTint="@color/blackButtonColor"
         android:text="Autonomous Mode"
         android:textColor="@color/textColor"
@@ -20,9 +20,10 @@
         app:layout_constraintBaseline_toBaselineOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.722" />
+        app:layout_constraintVertical_bias="0.744" />
 
     <Button
         android:id="@+id/diagnosis_button"
@@ -36,9 +37,23 @@
         android:theme="@style/ButtonStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.812" />
+        app:layout_constraintVertical_bias="0.846" />
+
+    <Button
+        android:id="@+id/pid_settings"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/blackButtonColor"
+        android:text="PID Settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.944" />
 
     <ImageView
         android:id="@+id/imageView"

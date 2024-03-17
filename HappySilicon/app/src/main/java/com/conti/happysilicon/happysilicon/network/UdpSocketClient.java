@@ -16,7 +16,7 @@ public class UdpSocketClient {
     private Context context;
     private DatagramSocket socket;
     private InetAddress serverAddress;
-    private int serverPort = 80; // Default port, change as needed
+    private int serverPort = 80; // Default port
     public String STATUS;
     public Integer rx = 0;
     public Integer tx = 0;
@@ -36,11 +36,10 @@ public class UdpSocketClient {
                     serverAddress = InetAddress.getByName(serverIP);
                     socket = new DatagramSocket(); // UDP socket
                     System.out.println("UDP Socket initialized for server at " + serverIP);
-                    this.sendMessage("ACK 9999");
                     // Prepare buffer for receiving confirmation
+                    this.sendMessage("ACK 9999");
                     byte[] buf = new byte[1024];
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
-
                     // Attempt to receive the confirmation packet
                     socket.receive(packet);
                     String received = new String(packet.getData(), 0, packet.getLength());

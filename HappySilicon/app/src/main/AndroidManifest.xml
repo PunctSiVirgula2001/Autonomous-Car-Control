@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.AutonomousMode" android:exported="true"></activity>
+        <activity android:name=".activity.PIDConfig" android:exported="true"/>
+        <activity android:name=".activity.AutonomousMode" android:exported="true"/>
         <activity android:name=".activity.DiagnosisMode" android:exported="true" />
         <activity
             android:name=".activity.MainActivity"

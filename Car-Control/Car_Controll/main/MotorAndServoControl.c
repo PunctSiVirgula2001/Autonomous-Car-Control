@@ -1,4 +1,6 @@
 #include "MotorAndServoControl.h"
+/*Include Network.h to send back to app diagnostics from the car*/
+#include "Network.h"
 
 // Initialize PWM for SERVO
 void init_servo_pwm() {
@@ -100,7 +102,7 @@ void configureEncoderInterrupts() {
 
 	ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &pcnt_unit));
 
-	pcnt_glitch_filter_config_t filter_config = { // debouncer
+	pcnt_glitch_filter_config_t filter_config = { // debouncer, lower value ==> higher the chance to act as low pass filter.
 			.max_glitch_ns = 1000, };
 	ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit, &filter_config));
 
@@ -141,55 +143,39 @@ void configureEncoderInterrupts() {
 	ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
-	//ESP_LOGI("PulseCounter", "Aici");
-
-	// Report counter value
-//	int event_count = 0;
-//	while (1) {
-//		if (xQueueReceive(queuePulseCnt, &event_count, pdMS_TO_TICKS(1000))) {
-//			ESP_LOGI("", "Watch point event, count: %d", event_count);
-//		}
-//	}
-
 }
 
 CarCommand parseCommand(const char *commandStr) {
-	CarCommand cmd;
-	memset(&cmd, 0, sizeof(cmd)); // Initialize the structure with zeros
+    CarCommand cmd;
+    memset(&cmd, 0, sizeof(cmd)); // Initialize the structure with zeros
 
-	if (strlen(commandStr) >= 2) {
-		// Extract the command, which is always present
-		char commandPart[3] = { commandStr[0], commandStr[1], '\0' };
-		cmd.command = atoi(commandPart);
-
-		// Check if there's more to the command than just the command part
-		if (strlen(commandStr) > 2) {
-			cmd.has_value = true;
-			// Extract the command value, which is optional
-			char valuePart[5]; // Assuming the value part will not exceed 4 digits
-			strncpy(valuePart, commandStr + 2, 4); // Copy the rest of the string as command value
-			valuePart[4] = '\0'; // Null-terminate the string
-			cmd.command_value = atoi(valuePart);
-		} else {
-			cmd.has_value = false;
-		}
-	}
-	return cmd;
+    if (strncmp(commandStr, "08", 2) == 0) {
+        // Handle command "08" specifically to parse KP, KI, KD values
+        sscanf(commandStr, "08%f %f %f", &cmd.KP, &cmd.KI, &cmd.KD);
+        cmd.command = PID_Changed; // Set the command to the appropriate enum value
+        cmd.has_value = false; // Since KP, KI, KD are used, command_value is not relevant
+    } else if (strlen(commandStr) >= 2) {
+        char commandPart[3] = { commandStr[0], commandStr[1], '\0' };
+        cmd.command = atoi(commandPart);
+        // Check if there's more to the command than just the command part
+        if (strlen(commandStr) > 2) {
+            cmd.has_value = true;
+            // Extract the command value, which is optional
+            char valuePart[5]; // Assuming the value part will not exceed 4 digits
+            strncpy(valuePart, commandStr + 2, 4); // Copy the rest of the string as command value
+            valuePart[4] = '\0'; // Null-terminate the string
+            cmd.command_value = atoi(valuePart);
+        } else {
+            cmd.has_value = false;
+        }
+    }
+    return cmd;
 }
-
-//typedef enum {
-//    StopReceived = 0,      		// 00
-//    ForwardReceived = 1,        // 01
-//    BackwardReceived = 2,       // 02
-//    SpeedReceived = 5,          // 05
-//    SteerReceived = 6,          // 06
-//	AutonomousReceived = 7		// 07
-//} ReceivedState_app;
 
 QueueHandle_t carControlQueue = NULL;
 
 void carControl_Task(void *pvParameters) {
-	CarCommand cmd = { StopReceived, 0, false };
+	CarCommand cmd = { StopReceived, 0, false, 0.0f, 0.0f, 0.0f };
 	int last_motor_speed = 0;
 	int speed_multiplier = 0;
 	char *command;
@@ -235,6 +221,10 @@ void carControl_Task(void *pvParameters) {
 					break;
 				case AutonomousReceived:
 					//ESP_LOGI(" ", "AutonomousReceived");
+					break;
+				case PID_Changed:
+					ESP_LOGI(" ", "PID_Changed : KP %.2f ,KI %.2f ,KD %.2f", cmd.KP,cmd.KI,cmd.KD);
+					HLD_SendMessage("OKPID!");
 					break;
 				}
 			}

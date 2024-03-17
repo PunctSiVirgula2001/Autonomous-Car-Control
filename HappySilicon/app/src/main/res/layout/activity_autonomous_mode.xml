@@ -138,7 +138,8 @@
             android:id="@+id/button"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="71dp"
+            android:background="@color/blackButtonColor"
             android:text="Start"
             android:textColor="@color/textColor"
             android:theme="@style/ButtonStyle" />
@@ -147,7 +148,8 @@
             android:id="@+id/button2"
             style="@style/Widget.AppCompat.Button"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="71dp"
+            android:backgroundTint="@color/blackButtonColor"
             android:text="Stop"
             android:textColor="@color/textColor"
             android:theme="@style/ButtonStyle" />

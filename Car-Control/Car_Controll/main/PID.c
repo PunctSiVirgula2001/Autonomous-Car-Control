@@ -86,33 +86,12 @@ void PIDTask(void *pvParameters)
 	            // Process the pulse count here (e.g., log it)
 	        	xNewWakeTime = xTaskGetTickCount();
 	        	pulse_time_ms =pdTICKS_TO_MS((xNewWakeTime - xLastWakeTime));
-	        	double SMA_pulse_time_ms = Sliding_Mean_Average(pulse_time_ms);
-	            ESP_LOGI("PulseCounter", "Pulse time: %f ms", SMA_pulse_time_ms);
+	        	double SMA_frequency =1.0/(Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
+
+	            ESP_LOGI("PulseCounter", "Frequency: %f", SMA_frequency);
 	            xLastWakeTime = xNewWakeTime;
 	        }
 
 	    }
 }
-
-//void app_main() {
-//    PID_t motorPID;
-//
-//    // Initialize PID with some sample values
-//    PID_Init(&motorPID, 1.0, 0.1, 0.01);
-//
-//    // Set your desired value
-//    motorPID.setpoint = 100.0;
-//
-//    while (1) {
-//        // Update your measured value here
-//        motorPID.measured = get_measured_value(); // Replace with your function to get the current measured value
-//
-//        float motorSpeed = PID_Compute(&motorPID);
-//
-//        // Apply the computed PID value (motorSpeed) to your system
-//        set_motor_speed(motorSpeed); // Replace with your function to set the motor speed
-//
-//        vTaskDelay(pdMS_TO_TICKS(10));  // Sample every 10ms, adjust as needed
-//    }
-//}
 

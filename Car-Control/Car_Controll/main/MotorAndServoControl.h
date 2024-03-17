@@ -43,7 +43,7 @@ void update_motor_pwm(unsigned int pulse_width_us);
 void changeMotorSpeed(int value);
 
 /*Encoder*/
-#define PCNT_HIGH_LIMIT_WATCHPOINT 6
+#define PCNT_HIGH_LIMIT_WATCHPOINT 6 // half a wheel
 #define PCNT_LOW_LIMIT_WATCHPOINT  -6
 #define encoderGPIO_A 35
 #define encoderGPIO_B 14
@@ -56,16 +56,20 @@ void configureEncoderInterrupts();
 typedef enum {
     StopReceived = 0,      		// 00
     ForwardReceived = 1,        // 01
-    BackwardReceived = 2,       // 02
+    BackwardReceived = 2,       // 02 //03 ->left light, 04 -> right light
     SpeedReceived = 5,          // 05
     SteerReceived = 6,          // 06
-	AutonomousReceived = 7		// 07
+	AutonomousReceived = 7,		// 07
+	PID_Changed = 8
 } ReceivedState_app;
 
 typedef struct {
 	ReceivedState_app command;
     int command_value;
     bool has_value; // Indicates whether command_value is valid
+    float KP;
+    float KI;
+    float KD;
 } CarCommand;
 
 

@@ -35,6 +35,11 @@ public class Car {
     private int chargingTime; // in seconds
     private boolean rightLightToggle;
     private boolean leftLightToggle;
+    private float actualKP;
+    private float actualKI;
+    private float actualKD;
+    private float setPoint;
+    private float measuredValue;
 
 
     // TODO other sensors and camera status handling
@@ -52,7 +57,11 @@ public class Car {
         chargingStationVoltage = 0;
         chargingTime = 0;
         currentDraw = 0;
-
+        actualKP = 0;
+        actualKI = 0;
+        actualKD = 0;
+        setPoint = 0;
+        measuredValue = 0;
         //TODO update car lights state
         rightLightToggle = false;
         leftLightToggle = false;
@@ -64,6 +73,7 @@ public class Car {
         }
         return instance;
     }
+    //Setters
     public void setCarSpeed(float carSpeed) {
         this.carSpeed = carSpeed;
     }
@@ -88,7 +98,6 @@ public class Car {
     public void setCarCommand(CarCommands carCommand){
         this.carCommand = carCommand;
     }
-
     public void setCarLights(boolean leftLight, boolean rightLight){
         this.leftLightToggle = leftLight;
         this.rightLightToggle = rightLight;
@@ -96,15 +105,18 @@ public class Car {
     public void setCurrentDraw(float current){
         currentDraw = current;
     }
+    public void setActualKP(float KP) {actualKP = KP;}
+    public void setActualKI(float KI) {actualKP = KI;}
+    public void setActualKD(float KD) {actualKP = KD;}
+    public void setSetPoint(float setPoint) {this.setPoint = setPoint;}
+    public void setMeasuredValue(float measuredValue) {this.measuredValue = measuredValue;}
+
 
     // Getters
-
     public float getCarSpeed() {
         return this.carSpeed;
     }
-    public float getBatteryLevel(){
-        return this.batteryLevel;
-    }
+    public float getBatteryLevel(){return this.batteryLevel;}
     public boolean getChargingState(){
         return this.chargingState;
     }
@@ -140,4 +152,9 @@ public class Car {
             return 3;
         }
     }
+    public float getActualKP(){return this.actualKP;}
+    public float getActualKI(){return this.actualKI;}
+    public float getActualKD(){return this.actualKD;}
+    public float getSetPoint(){return this.setPoint;}
+    public float getMeasuredValue(){return this.measuredValue;}
 }
