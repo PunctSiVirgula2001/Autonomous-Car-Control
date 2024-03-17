@@ -27,34 +27,8 @@ float PID_Compute(PID_t *pid, float deltaTime) {
 	return output; // This is the manipulated variable (e.g., motor speed, servo speed/control)
 }
 
-
-int mapValue_pid(int input_value) { //200 -----> 1024
-	int min_source = 0;
-	int max_source = 200;
-	int min_target = -1024;
-	int max_target = 1024;
-
-	int mapped_value = min_target
-			+ ((input_value - min_source) * (max_target - min_target))
-					/ (max_source - min_source);
-
-	return mapped_value;
-}
-
-int reverseMapValue_pid(int input_value) { //1024 ---> 200
-	int min_source = -1024;
-	int max_source = 1024;
-	int min_target = 0;
-	int max_target = 200;
-
-	int reverse_mapped_value = min_target
-			+ ((input_value - min_source) * (max_target - min_target))
-					/ (max_source - min_source);
-
-	return reverse_mapped_value;
-}
-
-void setPIDParameters() { // function for reading from keyboard
+// function for reading from keyboard --> TODO: Replace it by implementing PID setting from app.
+void setPIDParameters() {
 	char buffer[256];
 
 	if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
@@ -74,9 +48,29 @@ void setPIDParameters() { // function for reading from keyboard
 	}
 }
 
-/*CONFIG_FREERTOS_HZ is set to 100, this means the operating system tick rate is 100 ticks per second. Each tick would
-therefore represent 10 milliseconds (since 1000 milliseconds / 100 ticks = 10 milliseconds per tick).
-To convert a tick count to milliseconds, you can multiply the number of ticks by 10*/
+/*SLIDING MEAN AVERAGE function*/
+double buffer[WINDOW_SIZE_SMA] = {0.0};
+double sum = 0.0;
+
+// Function to add value to the buffer and update the sliding mean
+double Sliding_Mean_Average(int newValue) {
+	// To keep track of the oldest value's index in the circular buffer
+	static int index = 0;
+    // Subtract the oldest value from the sum
+    sum -= buffer[index];
+    // Add the new value to the buffer and to the sum
+    buffer[index] = (double)newValue;
+    sum += newValue;
+    // Calculate the new mean
+    double mean = sum / (double)WINDOW_SIZE_SMA;
+    // Move the index to the next position (circularly)
+    index = (index + 1) % WINDOW_SIZE_SMA;
+    return mean;
+}
+
+/*CONFIG_FREERTOS_HZ is set to 1000, this means the operating system tick rate is 100 ticks per second. Each tick would
+therefore represent 1 millisecond (since 1000 milliseconds / 1000 ticks = 1 millisecond per tick).
+To convert a tick count to milliseconds, you can multiply the number of ticks by 1*/
 
 extern QueueHandle_t queuePulseCnt;
 TickType_t xLastWakeTime =0U;
@@ -91,8 +85,9 @@ void PIDTask(void *pvParameters)
 	        if (xQueueReceive(queuePulseCnt, &pulseCount, portMAX_DELAY)) {
 	            // Process the pulse count here (e.g., log it)
 	        	xNewWakeTime = xTaskGetTickCount();
-	        	pulse_time_ms =(xNewWakeTime - xLastWakeTime)*10U;
-	            ESP_LOGI("PulseCounter", "Pulse time: %lu ms", pulse_time_ms);
+	        	pulse_time_ms =pdTICKS_TO_MS((xNewWakeTime - xLastWakeTime));
+	        	double SMA_pulse_time_ms = Sliding_Mean_Average(pulse_time_ms);
+	            ESP_LOGI("PulseCounter", "Pulse time: %f ms", SMA_pulse_time_ms);
 	            xLastWakeTime = xNewWakeTime;
 	        }
 

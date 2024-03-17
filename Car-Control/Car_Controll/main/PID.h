@@ -8,6 +8,8 @@
 #include "esp_log.h"
 #include "MotorAndServoControl.h"
 
+/*PID settings*/
+
 // PID Structure
 typedef struct {
     int setpoint;     // Desired value
@@ -21,11 +23,12 @@ typedef struct {
 
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd);
-
 // Compute PID
 float PID_Compute(PID_t *pid, float deltaTime) ;
-
-int mapValue_pid(int value);
-int reverseMapValue_pid(int input_value);
-void setPIDParameters(); // set parameters through keyboard
+// set parameters through keyboard
+void setPIDParameters();
 void PIDTask(void *pvParameters);
+
+/*Sliding mean average settings*/
+#define WINDOW_SIZE_SMA 8
+double Sliding_Mean_Average(int newValue);

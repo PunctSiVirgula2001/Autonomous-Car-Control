@@ -25,16 +25,16 @@ void update_servo_pwm(int pulse_width_us) {
 
 void changeSTEER(int value) {
 	// Check if the value is within the expected range
+
 	if (value < 0) {
 		value = 0;
 	} else if (value > 100) {
 		value = 100;
 	}
 	// Scale the value to fit between 1000 and 2000
-	int scaled_value = 1300
-			+ (int) (((1.0f - (100.0f - (float) value) / 100.0f) * 400.0f)); // scaled value will be between 1300 and 1300+400
-	ESP_LOGI("", "pwm_us %d", scaled_value);
-	update_servo_pwm(scaled_value);
+	int pulse_width_us = MIN_SERVO_DUTY_US + (value * (MAX_SERVO_DUTY_US - MIN_SERVO_DUTY_US) / 100);
+	ESP_LOGI("", "pwm_us %d", pulse_width_us);
+	update_servo_pwm(pulse_width_us);
 }
 
 // Initialize PWM for Motor
@@ -71,10 +71,10 @@ void changeMotorSpeed(int value) {
 		pulse_width_us = 1500;
 	else if (value >= 1) { // FORWARD
 		// Forward mode: Scale between 1545 and 1700
-		pulse_width_us = 1545 + (value * (1700 - 1545) / 100);
+		pulse_width_us = MIN_MOTOR_FW_DUTY_US + (value * (MAX_MOTOR_FW_DUTY_US - MIN_MOTOR_FW_DUTY_US) / 100);
 		ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	} else { 			// BACKWARD
-		pulse_width_us = 1455 - ((-value) * (1455 - 1240) / 100);
+		pulse_width_us = MAX_MOTOR_BW_DUTY_US - ((-value) * (MAX_MOTOR_BW_DUTY_US - MIN_MOTOR_BW_DUTY_US) / 100);
 		ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	}
 	update_motor_pwm(pulse_width_us);
@@ -95,8 +95,8 @@ bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
 }
 void configureEncoderInterrupts() {
 	queuePulseCnt = xQueueCreate(10, sizeof(int));
-	pcnt_unit_config_t unit_config = { .high_limit = EXAMPLE_PCNT_HIGH_LIMIT,
-			.low_limit = EXAMPLE_PCNT_LOW_LIMIT, };
+	pcnt_unit_config_t unit_config = { .high_limit = PCNT_HIGH_LIMIT_WATCHPOINT,
+			.low_limit = PCNT_LOW_LIMIT_WATCHPOINT, };
 
 	ESP_ERROR_CHECK(pcnt_new_unit(&unit_config, &pcnt_unit));
 
@@ -104,8 +104,8 @@ void configureEncoderInterrupts() {
 			.max_glitch_ns = 1000, };
 	ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit, &filter_config));
 
-	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, 6)); // watch point which will trigger the callback function when
-	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, -6)); // a pulse is generated
+	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, PCNT_HIGH_LIMIT_WATCHPOINT)); // watch point which will trigger the callback function when
+	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, PCNT_LOW_LIMIT_WATCHPOINT)); // a pulse is generated
 
 	pcnt_chan_config_t chan_a_config = { .edge_gpio_num = encoderGPIO_B,
 			.level_gpio_num = encoderGPIO_A, };
@@ -221,8 +221,6 @@ void carControl_Task(void *pvParameters) {
 					changeMotorSpeed(-15);
 					vTaskDelay(pdMS_TO_TICKS(50));
 					changeMotorSpeed(0);
-//					vTaskDelay(pdMS_TO_TICKS(50));
-//					changeMotorSpeed(-15);
 					vTaskDelay(pdMS_TO_TICKS(50));
 					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
 					break;
@@ -251,7 +249,6 @@ void carControl_init() {
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init
 	update_motor_pwm(1500);
-	//configureEncoderInterrupts();
 	vTaskDelay(pdMS_TO_TICKS(500)); // wait for init to complete
 	xTaskCreatePinnedToCore(carControl_Task, "carControl_task", 4096, NULL, 6,
 	NULL, 0U);
