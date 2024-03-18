@@ -2,8 +2,10 @@ package com.conti.happysilicon.happysilicon.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
+import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
@@ -24,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private Button autonomous_mode_button;
     private Button connect_to_esp_button;
     private Button pid_settings_button;
+    private Car carModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
         UdpSocketClient instance = app.getUdpSocketClient();
-
+        carModel = Car.getInstance();
         connect_to_esp_button = findViewById(R.id.connectESP);
         connect_to_esp_button.setOnClickListener(view -> {
             instance.init(() -> {
@@ -41,11 +45,17 @@ public class MainActivity extends AppCompatActivity {
                     ack.setText(instance.STATUS);
                     instance.tx++;
                 });
-                // Start listening for messages after initialization
+                // Start listening for messages after initialization is successful
                 instance.receiveMessage(message -> {
                     // Update UI with the received message
                     runOnUiThread(() -> {
-                        instance.rx++;
+                        instance.rx++; // count each incomming message from esp32
+
+                        if(message.equals("OKPID!")) {
+                            carModel.setActualKP(getSaveKP());
+                            carModel.setActualKI(getSaveKI());
+                            carModel.setActualKD(getSaveKD());
+                        }
                     });
                 });
             });
@@ -94,6 +104,21 @@ public class MainActivity extends AppCompatActivity {
     public void openPIDSettings() {
         Intent intent = new Intent(MainActivity.this, PIDConfig.class);
         startActivity(intent);
+    }
+
+    public float getSaveKP() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        return Float.parseFloat(sharedPreferences.getString("plainTextKP", "DefaultKP"));
+    }
+
+    public float getSaveKI() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        return Float.parseFloat(sharedPreferences.getString("plainTextKI", "DefaultKI"));
+    }
+
+    public float getSaveKD() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        return Float.parseFloat(sharedPreferences.getString("plainTextKD", "DefaultKD"));
     }
 
 }

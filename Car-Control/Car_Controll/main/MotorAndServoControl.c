@@ -148,7 +148,6 @@ void configureEncoderInterrupts() {
 CarCommand parseCommand(const char *commandStr) {
     CarCommand cmd;
     memset(&cmd, 0, sizeof(cmd)); // Initialize the structure with zeros
-
     if (strncmp(commandStr, "08", 2) == 0) {
         // Handle command "08" specifically to parse KP, KI, KD values
         sscanf(commandStr, "08%f %f %f", &cmd.KP, &cmd.KI, &cmd.KD);
@@ -185,7 +184,6 @@ void carControl_Task(void *pvParameters) {
 			portMAX_DELAY) == pdPASS) {
 				cmd = parseCommand(command);
 				ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
-				free(command);
 				switch (cmd.command) {
 				case StopReceived:
 					changeMotorSpeed(0); // to be changed
@@ -198,6 +196,7 @@ void carControl_Task(void *pvParameters) {
 					ESP_LOGI(" ", "ForwardReceived");
 					speed_multiplier = 1;
 					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
+					HLD_SendMessage("OKFWD!");
 					break;
 				case BackwardReceived:
 					ESP_LOGI(" ", "BackwardReceived");
@@ -209,14 +208,17 @@ void carControl_Task(void *pvParameters) {
 					changeMotorSpeed(0);
 					vTaskDelay(pdMS_TO_TICKS(50));
 					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
+					HLD_SendMessage("OKBWD!");
 					break;
 				case SpeedReceived:
 					changeMotorSpeed(speed_multiplier * cmd.command_value);
 					last_motor_speed = cmd.command_value;
 					ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier); // to be replaced with notify task PID.
+					HLD_SendMessage("OKSPEED!");
 					break;
 				case SteerReceived:
 					changeSTEER(cmd.command_value);
+					HLD_SendMessage("OKSTEER!");
 					//ESP_LOGI(" ", "SteerReceived");
 					break;
 				case AutonomousReceived:
@@ -234,7 +236,6 @@ void carControl_Task(void *pvParameters) {
 }
 
 void carControl_init() {
-	carControlQueue = xQueueCreate(10,sizeof(char*));
 	init_servo_pwm();
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init

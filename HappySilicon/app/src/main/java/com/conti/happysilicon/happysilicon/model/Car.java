@@ -106,8 +106,8 @@ public class Car {
         currentDraw = current;
     }
     public void setActualKP(float KP) {actualKP = KP;}
-    public void setActualKI(float KI) {actualKP = KI;}
-    public void setActualKD(float KD) {actualKP = KD;}
+    public void setActualKI(float KI) {actualKI = KI;}
+    public void setActualKD(float KD) {actualKD = KD;}
     public void setSetPoint(float setPoint) {this.setPoint = setPoint;}
     public void setMeasuredValue(float measuredValue) {this.measuredValue = measuredValue;}
 

@@ -22,7 +22,7 @@
 #include "errno.h"
 #include <stdlib.h>
 
-#define WIFI_SSID "ESP32-Access-Point"
+#define WIFI_SSID "Car_Ac_Tuiasi"
 #define WIFI_PASS "123456789"
 #define MAX_STA_CONN 4  /*Number of maximum connections allowed on access point. */
 #define PORT 80 		/*Port at which the access point has been started. */

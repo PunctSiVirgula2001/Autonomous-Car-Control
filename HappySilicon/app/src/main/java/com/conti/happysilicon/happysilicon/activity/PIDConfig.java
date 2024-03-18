@@ -119,37 +119,8 @@ public class PIDConfig extends AppCompatActivity {
         sendPIDConfig.setOnClickListener(view -> { // SEND PID CONFIG BUTTON
             String PIDString = getConcatenatedPIDValues();
             Log.d("PID", PIDString + '\n');
-//            carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage(PIDString);
             udpClient.tx++;
-
-//            udpClient.receiveMessage(message -> {
-//                // Update UI with the received message
-//                runOnUiThread(() -> {
-//                    udpClient.rx++;
-//                });
-        });
-
-        sendPIDConfig.setOnClickListener(view -> { // SEND PID CONFIG BUTTON
-            String PIDString = getConcatenatedPIDValues();
-            Log.d("PID", PIDString + '\n');
-//            carModel.setCarCommand(Car.CarCommands.BACKWARD);
-            udpClient.sendMessage(PIDString);
-            udpClient.tx++;
-            // need to make some logic to for the send to finish
-            udpClient.receiveMessage(message -> {
-                // Update UI with the received message
-                runOnUiThread(() -> {
-                    Log.i("",message);
-                    while(!message.equals("OKPID!"))
-                    {
-                        Log.i("KP","" + getSaveKP());
-                        carModel.setActualKP(getSaveKP()); // it doesn't set the actual kP
-                        carModel.setActualKI(getSaveKI());
-                        carModel.setActualKD(getSaveKD());
-                    }
-                });
-            });
         });
 
     }
@@ -196,20 +167,7 @@ public class PIDConfig extends AppCompatActivity {
         String plainTextKI1 = sharedPreferences.getString("plainTextKI", "DefaultKI");
         String plainTextKD1 = sharedPreferences.getString("plainTextKD", "DefaultKD");
 
-        return "08" + plainTextKP1 + " "  + plainTextKI1 + " " + plainTextKD1;
-    }
-    public float getSaveKP() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        return Float.parseFloat(sharedPreferences.getString("plainTextKP", "DefaultKP"));
+        return "08" + plainTextKP1 + " " + plainTextKI1 + " " + plainTextKD1;
     }
 
-    public float getSaveKI() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        return Float.parseFloat(sharedPreferences.getString("plainTextKI", "DefaultKP"));
-    }
-
-    public float getSaveKD() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        return Float.parseFloat(sharedPreferences.getString("plainTextKD", "DefaultKP"));
-    }
 }

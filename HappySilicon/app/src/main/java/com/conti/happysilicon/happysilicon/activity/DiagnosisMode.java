@@ -136,20 +136,6 @@ public class DiagnosisMode extends AppCompatActivity {
         // Start the Runnable for updating UI
         MyRunnable myRunnable = new MyRunnable(handler);
         handler.post(myRunnable);
-
-        // Setup listener for receiving messages
-        udpClient.receiveMessage(new UdpSocketClient.OnMessageReceived() {
-            @Override
-            public void onMessage(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //
-                    }
-                });
-            }
-        });
-
     }
     private class MyRunnable implements Runnable {
 

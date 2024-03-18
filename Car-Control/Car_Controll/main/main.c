@@ -8,19 +8,17 @@
 
 #include "MotorAndServoControl.h"
 #include "PID.h"
-#include "Queue.h"
 #include "Network.h"
 extern char rx_buffer[128];
-extern Queue Queue_receive_from_app;
-
 //Autonomous + diagnostic modes
 TaskHandle_t myTaskHandle_Autonomous = NULL;
 TaskHandle_t myTaskHandle_diagnostic = NULL;
 
 extern char bufferReceived[128];
-
+extern QueueHandle_t carControlQueue;
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
+	carControlQueue = xQueueCreate(20,sizeof(char*));
 	start_network_readBuffer_tasks();
 	carControl_init();
 	configureEncoderInterrupts();
