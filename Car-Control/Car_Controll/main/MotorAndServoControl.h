@@ -29,8 +29,8 @@
 #define MIN_MOTOR_BW_DUTY_US 		(1300)
 
 /*Pwm settings that are shared between servo and dc motor */
-#define LEDC_Motor_And_Servo_MODE  LEDC_HIGH_SPEED_MODE
-#define LEDC_Motor_And_Servo_FREQ  50   // 50Hz
+#define LEDC_Motor_And_Servo_MODE  	LEDC_HIGH_SPEED_MODE
+#define LEDC_Motor_And_Servo_FREQ  	50   // 50Hz
 
 /* Servo functions */
 void init_servo_pwm();
@@ -38,20 +38,26 @@ void update_servo_pwm(int pulse_width_us);
 void changeSTEER(int value);
 
 /* Motor functions */
+#define QUEUE_SIZE_SPEED 20
+#define QUEUE_SIZE_DATATYPE_SPEED (sizeof(int))
 void init_motor_pwm();
 void update_motor_pwm(unsigned int pulse_width_us);
 void changeMotorSpeed(int value);
 
 /*Encoder*/
-#define PCNT_HIGH_LIMIT_WATCHPOINT 6 // half a wheel
+#define QUEUE_SIZE_ENCODER_PULSE 	20
+#define QUEUE_SIZE_DATATYPE_ENCODER_PULSE (sizeof(int))
+#define PCNT_HIGH_LIMIT_WATCHPOINT 	6 // half a wheel
 #define PCNT_LOW_LIMIT_WATCHPOINT  -6
-#define encoderGPIO_A 35
-#define encoderGPIO_B 14
-
+#define encoderGPIO_A 			    35
+#define encoderGPIO_B 				14
 bool example_pcnt_on_reach(pcnt_unit_handle_t unit,const pcnt_watch_event_data_t *edata, void *user_ctx);
 void configureEncoderInterrupts();
 
 /*Car control*/
+#define QUEUE_SIZE_CAR_COMMANDS 20
+#define QUEUE_SIZE_DATATYPE_CAR_COMMANDS (sizeof(char*))
+
 /*COMMANDS RECEIVED FROM APP*/
 typedef enum {
     StopReceived = 0,      		// 00

@@ -73,23 +73,38 @@ therefore represent 1 millisecond (since 1000 milliseconds / 1000 ticks = 1 mill
 To convert a tick count to milliseconds, you can multiply the number of ticks by 1*/
 
 extern QueueHandle_t queuePulseCnt;
+extern QueueHandle_t speedQueue;
+extern QueueSetHandle_t QueueSet;
 TickType_t xLastWakeTime =0U;
 TickType_t xNewWakeTime =0U;
 uint32_t pulse_time_ms=0U;
 void PIDTask(void *pvParameters)
 {
-	 int pulseCount=0;
+	 int pulseCount = 0;
+	 int speed = 0;
+	 double SMA_frequency = 0;
+	 QueueSetMemberHandle_t xActivatedMember;
 	 //ESP_LOGI("PulseCounter", "Pulse Count");
 	    while (1) {
 	    	//ESP_LOGI("PulseCounter", "Pulse Count");
-	        if (xQueueReceive(queuePulseCnt, &pulseCount, portMAX_DELAY)) {
+	    	xActivatedMember = xQueueSelectFromSet(QueueSet ,portMAX_DELAY);
+
+	        if (xActivatedMember == queuePulseCnt)
+	        {
 	            // Process the pulse count here (e.g., log it)
+	        	xQueueReceive( xActivatedMember, &pulseCount, 0 );
 	        	xNewWakeTime = xTaskGetTickCount();
 	        	pulse_time_ms =pdTICKS_TO_MS((xNewWakeTime - xLastWakeTime));
-	        	double SMA_frequency =1.0/(Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
-
-	            ESP_LOGI("PulseCounter", "Frequency: %f", SMA_frequency);
+	        	SMA_frequency =1.0/(Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
+	            ESP_LOGI("PID", "Frequency: %f", SMA_frequency);
 	            xLastWakeTime = xNewWakeTime;
+	        }
+
+	        if (xActivatedMember == speedQueue)
+	        {
+	        	xQueueReceive( xActivatedMember, &speed, 0 );
+	        	changeMotorSpeed(speed);
+	        	ESP_LOGI("PID", "Speed: %d", speed);
 	        }
 
 	    }

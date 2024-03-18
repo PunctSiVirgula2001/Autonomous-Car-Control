@@ -2,6 +2,9 @@
 /*Include Network.h to send back to app diagnostics from the car*/
 #include "Network.h"
 
+//Queue set which adds all data from all queues.
+QueueSetHandle_t QueueSet;
+
 // Initialize PWM for SERVO
 void init_servo_pwm() {
 	// Prepare and set configuration of timers
@@ -96,7 +99,7 @@ bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
 	return (high_task_wakeup == pdTRUE);
 }
 void configureEncoderInterrupts() {
-	queuePulseCnt = xQueueCreate(10, sizeof(int));
+
 	pcnt_unit_config_t unit_config = { .high_limit = PCNT_HIGH_LIMIT_WATCHPOINT,
 			.low_limit = PCNT_LOW_LIMIT_WATCHPOINT, };
 
@@ -172,11 +175,12 @@ CarCommand parseCommand(const char *commandStr) {
 }
 
 QueueHandle_t carControlQueue = NULL;
-
+QueueHandle_t speedQueue = NULL;
 void carControl_Task(void *pvParameters) {
 	CarCommand cmd = { StopReceived, 0, false, 0.0f, 0.0f, 0.0f };
 	int last_motor_speed = 0;
 	int speed_multiplier = 0;
+	int speed = 0;
 	char *command;
 	while (1) {
 		if (carControlQueue != NULL) {
@@ -186,7 +190,9 @@ void carControl_Task(void *pvParameters) {
 				ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
 				switch (cmd.command) {
 				case StopReceived:
-					changeMotorSpeed(0); // to be changed
+					//changeMotorSpeed(0); // to be replaced with notify task PID.
+					speed =0;
+					xQueueSend(speedQueue,&speed,portMAX_DELAY);
 					speed_multiplier = 0;
 					// if the car is moving forward : logic for breaking.
 					// if the car is moving backward : logic for breaking.
@@ -195,7 +201,9 @@ void carControl_Task(void *pvParameters) {
 				case ForwardReceived:
 					ESP_LOGI(" ", "ForwardReceived");
 					speed_multiplier = 1;
-					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
+					//changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
+					speed = speed_multiplier * last_motor_speed;
+					xQueueSend(speedQueue,&speed,portMAX_DELAY);
 					HLD_SendMessage("OKFWD!");
 					break;
 				case BackwardReceived:
@@ -207,13 +215,18 @@ void carControl_Task(void *pvParameters) {
 					vTaskDelay(pdMS_TO_TICKS(50));
 					changeMotorSpeed(0);
 					vTaskDelay(pdMS_TO_TICKS(50));
-					changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
+					//changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
+					speed = speed_multiplier * last_motor_speed;
+					xQueueSend(speedQueue,&speed,portMAX_DELAY);
+
 					HLD_SendMessage("OKBWD!");
 					break;
 				case SpeedReceived:
-					changeMotorSpeed(speed_multiplier * cmd.command_value);
+					//changeMotorSpeed(speed_multiplier * cmd.command_value);// to be replaced with notify task PID.
+					speed = speed_multiplier * cmd.command_value;
+					xQueueSend(speedQueue,&speed,portMAX_DELAY);
 					last_motor_speed = cmd.command_value;
-					ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier); // to be replaced with notify task PID.
+					ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier);
 					HLD_SendMessage("OKSPEED!");
 					break;
 				case SteerReceived:

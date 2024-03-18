@@ -16,9 +16,22 @@ TaskHandle_t myTaskHandle_diagnostic = NULL;
 
 extern char bufferReceived[128];
 extern QueueHandle_t carControlQueue;
+extern QueueHandle_t queuePulseCnt;
+extern QueueSetHandle_t QueueSet;
+extern QueueSetHandle_t speedQueue;
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
-	carControlQueue = xQueueCreate(20,sizeof(char*));
+	carControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS,QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
+	queuePulseCnt = xQueueCreate(QUEUE_SIZE_ENCODER_PULSE, QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
+	speedQueue = xQueueCreate(QUEUE_SIZE_SPEED, QUEUE_SIZE_DATATYPE_SPEED);
+	/*Create a set which holds data from all necessary queues.*/
+	QueueSet = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS+QUEUE_SIZE_ENCODER_PULSE);
+	configASSERT(speedQueue);
+	configASSERT(queuePulseCnt);
+	configASSERT(speedQueue);
+	configASSERT(QueueSet);
+	xQueueAddToSet( speedQueue, QueueSet );
+	xQueueAddToSet( queuePulseCnt, QueueSet );
 	start_network_readBuffer_tasks();
 	carControl_init();
 	configureEncoderInterrupts();
