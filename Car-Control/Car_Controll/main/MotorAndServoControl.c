@@ -71,22 +71,27 @@ void update_motor_pwm(unsigned int pulse_width_us) {
 // Change Motor Speed, similar to changeSTEER function
 void changeMotorSpeed(int value) {
 	int pulse_width_us;
-	ESP_LOGI("", "value %d", value);
+	//ESP_LOGI("", "value %d", value);
+	if(value > 100)
+		value = 100;
+	else if(value < -100)
+		value = -100;
+
 	if (value == 0)
 		pulse_width_us = 1500;
 	else if (value >= 1) { // FORWARD
 		// Forward mode: Scale between 1545 and 1700
 		pulse_width_us = MIN_MOTOR_FW_DUTY_US + (value * (MAX_MOTOR_FW_DUTY_US - MIN_MOTOR_FW_DUTY_US) / 100);
-		ESP_LOGI("", "pwm_us %d", pulse_width_us);
+		//ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	} else { 			// BACKWARD
 		pulse_width_us = MAX_MOTOR_BW_DUTY_US - ((-value) * (MAX_MOTOR_BW_DUTY_US - MIN_MOTOR_BW_DUTY_US) / 100);
-		ESP_LOGI("", "pwm_us %d", pulse_width_us);
+		//ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	}
 	update_motor_pwm(pulse_width_us);
 }
 
 /* Encoder */
-QueueHandle_t queuePulseCnt;
+QueueHandle_t pulse_encoderQueue;
 pcnt_unit_handle_t pcnt_unit = NULL;
 
 bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
@@ -142,7 +147,7 @@ void configureEncoderInterrupts() {
 	pcnt_event_callbacks_t cbs = { .on_reach = example_pcnt_on_reach, };
 
 	ESP_ERROR_CHECK(
-			pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, queuePulseCnt));
+			pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, pulse_encoderQueue));
 	ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
@@ -174,8 +179,19 @@ CarCommand parseCommand(const char *commandStr) {
     return cmd;
 }
 
+void carControl_Backward_init()
+{
+	changeMotorSpeed(0);
+	vTaskDelay(pdMS_TO_TICKS(50));
+	changeMotorSpeed(-15);
+	vTaskDelay(pdMS_TO_TICKS(50));
+	changeMotorSpeed(0);
+	vTaskDelay(pdMS_TO_TICKS(50));
+}
+
 QueueHandle_t carControlQueue = NULL;
-QueueHandle_t speedQueue = NULL;
+QueueHandle_t speed_commandQueue = NULL;
+QueueHandle_t PID_commandQueue = NULL;
 void carControl_Task(void *pvParameters) {
 	CarCommand cmd = { StopReceived, 0, false, 0.0f, 0.0f, 0.0f };
 	int last_motor_speed = 0;
@@ -192,7 +208,7 @@ void carControl_Task(void *pvParameters) {
 				case StopReceived:
 					//changeMotorSpeed(0); // to be replaced with notify task PID.
 					speed =0;
-					xQueueSend(speedQueue,&speed,portMAX_DELAY);
+					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					speed_multiplier = 0;
 					// if the car is moving forward : logic for breaking.
 					// if the car is moving backward : logic for breaking.
@@ -201,30 +217,20 @@ void carControl_Task(void *pvParameters) {
 				case ForwardReceived:
 					ESP_LOGI(" ", "ForwardReceived");
 					speed_multiplier = 1;
-					//changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
 					speed = speed_multiplier * last_motor_speed;
-					xQueueSend(speedQueue,&speed,portMAX_DELAY);
+					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					HLD_SendMessage("OKFWD!");
 					break;
 				case BackwardReceived:
 					ESP_LOGI(" ", "BackwardReceived");
 					speed_multiplier = -1;
-					changeMotorSpeed(0);
-					vTaskDelay(pdMS_TO_TICKS(50));
-					changeMotorSpeed(-15);
-					vTaskDelay(pdMS_TO_TICKS(50));
-					changeMotorSpeed(0);
-					vTaskDelay(pdMS_TO_TICKS(50));
-					//changeMotorSpeed(speed_multiplier * last_motor_speed); // to be replaced with notify task PID.
 					speed = speed_multiplier * last_motor_speed;
-					xQueueSend(speedQueue,&speed,portMAX_DELAY);
-
+					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					HLD_SendMessage("OKBWD!");
 					break;
 				case SpeedReceived:
-					//changeMotorSpeed(speed_multiplier * cmd.command_value);// to be replaced with notify task PID.
 					speed = speed_multiplier * cmd.command_value;
-					xQueueSend(speedQueue,&speed,portMAX_DELAY);
+					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					last_motor_speed = cmd.command_value;
 					ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier);
 					HLD_SendMessage("OKSPEED!");
@@ -232,13 +238,12 @@ void carControl_Task(void *pvParameters) {
 				case SteerReceived:
 					changeSTEER(cmd.command_value);
 					HLD_SendMessage("OKSTEER!");
-					//ESP_LOGI(" ", "SteerReceived");
 					break;
 				case AutonomousReceived:
 					//ESP_LOGI(" ", "AutonomousReceived");
 					break;
 				case PID_Changed:
-					ESP_LOGI(" ", "PID_Changed : KP %.2f ,KI %.2f ,KD %.2f", cmd.KP,cmd.KI,cmd.KD);
+					xQueueSend(PID_commandQueue,&cmd,portMAX_DELAY);
 					HLD_SendMessage("OKPID!");
 					break;
 				}

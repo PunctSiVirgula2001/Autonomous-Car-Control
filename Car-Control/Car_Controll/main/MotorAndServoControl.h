@@ -23,10 +23,10 @@
 #define LEDC_MOTOR_CH1_CHANNEL 		LEDC_CHANNEL_1
 #define LEDC_MOTOR_GPIO 			(4)
 #define LEDC_MOTOR_DUTY_RESOLUTION 	LEDC_TIMER_16_BIT
-#define MAX_MOTOR_FW_DUTY_US 		(1600)
-#define MIN_MOTOR_FW_DUTY_US 		(1560)
-#define MAX_MOTOR_BW_DUTY_US 		(1440)
-#define MIN_MOTOR_BW_DUTY_US 		(1300)
+#define MAX_MOTOR_FW_DUTY_US 		(1650)
+#define MIN_MOTOR_FW_DUTY_US 		(1550)
+#define MAX_MOTOR_BW_DUTY_US 		(1450)
+#define MIN_MOTOR_BW_DUTY_US 		(1250)
 
 /*Pwm settings that are shared between servo and dc motor */
 #define LEDC_Motor_And_Servo_MODE  	LEDC_HIGH_SPEED_MODE
@@ -81,6 +81,7 @@ typedef struct {
 
 void carControl_Task(void *pvParameters);
 void carControl_init();
+void carControl_Backward_init();
 CarCommand parseCommand(const char* commandStr);
 
 
