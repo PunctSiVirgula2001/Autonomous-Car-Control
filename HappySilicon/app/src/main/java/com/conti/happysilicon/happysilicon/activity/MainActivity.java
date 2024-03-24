@@ -56,6 +56,20 @@ public class MainActivity extends AppCompatActivity {
                             carModel.setActualKI(getSaveKI());
                             carModel.setActualKD(getSaveKD());
                         }
+                        if((message).startsWith("00"))
+                        {
+                            
+                        }
+                        if((message).startsWith("01"))
+                        {
+
+                        }
+                        if((message).startsWith("02"))
+                        {
+
+                        }
+
+
                     });
                 });
             });

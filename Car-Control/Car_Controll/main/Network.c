@@ -6,6 +6,15 @@ struct sockaddr_in6 source_addr_global; // For IPv4 or IPv6
 socklen_t addr_len_global;
 int sock_global; 						// Socket descriptor
 char *word = NULL;				// Words extracted from data buffer from app.
+char *car_statics_for_app = "00-99-01-99-02-99-03-99-04-99-05-99";
+/*
+ * 00 - measured speed
+ * 01 - setpoint
+ * 02 - temperature
+ * 03 - obstacoll detected
+ * 04 - I_term
+ * 05 - error_pid
+ * */ // TODO: add a function that adds the specific values to the string for each stats
 
 void wifi_init_softap() {
 	ESP_ERROR_CHECK(nvs_flash_init());
@@ -33,8 +42,6 @@ void wifi_init_softap() {
 extern QueueHandle_t carControlQueue;
 bool allowed_to_send = false;
 void udp_server_task(void *pvParameters) {
-	//queue_init(&Queue_receive_from_app);
-
 	char addr_str[128];
 	int addr_family = AF_INET;
 	int ip_protocol = IPPROTO_UDP;
@@ -99,6 +106,17 @@ void udp_server_task(void *pvParameters) {
 	}
 }
 
+void send_data_to_app_task(void *pvParameters)
+{
+	while(1)
+	{
+		if(allowed_to_send == true)
+		{
+
+		}
+		vTaskDelay(pdMS_TO_TICKS(100));
+	}
+}
 // Function to send a message over a socket
 void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr,
 		socklen_t addr_len) {
@@ -123,8 +141,8 @@ void start_network_readBuffer_tasks() {
 	wifi_init_softap();
 	xTaskCreatePinnedToCore(udp_server_task, "tcp_server", 4096, NULL, 5, NULL,
 			0U);
-	//xTaskCreatePinnedToCore(read_buffer_task, "read_buffer", 4096, NULL, 5,
-	//NULL, 1U);
+	xTaskCreatePinnedToCore(send_data_to_app_task, "send_data_to_app_task", 4096, NULL, 5,
+	NULL, 1U);
 }
 
 //static void wifi_event_handler(void* arg, esp_event_base_t event_base,

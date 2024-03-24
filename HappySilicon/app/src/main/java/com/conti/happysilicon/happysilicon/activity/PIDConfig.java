@@ -1,13 +1,15 @@
 package com.conti.happysilicon.happysilicon.activity;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,23 +19,38 @@ import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
-import java.net.DatagramPacket;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PIDConfig extends AppCompatActivity {
+    int progressTestDCSeekBar = 0;
     private Car carModel;
     private UdpSocketClient udpClient;
     private Button sendPIDConfig;
-    private Button savePIDConfig;
+    private Button sendTestFWD;
+    private Button sendTestBWD;
+    private Button sendTestSTOP;
+    private SeekBar sendseekBarTestDcMotor;
     private TextView actualKP;
     private TextView actualKI;
     private TextView actualKD;
     private TextView setPoint;
+    private TextView testSeekBarTextView;
     private TextView measuredValue;
     private TextView plainTextKP;
     private TextView plainTextKI;
     private TextView plainTextKD;
     private final Handler handler = new Handler();
     private boolean pid_data_recovered = false;
+    List<Entry> entries = new ArrayList<Entry>();
+    @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pid_settings);
@@ -51,24 +68,69 @@ public class PIDConfig extends AppCompatActivity {
         plainTextKP = (TextView)findViewById((R.id.editTextKP));
         plainTextKI = (TextView)findViewById((R.id.editTextKI));
         plainTextKD = (TextView)findViewById((R.id.editTextKD));
+        testSeekBarTextView = (TextView)findViewById((R.id.textViewTestSeekBarDCMotor));
         sendPIDConfig = (Button)findViewById(R.id.buttonSendPidConfig);
-        savePIDConfig = (Button)findViewById(R.id.buttonSaveConfig);
+        sendTestFWD = (Button)findViewById(R.id.buttonFWDTest);
+        sendTestBWD = (Button)findViewById(R.id.buttonBWDTest);
+        sendTestSTOP = (Button) findViewById(R.id.buttonSTOPTest);
+        sendseekBarTestDcMotor = (SeekBar) findViewById(R.id.seekBarSendTestDCMotor);
+
+        sendseekBarTestDcMotor.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {   // SEEKBAR MOTOR SPEED
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
+                udpClient.tx++;
+                progressTestDCSeekBar = progressValue;
+                udpClient.sendMessage("05"+progressValue);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //Toast.makeText(getApplicationContext(), "Stopped tracking seekbar", Toast.LENGTH_SHORT).show();
+            }
+        });
+        sendTestSTOP.setOnClickListener(view -> {   // TEST STOP BUTTON
+            carModel.setCarCommand(Car.CarCommands.STOP);
+            udpClient.sendMessage("00");
+            udpClient.tx++;
+        });
+        sendTestFWD.setOnClickListener(view -> {  //TEST FORWARD BUTTON
+            carModel.setCarCommand(Car.CarCommands.FORWARD);
+            udpClient.sendMessage("01");
+            udpClient.tx++;
+        });
+        sendTestBWD.setOnClickListener(view -> { //TEST BACKWARD BUTTON
+            carModel.setCarCommand(Car.CarCommands.BACKWARD);
+            udpClient.sendMessage("02");
+            udpClient.tx++;
+        });
 
         // Start the Runnable for updating UI
         MyRunnable myRunnable = new MyRunnable(handler);
         handler.post(myRunnable);
 
+        // Create the chart for printing current value for speed.
+        LineChart chart = findViewById(R.id.lineChart);;
+        XAxis xAxis = chart.getXAxis();
+        YAxis leftAxis = chart.getAxisLeft();
+        YAxis rightAxis = chart.getAxisRight();
+        // Fill the list with Entry objects. Each Entry represents one point in the graph.
+        entries.add(new Entry(0f, 1f));
+        entries.add(new Entry(1f, 2f));
+        xAxis.setAxisMaximum(100f); // max = 100 seconds
+        xAxis.setAxisMinimum(0f);   // min = 0 seconds
+        leftAxis.setAxisMaximum(100f); // max = 100
+        leftAxis.setAxisMinimum(0f);   // min = 0
+        rightAxis.setEnabled(false);
+        chart.invalidate();
+        LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
+        dataSet.setColor(Color.RED); // Set the line color to red
+        dataSet.setLineWidth(5f); // Set the line width to 5 float pixels
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate(); // refresh
 
-//        plainTextKP.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if (!hasFocus) {
-//                    // The user is done typing.
-//                    String text = editText.getText().toString();
-//                    // Save the text here using Shared Preferences or any other persistence method
-//                }
-//            }
-//        });
         plainTextKP.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -147,6 +209,7 @@ public class PIDConfig extends AppCompatActivity {
             actualKD.setText(String.valueOf(carModel.getActualKD()));
             setPoint.setText(String.valueOf(carModel.getSetPoint()));
             measuredValue.setText(String.valueOf(carModel.getMeasuredValue()));
+            testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
 
         }
         public void restoreKPKIKD()

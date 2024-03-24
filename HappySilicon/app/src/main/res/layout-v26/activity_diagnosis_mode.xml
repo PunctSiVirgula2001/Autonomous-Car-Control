@@ -39,111 +39,85 @@
                 android:progress="1" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="21dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView25"
-                android:layout_width="62dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Rx packets:"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/rxTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=" "
-                android:textStyle="bold"
-                />
-
-            <TextView
-                android:id="@+id/textView28"
-                android:layout_width="112dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Tx packets: "
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=" "
-                android:textStyle="bold"
-                />
-        </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="2dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
-
-            <TextView
-                android:layout_width="114dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="@string/textViewVoltageLabel"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewVoltage"
-                android:layout_width="83dp"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="129dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="@string/textViewCurrentLabel"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewCurrent"
-                android:layout_width="45dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0" />
-
-        </LinearLayout>
-
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="2dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0" />
-
-        </LinearLayout>
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="2dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="279dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="25dp"
+                android:layout_height="21dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="62dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Rx packets:"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/rxTextView"
+                    android:layout_width="31dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" "
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="112dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tx packets: "
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text=" "
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="114dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewVoltageLabel"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewVoltage"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="129dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="@string/textViewCurrentLabel"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textViewCurrent"
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -243,39 +217,38 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/responseTextView1"
-                android:layout_width="match_parent"
-                android:layout_height="226dp"
-                android:layout_marginBottom="1dp"
-                android:textSize="12sp" />
-
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="113dp"
+            android:layout_height="338dp">
+
+            <TextView
+                android:id="@+id/responseTextView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="1dp"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="179dp"
             android:orientation="vertical">
 
             <SeekBar
                 android:id="@+id/seekBarDirection"
                 style="@style/seekBarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="112dp"
+                android:layout_height="38dp"
                 android:max="98"
                 android:min="2"
                 android:progress="50" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="265dp"
-            android:orientation="vertical">
 
             <Button
                 android:id="@+id/buttonForward"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="1dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/blackButtonColor"
                 android:text="@string/buttonForwardLabel"
@@ -285,13 +258,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="39dp"
+                android:layout_height="7dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/buttonLeftLight"
-                    android:layout_width="match_parent"
+                    android:layout_width="401dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:backgroundTint="@color/blackButtonColor"
@@ -302,7 +275,7 @@
 
                 <Button
                     android:id="@+id/buttonStop"
-                    android:layout_width="match_parent"
+                    android:layout_width="341dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
                     android:backgroundTint="@color/blackButtonColor"
@@ -313,7 +286,7 @@
 
                 <Button
                     android:id="@+id/buttonRightLight"
-                    android:layout_width="match_parent"
+                    android:layout_width="411dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:backgroundTint="@color/blackButtonColor"
@@ -326,7 +299,7 @@
             <Button
                 android:id="@+id/buttonBackward"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="1dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/blackButtonColor"
                 android:text="@string/buttonBackwardLabel"
