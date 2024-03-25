@@ -1,4 +1,5 @@
 #include "PID.h"
+#include "Network.h"
 
 //PID
 PID_t motorPID;
@@ -91,6 +92,7 @@ TickType_t xLastWakeTime = 0U;
 TickType_t xNewWakeTime = 0U;
 TickType_t pulse_time_ms = 0U;
 CarCommand onlyPIDValues;
+TickType_t startInitialSendingTime = 0U;
 void PIDTask(void *pvParameters) {
 	/*Init PID structure*/
 	PID_t myPID;
@@ -100,8 +102,7 @@ void PIDTask(void *pvParameters) {
 	double SMA_frequency = 0;
 	TickType_t newTime_backward = 0U;
 	TickType_t newTime_stop = 0U;
-	TickType_t measured_value_delay = xTaskGetTickCount();
-
+	//TickType_t measured_value_delay = xTaskGetTickCount();
 	QueueSetMemberHandle_t xActivatedMember;
 	//ESP_LOGI("PulseCounter", "Pulse Count");
 	while (1) {
@@ -143,24 +144,25 @@ void PIDTask(void *pvParameters) {
 		}
 		PID_Compute(&myPID);
 		if (myPID.Output < 0
-				&& xTaskGetTickCount() - newTime_backward > pdMS_TO_TICKS(1000)
-				&& setpoint_speed != 0) {
+			&& xTaskGetTickCount() - newTime_backward > pdMS_TO_TICKS(1000)
+			&& setpoint_speed != 0) {
 			carControl_Backward_init();
 		}
-		if (setpoint_speed
-				== 0&& xTaskGetTickCount()-newTime_stop>pdMS_TO_TICKS(1500)) { // Put a final stop only after the command was received, so the PID would first break.
+		if (setpoint_speed == 0
+			&& xTaskGetTickCount()-newTime_stop>pdMS_TO_TICKS(1500)) { // Put a final stop only after the command was received, so the PID would first break.
 			myPID.Output = 0;
 			myPID.measured = 0;
 			pulse_direction = 0;
-		}
-		if (xTaskGetTickCount() - measured_value_delay > pdMS_TO_TICKS(500)) // send every 500 ms to app the value of measured value and setp
-		{
-
+			myPID.I_term = 0;
 		}
 		changeMotorSpeed(myPID.Output);
-		ESP_LOGI("SP", "Output: %d , P_term: %f, I_term: %f, D_term: %f \n",
-				myPID.Output, myPID.P_term, myPID.I_term, myPID.D_term);
-		//ESP_LOGI("MS", "Measured: %d \n", myPID.measured);
+		TickType_t curentTime = pdTICKS_TO_MS(xTaskGetTickCount());
+		//sendCommandApp(ACTUAL_TIME_OF_SEND, (int*)curentTime);
+		sendCommandApp(MEASURED_VALUE, (int*)abs(myPID.measured));
+		sendCommandApp(I_TERM_VALUE, (int*)abs((int)myPID.I_term));
+		//ESP_LOGI("SP", "Output: %d , P_term: %f, I_term: %f, D_term: %f \n",
+		//		myPID.Output, myPID.P_term, myPID.I_term, myPID.D_term);
+		ESP_LOGI("MS", "Current time: %f \n", (float)pdTICKS_TO_MS(xTaskGetTickCount()));
 	}
 }
 

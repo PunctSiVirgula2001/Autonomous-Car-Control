@@ -41,7 +41,7 @@ public class PIDConfig extends AppCompatActivity {
     private TextView actualKP;
     private TextView actualKI;
     private TextView actualKD;
-    private TextView setPoint;
+    private TextView integralValue;
     private TextView testSeekBarTextView;
     private TextView measuredValue;
     private TextView plainTextKP;
@@ -50,6 +50,12 @@ public class PIDConfig extends AppCompatActivity {
     private final Handler handler = new Handler();
     private boolean pid_data_recovered = false;
     List<Entry> entries = new ArrayList<Entry>();
+    XAxis xAxis;
+    YAxis leftAxis;
+    YAxis rightAxis;
+    LineChart chart;
+    LineDataSet dataSet;
+    LineData lineData;
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +68,7 @@ public class PIDConfig extends AppCompatActivity {
         actualKP = (TextView)findViewById((R.id.textActualKP));
         actualKI = (TextView)findViewById((R.id.textActualKI));
         actualKD = (TextView)findViewById((R.id.textActualKD));
-        setPoint = (TextView)findViewById((R.id.textSetpoint));
+        integralValue = (TextView)findViewById((R.id.textIntegralValue));
         measuredValue = (TextView)findViewById((R.id.textMeasuredValue));
         //save and send to esp32
         plainTextKP = (TextView)findViewById((R.id.editTextKP));
@@ -111,25 +117,17 @@ public class PIDConfig extends AppCompatActivity {
         handler.post(myRunnable);
 
         // Create the chart for printing current value for speed.
-        LineChart chart = findViewById(R.id.lineChart);;
-        XAxis xAxis = chart.getXAxis();
-        YAxis leftAxis = chart.getAxisLeft();
-        YAxis rightAxis = chart.getAxisRight();
-        // Fill the list with Entry objects. Each Entry represents one point in the graph.
-        entries.add(new Entry(0f, 1f));
-        entries.add(new Entry(1f, 2f));
+        chart = findViewById(R.id.lineChart);;
+        xAxis = chart.getXAxis();
+        leftAxis = chart.getAxisLeft();
+        rightAxis = chart.getAxisRight();
         xAxis.setAxisMaximum(100f); // max = 100 seconds
         xAxis.setAxisMinimum(0f);   // min = 0 seconds
         leftAxis.setAxisMaximum(100f); // max = 100
         leftAxis.setAxisMinimum(0f);   // min = 0
         rightAxis.setEnabled(false);
-        chart.invalidate();
-        LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
-        dataSet.setColor(Color.RED); // Set the line color to red
-        dataSet.setLineWidth(5f); // Set the line width to 5 float pixels
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate(); // refresh
+        add_data_to_graph(1,1);
+
 
         plainTextKP.addTextChangedListener(new TextWatcher() {
             @Override
@@ -207,8 +205,8 @@ public class PIDConfig extends AppCompatActivity {
             actualKP.setText(String.valueOf(carModel.getActualKP()));
             actualKI.setText(String.valueOf(carModel.getActualKI()));
             actualKD.setText(String.valueOf(carModel.getActualKD()));
-            setPoint.setText(String.valueOf(carModel.getSetPoint()));
-            measuredValue.setText(String.valueOf(carModel.getMeasuredValue()));
+            integralValue.setText(String.valueOf(carModel.getIntegralValue()));
+            measuredValue.setText(String.valueOf(carModel.getCarSpeed()));
             testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
 
         }
@@ -231,6 +229,17 @@ public class PIDConfig extends AppCompatActivity {
         String plainTextKD1 = sharedPreferences.getString("plainTextKD", "DefaultKD");
 
         return "08" + plainTextKP1 + " " + plainTextKI1 + " " + plainTextKD1;
+    }
+
+    public void add_data_to_graph(int time, int data)
+    {
+        entries.add(new Entry(time, data));
+        dataSet = new LineDataSet(entries, "Measured Value"); // add entries to dataset
+        lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        dataSet.setColor(Color.RED); // Set the line color to red
+        dataSet.setLineWidth(5f); // Set the line width to 5 float pixels
+        chart.invalidate(); // refresh
     }
 
 }

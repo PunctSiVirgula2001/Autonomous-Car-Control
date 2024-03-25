@@ -5,8 +5,13 @@ static const char *TAG = "wifi_softAP";
 struct sockaddr_in6 source_addr_global; // For IPv4 or IPv6
 socklen_t addr_len_global;
 int sock_global; 						// Socket descriptor
-char *word = NULL;				// Words extracted from data buffer from app.
-char *car_statics_for_app = "00-99-01-99-02-99-03-99-04-99-05-99";
+char* stateSendToAppStrings[STATE_MAX] = {
+    "MEASURED_VALUE", 			// Corresponds to MEASURED_VALUE
+    "I_TERM_VALUE",     		// Corresponds to I_TERM_VALUE
+    "OBSTACLE_DETECTED_VALUE"   // Corresponds to OBSTACLE_DETECTED_VALUE
+	"ERROR_PID_VALUE"			// Corresponds to ERROR_PID_VALUE
+	"ACTUAL_TIME_OF_SEND"
+};
 /*
  * 00 - measured speed
  * 01 - setpoint
@@ -106,17 +111,6 @@ void udp_server_task(void *pvParameters) {
 	}
 }
 
-void send_data_to_app_task(void *pvParameters)
-{
-	while(1)
-	{
-		if(allowed_to_send == true)
-		{
-
-		}
-		vTaskDelay(pdMS_TO_TICKS(100));
-	}
-}
 // Function to send a message over a socket
 void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr,
 		socklen_t addr_len) {
@@ -126,8 +120,36 @@ void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr,
 	}
 }
 
+char* to_string(int value)
+{
+	char *strValue = malloc(20 * sizeof(char));
+	if (strValue == NULL) {
+		// Handle memory allocation failure if needed
+		return NULL;
+	}
+	// Convert the integer to string
+	sprintf(strValue, "%d", value);
+
+	return strValue;
+}
+
 void HLD_SendMessage(const char *message) {
 	sendMessage(sock_global, message, &source_addr_global, addr_len_global);
+}
+
+void sendCommandApp(SendCommandType_app commandType, void* commandValue)
+{
+	if(allowed_to_send == true){
+	char* commandTypeStr = stateSendToAppStrings[commandType];
+	char* commandValueStr = to_string(commandValue);
+
+	int lengthNeeded = strlen(commandTypeStr) + strlen(commandValueStr) + 2; // 2 = 1 space + 1 null termination
+	char* commandToSend = malloc(lengthNeeded);
+	sprintf(commandToSend, "%s %s", commandTypeStr, commandValueStr);
+	HLD_SendMessage(commandToSend);
+	free(commandValueStr);
+	free(commandToSend);
+	}
 }
 
 void start_network_readBuffer_tasks() {
@@ -141,19 +163,8 @@ void start_network_readBuffer_tasks() {
 	wifi_init_softap();
 	xTaskCreatePinnedToCore(udp_server_task, "tcp_server", 4096, NULL, 5, NULL,
 			0U);
-	xTaskCreatePinnedToCore(send_data_to_app_task, "send_data_to_app_task", 4096, NULL, 5,
-	NULL, 1U);
+	//xTaskCreatePinnedToCore(send_data_to_app_task, "send_data_to_app_task", 4096, NULL, 5,
+	//NULL, 1U);
 }
 
-//static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-//                                int32_t event_id, void* event_data)
-//{
-//    if (event_id == WIFI_EVENT_AP_STACONNECTED) {
-//        wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
-//        ESP_LOGI(TAG, "station MACSTR join, AID=");
-//    } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
-//        wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
-//        ESP_LOGI(TAG, "station MACSTR leave, AID=");
-//    }
-//}
 

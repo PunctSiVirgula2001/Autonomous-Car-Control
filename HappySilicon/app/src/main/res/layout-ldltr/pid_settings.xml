@@ -97,15 +97,15 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/Setpoint"
+                    android:id="@+id/IntegralValue"
                     android:layout_width="38dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="SETPOINT:"
+                    android:text="Integral Value:"
                     android:textAlignment="center" />
 
                 <TextView
-                    android:id="@+id/textSetpoint"
+                    android:id="@+id/textIntegralValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

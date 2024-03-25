@@ -38,7 +38,7 @@ public class Car {
     private float actualKP;
     private float actualKI;
     private float actualKD;
-    private float setPoint;
+    private float integralValue;
     private float measuredValue;
 
 
@@ -60,7 +60,7 @@ public class Car {
         actualKP = 0;
         actualKI = 0;
         actualKD = 0;
-        setPoint = 0;
+        integralValue = 0;
         measuredValue = 0;
         //TODO update car lights state
         rightLightToggle = false;
@@ -108,7 +108,7 @@ public class Car {
     public void setActualKP(float KP) {actualKP = KP;}
     public void setActualKI(float KI) {actualKI = KI;}
     public void setActualKD(float KD) {actualKD = KD;}
-    public void setSetPoint(float setPoint) {this.setPoint = setPoint;}
+    public void setIntegralValue(float setPoint) {this.integralValue = setPoint;}
     public void setMeasuredValue(float measuredValue) {this.measuredValue = measuredValue;}
 
 
@@ -155,6 +155,6 @@ public class Car {
     public float getActualKP(){return this.actualKP;}
     public float getActualKI(){return this.actualKI;}
     public float getActualKD(){return this.actualKD;}
-    public float getSetPoint(){return this.setPoint;}
+    public float getIntegralValue(){return this.integralValue;}
     public float getMeasuredValue(){return this.measuredValue;}
 }

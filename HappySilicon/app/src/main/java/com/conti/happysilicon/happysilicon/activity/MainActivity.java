@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
+import com.conti.happysilicon.happysilicon.Utilities.RollingSMA;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
@@ -28,11 +29,13 @@ public class MainActivity extends AppCompatActivity {
     private Button connect_to_esp_button;
     private Button pid_settings_button;
     private Car carModel;
+    RollingSMA sma;
+    static double sumSMA = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
-
+        sma = new RollingSMA(5); // For a SMA of period 5
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
         UdpSocketClient instance = app.getUdpSocketClient();
@@ -56,17 +59,29 @@ public class MainActivity extends AppCompatActivity {
                             carModel.setActualKI(getSaveKI());
                             carModel.setActualKD(getSaveKD());
                         }
-                        if((message).startsWith("00"))
+                        if((message).startsWith("MEASURED_VALUE"))
                         {
-                            
+                            String[] splitedValue = message.split(" ");
+                            int receivedValue = Integer.parseInt(splitedValue[1]);
+                            if(receivedValue != 0)
+                                carModel.setCarSpeed(sma.next(receivedValue));
+                            else
+                                carModel.setCarSpeed(0);
                         }
-                        if((message).startsWith("01"))
+                        if((message).startsWith("I_TERM_VALUE"))
                         {
-
+                            String[] splitedValue = message.split(" ");
+                            int receivedValue = Integer.parseInt(splitedValue[1]);
+                            if(receivedValue != 0)
+                                carModel.setIntegralValue(receivedValue);
+                            else
+                                carModel.setIntegralValue(0);
                         }
-                        if((message).startsWith("02"))
+                        if((message).startsWith("ACTUAL_TIME_OF_SEND"))
                         {
-
+                            String[] splitedValue = message.split(" ");
+                            int receivedValue = Integer.parseInt(splitedValue[1]);
+                            Log.d("Time ", String.valueOf(receivedValue));
                         }
 
 

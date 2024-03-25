@@ -241,6 +241,7 @@ void carControl_Task(void *pvParameters) {
 					break;
 				case AutonomousReceived:
 					//ESP_LOGI(" ", "AutonomousReceived");
+					// TODO: Implement an Autotmous Mode task.
 					break;
 				case PID_Changed:
 					xQueueSend(PID_commandQueue,&cmd,portMAX_DELAY);

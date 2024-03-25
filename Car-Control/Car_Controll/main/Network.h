@@ -28,10 +28,25 @@
 #define PORT 80 		/*Port at which the access point has been started. */
 #define TAG_send "SocketSender"
 
+/*COMMANDS TO SEND TO APP*/
+typedef enum {
+    MEASURED_VALUE,
+    I_TERM_VALUE,
+    OBSTACLE_DETECTED_VALUE,
+	ERROR_PID_VALUE,
+	ACTUAL_TIME_OF_SEND,
+    STATE_MAX
+} SendCommandType_app;
+
+
+
+//utility function for strings
+char* to_string(int value);
+
 //static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 void wifi_init_softap();
 void udp_server_task(void *pvParameters);
-void send_data_to_app_task(void *pvParameters);
 void start_network_readBuffer_tasks();
 void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr, socklen_t addr_len);
 void HLD_SendMessage(const char* message);
+void sendCommandApp(SendCommandType_app commandType, void* commandValue);
