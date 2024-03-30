@@ -121,13 +121,11 @@ public class PIDConfig extends AppCompatActivity {
         xAxis = chart.getXAxis();
         leftAxis = chart.getAxisLeft();
         rightAxis = chart.getAxisRight();
-        xAxis.setAxisMaximum(100f); // max = 100 seconds
+        xAxis.setAxisMaximum(60f); // max = 60 seconds
         xAxis.setAxisMinimum(0f);   // min = 0 seconds
         leftAxis.setAxisMaximum(100f); // max = 100
         leftAxis.setAxisMinimum(0f);   // min = 0
         rightAxis.setEnabled(false);
-        add_data_to_graph(1,1);
-
 
         plainTextKP.addTextChangedListener(new TextWatcher() {
             @Override
@@ -181,20 +179,24 @@ public class PIDConfig extends AppCompatActivity {
             Log.d("PID", PIDString + '\n');
             udpClient.sendMessage(PIDString);
             udpClient.tx++;
+            carModel.setResetGraph(true);
+            carModel.resetTimer();
+            carModel.startTimer();
         });
 
     }
-    private class MyRunnable implements Runnable {
-
+    private class MyRunnable implements Runnable 
+    {
         private final Handler handler;
-
-        public MyRunnable(Handler handler) {
+        public MyRunnable(Handler handler) 
+        {
             this.handler = handler;
         }
         @Override
-        public void run() {
+        public void run() 
+        {
             // Schedule next update with a delay
-            this.handler.postDelayed(this, 10);
+            this.handler.postDelayed(this, 5);
             if(!pid_data_recovered)
             {
                 restoreKPKIKD();
@@ -208,6 +210,17 @@ public class PIDConfig extends AppCompatActivity {
             integralValue.setText(String.valueOf(carModel.getIntegralValue()));
             measuredValue.setText(String.valueOf(carModel.getCarSpeed()));
             testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
+            if(carModel.isNewDataFromEsp()==true)
+            {
+                //Log.d("Data from ESP", "Time: " + carModel.getTimeOfSamplingFromEsp() + " Value: " + carModel.getValueOfSamplingFromEsp() + '\n');
+                add_data_to_graph(carModel.getTimeOfSamplingFromEsp(), carModel.getValueOfSamplingFromEsp());
+                carModel.setNewDataFromEsp(false);
+            }
+            if(carModel.isResetGraph()==true)
+            {
+                entries.clear();
+                carModel.setResetGraph(false);
+            }
 
         }
         public void restoreKPKIKD()
@@ -222,7 +235,9 @@ public class PIDConfig extends AppCompatActivity {
 
         }
     }
-    public String getConcatenatedPIDValues() {
+
+    public String getConcatenatedPIDValues() 
+    {
         SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String plainTextKP1 = sharedPreferences.getString("plainTextKP", "DefaultKP");
         String plainTextKI1 = sharedPreferences.getString("plainTextKI", "DefaultKI");
@@ -230,16 +245,27 @@ public class PIDConfig extends AppCompatActivity {
 
         return "08" + plainTextKP1 + " " + plainTextKI1 + " " + plainTextKD1;
     }
+    
 
-    public void add_data_to_graph(int time, int data)
-    {
+    public void add_data_to_graph(float time, float data) {
         entries.add(new Entry(time, data));
-        dataSet = new LineDataSet(entries, "Measured Value"); // add entries to dataset
-        lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        dataSet.setColor(Color.RED); // Set the line color to red
-        dataSet.setLineWidth(5f); // Set the line width to 5 float pixels
-        chart.invalidate(); // refresh
+        if (dataSet == null) {
+            dataSet = new LineDataSet(entries, "Measured Value");
+            dataSet.setColor(Color.BLUE);
+            dataSet.setLineWidth(3f);
+            dataSet.setDrawCircles(false); // Disable drawing circles
+            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER); // Set line mode to cubic bezier
+            lineData = new LineData(dataSet);
+            chart.setData(lineData);
+        } else {
+            lineData.notifyDataChanged();
+            chart.notifyDataSetChanged();
+        }
+        
+        // Set zoom to horizontal
+        chart.zoom(1f, 1f, 0f, 0f);
+        
+        chart.invalidate();
     }
 
 }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.Utilities.RollingSMA;
+import com.conti.happysilicon.happysilicon.Utilities.SimpleTimer;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
@@ -22,6 +23,8 @@ import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private Button diagnosis_mode_button;
@@ -31,16 +34,23 @@ public class MainActivity extends AppCompatActivity {
     private Car carModel;
     RollingSMA sma;
     static double sumSMA = 0;
+    static boolean firstSample = true;
+    //SimpleTimer timer; // Create a new timer instance
+    // declare a timer which will be started when data comes from esp32
+    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
-        sma = new RollingSMA(5); // For a SMA of period 5
+        sma = new RollingSMA(10); // For a SMA of period 5
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
         UdpSocketClient instance = app.getUdpSocketClient();
         carModel = Car.getInstance();
+        carModel.setTimer(new SimpleTimer());
         connect_to_esp_button = findViewById(R.id.connectESP);
+        carModel.setNewDataFromEsp(false);
         connect_to_esp_button.setOnClickListener(view -> {
             instance.init(() -> {
                 runOnUiThread(() -> {
@@ -63,15 +73,39 @@ public class MainActivity extends AppCompatActivity {
                         {
                             String[] splitedValue = message.split(" ");
                             int receivedValue = Integer.parseInt(splitedValue[1]);
+                            carModel.setNewDataFromEsp(true);
                             if(receivedValue != 0)
                                 carModel.setCarSpeed(sma.next(receivedValue));
                             else
                                 carModel.setCarSpeed(0);
+
+                            // Start the timer with the first sample
+                            if (firstSample) {
+                                carModel.startTimer();
+                                carModel.setTimeOfSamplingFromEsp(0);
+                                carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
+                                firstSample = false;
+                            } else {
+                                if (carModel.isTimerRunning()) {
+                                    // Use the timer to get the elapsed time in seconds since the first sample
+                                    float elapsedSeconds = carModel.getElapsedTimeSecs();
+                                    System.out.println("Elapsed time: " + elapsedSeconds);
+                                    carModel.setTimeOfSamplingFromEsp(elapsedSeconds);
+                                    carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
+                                }
+                                if(carModel.getElapsedTimeSecs() > 60.0f){
+                                    carModel.resetTimer();
+                                    carModel.setResetGraph(true);
+                                    carModel.startTimer();
+                                }
+                            }
+
                         }
                         if((message).startsWith("I_TERM_VALUE"))
                         {
                             String[] splitedValue = message.split(" ");
                             int receivedValue = Integer.parseInt(splitedValue[1]);
+                            //carModel.setNewDataFromEsp(true);
                             if(receivedValue != 0)
                                 carModel.setIntegralValue(receivedValue);
                             else

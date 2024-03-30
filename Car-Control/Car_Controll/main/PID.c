@@ -88,7 +88,7 @@ extern QueueHandle_t pulse_encoderQueue;
 extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t PID_commandQueue;
 extern QueueSetHandle_t QueueSet;
-TickType_t xLastWakeTime = 0U;
+TickType_t xLastWakePulse = 0U;
 TickType_t xNewWakeTime = 0U;
 TickType_t pulse_time_ms = 0U;
 CarCommand onlyPIDValues;
@@ -122,11 +122,11 @@ void PIDTask(void *pvParameters) {
 			}
 
 			xNewWakeTime = xTaskGetTickCount();
-			pulse_time_ms = pdTICKS_TO_MS((xNewWakeTime - xLastWakeTime));
+			pulse_time_ms = pdTICKS_TO_MS((xNewWakeTime - xLastWakePulse));
 			SMA_frequency = 1.0
 					/ (Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
 			ESP_LOGI("PID", "Frequency: %f", pulse_direction * SMA_frequency);
-			xLastWakeTime = xNewWakeTime;
+			xLastWakePulse = xNewWakeTime;
 			myPID.measured = pulse_direction * SMA_frequency;
 		}
 		if (xActivatedMember == speed_commandQueue) {
@@ -155,9 +155,10 @@ void PIDTask(void *pvParameters) {
 			pulse_direction = 0;
 			myPID.I_term = 0;
 		}
+		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(500))
+			myPID.measured = 0;
 		changeMotorSpeed(myPID.Output);
-		TickType_t curentTime = pdTICKS_TO_MS(xTaskGetTickCount());
-		//sendCommandApp(ACTUAL_TIME_OF_SEND, (int*)curentTime);
+		//TickType_t curentTime = pdTICKS_TO_MS(xTaskGetTickCount());
 		sendCommandApp(MEASURED_VALUE, (int*)abs(myPID.measured));
 		sendCommandApp(I_TERM_VALUE, (int*)abs((int)myPID.I_term));
 		//ESP_LOGI("SP", "Output: %d , P_term: %f, I_term: %f, D_term: %f \n",
