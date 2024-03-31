@@ -38,7 +38,7 @@ void changeSTEER(int value) {
 	}
 	// Scale the value to fit between 1000 and 2000
 	int pulse_width_us = MIN_SERVO_DUTY_US + (value * (MAX_SERVO_DUTY_US - MIN_SERVO_DUTY_US) / 100);
-	ESP_LOGI("", "pwm_us %d", pulse_width_us);
+	// ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	update_servo_pwm(pulse_width_us);
 }
 
@@ -153,30 +153,37 @@ void configureEncoderInterrupts() {
 	ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
 }
 
-CarCommand parseCommand(const char *commandStr) {
-    CarCommand cmd;
-    memset(&cmd, 0, sizeof(cmd)); // Initialize the structure with zeros
-    if (strncmp(commandStr, "08", 2) == 0) {
-        // Handle command "08" specifically to parse KP, KI, KD values
-        sscanf(commandStr, "08%f %f %f", &cmd.KP, &cmd.KI, &cmd.KD);
-        cmd.command = PID_Changed; // Set the command to the appropriate enum value
-        cmd.has_value = false; // Since KP, KI, KD are used, command_value is not relevant
-    } else if (strlen(commandStr) >= 2) {
-        char commandPart[3] = { commandStr[0], commandStr[1], '\0' };
-        cmd.command = atoi(commandPart);
-        // Check if there's more to the command than just the command part
-        if (strlen(commandStr) > 2) {
-            cmd.has_value = true;
-            // Extract the command value, which is optional
-            char valuePart[5]; // Assuming the value part will not exceed 4 digits
-            strncpy(valuePart, commandStr + 2, 4); // Copy the rest of the string as command value
-            valuePart[4] = '\0'; // Null-terminate the string
-            cmd.command_value = atoi(valuePart);
-        } else {
-            cmd.has_value = false;
-        }
-    }
-    return cmd;
+CarCommand parseCommand(const char *commandStr)
+{
+	CarCommand cmd;
+	memset(&cmd, 0, sizeof(cmd)); // Initialize the structure with zeros
+	if (strncmp(commandStr, "08", 2) == 0)
+	{
+		// Handle command "08" specifically to parse KP, KI, KD values
+		sscanf(commandStr, "08%f %f %f", &cmd.KP, &cmd.KI, &cmd.KD);
+		cmd.command = PID_Changed; // Set the command to the appropriate enum value
+		cmd.has_value = false;	   // Since KP, KI, KD are used, command_value is not relevant
+	}
+	else if (strlen(commandStr) >= 2)
+	{
+		char commandPart[3] = {commandStr[0], commandStr[1], '\0'};
+		cmd.command = atoi(commandPart);
+		// Check if there's more to the command than just the command part
+		if (strlen(commandStr) > 2)
+		{
+			cmd.has_value = true;
+			// Extract the command value, which is optional
+			char valuePart[5];					   // Assuming the value part will not exceed 4 digits
+			strncpy(valuePart, commandStr + 2, 4); // Copy the rest of the string as command value
+			valuePart[4] = '\0';				   // Null-terminate the string
+			cmd.command_value = atoi(valuePart);
+		}
+		else
+		{
+			cmd.has_value = false;
+		}
+	}
+	return cmd;
 }
 
 void carControl_Backward_init()
@@ -191,6 +198,7 @@ void carControl_Backward_init()
 
 QueueHandle_t carControlQueue = NULL;
 QueueHandle_t speed_commandQueue = NULL;
+QueueHandle_t steer_commandQueue = NULL;
 QueueHandle_t PID_commandQueue = NULL;
 void carControl_Task(void *pvParameters) {
 	CarCommand cmd = { StopReceived, 0, false, 0.0f, 0.0f, 0.0f };
@@ -203,7 +211,7 @@ void carControl_Task(void *pvParameters) {
 			if (xQueueReceive(carControlQueue, &command,
 			portMAX_DELAY) == pdPASS) {
 				cmd = parseCommand(command);
-				ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
+				//ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
 				switch (cmd.command) {
 				case StopReceived:
 					//changeMotorSpeed(0); // to be replaced with notify task PID.
@@ -215,14 +223,14 @@ void carControl_Task(void *pvParameters) {
 					// if the car is not moving but there are very small changes in speed(like pushing it a bit), don't apply any change
 					break;
 				case ForwardReceived:
-					ESP_LOGI(" ", "ForwardReceived");
+					//ESP_LOGI(" ", "ForwardReceived");
 					speed_multiplier = 1;
 					speed = speed_multiplier * last_motor_speed;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					HLD_SendMessage("OKFWD!");
 					break;
 				case BackwardReceived:
-					ESP_LOGI(" ", "BackwardReceived");
+					//ESP_LOGI(" ", "BackwardReceived");
 					speed_multiplier = -1;
 					speed = speed_multiplier * last_motor_speed;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
@@ -232,11 +240,12 @@ void carControl_Task(void *pvParameters) {
 					speed = speed_multiplier * cmd.command_value;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					last_motor_speed = cmd.command_value;
-					ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier);
+					//ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier);
 					HLD_SendMessage("OKSPEED!");
 					break;
 				case SteerReceived:
-					changeSTEER(cmd.command_value);
+					//changeSTEER(cmd.command_value);
+					xQueueSend(steer_commandQueue,&cmd.command_value,portMAX_DELAY);
 					HLD_SendMessage("OKSTEER!");
 					break;
 				case AutonomousReceived:
@@ -254,6 +263,18 @@ void carControl_Task(void *pvParameters) {
 	}
 }
 
+void steer_task(void *pvParameters) {
+	int steer = 0;
+	while (1) {
+		if (steer_commandQueue != NULL) {
+			if (xQueueReceive(steer_commandQueue, &steer, portMAX_DELAY) == pdPASS) {
+				changeSTEER(steer);
+			}
+		} else
+			vTaskDelay(pdMS_TO_TICKS(500));
+	}
+}
+
 void carControl_init() {
 	init_servo_pwm();
 	init_motor_pwm();
@@ -262,6 +283,7 @@ void carControl_init() {
 	vTaskDelay(pdMS_TO_TICKS(500)); // wait for init to complete
 	xTaskCreatePinnedToCore(carControl_Task, "carControl_task", 4096, NULL, 6,
 	NULL, 0U);
+	xTaskCreatePinnedToCore(steer_task, "steer_task", 4096, NULL, 5,NULL, 1U);
 
 }
 

@@ -37,13 +37,11 @@ public class MainActivity extends AppCompatActivity {
     static boolean firstSample = true;
     //SimpleTimer timer; // Create a new timer instance
     // declare a timer which will be started when data comes from esp32
-    
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
-        sma = new RollingSMA(10); // For a SMA of period 5
+        sma = new RollingSMA(10); // For a SMA of period 10
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
         UdpSocketClient instance = app.getUdpSocketClient();
@@ -111,14 +109,6 @@ public class MainActivity extends AppCompatActivity {
                             else
                                 carModel.setIntegralValue(0);
                         }
-                        if((message).startsWith("ACTUAL_TIME_OF_SEND"))
-                        {
-                            String[] splitedValue = message.split(" ");
-                            int receivedValue = Integer.parseInt(splitedValue[1]);
-                            Log.d("Time ", String.valueOf(receivedValue));
-                        }
-
-
                     });
                 });
             });

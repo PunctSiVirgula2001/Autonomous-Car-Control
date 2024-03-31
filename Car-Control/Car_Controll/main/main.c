@@ -1,14 +1,30 @@
+/*Brief for on which cores are the tasks runing
+	PIDTask: 		 	Core 1, Prio 10
+	CarControl_Task: 	Core 0, Prio 6
+	steer_task: 	 	Core 1, Prio 6
+	udp_server_task: 	Core 0, Prio 5
+	i2c_task: 		 	Core 1, Prio 7
+*/
+
+/*Brief for the main function
+	1. Create the necessary queues for the tasks.
+	2. Create a set which holds data from all necessary queues.
+	3. Start the network tasks.
+	4. Initialize the car control.
+	5. Configure the encoder interrupts.
+	6. Create the PID task.
+*/
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
 #include "esp_log.h"
-
 #include "MotorAndServoControl.h"
 #include "PID.h"
 #include "Network.h"
+
 extern char rx_buffer[128];
 //Autonomous + diagnostic modes
 TaskHandle_t myTaskHandle_Autonomous = NULL;
@@ -17,10 +33,12 @@ TaskHandle_t myTaskHandle_diagnostic = NULL;
 extern QueueHandle_t carControlQueue; // used for general incoming commands from the phone app
 extern QueueHandle_t pulse_encoderQueue; // holds the trasnformed time pulse differences incomming from encoder.
 extern QueueHandle_t speed_commandQueue;
+extern QueueHandle_t steer_commandQueue;
 extern QueueHandle_t PID_commandQueue;
 extern QueueSetHandle_t QueueSet;
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
+	steer_commandQueue = xQueueCreate(10,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	carControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS,
 			QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
 	pulse_encoderQueue = xQueueCreate(QUEUE_SIZE_ENCODER_PULSE,
@@ -34,6 +52,8 @@ void app_main(void) {
 	configASSERT(speed_commandQueue);
 	configASSERT(pulse_encoderQueue);
 	configASSERT(speed_commandQueue);
+	configASSERT(PID_commandQueue);
+	configASSERT(steer_commandQueue);
 	configASSERT(QueueSet);
 	xQueueAddToSet(speed_commandQueue, QueueSet);
 	xQueueAddToSet(pulse_encoderQueue, QueueSet);
@@ -44,45 +64,3 @@ void app_main(void) {
 	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL, 1U);
 
 }
-
-//	nvs_flash_init();
-//	init_servo_pwm();
-//	init_motor_pwm();
-//	changeSTEER(50);
-//	changeMotorSpeed(100);
-//	configureEncoderInterrupts();
-//	// Report counter value
-//	PID_Init(&motorPID, 1.2, 0.8, 0.002); //1 0.8 0.0001
-//	motorPID.setpoint = 0;
-
-//	xTaskCreate(handleJetsonState, "stateJetson", 2048, NULL, 1, NULL);
-
-//    handler1 = init_mcpwm(FREQUENCY, DEAD_TIME, Driver1High, Driver1Low);
-//    handler2 = init_mcpwm(FREQUENCY, DEAD_TIME, Driver2High, Driver2Low);
-
-//  xTaskCreate(controlMotor, "Run PWM", 2048, NULL, 1, &controlMotorHandle);
-
-//    configInterruptEncoder();
-//
-//
-//    while(1)
-//    {
-//    	printf("%lu \n",frequency);
-//    	vTaskDelay(pdMS_TO_TICKS(1000));
-//    }
-//	changeSTEER(50);
-//	vTaskDelay(pdMS_TO_TICKS(3000));
-//	changeMotorSpeed(140);
-//	vTaskDelay(pdMS_TO_TICKS(3000));
-//	changeMotorSpeed(50);
-//	vTaskDelay(pdMS_TO_TICKS(3000));
-//	changeMotorSpeed(135);
-//	vTaskDelay(pdMS_TO_TICKS(3000));
-//	changeMotorSpeed(50);
-
-//changeDIRECTION(BREAKING);
-//init_uart();
-//	read_uart();
-//	xTaskCreate(echo_task, "uart_echo_task", ECHO_TASK_STACK_SIZE, NULL, 10,
-//			NULL);
-

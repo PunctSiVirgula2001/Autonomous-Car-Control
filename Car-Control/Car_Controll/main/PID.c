@@ -107,9 +107,7 @@ void PIDTask(void *pvParameters) {
 	//ESP_LOGI("PulseCounter", "Pulse Count");
 	while (1) {
 		//ESP_LOGI("PulseCounter", "Pulse Count");
-
 		xActivatedMember = xQueueSelectFromSet(QueueSet, pdMS_TO_TICKS(500));
-
 		if (xActivatedMember == pulse_encoderQueue) {
 			// Process the pulse count here (e.g., log it)
 			xQueueReceive(xActivatedMember, &pulse_direction, 0);
@@ -120,7 +118,6 @@ void PIDTask(void *pvParameters) {
 				//set_backward = true;
 				newTime_backward = xTaskGetTickCount();
 			}
-
 			xNewWakeTime = xTaskGetTickCount();
 			pulse_time_ms = pdTICKS_TO_MS((xNewWakeTime - xLastWakePulse));
 			SMA_frequency = 1.0
@@ -163,7 +160,7 @@ void PIDTask(void *pvParameters) {
 		sendCommandApp(I_TERM_VALUE, (int*)abs((int)myPID.I_term));
 		//ESP_LOGI("SP", "Output: %d , P_term: %f, I_term: %f, D_term: %f \n",
 		//		myPID.Output, myPID.P_term, myPID.I_term, myPID.D_term);
-		ESP_LOGI("MS", "Current time: %f \n", (float)pdTICKS_TO_MS(xTaskGetTickCount()));
+		//ESP_LOGI("MS", "Current time: %f \n", (float)pdTICKS_TO_MS(xTaskGetTickCount()));
 	}
 }
 

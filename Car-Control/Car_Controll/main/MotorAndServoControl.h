@@ -66,11 +66,11 @@ typedef enum {
     SpeedReceived = 5,          // 05
     SteerReceived = 6,          // 06
 	AutonomousReceived = 7,		// 07
-	PID_Changed = 8
+    PID_Changed = 8
 } ReceivedState_app;
 
 typedef struct {
-	ReceivedState_app command;
+    ReceivedState_app command;
     int command_value;
     bool has_value; // Indicates whether command_value is valid
     float KP;
@@ -78,8 +78,11 @@ typedef struct {
     float KD;
 } CarCommand;
 
-
+/*Car control tasks*/
 void carControl_Task(void *pvParameters);
+void steer_task(void *pvParameters);
+
+/*Car control functions*/
 void carControl_init();
 void carControl_Backward_init();
 CarCommand parseCommand(const char* commandStr);

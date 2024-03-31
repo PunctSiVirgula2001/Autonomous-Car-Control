@@ -163,8 +163,6 @@ void start_network_readBuffer_tasks() {
 	wifi_init_softap();
 	xTaskCreatePinnedToCore(udp_server_task, "tcp_server", 4096, NULL, 5, NULL,
 			0U);
-	//xTaskCreatePinnedToCore(send_data_to_app_task, "send_data_to_app_task", 4096, NULL, 5,
-	//NULL, 1U);
 }
 
 
