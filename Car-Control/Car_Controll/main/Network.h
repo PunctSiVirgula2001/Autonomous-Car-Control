@@ -27,6 +27,7 @@
 #define MAX_STA_CONN 4  /*Number of maximum connections allowed on access point. */
 #define PORT 80 		/*Port at which the access point has been started. */
 #define TAG_send "SocketSender"
+#define INBUILT_LED_CONNECTED GPIO_NUM_2
 
 /*COMMANDS TO SEND TO APP*/
 typedef enum {
@@ -50,3 +51,7 @@ void start_network_readBuffer_tasks();
 void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr, socklen_t addr_len);
 void HLD_SendMessage(const char* message);
 void sendCommandApp(SendCommandType_app commandType, void* commandValue);
+void config_Connected_led();
+void turnOnLED_connected();
+void complement_connected_led();
+void blink_led_task(void *pvParameters);

@@ -21,6 +21,10 @@ char* stateSendToAppStrings[STATE_MAX] = {
  * 05 - error_pid
  * */ // TODO: add a function that adds the specific values to the string for each stats
 
+//Initialize a handler for blinking led
+TaskHandle_t handlerBlinkLedTask = NULL;
+
+
 void wifi_init_softap() {
 	ESP_ERROR_CHECK(nvs_flash_init());
 	ESP_ERROR_CHECK(esp_netif_init());
@@ -47,6 +51,10 @@ void wifi_init_softap() {
 extern QueueHandle_t carControlQueue;
 bool allowed_to_send = false;
 void udp_server_task(void *pvParameters) {
+	config_Connected_led();
+	// Create blinking led task
+	xTaskCreatePinnedToCore(blink_led_task, "blink_led_task", 2048, NULL, 5,
+			&handlerBlinkLedTask, 0U);
 	char addr_str[128];
 	int addr_family = AF_INET;
 	int ip_protocol = IPPROTO_UDP;
@@ -94,6 +102,9 @@ void udp_server_task(void *pvParameters) {
 				message = "YES"; // Specific acknowledgment for "ACK 9999"
 				HLD_SendMessage(message);
 				allowed_to_send = true;
+				// Destroy the blinking led task
+				vTaskDelete(handlerBlinkLedTask);
+				turnOnLED_connected();
 			} else if (allowed_to_send == true) {
 				if (xQueueSend(carControlQueue, &message,
 						portMAX_DELAY) != pdPASS) {
@@ -164,5 +175,24 @@ void start_network_readBuffer_tasks() {
 	xTaskCreatePinnedToCore(udp_server_task, "tcp_server", 4096, NULL, 5, NULL,
 			0U);
 }
+void config_Connected_led() {
+	gpio_reset_pin(INBUILT_LED_CONNECTED);
+	gpio_set_direction(INBUILT_LED_CONNECTED, GPIO_MODE_OUTPUT);
+}
 
+void turnOnLED_connected() {
+	gpio_set_level(INBUILT_LED_CONNECTED, 1);
+}
 
+void complement_connected_led() {
+	static unsigned char state = 0;
+	gpio_set_level(INBUILT_LED_CONNECTED, state);
+	state ^= 1;
+}
+
+void blink_led_task(void *pvParameters) {
+	while (1) {
+		complement_connected_led();
+		vTaskDelay(500 / portTICK_PERIOD_MS);
+	}
+}
