@@ -6,7 +6,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/mcpwm_types.h"
-#include "unity.h"
 #include "soc/soc_caps.h"
 #include "driver/mcpwm_timer.h"
 #include "driver/mcpwm_oper.h"

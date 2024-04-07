@@ -85,9 +85,14 @@ void udp_server_task(void *pvParameters) {
 		socklen_t addr_len = sizeof(source_addr);
 		int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0,
 				(struct sockaddr*) &source_addr, &addr_len);
-		source_addr_global = source_addr; // Copy the source address
-		addr_len_global = addr_len; // Copy the address length
-		sock_global = sock; // Store the socket descriptor
+		// Copy the source address to a global variable for later use
+		source_addr_global = source_addr;
+
+		// Copy the address length to a global variable for later use
+		addr_len_global = addr_len;
+
+		// Store the socket descriptor in a global variable for later use
+		sock_global = sock;
 
 		// Check for errors or no data read
 		if (len < 0) {
@@ -152,7 +157,7 @@ void sendCommandApp(SendCommandType_app commandType, void* commandValue)
 {
 	if(allowed_to_send == true){
 	char* commandTypeStr = stateSendToAppStrings[commandType];
-	char* commandValueStr = to_string(commandValue);
+	char* commandValueStr = (char*)to_string(commandValue);
 
 	int lengthNeeded = strlen(commandTypeStr) + strlen(commandValueStr) + 2; // 2 = 1 space + 1 null termination
 	char* commandToSend = malloc(lengthNeeded);
