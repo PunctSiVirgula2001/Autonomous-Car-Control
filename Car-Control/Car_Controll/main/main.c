@@ -24,6 +24,7 @@
 #include "MotorAndServoControl.h"
 #include "PID.h"
 #include "Network.h"
+#include "I2C_devices.h"
 
 extern char rx_buffer[128];
 //Autonomous + diagnostic modes
@@ -58,9 +59,10 @@ void app_main(void) {
 	xQueueAddToSet(speed_commandQueue, QueueSet);
 	xQueueAddToSet(pulse_encoderQueue, QueueSet);
 	xQueueAddToSet(PID_commandQueue, QueueSet);
-	start_network_readBuffer_tasks();
-	carControl_init();
-	configureEncoderInterrupts();
-	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL, 1U);
+	//start_network_readBuffer_tasks();
+	//carControl_init();
+	start_I2C_devices_task();
+	//configureEncoderInterrupts();
+	//xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL, 1U);
 
 }
