@@ -14,7 +14,7 @@ void I2C_master_init()
     esp32_i2c_config.sda_io_num = I2C_SDA;
     esp32_i2c_config.scl_io_num = I2C_SCL;
     esp32_i2c_config.clk_source = I2C_CLK_SRC_DEFAULT;
-	esp32_i2c_config.flags.enable_internal_pullup = ALLOW_INTERNAL_PULLUPS; // might need external pullups as well
+	esp32_i2c_config.flags.enable_internal_pullup = INTERNAL_PULLUPS; // might need external pullups as well
 	esp32_i2c_config.trans_queue_depth = 4; 								// queue size when the communication is asynchronous
 	esp32_i2c_config.glitch_ignore_cnt = GLITCH_IGNORE_CNT; 				// number of clock cycles to ignore for glitch filtering
 	esp32_i2c_config.intr_priority = 0;
@@ -22,7 +22,7 @@ void I2C_master_init()
 }
 
 // switch the multiplexer channel
-void I2C_select_multiplexer_channel(uint8_t num_channel)
+void I2C_select_multiplexer_channel(I2C_devices_mux num_channel)
 {
 	// Prepare the data to send: one byte where each bit represents a channel
 	uint8_t data = 1 << num_channel; // Shift 1 to the correct bit position for the channel
@@ -34,7 +34,7 @@ void I2C_select_multiplexer_channel(uint8_t num_channel)
 	// Check the result
 	if (ret != ESP_OK)
 	{
-	   // Handle error here
+		ESP_LOGI("I2C ERR", "ERROR Channel %d not selected", num_channel);
 	}
 }
 
@@ -52,26 +52,32 @@ void I2C_add_device(uint8_t device_address)
       case I2C_temp_sens_addr:
     	  if(mux_added){
     	  I2C_select_multiplexer_channel(I2C_temp_sens_mux);
+    	  vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_temp_sens_dev_handle]));
     	  }
     	  break;
       case I2C_distance_sens_addr:
     	  if(mux_added){
     	  I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
+    	  vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens1_dev_handle])); // distance sensors have the same addr
+    	  vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
     	  I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+    	  vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens2_dev_handle])); // distance sensors have the same addr
     	  }
     	  break;
       case I2C_pixy2_camera_addr:
       	  if(mux_added){
     	  I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+    	  vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_pixy2_dev_handle]));
     	  }
     	  break;
       case I2C_oled_display_096_addr:
     	  if(mux_added){
           I2C_select_multiplexer_channel(I2C_oled_display_096_mux);
+          vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_oled_display_096_dev_handle]));
     	  }
     	  break;
@@ -86,6 +92,11 @@ void I2C_add_device(uint8_t device_address)
 
 void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data)
 {
+	static I2C_dev_handles old_handle=99;
+	static I2C_dev_handles current_handle;
+
+	current_handle=device_handle;
+	if(old_handle!=current_handle){
 	//Before transmitting choose the correct channel for the mux
 	switch (device_handle) {
 		case I2C_multiplexer_dev_handle:
@@ -93,48 +104,66 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data)
 		break;
 		case I2C_pixy2_dev_handle:
 			 I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+			 old_handle=I2C_pixy2_dev_handle;
 		break;
 		case I2C_distance_sens1_dev_handle:
 			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
+			old_handle=I2C_distance_sens1_dev_handle;
 		break;
 		case I2C_distance_sens2_dev_handle:
 			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+			old_handle=I2C_distance_sens2_dev_handle;
 		break;
 		case I2C_temp_sens_dev_handle:
-			I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
+			old_handle=I2C_temp_sens_dev_handle;
 		break;
 		case I2C_oled_display_096_dev_handle:
-			I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+			I2C_select_multiplexer_channel(I2C_oled_display_096_mux);
+			old_handle=I2C_oled_display_096_dev_handle;
 		break;
 		default:
+	 }
 	}
+	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
 	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, 2, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 }
 
 void I2C_receive(I2C_dev_handles device_handle, uint8_t* data)
 {
+	static I2C_dev_handles old_handle=99;
+	static I2C_dev_handles current_handle;
+
+	current_handle=device_handle;
+	if(old_handle!=current_handle)
 	switch (device_handle) {
 		case I2C_multiplexer_dev_handle:
 			// do nothing
 		break;
 		case I2C_pixy2_dev_handle:
 			 I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+			 old_handle=I2C_pixy2_dev_handle;
 		break;
 		case I2C_distance_sens1_dev_handle:
 			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
+			old_handle=I2C_distance_sens1_dev_handle;
 		break;
 		case I2C_distance_sens2_dev_handle:
 			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+			old_handle=I2C_distance_sens2_dev_handle;
 		break;
 		case I2C_temp_sens_dev_handle:
-			I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
+			old_handle=I2C_temp_sens_dev_handle;
 		break;
 		case I2C_oled_display_096_dev_handle:
-			I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+			I2C_select_multiplexer_channel(I2C_oled_display_096_mux);
+			old_handle=I2C_oled_display_096_dev_handle;
 		break;
 		default:
 	}
-	ESP_ERROR_CHECK(i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (uint8_t*)data, 10, 1000)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
+	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
+	ESP_ERROR_CHECK(i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (uint8_t*)data, 10, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 }
 
 void I2C_probe(I2C_devices device_addr)
@@ -145,26 +174,19 @@ void I2C_probe(I2C_devices device_addr)
 // Task for I2C devices
 void I2C_devices_task(void *pvParameters)
 {
-	//config rst pin for the mux
-	config_rst_pin_i2c_mux();
-	//rst pin on
-	rst_pin_i2c_mux_on();
-	//init master
-    I2C_master_init();
-    // add the multiplexer to the I2C bus
-    I2C_add_device(I2C_mux_addr);
-	//uint8_t data[10];
-	uint8_t channel = 0;
+	/* Initial config I2C */
+	config_rst_pin_i2c_mux();	 //config rst pin for the mux
+	rst_pin_i2c_mux_on();		 //rst pin on
+    I2C_master_init();			 //init master
+    I2C_add_device(I2C_mux_addr);//add the multiplexer to the I2C bus
+    I2C_add_device(I2C_temp_sens_addr);
+    uint32_t temp;
 	while(1){
-	I2C_select_multiplexer_channel(channel);
-	channel++;
-	if(channel>4)
-	channel = 0;
-    // delay
-	vTaskDelay(10);
+	I2C_read_temperature(&temp);
+	ESP_LOGI("I2C", "[ %"PRIu32" ]", temp);
+	ESP_LOGI("I2C", "\n");
+	vTaskDelay(pdMS_TO_TICKS(500));
 	}
-
-
     // add the other devices - uncomment when added
     //I2C_add_device(I2C_temp_sens_addr);
     //I2C_add_device(I2C_distance_sens_addr);
@@ -189,4 +211,48 @@ void rst_pin_i2c_mux_off()
 void start_I2C_devices_task()
 {
 	xTaskCreatePinnedToCore(I2C_devices_task, "I2C_devices_task", 4096, NULL, 7, NULL, 1);
+}
+
+/******** BMP/BME280 sensor **********/
+//I2C functions for accessing the BMP/BME280 sensor : temperature, pressure, humidity
+
+// I2C temperature sensor BMP functions
+void I2C_trigger_measurement(){
+    // Define the control register address for BMP280/BME280
+    uint8_t ctrl_meas_reg = 0xF4;
+    // Write a value to trigger a measurement: use 0x2X for force mode, 0x3X for normal mode
+    // The 'X' should be replaced with the combination of temperature and pressure oversampling
+    // Example: 0x27 for normal mode, oversampling x1 for both temperature and pressure
+    uint8_t ctrl_meas_value = 0x27;
+    // Transmit the address and the value
+    I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){ctrl_meas_reg, ctrl_meas_value});
+}
+
+void I2C_read_temperature(uint32_t *raw_temp)
+{
+	// Read temperature registers
+	uint8_t temp_msb;
+	uint8_t temp_lsb;
+	uint8_t temp_xlsb;
+	I2C_trigger_measurement();
+	vTaskDelay(pdMS_TO_TICKS(10));
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFA});
+	I2C_receive(I2C_temp_sens_dev_handle, &temp_msb);
+
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFB});
+	I2C_receive(I2C_temp_sens_dev_handle, &temp_lsb);
+
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFC});
+	I2C_receive(I2C_temp_sens_dev_handle, &temp_xlsb);
+	// Combine bytes to get the raw temperature value
+	*raw_temp = ((uint32_t)temp_msb << 12) | ((uint32_t)temp_lsb << 4) | ((uint32_t)temp_xlsb >> 4);
+}
+// I2c pressure sensor BME functions
+void I2C_set_pressure_register()
+{
+   I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xF7}); // Pressure register address
+}
+// I2c humidity sensor BME/BMP functions
+void I2C_set_humidity_register(){
+   I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFD}); // Humidity register address
 }
