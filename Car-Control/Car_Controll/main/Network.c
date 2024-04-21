@@ -1,5 +1,5 @@
 #include "Network.h"
-
+bool allowed_to_send = false;
 char rx_buffer[128];
 static const char *TAG = "wifi_softAP";
 struct sockaddr_in6 source_addr_global; // For IPv4 or IPv6
@@ -49,7 +49,7 @@ void wifi_init_softap() {
 			WIFI_PASS);
 }
 extern QueueHandle_t carControlQueue;
-bool allowed_to_send = false;
+
 void udp_server_task(void *pvParameters) {
 	config_Connected_led();
 	// Create blinking led task

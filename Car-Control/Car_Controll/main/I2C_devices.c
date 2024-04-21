@@ -90,7 +90,7 @@ void I2C_add_device(uint8_t device_address)
 }
 
 
-void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data)
+void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t write_size)
 {
 	static I2C_dev_handles old_handle=99;
 	static I2C_dev_handles current_handle;
@@ -126,10 +126,10 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data)
 	 }
 	}
 	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
-	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, 2, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
+	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 }
 
-void I2C_receive(I2C_dev_handles device_handle, uint8_t* data)
+void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 {
 	static I2C_dev_handles old_handle=99;
 	static I2C_dev_handles current_handle;
@@ -163,7 +163,7 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data)
 		default:
 	}
 	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
-	ESP_ERROR_CHECK(i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (uint8_t*)data, 10, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
+	ESP_ERROR_CHECK(i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (uint8_t*)data, read_size, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 }
 
 void I2C_probe(I2C_devices device_addr)
@@ -180,13 +180,15 @@ void I2C_devices_task(void *pvParameters)
     I2C_master_init();			 //init master
     I2C_add_device(I2C_mux_addr);//add the multiplexer to the I2C bus
     I2C_add_device(I2C_temp_sens_addr);
-    uint32_t temp;
+    double temp;
+    I2C_trigger_measurement();
 	while(1){
 	I2C_read_temperature(&temp);
-	ESP_LOGI("I2C", "[ %"PRIu32" ]", temp);
+	ESP_LOGI("I2C", "[ %lf ]", temp);
 	ESP_LOGI("I2C", "\n");
-	vTaskDelay(pdMS_TO_TICKS(500));
+	vTaskDelay(pdMS_TO_TICKS(2000));
 	}
+
     // add the other devices - uncomment when added
     //I2C_add_device(I2C_temp_sens_addr);
     //I2C_add_device(I2C_distance_sens_addr);
@@ -215,9 +217,19 @@ void start_I2C_devices_task()
 
 /******** BMP/BME280 sensor **********/
 //I2C functions for accessing the BMP/BME280 sensor : temperature, pressure, humidity
-
+struct bme280_calib_data temp_calibration;
 // I2C temperature sensor BMP functions
 void I2C_trigger_measurement(){
+	uint8_t calib[24];
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0x88},1);
+	vTaskDelay(pdMS_TO_TICKS(10));
+	I2C_receive(I2C_temp_sens_dev_handle, calib,24);
+	vTaskDelay(pdMS_TO_TICKS(10));
+	// Convert the bytes into calibration data
+	temp_calibration.dig_T1 = (uint16_t)(calib[1] << 8) | calib[0];
+	temp_calibration.dig_T2 = (int16_t)(calib[3] << 8) | calib[2];
+	temp_calibration.dig_T3 = (int16_t)(calib[5] << 8) | calib[4];
+
     // Define the control register address for BMP280/BME280
     uint8_t ctrl_meas_reg = 0xF4;
     // Write a value to trigger a measurement: use 0x2X for force mode, 0x3X for normal mode
@@ -225,34 +237,38 @@ void I2C_trigger_measurement(){
     // Example: 0x27 for normal mode, oversampling x1 for both temperature and pressure
     uint8_t ctrl_meas_value = 0x27;
     // Transmit the address and the value
-    I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){ctrl_meas_reg, ctrl_meas_value});
+    I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){ctrl_meas_reg, ctrl_meas_value},2);
 }
 
-void I2C_read_temperature(uint32_t *raw_temp)
+void I2C_read_temperature(double *fine_temp)
 {
 	// Read temperature registers
 	uint8_t temp_msb;
 	uint8_t temp_lsb;
 	uint8_t temp_xlsb;
-	I2C_trigger_measurement();
-	vTaskDelay(pdMS_TO_TICKS(10));
-	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFA});
-	I2C_receive(I2C_temp_sens_dev_handle, &temp_msb);
+	uint32_t raw_temp;
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFA},1);
+	I2C_receive(I2C_temp_sens_dev_handle, &temp_msb,8);
 
-	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFB});
-	I2C_receive(I2C_temp_sens_dev_handle, &temp_lsb);
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFB},1);
+	I2C_receive(I2C_temp_sens_dev_handle, &temp_lsb,8);
 
-	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFC});
-	I2C_receive(I2C_temp_sens_dev_handle, &temp_xlsb);
+	I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFC},1);
+	I2C_receive(I2C_temp_sens_dev_handle, &temp_xlsb,4);
 	// Combine bytes to get the raw temperature value
-	*raw_temp = ((uint32_t)temp_msb << 12) | ((uint32_t)temp_lsb << 4) | ((uint32_t)temp_xlsb >> 4);
+	raw_temp = ((uint32_t)temp_msb << 12) | ((uint32_t)temp_lsb << 4) | (temp_xlsb >> 4);
+
+	double var1, var2;
+	var1  = (((double)raw_temp)/16384.0-((double)temp_calibration.dig_T1)/1024.0) * ((double)temp_calibration.dig_T2);
+	var2  = ((((double)raw_temp)/131072.0-((double)temp_calibration.dig_T1)/8192.0) *(((double)raw_temp)/131072.0-((double) temp_calibration.dig_T1)/8192.0)) * ((double)temp_calibration.dig_T3);
+	*fine_temp  = (var1 + var2) / 5120.0;
 }
 // I2c pressure sensor BME functions
 void I2C_set_pressure_register()
 {
-   I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xF7}); // Pressure register address
+   I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xF7},1); // Pressure register address
 }
 // I2c humidity sensor BME/BMP functions
 void I2C_set_humidity_register(){
-   I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFD}); // Humidity register address
+   I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFD},1); // Humidity register address
 }

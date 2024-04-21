@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                             else
                                 carModel.setIntegralValue(0);
                         }
+                        
                     });
                 });
             });

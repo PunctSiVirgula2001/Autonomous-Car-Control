@@ -43,14 +43,16 @@ typedef enum I2C_dev_handles
 }I2C_dev_handles;
 
 
+
+
 // Init I2C for esp32 as master
 void I2C_master_init();
 
 void I2C_select_multiplexer_channel(I2C_devices_mux num_channel);
 
-void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data);
+void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t write_size);
 
-void I2C_receive(I2C_dev_handles device_handle, uint8_t* data);
+void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size);
 
 void I2C_probe(I2C_devices device_addr);
 
@@ -65,8 +67,14 @@ void rst_pin_i2c_mux_on();
 void rst_pin_i2c_mux_off();
 
 /******** BMP/BME280 sensor **********/
+struct bme280_calib_data {
+    uint16_t dig_T1;
+    int16_t dig_T2;
+    int16_t dig_T3;
+    // Add humidity calibration data here if needed
+};
 // I2C temperature sensor BMP functions
-void I2C_read_temperature(uint32_t *raw_temp);
+void I2C_read_temperature(double *fine_temp);
 void I2C_trigger_measurement();
 // I2C pressure sensor BME functions
 void I2C_set_pressure_register();
