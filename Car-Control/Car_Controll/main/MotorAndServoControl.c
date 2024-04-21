@@ -189,11 +189,11 @@ CarCommand parseCommand(const char *commandStr)
 void carControl_Backward_init()
 {
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(50));
-	changeMotorSpeed(-15);
-	vTaskDelay(pdMS_TO_TICKS(50));
+	vTaskDelay(pdMS_TO_TICKS(20));
+	changeMotorSpeed(-80);
+	vTaskDelay(pdMS_TO_TICKS(20));
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(50));
+	vTaskDelay(pdMS_TO_TICKS(20));
 }
 
 QueueHandle_t carControlQueue = NULL;
@@ -259,7 +259,7 @@ void carControl_Task(void *pvParameters) {
 				}
 			}
 		} else
-			vTaskDelay(pdMS_TO_TICKS(500));
+			vTaskDelay(pdMS_TO_TICKS(250));
 	}
 }
 
@@ -271,7 +271,7 @@ void steer_task(void *pvParameters) {
 				changeSTEER(steer);
 			}
 		} else
-			vTaskDelay(pdMS_TO_TICKS(500));
+			vTaskDelay(pdMS_TO_TICKS(250));
 	}
 }
 

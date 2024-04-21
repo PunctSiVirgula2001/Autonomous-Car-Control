@@ -93,6 +93,7 @@ TickType_t xNewWakeTime = 0U;
 TickType_t pulse_time_ms = 0U;
 CarCommand onlyPIDValues;
 TickType_t startInitialSendingTime = 0U;
+bool car_stays_stopped = false;
 void PIDTask(void *pvParameters) {
 	/*Init PID structure*/
 	PID_t myPID;
@@ -107,7 +108,7 @@ void PIDTask(void *pvParameters) {
 	//ESP_LOGI("PulseCounter", "Pulse Count");
 	while (1) {
 		//ESP_LOGI("PulseCounter", "Pulse Count");
-		xActivatedMember = xQueueSelectFromSet(QueueSet, pdMS_TO_TICKS(500));
+		xActivatedMember = xQueueSelectFromSet(QueueSet, pdMS_TO_TICKS(100));
 		if (xActivatedMember == pulse_encoderQueue) {
 			// Process the pulse count here (e.g., log it)
 			xQueueReceive(xActivatedMember, &pulse_direction, 0);
@@ -118,20 +119,24 @@ void PIDTask(void *pvParameters) {
 				//set_backward = true;
 				newTime_backward = xTaskGetTickCount();
 			}
+			else car_stays_stopped = true;
+
 			xNewWakeTime = xTaskGetTickCount();
 			pulse_time_ms = pdTICKS_TO_MS((xNewWakeTime - xLastWakePulse));
 			SMA_frequency = 1.0
 					/ (Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
 			ESP_LOGI("PID", "Frequency: %f", pulse_direction * SMA_frequency);
 			xLastWakePulse = xNewWakeTime;
-			myPID.measured = pulse_direction * SMA_frequency;
+			myPID.measured = pulse_direction * SMA_frequency; // MEASURED
 		}
 		if (xActivatedMember == speed_commandQueue) {
 			xQueueReceive(xActivatedMember, &setpoint_speed, 0);
 			//changeMotorSpeed(setpoint_speed);
 			myPID.setpoint = setpoint_speed;
-			if (setpoint_speed == 0)
+			if (setpoint_speed == 0){
+				myPID.measured = 0;
 				newTime_stop = xTaskGetTickCount();
+			}
 			//ESP_LOGI("PID", "Speed Setpoint: %d", setpoint_speed);
 		}
 		if (xActivatedMember == PID_commandQueue) {
@@ -139,21 +144,42 @@ void PIDTask(void *pvParameters) {
 			PID_UpdateParams(&myPID, onlyPIDValues.KP, onlyPIDValues.KI,
 					onlyPIDValues.KD);
 		}
+
+		if(myPID.setpoint == 0 && pulse_direction > 0)
+		{
+			myPID.setpoint = -50;
+			carControl_Backward_init();
+		}
+		else if(myPID.setpoint == 0 && pulse_direction == 0)
+			myPID.setpoint = 0;
+
 		PID_Compute(&myPID);
+
+		// if the output is crossing the backward moving zone, init backward
 		if (myPID.Output < 0
 			&& xTaskGetTickCount() - newTime_backward > pdMS_TO_TICKS(1000)
 			&& setpoint_speed != 0) {
+			myPID.I_term = 0;
 			carControl_Backward_init();
 		}
-		if (setpoint_speed == 0
-			&& xTaskGetTickCount()-newTime_stop>pdMS_TO_TICKS(1500)) { // Put a final stop only after the command was received, so the PID would first break.
-			myPID.Output = 0;
+
+
+
+
+
+//		if (setpoint_speed == 0
+//			&& xTaskGetTickCount()-newTime_stop>pdMS_TO_TICKS(1500)) { // Put a final stop only after the command was received, so the PID would first break.
+//			myPID.Output = 0;
+//			myPID.measured = 0;
+//			pulse_direction = 0;
+//			myPID.I_term = 0;
+//		}
+		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(500))
+		{
 			myPID.measured = 0;
-			pulse_direction = 0;
 			myPID.I_term = 0;
 		}
-		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(500))
-			myPID.measured = 0;
+
 		changeMotorSpeed(myPID.Output);
 		//TickType_t curentTime = pdTICKS_TO_MS(xTaskGetTickCount());
 		sendCommandApp(MEASURED_VALUE, (int*)abs(myPID.measured));

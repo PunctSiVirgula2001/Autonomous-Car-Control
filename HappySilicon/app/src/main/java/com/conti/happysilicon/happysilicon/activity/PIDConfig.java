@@ -179,9 +179,9 @@ public class PIDConfig extends AppCompatActivity {
             Log.d("PID", PIDString + '\n');
             udpClient.sendMessage(PIDString);
             udpClient.tx++;
-            carModel.setResetGraph(true);
-            carModel.resetTimer();
-            carModel.startTimer();
+            Car.setResetGraph(true);
+            Car.resetTimer();
+            Car.startTimer();
         });
 
     }
@@ -219,6 +219,7 @@ public class PIDConfig extends AppCompatActivity {
             if(carModel.isResetGraph()==true)
             {
                 entries.clear();
+                chart.invalidate();
                 carModel.setResetGraph(false);
             }
 
