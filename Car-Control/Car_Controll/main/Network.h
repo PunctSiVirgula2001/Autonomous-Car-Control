@@ -35,13 +35,20 @@ typedef enum {
     OBSTACLE_DETECTED_VALUE,
 	ERROR_PID_VALUE,
 	ACTUAL_TIME_OF_SEND,
+	TEMPRATURE,
     STATE_MAX
 } SendCommandType_app;
 
+typedef enum data_type_to_send
+{
+	INT,
+	FLOAT,
+	DOUBLE
+}data_type_to_send;
 
 
 //utility function for strings
-char* to_string(int value);
+char* to_string(void *value, data_type_to_send type);
 
 //static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 void wifi_init_softap();
@@ -49,7 +56,7 @@ void udp_server_task(void *pvParameters);
 void start_network_readBuffer_tasks();
 void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr, socklen_t addr_len);
 void HLD_SendMessage(const char* message);
-void sendCommandApp(SendCommandType_app commandType, void* commandValue);
+void sendCommandApp(SendCommandType_app commandType, void* commandValue, data_type_to_send type);
 void config_Connected_led();
 void turnOnLED_connected();
 void complement_connected_led();

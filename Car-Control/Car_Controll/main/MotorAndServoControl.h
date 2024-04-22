@@ -41,6 +41,7 @@ void changeSTEER(int value);
 #define QUEUE_SIZE_SPEED 20
 #define QUEUE_SIZE_DATATYPE_SPEED (sizeof(int))
 void init_motor_pwm();
+void carControl_calibrate_motor();
 void update_motor_pwm(unsigned int pulse_width_us);
 void changeMotorSpeed(int value);
 

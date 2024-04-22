@@ -221,6 +221,8 @@ public class PIDConfig extends AppCompatActivity {
                 entries.clear();
                 chart.invalidate();
                 carModel.setResetGraph(false);
+                Car.resetTimer();
+                Car.startTimer();
             }
 
         }

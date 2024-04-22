@@ -189,11 +189,25 @@ CarCommand parseCommand(const char *commandStr)
 void carControl_Backward_init()
 {
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(20));
-	changeMotorSpeed(-80);
-	vTaskDelay(pdMS_TO_TICKS(20));
+	vTaskDelay(pdMS_TO_TICKS(25));
+	changeMotorSpeed(-15);
+	vTaskDelay(pdMS_TO_TICKS(25));
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(20));
+	vTaskDelay(pdMS_TO_TICKS(25));
+}
+
+
+bool calib_motor_done = false;
+void carControl_calibrate_motor()
+{
+	update_motor_pwm(2000);
+	vTaskDelay(pdMS_TO_TICKS(3000));
+	update_motor_pwm(1000);
+	vTaskDelay(pdMS_TO_TICKS(3000));
+	update_motor_pwm(1500);
+	vTaskDelay(pdMS_TO_TICKS(3000));
+	ESP_LOGI(" ", "ESC Calibration over.");
+	calib_motor_done = true;
 }
 
 QueueHandle_t carControlQueue = NULL;
@@ -276,10 +290,13 @@ void steer_task(void *pvParameters) {
 }
 
 void carControl_init() {
+
 	init_servo_pwm();
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init
 	update_motor_pwm(1500);
+	//carControl_calibrate_motor();
+	//while(calib_motor_done!=true) vTaskDelay(pdMS_TO_TICKS(50));
 	vTaskDelay(pdMS_TO_TICKS(500)); // wait for init to complete
 	xTaskCreatePinnedToCore(carControl_Task, "carControl_task", 4096, NULL, 6,
 	NULL, 0U);

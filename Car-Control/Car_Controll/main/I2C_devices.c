@@ -1,4 +1,5 @@
 #include "I2C_devices.h"
+#include "Network.h"
 
 //i2c config structure
 i2c_master_bus_config_t esp32_i2c_config;
@@ -186,6 +187,7 @@ void I2C_devices_task(void *pvParameters)
 	I2C_read_temperature(&temp);
 	ESP_LOGI("I2C", "[ %lf ]", temp);
 	ESP_LOGI("I2C", "\n");
+	sendCommandApp(TEMPRATURE, (double*)&temp, DOUBLE);
 	vTaskDelay(pdMS_TO_TICKS(2000));
 	}
 

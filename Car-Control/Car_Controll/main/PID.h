@@ -41,7 +41,11 @@ void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd);
 void PIDTask(void *pvParameters);
 
 /* Sliding mean average settings */
-#define WINDOW_SIZE_SMA 8 // Window size for sliding mean average
+#define WINDOW_SIZE_SMA 10 // Window size for sliding mean average
 
 /* Sliding Mean Average function */
 double Sliding_Mean_Average(int newValue);
+
+/*Clamp function for PID*/
+void clamp_float(float *value, float min, float max);
+void clamp_int(int *value, int min, int max);

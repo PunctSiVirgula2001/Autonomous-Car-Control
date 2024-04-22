@@ -40,7 +40,7 @@ extern QueueHandle_t PID_commandQueue;
 extern QueueSetHandle_t QueueSet;
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
-	steer_commandQueue = xQueueCreate(10,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
+	steer_commandQueue = xQueueCreate(20,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	carControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS, QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
 	pulse_encoderQueue = xQueueCreate(QUEUE_SIZE_ENCODER_PULSE, QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	speed_commandQueue = xQueueCreate(QUEUE_SIZE_SPEED, QUEUE_SIZE_DATATYPE_SPEED);

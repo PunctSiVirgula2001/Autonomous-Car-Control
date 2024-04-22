@@ -8,9 +8,11 @@ int sock_global; 						// Socket descriptor
 char* stateSendToAppStrings[STATE_MAX] = {
     "MEASURED_VALUE", 			// Corresponds to MEASURED_VALUE
     "I_TERM_VALUE",     		// Corresponds to I_TERM_VALUE
-    "OBSTACLE_DETECTED_VALUE"   // Corresponds to OBSTACLE_DETECTED_VALUE
-	"ERROR_PID_VALUE"			// Corresponds to ERROR_PID_VALUE
-	"ACTUAL_TIME_OF_SEND"
+    "OBSTACLE_DETECTED_VALUE",   // Corresponds to OBSTACLE_DETECTED_VALUE
+	"ERROR_PID_VALUE",			// Corresponds to ERROR_PID_VALUE
+	"ACTUAL_TIME_OF_SEND",
+	"TEMP_VALUE"
+
 };
 /*
  * 00 - measured speed
@@ -136,28 +138,37 @@ void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr,
 	}
 }
 
-char* to_string(int value)
-{
-	char *strValue = malloc(20 * sizeof(char));
-	if (strValue == NULL) {
-		// Handle memory allocation failure if needed
-		return NULL;
-	}
-	// Convert the integer to string
-	sprintf(strValue, "%d", value);
+char* to_string(void* value, data_type_to_send type) {
+    char* strValue = malloc(20 * sizeof(char));
+    if (strValue == NULL) {
+        // Handle memory allocation failure if needed
+        return NULL;
+    }
 
-	return strValue;
+    // Convert the value to a string based on its type
+    switch (type) {
+        case INT:
+            sprintf(strValue, "%d", *(int*)value);
+            break;
+        case DOUBLE:
+            sprintf(strValue, "%.2lf", *(double*)value);
+            break;
+        case FLOAT:
+            sprintf(strValue, "%.2f", *(float*)value);
+            break;
+    }
+    return strValue;
 }
 
 void HLD_SendMessage(const char *message) {
 	sendMessage(sock_global, message, &source_addr_global, addr_len_global);
 }
 
-void sendCommandApp(SendCommandType_app commandType, void* commandValue)
+void sendCommandApp(SendCommandType_app commandType, void* commandValue, data_type_to_send type)
 {
 	if(allowed_to_send == true){
 	char* commandTypeStr = stateSendToAppStrings[commandType];
-	char* commandValueStr = (char*)to_string(commandValue);
+	char* commandValueStr = (char*)to_string(commandValue, type);
 
 	int lengthNeeded = strlen(commandTypeStr) + strlen(commandValueStr) + 2; // 2 = 1 space + 1 null termination
 	char* commandToSend = malloc(lengthNeeded);

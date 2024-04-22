@@ -102,12 +102,19 @@ public class MainActivity extends AppCompatActivity {
                         if((message).startsWith("I_TERM_VALUE"))
                         {
                             String[] splitedValue = message.split(" ");
-                            int receivedValue = Integer.parseInt(splitedValue[1]);
+                            float receivedValue = Float.parseFloat(splitedValue[1]);
                             //carModel.setNewDataFromEsp(true);
                             if(receivedValue != 0)
                                 carModel.setIntegralValue(receivedValue);
                             else
                                 carModel.setIntegralValue(0);
+                        }
+
+                        if((message).startsWith("TEMP_VALUE"))
+                        {
+                            String[] splitedValue = message.split(" ");
+                            float receivedValue = Float.parseFloat(splitedValue[1]);
+                            carModel.setTemperature(receivedValue);
                         }
 
                     });

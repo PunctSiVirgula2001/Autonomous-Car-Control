@@ -1,5 +1,6 @@
 #include "PID.h"
 #include "Network.h"
+#include <math.h>
 
 //PID
 PID_t motorPID;
@@ -24,18 +25,11 @@ void PID_Compute(PID_t *pid) {
 	float error = pid->setpoint - pid->measured;
 	pid->P_term = pid->Kp * error;
 	pid->I_term += (pid->Ki * error);
+	clamp_float(&(pid->I_term), -30, 30);  // Ensure I_term is within bounds
 	pid->D_term = pid->Kd * (error - pid->previous_error);
 	pid->Output = pid->P_term + pid->I_term + pid->D_term;
+	clamp_int(&(pid->Output), -100, 100);  // Ensure Output is within bounds
 	pid->previous_error = error;
-	if (pid->I_term >= 100)
-		pid->I_term = 100;
-	else if (pid->I_term <= -100)
-		pid->I_term = -100;
-
-	if (pid->Output >= 100)
-		pid->Output = 100;
-	else if (pid->Output <= -100)
-		pid->Output = -100;
 
 	//TODO: Reset the I_term once in a while.
 	// ... and other necessary computations ...
@@ -123,11 +117,11 @@ void PIDTask(void *pvParameters) {
 
 			xNewWakeTime = xTaskGetTickCount();
 			pulse_time_ms = pdTICKS_TO_MS((xNewWakeTime - xLastWakePulse));
-			SMA_frequency = 1.0
-					/ (Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
-			ESP_LOGI("PID", "Frequency: %f", pulse_direction * SMA_frequency);
+			SMA_frequency = 1.0 / (Sliding_Mean_Average(pulse_time_ms) / 1000.0); // convert frequency HZ
 			xLastWakePulse = xNewWakeTime;
 			myPID.measured = pulse_direction * SMA_frequency; // MEASURED
+
+			//ESP_LOGI("PID", "Frequency: %f", pulse_direction * SMA_frequency);
 		}
 		if (xActivatedMember == speed_commandQueue) {
 			xQueueReceive(xActivatedMember, &setpoint_speed, 0);
@@ -148,13 +142,12 @@ void PIDTask(void *pvParameters) {
 		if(myPID.setpoint == 0 && pulse_direction > 0)
 		{
 			myPID.setpoint = -50;
-			carControl_Backward_init();
+			//carControl_Backward_init();
 		}
 		else if(myPID.setpoint == 0 && pulse_direction == 0)
 			myPID.setpoint = 0;
 
 		PID_Compute(&myPID);
-
 		// if the output is crossing the backward moving zone, init backward
 		if (myPID.Output < 0
 			&& xTaskGetTickCount() - newTime_backward > pdMS_TO_TICKS(1000)
@@ -163,10 +156,7 @@ void PIDTask(void *pvParameters) {
 			carControl_Backward_init();
 		}
 
-
-
-
-
+		changeMotorSpeed(myPID.Output);
 //		if (setpoint_speed == 0
 //			&& xTaskGetTickCount()-newTime_stop>pdMS_TO_TICKS(1500)) { // Put a final stop only after the command was received, so the PID would first break.
 //			myPID.Output = 0;
@@ -174,19 +164,38 @@ void PIDTask(void *pvParameters) {
 //			pulse_direction = 0;
 //			myPID.I_term = 0;
 //		}
-		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(500))
+		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(700))
 		{
 			myPID.measured = 0;
 			myPID.I_term = 0;
 		}
 
-		changeMotorSpeed(myPID.Output);
+
 		//TickType_t curentTime = pdTICKS_TO_MS(xTaskGetTickCount());
-		sendCommandApp(MEASURED_VALUE, (int*)abs(myPID.measured));
-		sendCommandApp(I_TERM_VALUE, (int*)abs((int)myPID.I_term));
+		int abs_measured = abs(myPID.measured);
+		float abs_I_term = fabs((double)myPID.I_term);
+		sendCommandApp(MEASURED_VALUE, (int*)&abs_measured, INT);
+		sendCommandApp(I_TERM_VALUE, (float*)&abs_I_term, FLOAT);
+
 		//ESP_LOGI("SP", "Output: %d , P_term: %f, I_term: %f, D_term: %f \n",
 		//		myPID.Output, myPID.P_term, myPID.I_term, myPID.D_term);
 		//ESP_LOGI("MS", "Current time: %f \n", (float)pdTICKS_TO_MS(xTaskGetTickCount()));
 	}
 }
 
+/*Clamp function for PID*/
+void clamp_float(float *value, float min, float max) {
+	if (*value > max) {
+		*value = max;
+	} else if (*value < min) {
+		*value = min;
+	}
+}
+
+void clamp_int(int *value, int min, int max) {
+	if (*value > max) {
+		*value = max;
+	} else if (*value < min) {
+		*value = min;
+	}
+}
