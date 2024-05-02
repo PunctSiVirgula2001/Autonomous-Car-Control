@@ -24,8 +24,8 @@
 #define LEDC_MOTOR_GPIO 			(4)
 #define LEDC_MOTOR_DUTY_RESOLUTION 	LEDC_TIMER_16_BIT
 #define MAX_MOTOR_FW_DUTY_US 		(1650)
-#define MIN_MOTOR_FW_DUTY_US 		(1550)
-#define MAX_MOTOR_BW_DUTY_US 		(1450)
+#define MIN_MOTOR_FW_DUTY_US 		(1555)
+#define MAX_MOTOR_BW_DUTY_US 		(1445)
 #define MIN_MOTOR_BW_DUTY_US 		(1250)
 
 /*Pwm settings that are shared between servo and dc motor */
@@ -38,20 +38,21 @@ void update_servo_pwm(int pulse_width_us);
 void changeSTEER(int value);
 
 /* Motor functions */
-#define QUEUE_SIZE_SPEED 20
+#define QUEUE_SIZE_SPEED 		   20
 #define QUEUE_SIZE_DATATYPE_SPEED (sizeof(int))
+
 void init_motor_pwm();
 void carControl_calibrate_motor();
 void update_motor_pwm(unsigned int pulse_width_us);
 void changeMotorSpeed(int value);
 
 /*Encoder*/
-#define QUEUE_SIZE_ENCODER_PULSE 	20
+#define QUEUE_SIZE_ENCODER_PULSE 		   20
 #define QUEUE_SIZE_DATATYPE_ENCODER_PULSE (sizeof(int))
-#define PCNT_HIGH_LIMIT_WATCHPOINT 	6 // at every 6 pulses forward the car has moved half a wheel and the callback is called
-#define PCNT_LOW_LIMIT_WATCHPOINT  -6 // at every 6 pulses backward the car has moved half a wheel and the callback is called
-#define encoderGPIO_A 			    35
-#define encoderGPIO_B 				14
+#define PCNT_HIGH_LIMIT_WATCHPOINT 		   6 // at every 6 pulses forward the car has moved half a wheel and the callback is called
+#define PCNT_LOW_LIMIT_WATCHPOINT  		  -6 // at every 6 pulses backward the car has moved half a wheel and the callback is called
+#define encoderGPIO_A 			    	   35
+#define encoderGPIO_B 					   14
 bool example_pcnt_on_reach(pcnt_unit_handle_t unit,const pcnt_watch_event_data_t *edata, void *user_ctx);
 void configureEncoderInterrupts();
 

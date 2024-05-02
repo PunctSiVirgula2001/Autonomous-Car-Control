@@ -68,7 +68,7 @@ void update_motor_pwm(unsigned int pulse_width_us) {
 	ledc_update_duty(LEDC_Motor_And_Servo_MODE, LEDC_MOTOR_CH1_CHANNEL);
 }
 
-// Change Motor Speed, similar to changeSTEER function
+/* Change Motor Speed, similar to changeSTEER function */
 void changeMotorSpeed(int value) {
 	int pulse_width_us;
 	//ESP_LOGI("", "value %d", value);
@@ -189,11 +189,11 @@ CarCommand parseCommand(const char *commandStr)
 void carControl_Backward_init()
 {
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(25));
-	changeMotorSpeed(-15);
-	vTaskDelay(pdMS_TO_TICKS(25));
+	vTaskDelay(pdMS_TO_TICKS(5));
+	changeMotorSpeed(-80);
+	vTaskDelay(pdMS_TO_TICKS(5));
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(25));
+	vTaskDelay(pdMS_TO_TICKS(5));
 }
 
 

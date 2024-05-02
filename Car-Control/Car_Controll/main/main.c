@@ -62,6 +62,5 @@ void app_main(void) {
 	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
 	start_I2C_devices_task();
 	configureEncoderInterrupts();
-	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL, 1U);
-
+	start_PID_task();
 }
