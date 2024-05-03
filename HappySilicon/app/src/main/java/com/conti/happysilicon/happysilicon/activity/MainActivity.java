@@ -78,26 +78,27 @@ public class MainActivity extends AppCompatActivity {
                                 carModel.setCarSpeed(0);
 
                             // Start the timer with the first sample
-                            if (firstSample) {
-                                carModel.startTimer();
-                                carModel.setTimeOfSamplingFromEsp(0);
+//                            if (firstSample) {
+//                                carModel.startTimer();
+//                                carModel.setTimeOfSamplingFromEsp(0);
+//                                carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
+//                                firstSample = false;
+//                            } else {
+
+                            if (carModel.isTimerRunning()) {
+                                // Use the timer to get the elapsed time in seconds since the first sample
+                                float elapsedSeconds = carModel.getElapsedTimeSecs();
+                                System.out.println("Elapsed time: " + elapsedSeconds);
+                                carModel.setTimeOfSamplingFromEsp(elapsedSeconds);
                                 carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
-                                firstSample = false;
-                            } else {
-                                if (carModel.isTimerRunning()) {
-                                    // Use the timer to get the elapsed time in seconds since the first sample
-                                    float elapsedSeconds = carModel.getElapsedTimeSecs();
-                                    System.out.println("Elapsed time: " + elapsedSeconds);
-                                    carModel.setTimeOfSamplingFromEsp(elapsedSeconds);
-                                    carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
-                                }
-                                if(carModel.getElapsedTimeSecs() > 60.0f){
-                                    carModel.resetTimer();
-                                    carModel.setResetGraph(true);
-                                    carModel.startTimer();
-                                }
+                            }
+                            if(carModel.getElapsedTimeSecs() > 60.0f){
+                                carModel.resetTimer();
+                                carModel.setResetGraph(true);
+                                carModel.startTimer();
                             }
 
+//                          }
                         }
                         if((message).startsWith("I_TERM_VALUE"))
                         {

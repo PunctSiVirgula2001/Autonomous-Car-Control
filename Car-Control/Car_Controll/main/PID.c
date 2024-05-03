@@ -163,8 +163,6 @@ void PIDTask(void *pvParameters) {
 		 * 						  -> Output value if it goes below 0, it shall not bring the car
 		 * 						  	 in a backward mode because it wasn't decided by the user.	*/
 
-
-
 		/* Each time a pulse has happened, the task will be notified
 		 * and PID will compute next OUTPUT value. */
 		PID_Compute(&motorPID);
@@ -187,9 +185,7 @@ void PIDTask(void *pvParameters) {
 			}
 		}
 
-		/* If the setpoint is crossing the backward moving zone, brake. */
-
-		//managePIDOutput(&motorPID);
+		/* If the Setpoint is crossing the backward moving zone, brake. */
 		PID_backward_if_detected(&motorPID);
 		changeMotorSpeed(motorPID.Output);
 
@@ -206,10 +202,6 @@ void PIDTask(void *pvParameters) {
 		float abs_I_term = fabs((double)motorPID.I_term);
 		sendCommandApp(MEASURED_VALUE, (int*)&abs_measured, INT);
 		sendCommandApp(I_TERM_VALUE, (float*)&abs_I_term, FLOAT);
-
-		//ESP_LOGI("SP", "Output: %d , P_term: %f, I_term: %f, D_term: %f \n",
-		//		myPID.Output, myPID.P_term, myPID.I_term, myPID.D_term);
-		//ESP_LOGI("MS", "Current time: %f \n", (float)pdTICKS_TO_MS(xTaskGetTickCount()));
 	}
 }
 
@@ -235,6 +227,7 @@ void PID_backward_if_detected(PID_t *motor) {
     static int backward_active = 0;
 
     if (motor->setpoint < 0 && motor->measured >= 0) {
+    	ESP_LOGI("PID", "Speed Setpoint: %d", motor->setpoint);
         if (!backward_active || motor->Output < 0) {
             carControl_Backward_init();
             motor->I_term = 0;  // Reset integral term

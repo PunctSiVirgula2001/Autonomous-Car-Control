@@ -56,6 +56,11 @@ public class PIDConfig extends AppCompatActivity {
     LineChart chart;
     LineDataSet dataSet;
     LineData lineData;
+    boolean chartReseted = true;
+    private ArrayList<Entry> buffer = new ArrayList<>();
+    private static final int BUFFER_SIZE = 2; // Update the chart after every 5 entries
+    boolean start_new_command_after_reset = false;
+
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,16 +105,19 @@ public class PIDConfig extends AppCompatActivity {
             carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
             udpClient.tx++;
+            start_new_command_after_reset = true;
         });
         sendTestFWD.setOnClickListener(view -> {  //TEST FORWARD BUTTON
             carModel.setCarCommand(Car.CarCommands.FORWARD);
             udpClient.sendMessage("01");
             udpClient.tx++;
+            start_new_command_after_reset = true;
         });
         sendTestBWD.setOnClickListener(view -> { //TEST BACKWARD BUTTON
             carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage("02");
             udpClient.tx++;
+            start_new_command_after_reset = true;
         });
 
         // Start the Runnable for updating UI
@@ -179,13 +187,15 @@ public class PIDConfig extends AppCompatActivity {
             Log.d("PID", PIDString + '\n');
             udpClient.sendMessage(PIDString);
             udpClient.tx++;
+            udpClient.sendMessage("00");
             Car.setResetGraph(true);
             Car.resetTimer();
             Car.startTimer();
+            start_new_command_after_reset = false;
         });
 
     }
-    private class MyRunnable implements Runnable 
+    private class MyRunnable implements Runnable
     {
         private final Handler handler;
         public MyRunnable(Handler handler) 
@@ -210,19 +220,50 @@ public class PIDConfig extends AppCompatActivity {
             integralValue.setText(String.valueOf(carModel.getIntegralValue()));
             measuredValue.setText(String.valueOf(carModel.getCarSpeed()));
             testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
-            if(carModel.isNewDataFromEsp()==true)
-            {
-                //Log.d("Data from ESP", "Time: " + carModel.getTimeOfSamplingFromEsp() + " Value: " + carModel.getValueOfSamplingFromEsp() + '\n');
-                add_data_to_graph(carModel.getTimeOfSamplingFromEsp(), carModel.getValueOfSamplingFromEsp());
-                carModel.setNewDataFromEsp(false);
+
+            if (Car.isNewDataFromEsp() && start_new_command_after_reset) {
+                float time = Car.getTimeOfSamplingFromEsp();
+                float data = Car.getValueOfSamplingFromEsp();
+                buffer.add(new Entry(time, data));
+                if (buffer.size() >= BUFFER_SIZE) {
+                    for (Entry entry : buffer) {
+                        add_data_to_graph(entry.getX(), entry.getY());
+                    }
+                    buffer.clear(); // Clear the buffer after updating the chart
+                }
+                Car.setNewDataFromEsp(false);
             }
-            if(carModel.isResetGraph()==true)
-            {
-                entries.clear();
+
+            if(Car.isResetGraph()) {
+                chartReseted = true;
                 chart.invalidate();
-                carModel.setResetGraph(false);
+                entries.clear();
+                if (dataSet != null) {
+                    dataSet.clear();
+                    dataSet = null;
+                }
+                if (lineData != null) {
+                    lineData.clearValues();
+                }
+                chart.clear();
+                chart.setData(null); // Ensure chart is fully cleared
+
+                // Create the chart for printing current value for speed.
+                chart = findViewById(R.id.lineChart);;
+                xAxis = chart.getXAxis();
+                leftAxis = chart.getAxisLeft();
+                rightAxis = chart.getAxisRight();
+                xAxis.setAxisMaximum(60f); // max = 60 seconds
+                xAxis.setAxisMinimum(0f);   // min = 0 seconds
+                leftAxis.setAxisMaximum(100f); // max = 100
+                leftAxis.setAxisMinimum(0f);   // min = 0
+                rightAxis.setEnabled(false);
+
+                Car.setResetGraph(false);
+
                 Car.resetTimer();
                 Car.startTimer();
+                Log.d("ChartDebug2", "Entries count after reset: " + entries.size());
             }
 
         }
@@ -239,7 +280,13 @@ public class PIDConfig extends AppCompatActivity {
         }
     }
 
-    public String getConcatenatedPIDValues() 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Car.setResetGraph(true);
+    }
+
+    public String getConcatenatedPIDValues()
     {
         SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String plainTextKP1 = sharedPreferences.getString("plainTextKP", "DefaultKP");
@@ -267,7 +314,6 @@ public class PIDConfig extends AppCompatActivity {
         
         // Set zoom to horizontal
         chart.zoom(1f, 1f, 0f, 0f);
-        
         chart.invalidate();
     }
 

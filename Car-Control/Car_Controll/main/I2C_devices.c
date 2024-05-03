@@ -136,6 +136,8 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 	static I2C_dev_handles current_handle;
 
 	current_handle=device_handle;
+	// If the channel is already selected, don't call the function for changing
+	// channel.
 	if(old_handle!=current_handle)
 	switch (device_handle) {
 		case I2C_multiplexer_dev_handle:
