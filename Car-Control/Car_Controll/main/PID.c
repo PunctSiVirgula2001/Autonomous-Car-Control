@@ -2,9 +2,10 @@
 #include "Network.h"
 #include <math.h>
 
-//PID
+/*Init motor's PID structure*/
 PID_t motorPID;
-float deltaTime = 0.02;  // 20 ms = 0.02 seconds
+/* TODO: Add steerPID for a greater efficiency in car's control when it enters autonomous mode. */
+PID_t steerPID;
 
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
@@ -81,7 +82,7 @@ double Sliding_Mean_Average(int newValue) {
 extern QueueHandle_t pulse_encoderQueue;
 extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t PID_commandQueue;
-extern QueueSetHandle_t QueueSet;
+extern QueueSetHandle_t QueueSetGeneralCommands;
 TickType_t xLastWakePulse = 0U;
 TickType_t xNewWakeTime = 0U;
 TickType_t pulse_time_ms = 0U;
@@ -89,10 +90,7 @@ CarCommand onlyPIDValues;
 TickType_t startInitialSendingTime = 0U;
 bool car_stays_stopped = false;
 void PIDTask(void *pvParameters) {
-	/*Init motor's PID structure*/
-	PID_t motorPID;
-	/* TODO: Add steerPID for a greater efficiency in car's control when it enters autonomous mode. */
-	PID_t steerPID;
+
 
 	PID_Init(&motorPID, 0, 0, 0);
 	int pulse_direction = 0;
@@ -113,8 +111,8 @@ void PIDTask(void *pvParameters) {
 	QueueSetMemberHandle_t xActivatedMember;
 
 	while (1) {
-		//ESP_LOGI("PulseCounter", "Pulse Count");
-		xActivatedMember = xQueueSelectFromSet(QueueSet, pdMS_TO_TICKS(100));
+
+		xActivatedMember = xQueueSelectFromSet(QueueSetGeneralCommands, pdMS_TO_TICKS(100));
 		if (xActivatedMember == pulse_encoderQueue)
 		{
 			xQueueReceive(xActivatedMember, &pulse_direction, 0);
@@ -167,7 +165,6 @@ void PIDTask(void *pvParameters) {
 		 * and PID will compute next OUTPUT value. */
 		PID_Compute(&motorPID);
 
-		/* If setpoint is set to 0 and the car is still moving, then BRAKE. */
 		if(motorPID.setpoint == 0 && pulse_direction == 0)
 		{
 			/* Used a value above 0 because if I did 0, it will init the backward mode. */
@@ -197,7 +194,7 @@ void PIDTask(void *pvParameters) {
 				motorPID.I_term = 0;
 		}
 
-
+		/* Send diagnostic data to phone app in order to monitor the speed and behaviour of Integral value. */
 		int abs_measured = abs(motorPID.measured);
 		float abs_I_term = fabs((double)motorPID.I_term);
 		sendCommandApp(MEASURED_VALUE, (int*)&abs_measured, INT);

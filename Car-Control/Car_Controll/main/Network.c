@@ -36,9 +36,13 @@ void wifi_init_softap() {
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 
-	wifi_config_t wifi_config = { .ap = { .ssid = WIFI_SSID, .ssid_len = strlen(
-	WIFI_SSID), .password = WIFI_PASS, .max_connection = MAX_STA_CONN,
-			.authmode = WIFI_AUTH_WPA_WPA2_PSK }, };
+	wifi_config_t wifi_config = {
+	  .ap = { .ssid = WIFI_SSID,
+	  .ssid_len = strlen(WIFI_SSID),
+	  .password = WIFI_PASS,
+	  .max_connection = MAX_STA_CONN,
+	  .authmode = WIFI_AUTH_WPA_WPA2_PSK },
+	};
 	if (strlen(WIFI_PASS) == 0) {
 		wifi_config.ap.authmode = WIFI_AUTH_OPEN;
 	}
@@ -50,7 +54,7 @@ void wifi_init_softap() {
 	ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s", WIFI_SSID,
 			WIFI_PASS);
 }
-extern QueueHandle_t carControlQueue;
+extern QueueHandle_t diagnosticModeControlQueue;
 
 void udp_server_task(void *pvParameters) {
 	config_Connected_led();
@@ -113,7 +117,7 @@ void udp_server_task(void *pvParameters) {
 				vTaskDelete(handlerBlinkLedTask);
 				turnOnLED_connected();
 			} else if (allowed_to_send == true) {
-				if (xQueueSend(carControlQueue, &message,
+				if (xQueueSend(diagnosticModeControlQueue, &message,
 						portMAX_DELAY) != pdPASS) {
 					ESP_LOGE(TAG,
 							"Failed to buffer the incoming data from app.");
@@ -166,20 +170,21 @@ void HLD_SendMessage(const char *message) {
 
 void sendCommandApp(SendCommandType_app commandType, void* commandValue, data_type_to_send type)
 {
-	if(allowed_to_send == true){
-	char* commandTypeStr = stateSendToAppStrings[commandType];
-	char* commandValueStr = (char*)to_string(commandValue, type);
+	if(allowed_to_send == true)
+	{
+		char* commandTypeStr = stateSendToAppStrings[commandType];
+		char* commandValueStr = (char*)to_string(commandValue, type);
 
-	int lengthNeeded = strlen(commandTypeStr) + strlen(commandValueStr) + 2; // 2 = 1 space + 1 null termination
-	char* commandToSend = malloc(lengthNeeded);
-	sprintf(commandToSend, "%s %s", commandTypeStr, commandValueStr);
-	HLD_SendMessage(commandToSend);
-	free(commandValueStr);
-	free(commandToSend);
+		int lengthNeeded = strlen(commandTypeStr) + strlen(commandValueStr) + 2; // 2 = 1 space + 1 null termination
+		char* commandToSend = malloc(lengthNeeded);
+		sprintf(commandToSend, "%s %s", commandTypeStr, commandValueStr);
+		HLD_SendMessage(commandToSend);
+		free(commandValueStr);
+		free(commandToSend);
 	}
 }
 
-void start_network_readBuffer_tasks() {
+void start_network_task() {
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
 		ESP_ERROR_CHECK(nvs_flash_erase());
@@ -209,6 +214,6 @@ void complement_connected_led() {
 void blink_led_task(void *pvParameters) {
 	while (1) {
 		complement_connected_led();
-		vTaskDelay(500 / portTICK_PERIOD_MS);
+		vTaskDelay(pdMS_TO_TICKS(500));
 	}
 }

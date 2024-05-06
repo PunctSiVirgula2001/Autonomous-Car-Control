@@ -53,7 +53,7 @@ char* to_string(void *value, data_type_to_send type);
 //static void wifi_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 void wifi_init_softap();
 void udp_server_task(void *pvParameters);
-void start_network_readBuffer_tasks();
+void start_network_task();
 void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr, socklen_t addr_len);
 void HLD_SendMessage(const char* message);
 void sendCommandApp(SendCommandType_app commandType, void* commandValue, data_type_to_send type);

@@ -187,10 +187,10 @@ void I2C_devices_task(void *pvParameters)
     I2C_trigger_measurement();
 	while(1){
 	I2C_read_temperature(&temp);
-	ESP_LOGI("I2C", "[ %lf ]", temp);
-	ESP_LOGI("I2C", "\n");
+	//ESP_LOGI("I2C", "[ %lf ]", temp);
+	//ESP_LOGI("I2C", "\n");
 	sendCommandApp(TEMPRATURE, (double*)&temp, DOUBLE);
-	vTaskDelay(pdMS_TO_TICKS(2000));
+	vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 
     // add the other devices - uncomment when added
@@ -276,3 +276,7 @@ void I2C_set_pressure_register()
 void I2C_set_humidity_register(){
    I2C_transmit(I2C_temp_sens_dev_handle, (unsigned char[]){0xFD},1); // Humidity register address
 }
+
+/******** VLX sensor **********/
+
+

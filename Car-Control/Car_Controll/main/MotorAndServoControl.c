@@ -3,7 +3,7 @@
 #include "Network.h"
 
 //Queue set which adds all data from all queues.
-QueueSetHandle_t QueueSet;
+QueueSetHandle_t QueueSetGeneralCommands;
 
 // Initialize PWM for SERVO
 void init_servo_pwm() {
@@ -210,31 +210,45 @@ void carControl_calibrate_motor()
 	calib_motor_done = true;
 }
 
-QueueHandle_t carControlQueue = NULL;
+QueueHandle_t diagnosticModeControlQueue = NULL;
+QueueHandle_t autonomousModeControlQueue = NULL;
 QueueHandle_t speed_commandQueue = NULL;
 QueueHandle_t steer_commandQueue = NULL;
 QueueHandle_t PID_commandQueue = NULL;
+QueueSetHandle_t QueueSetAutonomousOrDiagnostic = NULL;
+
+/* This variable allows the uart_task to fill Autonomous Queue for controlling the car. */
+bool AutonomousMode = false;
 void carControl_Task(void *pvParameters) {
 	CarCommand cmd = { StopReceived, 0, false, 0.0f, 0.0f, 0.0f };
 	int last_motor_speed = 0;
 	int speed_multiplier = 0;
 	int speed = 0;
 	char *command;
+	QueueSetMemberHandle_t xActivatedModeAorM_Member;
+
 	while (1) {
-		if (carControlQueue != NULL) {
-			if (xQueueReceive(carControlQueue, &command,
-			portMAX_DELAY) == pdPASS) {
+		if (diagnosticModeControlQueue != NULL && autonomousModeControlQueue != NULL) {
+			xActivatedModeAorM_Member = xQueueSelectFromSet(QueueSetAutonomousOrDiagnostic, portMAX_DELAY);
+
+			if(xActivatedModeAorM_Member == diagnosticModeControlQueue)
+			{
+				AutonomousMode = false;
+				xQueueReceive(xActivatedModeAorM_Member, &command, 0);
 				cmd = parseCommand(command);
+			}
+			else if(xActivatedModeAorM_Member == autonomousModeControlQueue)
+			{
+				xQueueReceive(xActivatedModeAorM_Member, &cmd, 0);
+			}
+
+
 				//ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
 				switch (cmd.command) {
 				case StopReceived:
-					//changeMotorSpeed(0); // to be replaced with notify task PID.
 					speed =0;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					speed_multiplier = 0;
-					// if the car is moving forward : logic for breaking.
-					// if the car is moving backward : logic for breaking.
-					// if the car is not moving but there are very small changes in speed(like pushing it a bit), don't apply any change
 					break;
 				case ForwardReceived:
 					//ESP_LOGI(" ", "ForwardReceived");
@@ -264,14 +278,14 @@ void carControl_Task(void *pvParameters) {
 					break;
 				case AutonomousReceived:
 					//ESP_LOGI(" ", "AutonomousReceived");
-					// TODO: Implement an Autotmous Mode task.
+					AutonomousMode = true;
 					break;
 				case PID_Changed:
 					xQueueSend(PID_commandQueue,&cmd,portMAX_DELAY);
 					HLD_SendMessage("OKPID!");
 					break;
 				}
-			}
+
 		} else
 			vTaskDelay(pdMS_TO_TICKS(250));
 	}
