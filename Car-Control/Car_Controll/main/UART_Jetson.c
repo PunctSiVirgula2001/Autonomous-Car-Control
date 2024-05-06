@@ -3,6 +3,7 @@
 
 extern bool AutonomousMode;
 QueueHandle_t uartJetsonQueue;
+extern QueueHandle_t autonomousModeControlQueue;
 
 void JetsonUartConfig()
 {
@@ -25,8 +26,9 @@ void JetsonUartConfig()
 
 void uart_Jetson_Task (void *params)
 {
+
 	uart_event_t uartJetsonEvent;
-	uint8_t data[128];
+	char data[128];
 	int length = 0;
 	while(1)
 	{
@@ -44,12 +46,18 @@ void uart_Jetson_Task (void *params)
 					ESP_ERROR_CHECK(uart_get_buffered_data_len(UART_PORT, (size_t*)&length));
 					uart_read_bytes(UART_PORT, data, length, portMAX_DELAY);
 					data[length]='\0';
-					ESP_LOGI("Data Jetson", "Data Received: %s", data);
-					//parse data
-
-					//filter incomming data: if the change is too small in a too short
-					//amount of time then don't make a change in steer.
-
+					char *data_sp = strtok(data, " ");
+					char *data_st = strtok(NULL, " ");
+					 if (data_sp == NULL || data_st == NULL) {
+					        ESP_LOGE("UART_ERROR", "Splitting failed or incomplete command received");
+					        break; // Exit the case or handle the error appropriately
+					    }
+					if (xQueueSend(autonomousModeControlQueue, &data_sp, portMAX_DELAY) != pdPASS) {
+						ESP_LOGE("Error uart", "Unable to send to queue");
+					}
+					if (xQueueSend(autonomousModeControlQueue, &data_st, portMAX_DELAY) != pdPASS) {
+						ESP_LOGE("Error uart", "Unable to send to queue");
+					}
 
 				break;
 
@@ -81,16 +89,16 @@ void start_UartJetson_task()
 	xTaskCreatePinnedToCore(uart_Jetson_Task, "uartJetson", 4096, NULL, 6, NULL,1U);
 }
 
-CarCommand parseJetsonData(const uint8_t* data)
+commandReceived_jetson parseJetsonData(const char *data)
 {
-	int currentSpeed = 0;
-	int currentSteer = 0;
-	static int lastSpeed = 0;
-	static int lastSteer = 0;
-	static TickType_t newTime = 0U;
-	static TickType_t oldTime = 0U;
-	CarCommand Jet;
+//	int currentSpeed = 0;
+//	int currentSteer = 0;
+//	static int lastSpeed = 0;
+//	static int lastSteer = 0;
+	//static TickType_t newTime = 0U;
+	//static TickType_t oldTime = 0U;
+	commandReceived_jetson Jet;
 	memset(&Jet, 0, sizeof(Jet));
-	sscanf(data, "st=%d sp=%d", &currentSpeed, &currentSteer);
-
+	sscanf(data, "st=%d sp=%d", &Jet.Speed, &Jet.Steer);
+	return Jet;
 }

@@ -28,13 +28,9 @@ typedef enum {
 }ReceivedState_jetson;
 
 typedef struct {
-    unsigned long steer;
-    unsigned long speed;
-} commandReceived_app;
-
-typedef struct {
     unsigned long state;
-    unsigned long Steer;
+    int Steer;
+    int Speed;
     unsigned long class_id;
     unsigned long class_confidence;
     unsigned long det_confidence;
@@ -46,6 +42,6 @@ typedef struct {
 void JetsonUartConfig();
 void uart_Jetson_Task (void *params);
 void start_UartJetson_task();
-
+commandReceived_jetson parseJetsonData(const char *data);
 
 #endif /* MAIN_UART_JETSON_H_ */

@@ -239,7 +239,18 @@ void carControl_Task(void *pvParameters) {
 			}
 			else if(xActivatedModeAorM_Member == autonomousModeControlQueue)
 			{
-				xQueueReceive(xActivatedModeAorM_Member, &cmd, 0);
+				xQueueReceive(xActivatedModeAorM_Member, &command, 0);
+
+				if(strncmp(command,"sp=",3)==0)
+				{
+					sscanf(command, "sp=%d", &cmd.command_value);
+					cmd.command = SpeedReceived;
+				}
+				else if(strncmp(command,"st=",3)==0)
+				{
+					sscanf(command, "st=%d", &cmd.command_value);
+					cmd.command = SteerReceived;
+				}
 			}
 
 
@@ -265,7 +276,11 @@ void carControl_Task(void *pvParameters) {
 					HLD_SendMessage("OKBWD!");
 					break;
 				case SpeedReceived:
-					speed = speed_multiplier * cmd.command_value;
+					if(AutonomousMode == false)
+						speed = speed_multiplier * cmd.command_value;
+					else
+						speed = cmd.command_value;
+
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					last_motor_speed = cmd.command_value;
 					//ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier);
