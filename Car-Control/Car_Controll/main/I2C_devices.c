@@ -8,6 +8,9 @@ i2c_master_bus_handle_t bus_handle_esp32_i2c_config;
 //i2c device handle for the configuration
 i2c_master_dev_handle_t device_handle_esp32_i2c_config[I2C_MAX_Num_of_dev_handles];
 
+bool I2C_sensors_initiated = false;
+
+
 // initialize I2C for esp32 as master
 void I2C_master_init()
 {
@@ -16,9 +19,9 @@ void I2C_master_init()
     esp32_i2c_config.scl_io_num = I2C_SCL;
     esp32_i2c_config.clk_source = I2C_CLK_SRC_DEFAULT;
 	esp32_i2c_config.flags.enable_internal_pullup = INTERNAL_PULLUPS; // might need external pullups as well
-	esp32_i2c_config.trans_queue_depth = 10; 								// queue size when the communication is asynchronous
+	esp32_i2c_config.trans_queue_depth = 0; 								// queue size when the communication is asynchronous
 	esp32_i2c_config.glitch_ignore_cnt = GLITCH_IGNORE_CNT; 				// number of clock cycles to ignore for glitch filtering
-	esp32_i2c_config.intr_priority = 1;
+	esp32_i2c_config.intr_priority = 0;
     ESP_ERROR_CHECK(i2c_new_master_bus(&esp32_i2c_config, &bus_handle_esp32_i2c_config));
 }
 
@@ -31,8 +34,8 @@ void I2C_select_multiplexer_channel(I2C_devices_mux num_channel)
 	// Perform the I2C write to change the channel
 	esp_err_t ret = i2c_master_transmit(device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle], &data, 1, pdMS_TO_TICKS(100));
 	// Check the result
-	if(ret==ESP_OK)
-	ESP_LOGI("I2C", "Channel %d selected", num_channel);
+	//if(ret==ESP_OK)
+	//ESP_LOGI("I2C", "Channel %d selected", num_channel);
 	// Check the result
 	if (ret != ESP_OK)
 	{
@@ -64,9 +67,9 @@ void I2C_add_device(uint8_t device_address)
     	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens1_dev_handle])); // distance sensors have the same addr
     	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-    	  I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens2_dev_handle])); // distance sensors have the same addr
+//    	  I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+//    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
+//    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens2_dev_handle])); // distance sensors have the same addr
     	  }
     	  break;
       case I2C_pixy2_camera_addr:
@@ -87,6 +90,10 @@ void I2C_add_device(uint8_t device_address)
     	  mux_added = 1U;
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle]));
     	break;
+      case I2C_adxl345_sens_addr:
+    	  I2C_select_multiplexer_channel(I2C_adxl345_sens_mux);
+		  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_adxl345_sens_dev_handle]));
+		break;
       default:
     }
 }
@@ -106,7 +113,7 @@ static void i2c_manual_stop(int stop_ms) {
 }
 void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t write_size)
 {
-	static I2C_dev_handles old_handle;
+	static I2C_dev_handles old_handle=999;
 	static I2C_dev_handles current_handle;
 
 	current_handle=device_handle;
@@ -124,10 +131,10 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
 			old_handle=I2C_distance_sens1_dev_handle;
 		break;
-		case I2C_distance_sens2_dev_handle:
-			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-			old_handle=I2C_distance_sens2_dev_handle;
-		break;
+//		case I2C_distance_sens2_dev_handle:
+//			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+//			old_handle=I2C_distance_sens2_dev_handle;
+//		break;
 		case I2C_temp_sens_dev_handle:
 			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
 			old_handle=I2C_temp_sens_dev_handle;
@@ -136,12 +143,15 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 			I2C_select_multiplexer_channel(I2C_oled_display_096_mux);
 			old_handle=I2C_oled_display_096_dev_handle;
 		break;
+		case I2C_adxl345_sens_dev_handle:
+			I2C_select_multiplexer_channel(I2C_adxl345_sens_mux);
+			old_handle=I2C_adxl345_sens_dev_handle;
+		break;
 		default:
 	 }
 	}
-	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
-	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, pdMS_TO_TICKS(1000))); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
-    i2c_manual_stop(5);
+	vTaskDelay(pdMS_TO_TICKS(15)); // space for the switch of the channel to happen
+	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, pdMS_TO_TICKS(100))); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 }
 
 void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
@@ -166,10 +176,10 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
 			old_handle=I2C_distance_sens1_dev_handle;
 		break;
-		case I2C_distance_sens2_dev_handle:
-			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-			old_handle=I2C_distance_sens2_dev_handle;
-		break;
+//		case I2C_distance_sens2_dev_handle:
+//			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+//			old_handle=I2C_distance_sens2_dev_handle;
+	//	break;
 		case I2C_temp_sens_dev_handle:
 			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
 			old_handle=I2C_temp_sens_dev_handle;
@@ -178,27 +188,28 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 			I2C_select_multiplexer_channel(I2C_oled_display_096_mux);
 			old_handle=I2C_oled_display_096_dev_handle;
 		break;
+		case I2C_adxl345_sens_dev_handle:
+			I2C_select_multiplexer_channel(I2C_adxl345_sens_mux);
+			old_handle=I2C_adxl345_sens_dev_handle;
+		break;
 		default:
 	}
 
-	vTaskDelay(pdMS_TO_TICKS(20)); // space for the switch of the channel to happen
-	esp_err_t ret = i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, read_size, pdMS_TO_TICKS(1000));
+	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
+	esp_err_t ret = i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, read_size, pdMS_TO_TICKS(500));
 	if (ret != ESP_OK) {
 	    ESP_LOGE("I2C Receive", "Failed to receive data: %s", esp_err_to_name(ret));
 	}
-    i2c_manual_stop(5);
-
 }
 
 uint8_t I2C_readRegister8bit(I2C_dev_handles device_handle, uint8_t reg)
 {
     uint8_t data;
     I2C_transmit(device_handle, &reg, 1);
-    vTaskDelay(pdMS_TO_TICKS(30));
-    ESP_LOGI(" ","aAFGDSG");
+    vTaskDelay(pdMS_TO_TICKS(10));
     i2c_manual_stop(10);
     I2C_receive(device_handle, &data, 1);
-    vTaskDelay(pdMS_TO_TICKS(30));
+    vTaskDelay(pdMS_TO_TICKS(10));
     return data;
 }
 
@@ -207,11 +218,10 @@ uint16_t I2C_readRegister16bit(I2C_dev_handles device_handle, uint8_t reg)
     uint8_t data[2];
     uint16_t data_f;
     I2C_transmit(device_handle, &reg, 1);
-    vTaskDelay(pdMS_TO_TICKS(20));
-
+    vTaskDelay(pdMS_TO_TICKS(10));
     // Read two bytes at once
     I2C_receive(device_handle, data, 2);
-    vTaskDelay(pdMS_TO_TICKS(20));
+    vTaskDelay(pdMS_TO_TICKS(10));
 
     // Combine the two bytes into one 16-bit value
     data_f = (uint16_t)data[0] << 8 | data[1];
@@ -249,9 +259,9 @@ void I2C_writeRegister8bit(I2C_dev_handles device_handle, uint8_t reg, uint8_t v
 	data[1] = value; // Second byte is the data to write
 
 	// Transmit both bytes at once
-	I2C_transmit(device_handle, data, 1);
-	//i2c_manual_stop(pdMS_TO_TICKS(5));
-	//vTaskDelay(pdMS_TO_TICKS(50)); // Delay to allow the transaction to complete
+	I2C_transmit(device_handle, data, 2);
+	i2c_manual_stop(pdMS_TO_TICKS(5));
+	vTaskDelay(pdMS_TO_TICKS(5)); // Delay to allow the transaction to complete
 }
 
 void I2C_writeRegister16bit(I2C_dev_handles device_handle, uint8_t reg, uint16_t value)
@@ -262,8 +272,8 @@ void I2C_writeRegister16bit(I2C_dev_handles device_handle, uint8_t reg, uint16_t
     data[2] = (uint8_t)value;        // Low byte of the 16-bit value
 
     // Transmit the register address and value in one go
-    I2C_transmit(device_handle, data, 2);
-    vTaskDelay(pdMS_TO_TICKS(50)); // Delay to allow the transaction to complete
+    I2C_transmit(device_handle, data, 3);
+    //vTaskDelay(pdMS_TO_TICKS(10)); // Delay to allow the transaction to complete
 }
 
 void I2C_writeRegister32bit(I2C_dev_handles device_handle, uint8_t reg, uint32_t value)
@@ -276,7 +286,7 @@ void I2C_writeRegister32bit(I2C_dev_handles device_handle, uint8_t reg, uint32_t
     data[4] = (uint8_t)value;         // Lowest byte
 
     // Transmit the register address and value in one go
-    I2C_transmit(device_handle, data, 4);
+    I2C_transmit(device_handle, data, 5);
     vTaskDelay(pdMS_TO_TICKS(50)); // Delay to allow the transaction to complete
 }
 
@@ -293,6 +303,8 @@ void I2C_probe(I2C_devices device_addr)
 // Task for I2C devices
 void I2C_devices_task(void *pvParameters)
 {
+	I2C_sensors_initiated = false;
+
 	/* Initial config I2C */
 	config_rst_pin_i2c_mux();	 //config rst pin for the mux
 	rst_pin_i2c_mux_on();		 //rst pin on
@@ -300,22 +312,89 @@ void I2C_devices_task(void *pvParameters)
     I2C_add_device(I2C_mux_addr);//add the multiplexer to the I2C bus
     I2C_add_device(I2C_temp_sens_addr);
     I2C_add_device(I2C_distance_sens_addr);
-
+    I2C_add_device(I2C_adxl345_sens_addr);
+    I2C_adxl345_init(I2C_adxl345_sens_dev_handle);
     double temp;
-    //vTaskDelay(pdMS_TO_TICKS(500));
-    //I2C_trigger_measurement();
-    //I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-
-    VL53L0X_Init(I2C_distance_sens1_dev_handle);
+    I2C_trigger_measurement();
+    ESP_LOGI(" ", "VL53L0X_Init");
+    bool did_init = VL53L0X_Init(I2C_distance_sens1_dev_handle);
+    I2C_devices_mux current_mux = NO_MUX_SELECTED;
+    I2C_WRR_tokens numberOfTokens = 1;
+    bool WRR_depleted = true;
+    bool WRR_Tokens_given = false;
+    uint16_t readValSensor;
+    I2C_sensors_initiated = true;
 	while(1){
-	uint16_t val = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens1_dev_handle);
+	if(WRR_depleted)
+	{
+		if(++current_mux == I2C_oled_display_096_mux ) current_mux = 0;
+		WRR_Tokens_given = false;
+		WRR_depleted = false;
+	}
 
-	ESP_LOGI("Range: ","%"PRIu16, val);
-//	I2C_read_temperature(&temp);
-//	ESP_LOGI("I2C", "[ %lf ]", temp);
-//	ESP_LOGI("I2C", "\n");
+	switch(current_mux){
+		case I2C_distance_sens_1_mux:
+			if(!WRR_Tokens_given)
+			{
+				WRR_Tokens_given = true;
+				numberOfTokens = distance_sens1;
+				//vTaskDelay(pdMS_TO_TICKS(50));
+				//readValSensor = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens1_dev_handle);
+				//ESP_LOGI("I2C", "Range1: [ %"PRIu16" ]", readValSensor);
+			}
+			readValSensor = VL53L0X_readRangeContinuousMillimeters(I2C_distance_sens1_dev_handle);
+			ESP_LOGI("I2C", "Range1: [ %"PRIu16" ]", readValSensor);
+		break;
+//
+//		case I2C_distance_sens_2_mux:
+//			if(!WRR_Tokens_given)
+//			{
+//				WRR_Tokens_given = true;
+//				numberOfTokens = distance_sens2;
+//			}
+//			readValSensor = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens2_dev_handle);
+//			ESP_LOGI("I2C", "Range2: [ %"PRIu16" ]", readValSensor);
+		break;
+
+		case I2C_adxl345_sens_mux:
+			if(!WRR_Tokens_given)
+			{
+				WRR_Tokens_given = true;
+				numberOfTokens = adxl_acc;
+			}
+			double x, y, z;
+			I2C_read_adxl345_data(I2C_adxl345_sens_dev_handle,&x,&y,&z);
+			ESP_LOGI("","Rotation x=%lf y=%lf  z=%lf ",x,y,z);
+		break;
+
+		case I2C_pixy2_camera_mux:
+			if(!WRR_Tokens_given)
+			{
+				WRR_Tokens_given = true;
+				numberOfTokens = pixy2;
+				//vTaskDelay(pdMS_TO_TICKS(50));
+			}
+		break;
+
+		case I2C_temp_sens_mux:
+			if(!WRR_Tokens_given)
+			{
+				WRR_Tokens_given = true;
+				numberOfTokens = temp_sens;
+				//vTaskDelay(pdMS_TO_TICKS(50));
+			}
+			I2C_read_temperature(&temp);
+			ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
+			ESP_LOGI("I2C", "\n");
+		break;
+		default:
+		break;
+	}
+	if (--numberOfTokens == 0) {
+	        WRR_depleted = true;
+	    }
 //	//sendCommandApp(TEMPRATURE, (double*)&temp, DOUBLE);
-	vTaskDelay(pdMS_TO_TICKS(500));
+	vTaskDelay(pdMS_TO_TICKS(1));
 	}
 
     // add the other devices - uncomment when added
@@ -403,8 +482,6 @@ void I2C_set_humidity_register(){
 }
 
 /******** VLX sensor **********/
-uint8_t stop_variable;
-uint32_t measurement_timing_budget_us;
 bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle ,uint8_t * count, bool * type_is_aperture)
 {
   uint8_t tmp;
@@ -412,25 +489,23 @@ bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle ,uint8_t * count, bool * 
   I2C_writeRegister8bit(device_handle, 0x80, 0x01);
   I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
   I2C_writeRegister8bit(device_handle, 0x00, 0x00);
-
   I2C_writeRegister8bit(device_handle, 0xFF, 0x06);
-  I2C_writeRegister8bit(device_handle, 0x83, I2C_readRegister8bit(device_handle, 0x83) | 0x04);
+  I2C_writeRegister8bit(device_handle, 0x83, (uint8_t)(I2C_readRegister16bit(device_handle, 0x83)>>8) | 0x04);
   I2C_writeRegister8bit(device_handle, 0xFF, 0x07);
   I2C_writeRegister8bit(device_handle, 0x81, 0x01);
-
   I2C_writeRegister8bit(device_handle, 0x80, 0x01);
-
   I2C_writeRegister8bit(device_handle, 0x94, 0x6b);
   I2C_writeRegister8bit(device_handle, 0x83, 0x00);
-  //startTimeout();
-  while (I2C_readRegister8bit(device_handle, 0x83) == 0x00)
+  uint8_t reg;
+  startTimeout();
+  do
   {
-    //if (checkTimeoutExpired()) { return false; }
-	ESP_LOGI(" ","TIMEOUT");
-	vTaskDelay(pdMS_TO_TICKS(100));
-  }
+	reg = (uint8_t)(I2C_readRegister16bit(device_handle, 0x83)>>8);
+    if (checkTimeoutExpired()) { return false; }
+	vTaskDelay(pdMS_TO_TICKS(10));
+  } while(reg == 0x00);
   I2C_writeRegister8bit(device_handle, 0x83, 0x01);
-  tmp = I2C_readRegister8bit(device_handle, 0x92);
+  tmp = (uint8_t)(I2C_readRegister16bit(device_handle, 0x92)>>8);
 
   *count = tmp & 0x7f;
   *type_is_aperture = (tmp >> 7) & 0x01;
@@ -438,11 +513,7 @@ bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle ,uint8_t * count, bool * 
   I2C_writeRegister8bit(device_handle, 0x81, 0x00);
   I2C_writeRegister8bit(device_handle, 0xFF, 0x06);
   uint8_t data;
-  I2C_transmit(device_handle, (unsigned char[]){0x83},1);
-  vTaskDelay(pdMS_TO_TICKS(10));
-  I2C_receive(device_handle, &data,1);
-  vTaskDelay(pdMS_TO_TICKS(10));
-  I2C_writeRegister8bit(device_handle, 0x83, data  & ~0x04);
+  I2C_writeRegister8bit(device_handle, 0x83, (uint8_t)(I2C_readRegister16bit(device_handle, 0x83)>>8) & ~0x04);
   I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
   I2C_writeRegister8bit(device_handle, 0x00, 0x01);
 
@@ -451,8 +522,20 @@ bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle ,uint8_t * count, bool * 
 
   return true;
 }
+typedef enum err
+{
+	not_err=0,
+	err=1
+}type_error;
 
-
+static type_error VL53L0X_setSignalRateLimit (I2C_dev_handles device_handle, float limit_Mcps)
+{
+   if (limit_Mcps < 0 || limit_Mcps > 511.99)
+      return err;
+   // Q9.7 fixed point format (9 integer bits, 7 fractional bits)
+   I2C_writeRegister16bit(device_handle, FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT, limit_Mcps * (1 << 7));
+   return not_err;
+}
 
 bool VL53L0X_Init(I2C_dev_handles device_handle)
 {
@@ -461,45 +544,47 @@ bool VL53L0X_Init(I2C_dev_handles device_handle)
 	//	return false;
 	  //i2c_manual_stop(5);VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV) | 0x01)
 	  uint8_t ID = I2C_readRegister8bit(device_handle, IDENTIFICATION_MODEL_ID);
-	  ESP_LOGI(" ", "ID: %u\n", ID);
+	  uint16_t data;
+	  ESP_LOGI(" ", "ID: %u", ID);
 	  //i2c_manual_stop(pdMS_TO_TICKS(5));
 	 // "Set I2C standard mode"
 	  I2C_writeRegister8bit(device_handle,0x88, 0x00);
 	  I2C_writeRegister8bit(device_handle,0x80, 0x01);
 	  I2C_writeRegister8bit(device_handle,0xFF, 0x01);
 	  I2C_writeRegister8bit(device_handle,0x00, 0x00);
-	  uint8_t data;
-	  I2C_transmit(device_handle, (unsigned char[]){0x91},1);
-	  //vTaskDelay(pdMS_TO_TICKS(100));
-	  I2C_receive(device_handle, &data,1);
-	  //vTaskDelay(pdMS_TO_TICKS(100));
-	  ESP_LOGI(" ", "Data: %u\n", data);
+
 	  //s_i2c_hw_fsm_reset(bus_handle_esp32_i2c_config);
-	  //stop_variable = I2C_readRegister8bit(device_handle, 0x91);
-	  stop_variable = data;
-	  i2c_manual_stop(pdMS_TO_TICKS(1000));
-	  ESP_LOGI("Set I2C standard mode", "\n");
+	  //stop_variable = (uint8_t)(I2C_readRegister32bit(device_handle, 0x91)>>8);
+	  stop_variable = (uint8_t)(I2C_readRegister16bit(device_handle, 0x91)>>8);
+	  ESP_LOGI(" ", "stop_variable: %u", stop_variable);
 	  I2C_writeRegister8bit(device_handle,0x00, 0x01);
-	  ESP_LOGI("Set I2C standard mode", "\n");
 	  I2C_writeRegister8bit(device_handle,0xFF, 0x00);
-	  ESP_LOGI("Set I2C standard mode", "\n");
 	  I2C_writeRegister8bit(device_handle,0x80, 0x00);
 
 	  //vTaskDelay(pdMS_TO_TICKS(2000));
 	  // disable SIGNAL_RATE_MSRC (bit 1) and SIGNAL_RATE_PRE_RANGE (bit 4) limit checks
-	  uint8_t MSRC_CONFIG = (I2C_readRegister8bit(device_handle, MSRC_CONFIG_CONTROL));
+	  uint8_t MSRC_CONFIG = (uint8_t)(I2C_readRegister16bit(device_handle, MSRC_CONFIG_CONTROL)>>8);
 	  //vTaskDelay(pdMS_TO_TICKS(2000));
 	  I2C_writeRegister8bit(device_handle, MSRC_CONFIG_CONTROL, MSRC_CONFIG | 0x12) ;
-	  ESP_LOGI("Disable SIGNAL_RATE_MSRC (bit 1) and SIGNAL_RATE_PRE_RANGE (bit 4)", "\n");
+	  ESP_LOGI(" ","MSRCONFIG: %u", MSRC_CONFIG);
+
+
+	  data = VL53L0X_setSignalRateLimit (device_handle, 0.25);
+		 // ESP_LOGI(" ","VL53L0X_setSignalRateLimit false");
+	       //return false;
+
+	  I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xFF);
 
 	  uint8_t spad_count;
 	  bool spad_type_is_aperture;
-	  if (!VL53L0X_getSpadInfo(device_handle ,&spad_count, &spad_type_is_aperture)) { return false; }
+	  if (!VL53L0X_getSpadInfo(device_handle ,&spad_count, &spad_type_is_aperture)) {
+		  ESP_LOGI(" ","VL53L0X_getSpadInfo false");
+		  return false;
+	  }
 	  ESP_LOGI("getSpadInfo", "\n");
-	  vTaskDelay(pdMS_TO_TICKS(2000));
 	  uint8_t ref_spad_map[6];
 	  uint8_t spad_enables_ref_0 = GLOBAL_CONFIG_SPAD_ENABLES_REF_0;
-	  I2C_transmit(device_handle, &spad_enables_ref_0, sizeof(spad_enables_ref_0));
+	  I2C_transmit(device_handle, &spad_enables_ref_0, 1);
 	  vTaskDelay(pdMS_TO_TICKS(10));
 	  I2C_receive(device_handle, ref_spad_map, 6);
 	  vTaskDelay(pdMS_TO_TICKS(10));
@@ -526,9 +611,12 @@ bool VL53L0X_Init(I2C_dev_handles device_handle)
 	       spads_enabled++;
 	     }
 	   }
-	   I2C_transmit(device_handle, &spad_enables_ref_0, sizeof(spad_enables_ref_0));
+	   I2C_transmit(device_handle, &spad_enables_ref_0, 1);
 	   vTaskDelay(pdMS_TO_TICKS(10));
 	   I2C_transmit(device_handle, ref_spad_map, sizeof(ref_spad_map)); // 6
+	   ESP_LOGI(" ","ref_spad_map_5: %u", ref_spad_map[5]);
+	   ESP_LOGI(" ","ref_spad_map_4: %u", ref_spad_map[4]);
+
 	   vTaskDelay(pdMS_TO_TICKS(10));
 
 	   I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
@@ -626,26 +714,27 @@ bool VL53L0X_Init(I2C_dev_handles device_handle)
 	   I2C_writeRegister8bit(device_handle, 0x80, 0x00);
 
 	   I2C_writeRegister8bit(device_handle, SYSTEM_INTERRUPT_CONFIG_GPIO, 0x04);
-	   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget1 \n");
-	   I2C_writeRegister8bit(device_handle, GPIO_HV_MUX_ACTIVE_HIGH, I2C_readRegister8bit(device_handle, GPIO_HV_MUX_ACTIVE_HIGH) & ~0x10); // active low
-	   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget2 \n");
+	   I2C_writeRegister8bit(device_handle, GPIO_HV_MUX_ACTIVE_HIGH, (uint8_t)(I2C_readRegister16bit(device_handle, GPIO_HV_MUX_ACTIVE_HIGH)>>8) & ~0x10); // active low
 	   I2C_writeRegister8bit(device_handle, SYSTEM_INTERRUPT_CLEAR, 0x01);
-	   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget3 \n");
+
 	   measurement_timing_budget_us = VL53L0X_getMeasurementTimingBudget(device_handle);
-	   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget4 \n");
 
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
-	   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget5 \n");
-	   VL53L0X_setMeasurementTimingBudget(device_handle,measurement_timing_budget_us);
-
+	   if (!VL53L0X_setMeasurementTimingBudget(device_handle,measurement_timing_budget_us)) {
+		   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget false \n");
+		   return false;
+	   };
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0x01);
-
-	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x40)) { return false; }
-
+	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x40)) {
+		   ESP_LOGI(" ","VL53L0X_performSingleRefCalibration1 false \n");
+		   return false; }
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0x02);
-	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x00)) { return false; }
+	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x00)) {
+		   ESP_LOGI(" ","VL53L0X_performSingleRefCalibration2 false \n");
+		   return false; }
 
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
+
 	   ESP_LOGI(" ","VLX sensor init done! \n");
 	   return true;
 }
@@ -757,9 +846,9 @@ bool VL53L0X_setMeasurementTimingBudget(I2C_dev_handles device_handle, uint32_t 
     //  must be added. To do this both final and pre-range
     //  timeouts must be expressed in macro periods MClks
     //  because they have different vcsel periods."
-    uint32_t final_range_timeout_mclks =0;
-    //VL53L0X_timeoutMicrosecondsToMclks(final_range_timeout_us,
-                               // timeouts.final_range_vcsel_period_pclks);
+    uint32_t final_range_timeout_mclks =
+    VL53L0X_timeoutMicrosecondsToMclks(final_range_timeout_us,
+                                timeouts.final_range_vcsel_period_pclks);
 
     if (enables.pre_range)
     {
@@ -779,7 +868,7 @@ bool VL53L0X_setMeasurementTimingBudget(I2C_dev_handles device_handle, uint32_t 
 
 void VL53L0X_getSequenceStepEnables(I2C_dev_handles device_handle, SequenceStepEnables * enables)
 {
-  uint8_t sequence_config = I2C_readRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG);
+  uint8_t sequence_config = (uint8_t)(I2C_readRegister16bit(device_handle, SYSTEM_SEQUENCE_CONFIG)>>8);
 
   enables->tcc          = (sequence_config >> 4) & 0x1;
   enables->dss          = (sequence_config >> 3) & 0x1;
@@ -791,20 +880,13 @@ void VL53L0X_getSequenceStepEnables(I2C_dev_handles device_handle, SequenceStepE
 void VL53L0X_getSequenceStepTimeouts(I2C_dev_handles device_handle, SequenceStepEnables const * enables, SequenceStepTimeouts * timeouts)
 {
   timeouts->pre_range_vcsel_period_pclks = VL53L0X_getVcselPulsePeriod(device_handle, VcselPeriodPreRange);
-
-  timeouts->msrc_dss_tcc_mclks = I2C_readRegister8bit(device_handle, MSRC_CONFIG_TIMEOUT_MACROP) + 1;
-  timeouts->msrc_dss_tcc_us =
-    VL53L0X_timeoutMclksToMicroseconds(timeouts->msrc_dss_tcc_mclks,
+  timeouts->msrc_dss_tcc_mclks = (uint8_t)(I2C_readRegister16bit(device_handle, MSRC_CONFIG_TIMEOUT_MACROP)>>8) + 1;
+  timeouts->msrc_dss_tcc_us = VL53L0X_timeoutMclksToMicroseconds(timeouts->msrc_dss_tcc_mclks,
                                timeouts->pre_range_vcsel_period_pclks);
-
-  timeouts->pre_range_mclks =
-    VL53L0X_decodeTimeout(I2C_readRegister16bit(device_handle, PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI));
-  timeouts->pre_range_us =
-    VL53L0X_timeoutMclksToMicroseconds(timeouts->pre_range_mclks,
+  timeouts->pre_range_mclks = VL53L0X_decodeTimeout(I2C_readRegister16bit(device_handle, PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI));
+  timeouts->pre_range_us =VL53L0X_timeoutMclksToMicroseconds(timeouts->pre_range_mclks,
                                timeouts->pre_range_vcsel_period_pclks);
-
   timeouts->final_range_vcsel_period_pclks = VL53L0X_getVcselPulsePeriod(device_handle, VcselPeriodFinalRange);
-
   timeouts->final_range_mclks =
     VL53L0X_decodeTimeout(I2C_readRegister16bit(device_handle, FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI));
 
@@ -812,7 +894,6 @@ void VL53L0X_getSequenceStepTimeouts(I2C_dev_handles device_handle, SequenceStep
   {
     timeouts->final_range_mclks -= timeouts->pre_range_mclks;
   }
-
   timeouts->final_range_us =
     VL53L0X_timeoutMclksToMicroseconds(timeouts->final_range_mclks,
                                timeouts->final_range_vcsel_period_pclks);
@@ -824,11 +905,11 @@ uint8_t VL53L0X_getVcselPulsePeriod(I2C_dev_handles device_handle, vcselPeriodTy
 {
   if (type == VcselPeriodPreRange)
   {
-    return decodeVcselPeriod(I2C_readRegister8bit(device_handle, PRE_RANGE_CONFIG_VCSEL_PERIOD));
+    return decodeVcselPeriod((uint8_t)(I2C_readRegister16bit(device_handle, PRE_RANGE_CONFIG_VCSEL_PERIOD)>>8));
   }
   else if (type == VcselPeriodFinalRange)
   {
-    return decodeVcselPeriod(I2C_readRegister8bit(device_handle, FINAL_RANGE_CONFIG_VCSEL_PERIOD));
+    return decodeVcselPeriod((uint8_t)(I2C_readRegister16bit(device_handle, FINAL_RANGE_CONFIG_VCSEL_PERIOD)>>8));
   }
   else { return 255; }
 }
@@ -878,13 +959,15 @@ uint16_t VL53L0X_encodeTimeout(uint32_t timeout_mclks)
 bool VL53L0X_performSingleRefCalibration(I2C_dev_handles device_handle ,uint8_t vhv_init_byte)
 {
   I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x01 | vhv_init_byte); // VL53L0X_REG_SYSRANGE_MODE_START_STOP
-
-  //startTimeout();
-  while ((I2C_readRegister8bit(device_handle, RESULT_INTERRUPT_STATUS) & 0x07) == 0)
+  uint16_t reg2;
+  startTimeout();
+  do
   {
-    //if (checkTimeoutExpired()) { return false; }
+	  reg2 = I2C_readRegister16bit(device_handle, RESULT_INTERRUPT_STATUS);
+	  ESP_LOGI("","Single: %"PRIu16" ",reg2);
+	  if (checkTimeoutExpired()) { return false; }
 	  vTaskDelay(pdMS_TO_TICKS(500));
-  }
+  } while(((uint8_t)reg2 & 0x07) == 0);
 
   I2C_writeRegister8bit(device_handle, SYSTEM_INTERRUPT_CLEAR, 0x01);
 
@@ -904,17 +987,16 @@ uint16_t VL53L0X_readRangeSingleMillimeters(I2C_dev_handles device_handle)
   I2C_writeRegister8bit(device_handle, 0x80, 0x00);
 
   I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x01);
-  ESP_LOGI(" ", "AICI");
+  //ESP_LOGI(" ", "AICI");
    //"Wait until start bit has been cleared"
-  //startTimeout();
-  while ((I2C_readRegister8bit(device_handle, SYSRANGE_START) & 0x01))
+  startTimeout();
+  while (((uint8_t)(I2C_readRegister16bit(device_handle, SYSRANGE_START)>>8) & 0x01))
   {
-	  ESP_LOGI(" ", "AICI %u", I2C_readRegister8bit(device_handle, SYSRANGE_START) & 0x01 );
-//    if (checkTimeoutExpired())
-//    {
-//      did_timeout = true;
-//      return 65535;
-//    }
+    if (checkTimeoutExpired())
+    {
+      //did_timeout = true;
+      return 65535;
+    }
   }
 
   return VL53L0X_readRangeContinuousMillimeters(device_handle);
@@ -922,14 +1004,15 @@ uint16_t VL53L0X_readRangeSingleMillimeters(I2C_dev_handles device_handle)
 
 uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
 {
-  //startTimeout();
-  while ((I2C_readRegister8bit(device_handle, RESULT_INTERRUPT_STATUS) & 0x07) == 0)
+  startTimeout();
+  I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x01);
+  while (((uint8_t)(I2C_readRegister16bit(device_handle, RESULT_INTERRUPT_STATUS)>>8) & 0x07) == 0)
   {
-//    if (checkTimeoutExpired())
-//    {
-//      did_timeout = true;
-//      return 65535;
-//    }
+    if (checkTimeoutExpired())
+    {
+      //did_timeout = true;
+      return 65535;
+    }
   }
 
   // assumptions: Linearity Corrective Gain is 1000 (default);
@@ -941,3 +1024,43 @@ uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
   return range;
 }
 
+void VL53L0X_SetInterruptThresholds(I2C_dev_handles device_handle,
+                                             uint32_t ThresholdLow,
+											 uint32_t ThresholdHigh) {
+  uint16_t Threshold16;
+
+  /* no dependency on DeviceMode for Ewok */
+  /* Need to divide by 2 because the FW will apply a x2 */
+  Threshold16 = (uint16_t)((ThresholdLow >> 17) & 0x00fff);
+  I2C_writeRegister16bit(device_handle,  SYSTEM_THRESH_LOW, Threshold16);
+
+  /* Need to divide by 2 because the FW will apply a x2 */
+  Threshold16 = (uint16_t)((ThresholdHigh >> 17) & 0x00fff);
+  I2C_writeRegister16bit(device_handle,  SYSTEM_THRESH_HIGH, Threshold16);
+  ESP_LOGI("", "Set treshold.");
+}
+
+
+
+/* ADXL 345 accelerometer sensor */
+void I2C_adxl345_init(I2C_dev_handles device_handle) {
+    I2C_writeRegister8bit(device_handle, ADXL345_REG_POWER_CTL, 0x08);  // Bit 3 high to start measuring
+    I2C_writeRegister8bit(device_handle, ADXL345_REG_DATA_FORMAT, 0x0B); // Plus/minus 16g, 13-bit mode
+}
+
+void I2C_read_adxl345_data(I2C_dev_handles device_handle, double* x, double* y, double* z) {
+    uint8_t data[6];  // Array to hold the raw sensor data
+    double resolution = 1<<8;
+    // Read 6 bytes from the ADXL345 starting from DATAX0
+    data[0]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAX0)>>8);
+    data[1]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAX1)>>8);
+    data[2]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAY0)>>8);
+    data[3]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAY1)>>8);
+    data[4]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAZ0)>>8);
+    data[5]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAZ1)>>8);
+
+    // Combine the bytes into integers
+    *x = (double)((int16_t)(data[1] << 8 | data[0]))/resolution;
+    *y = (double)((int16_t)(data[3] << 8 | data[2]))/resolution;
+    *z = (double)((int16_t)(data[5] << 8 | data[4]))/resolution;
+}

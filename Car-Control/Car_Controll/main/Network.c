@@ -139,6 +139,7 @@ void sendMessage(int sock, const char *message, struct sockaddr_in6 *addr,
 	if (sendto(sock, message, strlen(message), 0, (struct sockaddr*) addr,
 			addr_len) < 0) {
 		ESP_LOGE(TAG, "Failed to send message: %s, errno %d", message, errno);
+		vTaskDelay(pdMS_TO_TICKS(50));
 	}
 }
 

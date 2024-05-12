@@ -14,11 +14,16 @@
 #define SCL_SPEED_FAST_MODE 400000
 #define SCL_SPEED_LOW_MODE 100000
 #define RST_PIN_MUX_I2C 23
+#define ON 1
+#define OFF 0
+#define HIGH_SPEED_MODE ON
 
 // I2C 8 devices connected to the I2C multiplexer. --> control register mux
 typedef enum I2C_devices_multiplexer {
-    I2C_distance_sens_1_mux  = 0,
-    I2C_distance_sens_2_mux  = 1,
+	NO_MUX_SELECTED = -1,
+    I2C_distance_sens_1_mux  = 1,
+    //I2C_distance_sens_2_mux  = 99,
+	I2C_adxl345_sens_mux 	 = 0,
 	I2C_temp_sens_mux		 = 2,
 	I2C_oled_display_096_mux = 3,
     I2C_pixy2_camera_mux 	 = 4,
@@ -30,6 +35,7 @@ typedef enum I2C_devices{
 	I2C_temp_sens_addr		  = 0x76,
 	I2C_distance_sens_addr    = 0x29,
 	I2C_pixy2_camera_addr 	  = 0x54,
+	I2C_adxl345_sens_addr 	  = 0x53,
 	I2C_oled_display_096_addr = 0x00
 }I2C_devices;
 
@@ -41,8 +47,18 @@ typedef enum I2C_dev_handles
   I2C_distance_sens2_dev_handle,
   I2C_temp_sens_dev_handle,
   I2C_oled_display_096_dev_handle,
+  I2C_adxl345_sens_dev_handle,
   I2C_MAX_Num_of_dev_handles
 }I2C_dev_handles;
+
+typedef enum I2C_WRR_tokens
+{
+	pixy2 = 5,
+	distance_sens1 = 3,
+	distance_sens2 = 1,
+	adxl_acc = 2,
+	temp_sens = 1
+}I2C_WRR_tokens;
 
 
 
@@ -93,11 +109,21 @@ void I2C_trigger_measurement();
 void I2C_set_pressure_register();
 // I2C humidity sensor BME/BMP functions
 void I2C_set_humidity_register();
-
+void I2C_read_temperature(double *fine_temp);
 // Task for I2C devices
 void I2C_devices_task(void *pvParameters);
 
 /* VL53L0X */
+static uint8_t stop_variable;
+static uint16_t timeout_start_ms;
+static uint32_t measurement_timing_budget_us;
+#define io_timeout 100
+#define millis() (pdTICKS_TO_MS(xTaskGetTickCount()))
+#define checkTimeoutExpired() (io_timeout > 0 && ((uint16_t)(millis() - timeout_start_ms)) > io_timeout)
+// Record the current time to check an upcoming timeout against
+#define startTimeout() (timeout_start_ms = millis())
+
+// Check if timeout is enabled (set to nonzero value) and has expired
 
 #define calcMacroPeriod(vcsel_period_pclks) ((((uint32_t)2304 * (vcsel_period_pclks) * 1655) + 500) / 1000)
 #define decodeVcselPeriod(reg_val)      (((reg_val) + 1) << 1)
@@ -201,3 +227,22 @@ bool VL53L0X_setMeasurementTimingBudget(I2C_dev_handles device_handle, uint32_t 
 bool VL53L0X_performSingleRefCalibration(I2C_dev_handles device_handle ,uint8_t vhv_init_byte);
 uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle);
 uint16_t VL53L0X_readRangeSingleMillimeters(I2C_dev_handles device_handle);
+void VL53L0X_SetInterruptThresholds(I2C_dev_handles device_handle, uint32_t ThresholdLow ,uint32_t ThresholdHigh);
+
+/* ADXL 345 accelerometer sensor */
+
+typedef enum ADX_345_reg
+{
+  ADXL345_REG_POWER_CTL   = 0x2D,
+  ADXL345_REG_DATA_FORMAT = 0x31,
+  ADXL345_REG_DATAX0      = 0x32,
+  ADXL345_REG_DATAX1	  = 0x33,
+  ADXL345_REG_DATAY0	  = 0x34,
+  ADXL345_REG_DATAY1	  = 0x35,
+  ADXL345_REG_DATAZ0	  = 0x36,
+  ADXL345_REG_DATAZ1	  = 0x37
+}ADX_345_reg;
+
+void I2C_read_adxl345_data(I2C_dev_handles device_handle, double* x, double* y, double* z);
+void I2C_adxl345_init(I2C_dev_handles device_handle);
+

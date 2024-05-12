@@ -44,6 +44,7 @@ extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t steer_commandQueue;
 extern QueueHandle_t PID_commandQueue;
 extern QueueSetHandle_t QueueSetGeneralCommands;
+extern bool I2C_sensors_initiated;
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
 	steer_commandQueue = xQueueCreate(20,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
@@ -69,11 +70,12 @@ void app_main(void) {
 	xQueueAddToSet(speed_commandQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(pulse_encoderQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(PID_commandQueue, QueueSetGeneralCommands);
-	//start_network_task();
-//	carControl_init();
-	//while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
 	start_I2C_devices_task();
-	//configureEncoderInterrupts();
-	//start_PID_task();
-	//start_UartJetson_task();
+	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
+	start_network_task();
+	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
+	carControl_init();
+	configureEncoderInterrupts();
+	start_PID_task();
+	start_UartJetson_task();
 }

@@ -195,10 +195,19 @@ void PIDTask(void *pvParameters) {
 		}
 
 		/* Send diagnostic data to phone app in order to monitor the speed and behaviour of Integral value. */
+
 		int abs_measured = abs(motorPID.measured);
 		float abs_I_term = fabs((double)motorPID.I_term);
+		static int old_abs_measured;
+		static float old_abs_I_term;
+		/* Send only the data the is different from the one sent before. */
+		if(abs_measured != old_abs_measured || abs_I_term != old_abs_I_term)
+		{
 		sendCommandApp(MEASURED_VALUE, (int*)&abs_measured, INT);
 		sendCommandApp(I_TERM_VALUE, (float*)&abs_I_term, FLOAT);
+		old_abs_measured = abs_measured;
+		old_abs_I_term = abs_I_term;
+		}
 	}
 }
 
