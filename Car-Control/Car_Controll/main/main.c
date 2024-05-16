@@ -71,11 +71,11 @@ void app_main(void) {
 	xQueueAddToSet(pulse_encoderQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(PID_commandQueue, QueueSetGeneralCommands);
 	start_I2C_devices_task();
-	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
-	start_network_task();
-	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
-	carControl_init();
-	configureEncoderInterrupts();
-	start_PID_task();
-	start_UartJetson_task();
+//	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
+//	start_network_task();
+//	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
+//	carControl_init();
+//	configureEncoderInterrupts();
+//	start_PID_task();
+//	start_UartJetson_task();
 }

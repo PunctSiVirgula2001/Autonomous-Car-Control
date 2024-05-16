@@ -67,9 +67,9 @@ void I2C_add_device(uint8_t device_address)
     	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens1_dev_handle])); // distance sensors have the same addr
     	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-//    	  I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-//    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-//    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens2_dev_handle])); // distance sensors have the same addr
+    	  I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
+    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens2_dev_handle])); // distance sensors have the same addr
     	  }
     	  break;
       case I2C_pixy2_camera_addr:
@@ -131,10 +131,10 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
 			old_handle=I2C_distance_sens1_dev_handle;
 		break;
-//		case I2C_distance_sens2_dev_handle:
-//			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-//			old_handle=I2C_distance_sens2_dev_handle;
-//		break;
+		case I2C_distance_sens2_dev_handle:
+			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+			old_handle=I2C_distance_sens2_dev_handle;
+		break;
 		case I2C_temp_sens_dev_handle:
 			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
 			old_handle=I2C_temp_sens_dev_handle;
@@ -176,10 +176,10 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
 			old_handle=I2C_distance_sens1_dev_handle;
 		break;
-//		case I2C_distance_sens2_dev_handle:
-//			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-//			old_handle=I2C_distance_sens2_dev_handle;
-	//	break;
+		case I2C_distance_sens2_dev_handle:
+			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
+			old_handle=I2C_distance_sens2_dev_handle;
+		break;
 		case I2C_temp_sens_dev_handle:
 			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
 			old_handle=I2C_temp_sens_dev_handle;
@@ -345,15 +345,16 @@ void I2C_devices_task(void *pvParameters)
 			readValSensor = VL53L0X_readRangeContinuousMillimeters(I2C_distance_sens1_dev_handle);
 			ESP_LOGI("I2C", "Range1: [ %"PRIu16" ]", readValSensor);
 		break;
-//
-//		case I2C_distance_sens_2_mux:
-//			if(!WRR_Tokens_given)
-//			{
-//				WRR_Tokens_given = true;
-//				numberOfTokens = distance_sens2;
-//			}
-//			readValSensor = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens2_dev_handle);
-//			ESP_LOGI("I2C", "Range2: [ %"PRIu16" ]", readValSensor);
+
+		case I2C_distance_sens_2_mux:
+
+			if(!WRR_Tokens_given)
+			{
+				WRR_Tokens_given = true;
+				numberOfTokens = distance_sens2;
+			}
+			readValSensor = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens2_dev_handle);
+			ESP_LOGI("I2C", "Range2: [ %"PRIu16" ]", readValSensor);
 		break;
 
 		case I2C_adxl345_sens_mux:
@@ -394,7 +395,7 @@ void I2C_devices_task(void *pvParameters)
 	        WRR_depleted = true;
 	    }
 //	//sendCommandApp(TEMPRATURE, (double*)&temp, DOUBLE);
-	vTaskDelay(pdMS_TO_TICKS(1));
+	vTaskDelay(pdMS_TO_TICKS(10));
 	}
 
     // add the other devices - uncomment when added
