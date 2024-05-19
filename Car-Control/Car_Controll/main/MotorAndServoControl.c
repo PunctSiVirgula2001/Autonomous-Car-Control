@@ -189,11 +189,11 @@ CarCommand parseCommand(const char *commandStr)
 void carControl_Backward_init()
 {
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(5));
-	changeMotorSpeed(-80);
-	vTaskDelay(pdMS_TO_TICKS(5));
+	vTaskDelay(pdMS_TO_TICKS(20));
+	changeMotorSpeed(-30);
+	vTaskDelay(pdMS_TO_TICKS(20));
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(5));
+	vTaskDelay(pdMS_TO_TICKS(20));
 }
 
 

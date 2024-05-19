@@ -1,5 +1,6 @@
 #include "I2C_devices.h"
 #include "Network.h"
+#include "math.h"
 
 //i2c config structure
 i2c_master_bus_config_t esp32_i2c_config;
@@ -9,6 +10,9 @@ i2c_master_bus_handle_t bus_handle_esp32_i2c_config;
 i2c_master_dev_handle_t device_handle_esp32_i2c_config[I2C_MAX_Num_of_dev_handles];
 
 bool I2C_sensors_initiated = false;
+
+QueueHandle_t I2C_commandQueue;
+I2C_COMMAND i2c_command;
 
 
 // initialize I2C for esp32 as master
@@ -50,7 +54,7 @@ void I2C_add_device(uint8_t device_address)
     i2c_device_config_t device_config = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = device_address,
-        .scl_speed_hz = SCL_SPEED_LOW_MODE
+        .scl_speed_hz = SCL_SPEED_FAST_MODE
     };
 
     switch (device_address) {
@@ -150,8 +154,8 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 		default:
 	 }
 	}
-	vTaskDelay(pdMS_TO_TICKS(15)); // space for the switch of the channel to happen
-	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, pdMS_TO_TICKS(100))); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
+	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
+	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 }
 
 void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
@@ -196,7 +200,7 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 	}
 
 	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
-	esp_err_t ret = i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, read_size, pdMS_TO_TICKS(500));
+	esp_err_t ret = i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, read_size, -1);
 	if (ret != ESP_OK) {
 	    ESP_LOGE("I2C Receive", "Failed to receive data: %s", esp_err_to_name(ret));
 	}
@@ -207,7 +211,6 @@ uint8_t I2C_readRegister8bit(I2C_dev_handles device_handle, uint8_t reg)
     uint8_t data;
     I2C_transmit(device_handle, &reg, 1);
     vTaskDelay(pdMS_TO_TICKS(10));
-    i2c_manual_stop(10);
     I2C_receive(device_handle, &data, 1);
     vTaskDelay(pdMS_TO_TICKS(10));
     return data;
@@ -290,119 +293,181 @@ void I2C_writeRegister32bit(I2C_dev_handles device_handle, uint8_t reg, uint32_t
     vTaskDelay(pdMS_TO_TICKS(50)); // Delay to allow the transaction to complete
 }
 
+void I2C_devices_task(void *pvParameters) {
+    I2C_sensors_initiated = false;
 
-void I2C_probe(I2C_devices device_addr)
-{
-	//esp_err_t a =i2c_master_probe(bus_handle_esp32_i2c_config,device_addr,1000); // 1000ms timeout
-
-}
-
-
-
-
-// Task for I2C devices
-void I2C_devices_task(void *pvParameters)
-{
-	I2C_sensors_initiated = false;
-
-	/* Initial config I2C */
-	config_rst_pin_i2c_mux();	 //config rst pin for the mux
-	rst_pin_i2c_mux_on();		 //rst pin on
-    I2C_master_init();			 //init master
-    I2C_add_device(I2C_mux_addr);//add the multiplexer to the I2C bus
+    // Initial config I2C
+    config_rst_pin_i2c_mux();    // config rst pin for the mux
+    rst_pin_i2c_mux_on();        // rst pin on
+    I2C_master_init();           // init master
+    I2C_add_device(I2C_mux_addr);// add the multiplexer to the I2C bus
     I2C_add_device(I2C_temp_sens_addr);
     I2C_add_device(I2C_distance_sens_addr);
     I2C_add_device(I2C_adxl345_sens_addr);
     I2C_adxl345_init(I2C_adxl345_sens_dev_handle);
+    I2C_adxl345_setRate(I2C_adxl345_sens_dev_handle,ADXL1345_READ_RATE);
+
     double temp;
     I2C_trigger_measurement();
     ESP_LOGI(" ", "VL53L0X_Init");
-    bool did_init = VL53L0X_Init(I2C_distance_sens1_dev_handle);
-    I2C_devices_mux current_mux = NO_MUX_SELECTED;
-    I2C_WRR_tokens numberOfTokens = 1;
-    bool WRR_depleted = true;
-    bool WRR_Tokens_given = false;
-    uint16_t readValSensor;
+    VL53L0X_Init(I2C_distance_sens1_dev_handle);
+
+    sensor_t sensors[] = {
+        {I2C_distance_sens1_dev_handle, I2C_distance_sens_1_mux, distance_sens1, distance_sens1, SENSOR_IDLE},
+        {I2C_distance_sens2_dev_handle, I2C_distance_sens_2_mux, distance_sens2, distance_sens2, SENSOR_IDLE},
+        {I2C_adxl345_sens_dev_handle, I2C_adxl345_sens_mux, adxl_acc, adxl_acc, SENSOR_IDLE},
+        {I2C_pixy2_dev_handle, I2C_pixy2_camera_mux, pixy2, pixy2, SENSOR_IDLE},
+        {I2C_temp_sens_dev_handle, I2C_temp_sens_mux, temp_sens, temp_sens, SENSOR_IDLE}
+    };
+    I2C_COMMAND i2c_command = {0, 0, 0};
+
+    size_t sensor_count = sizeof(sensors) / sizeof(sensor_t);
+    size_t current_sensor_index = 0;
+    sensor_t *current_sensor = &sensors[current_sensor_index];
+
     I2C_sensors_initiated = true;
-	while(1){
-	if(WRR_depleted)
-	{
-		if(++current_mux == I2C_oled_display_096_mux ) current_mux = 0;
-		WRR_Tokens_given = false;
-		WRR_depleted = false;
-	}
 
-	switch(current_mux){
-		case I2C_distance_sens_1_mux:
-			if(!WRR_Tokens_given)
-			{
-				WRR_Tokens_given = true;
-				numberOfTokens = distance_sens1;
-				//vTaskDelay(pdMS_TO_TICKS(50));
-				//readValSensor = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens1_dev_handle);
-				//ESP_LOGI("I2C", "Range1: [ %"PRIu16" ]", readValSensor);
-			}
-			readValSensor = VL53L0X_readRangeContinuousMillimeters(I2C_distance_sens1_dev_handle);
-			ESP_LOGI("I2C", "Range1: [ %"PRIu16" ]", readValSensor);
-		break;
+    while (1) {
+        // Skip sensors with 0 tokens
+        while (current_sensor->tokens == 0) {
+            current_sensor_index = (current_sensor_index + 1) % sensor_count;
+            current_sensor = &sensors[current_sensor_index];
+        }
+        static uint16_t readValSensor_dist1_prev = 0;
+        static double readValSensor_dist1_final = 0;
 
-		case I2C_distance_sens_2_mux:
+        static uint16_t readValSensor_dist2_prev = 0;
+        static double readValSensor_dist2_final = 0;
 
-			if(!WRR_Tokens_given)
-			{
-				WRR_Tokens_given = true;
-				numberOfTokens = distance_sens2;
-			}
-			readValSensor = VL53L0X_readRangeSingleMillimeters(I2C_distance_sens2_dev_handle);
-			ESP_LOGI("I2C", "Range2: [ %"PRIu16" ]", readValSensor);
-		break;
+        switch (current_sensor->state) {
+            case SENSOR_IDLE:
+                I2C_select_multiplexer_channel(current_sensor->mux);
+                vTaskDelay(pdMS_TO_TICKS(10)); // Allow for multiplexer switch
+                current_sensor->state = SENSOR_READING;
+                break;
 
-		case I2C_adxl345_sens_mux:
-			if(!WRR_Tokens_given)
-			{
-				WRR_Tokens_given = true;
-				numberOfTokens = adxl_acc;
-			}
-			double x, y, z;
-			I2C_read_adxl345_data(I2C_adxl345_sens_dev_handle,&x,&y,&z);
-			ESP_LOGI("","Rotation x=%lf y=%lf  z=%lf ",x,y,z);
-		break;
+            case SENSOR_READING:
+                switch (current_sensor->mux) {
+                    case I2C_distance_sens_1_mux:
+                    	uint16_t readValSensor1;
+                    	// Read new sensor value
+						readValSensor1 = VL53L0X_readRangeContinuousMillimeters(I2C_distance_sens1_dev_handle);
+						// Apply low-pass filter
+						readValSensor_dist1_final = ALPHA_VL53L0X * (double)readValSensor1 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist1_prev;
+						// Update the previous value for the next iteration
+						readValSensor_dist1_prev = readValSensor1;
+						// Make a decision
+						static int countSendStop_sens1 = 0,countSendStart_sens1 = 0;
+						if(readValSensor_dist1_final < 800.0 && countSendStop_sens1 == 0)
+						{
+							countSendStop_sens1++;
+							countSendStart_sens1=0;
+							i2c_command.command = I2C_STOP_MOTOR;
+							i2c_command.commandValue = 0;
+							i2c_command.sendingSensor = I2C_distance_sens1_dev_handle;
+							xQueueSend(I2C_commandQueue,&i2c_command,pdMS_TO_TICKS(5000));
+							ESP_LOGI("", "Sent STOP for forward \n");
+						}
+						else if (countSendStart_sens1 == 0 && readValSensor_dist1_final >= 800.0)
+						{
+							countSendStop_sens1=0;
+							countSendStart_sens1++;
+							i2c_command.command = I2C_START_MOTOR;
+							i2c_command.commandValue = 0;
+							i2c_command.sendingSensor = I2C_distance_sens1_dev_handle;
+							xQueueSend(I2C_commandQueue,&i2c_command,pdMS_TO_TICKS(5000));
+							ESP_LOGI("", "Sent START for forward \n");
+						}
 
-		case I2C_pixy2_camera_mux:
-			if(!WRR_Tokens_given)
-			{
-				WRR_Tokens_given = true;
-				numberOfTokens = pixy2;
-				//vTaskDelay(pdMS_TO_TICKS(50));
-			}
-		break;
+						// Log the filtered value
+						ESP_LOGI("I2C", "Range1: [ %.2lf ]", readValSensor_dist1_final);
+                        //vTaskDelay(pdMS_TO_TICKS(50)); // Allow for multiplexer switch
+                        break;
 
-		case I2C_temp_sens_mux:
-			if(!WRR_Tokens_given)
-			{
-				WRR_Tokens_given = true;
-				numberOfTokens = temp_sens;
-				//vTaskDelay(pdMS_TO_TICKS(50));
-			}
-			I2C_read_temperature(&temp);
-			ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
-			ESP_LOGI("I2C", "\n");
-		break;
-		default:
-		break;
-	}
-	if (--numberOfTokens == 0) {
-	        WRR_depleted = true;
-	    }
-//	//sendCommandApp(TEMPRATURE, (double*)&temp, DOUBLE);
-	vTaskDelay(pdMS_TO_TICKS(10));
-	}
+                    case I2C_distance_sens_2_mux:
+                    	uint16_t readValSensor2;
+                        readValSensor2 = VL53L0X_readRangeSingleMillimeters(current_sensor->device_handle);
+                        readValSensor_dist2_final = ALPHA_VL53L0X * (double)readValSensor2 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist2_prev;						// Update the previous value for the next iteration
+                        readValSensor_dist2_prev = readValSensor2;
+                        static int countSendStop_sens2 = 0,countSendStart_sens2 = 0;
+                        if(readValSensor_dist2_final < 800.0 && countSendStop_sens2 == 0)
+						{
+                        	countSendStop_sens2++;
+                        	countSendStart_sens2=0;
+							i2c_command.command = I2C_STOP_MOTOR;
+							i2c_command.commandValue = 0;
+							i2c_command.sendingSensor = I2C_distance_sens2_dev_handle;
+							xQueueSend(I2C_commandQueue,&i2c_command,-1);
+							ESP_LOGI("", "Sent STOP for backward \n");
+						}
+                        else if (countSendStart_sens2 == 0 && readValSensor_dist2_final >= 800)
+                        {
+                        	countSendStop_sens2=0;
+                        	countSendStart_sens2++;
+                        	i2c_command.command = I2C_START_MOTOR;
+                        	i2c_command.commandValue = 0;
+                        	i2c_command.sendingSensor = I2C_distance_sens2_dev_handle;
+                        	xQueueSend(I2C_commandQueue,&i2c_command,-1);
+                        }
+                        						// Log the filtered value
+                        ESP_LOGI("I2C", "Range2: [ %.2lf ]", readValSensor_dist2_final);
+                        break;
 
-    // add the other devices - uncomment when added
-    //I2C_add_device(I2C_temp_sens_addr);
-    //I2C_add_device(I2C_distance_sens_addr);
-    //I2C_add_device(I2C_pixy2_camera_addr);
-    //I2C_add_device(I2C_oled_display_096_addr);
+                    case I2C_adxl345_sens_mux: // if
+						 double x, y, z;
+						 static double roll_init_offset = 0, pitch_init_offset = 0, count = 0;
+						 bool init_offset = false;
+						I2C_read_adxl345_data(current_sensor->device_handle, &x, &y, &z);
+
+						// Calculate roll and pitch
+						double roll = atan2(y, sqrt(x * x + z * z)) * 180.0 / M_PI;
+						double pitch = atan2(-x, sqrt(y * y + z * z)) * 180.0 / M_PI;
+						if(init_offset == false)
+						{
+							count++;
+							if(count<6)
+							{
+								init_offset = true;
+								roll_init_offset = roll;
+								pitch_init_offset = pitch;
+							}
+						}
+						roll -=roll_init_offset;
+						pitch -=pitch_init_offset;
+						//ESP_LOGI("I2C", "Acceleration x=%lf y=%lf z=%lf ", x, y, z);
+						ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll, pitch);
+
+						I2C_writeRegister8bit(current_sensor->device_handle, ADXL345_REG_POWER_CTL, 0x08);
+						break;
+
+                    case I2C_pixy2_camera_mux:
+                        // Implement camera read logic here
+                        break;
+
+                    case I2C_temp_sens_mux:
+                        I2C_read_temperature(&temp);
+                        ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
+                        break;
+
+                    default:
+                        break;
+                }
+                current_sensor->state = SENSOR_READY;
+                break;
+
+            case SENSOR_READY:
+                if (--current_sensor->tokens_remaining == 0) {
+                    current_sensor->tokens_remaining = current_sensor->tokens;
+                    current_sensor->state = SENSOR_IDLE;
+                    current_sensor_index = (current_sensor_index + 1) % sensor_count;
+                    current_sensor = &sensors[current_sensor_index];
+                } else {
+                    current_sensor->state = SENSOR_IDLE;
+                }
+                break;
+        }
+        vTaskDelay(pdMS_TO_TICKS(1));
+    }
 }
 
 void config_rst_pin_i2c_mux() {
@@ -483,6 +548,8 @@ void I2C_set_humidity_register(){
 }
 
 /******** VLX sensor **********/
+
+
 bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle ,uint8_t * count, bool * type_is_aperture)
 {
   uint8_t tmp;
@@ -538,7 +605,7 @@ static type_error VL53L0X_setSignalRateLimit (I2C_dev_handles device_handle, flo
    return not_err;
 }
 
-bool VL53L0X_Init(I2C_dev_handles device_handle)
+void VL53L0X_Init(I2C_dev_handles device_handle)
 {
 
 	//if(I2C_readRegister8bit(device_handle, IDENTIFICATION_MODEL_ID)!=0xEE)
@@ -580,7 +647,7 @@ bool VL53L0X_Init(I2C_dev_handles device_handle)
 	  bool spad_type_is_aperture;
 	  if (!VL53L0X_getSpadInfo(device_handle ,&spad_count, &spad_type_is_aperture)) {
 		  ESP_LOGI(" ","VL53L0X_getSpadInfo false");
-		  return false;
+
 	  }
 	  ESP_LOGI("getSpadInfo", "\n");
 	  uint8_t ref_spad_map[6];
@@ -723,21 +790,19 @@ bool VL53L0X_Init(I2C_dev_handles device_handle)
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
 	   if (!VL53L0X_setMeasurementTimingBudget(device_handle,measurement_timing_budget_us)) {
 		   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget false \n");
-		   return false;
 	   };
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0x01);
 	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x40)) {
 		   ESP_LOGI(" ","VL53L0X_performSingleRefCalibration1 false \n");
-		   return false; }
+	   }
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0x02);
 	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x00)) {
 		   ESP_LOGI(" ","VL53L0X_performSingleRefCalibration2 false \n");
-		   return false; }
+	   }
 
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
 
 	   ESP_LOGI(" ","VLX sensor init done! \n");
-	   return true;
 }
 
 uint32_t VL53L0X_getMeasurementTimingBudget(I2C_dev_handles device_handle)
@@ -1006,21 +1071,35 @@ uint16_t VL53L0X_readRangeSingleMillimeters(I2C_dev_handles device_handle)
 uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
 {
   startTimeout();
-  I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x01);
+  uint16_t range = 0;
+  static bool start_continuous_back2back = false;
+  if(start_continuous_back2back == false)
+  {
+	  I2C_writeRegister8bit(device_handle, 0x80, 0x01);
+	  I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
+	  I2C_writeRegister8bit(device_handle, 0x00, 0x00);
+	  I2C_writeRegister8bit(device_handle, 0x91, stop_variable);
+	  I2C_writeRegister8bit(device_handle, 0x00, 0x01);
+	  I2C_writeRegister8bit(device_handle, 0xFF, 0x00);
+	  I2C_writeRegister8bit(device_handle, 0x80, 0x00);
+	  I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x02); // back to back mode = fast as possible
+	  start_continuous_back2back = true;
+	  vTaskDelay(pdMS_TO_TICKS(20));
+  }
+
   while (((uint8_t)(I2C_readRegister16bit(device_handle, RESULT_INTERRUPT_STATUS)>>8) & 0x07) == 0)
   {
     if (checkTimeoutExpired())
     {
       //did_timeout = true;
-      return 65535;
+      return 0;
     }
   }
-
   // assumptions: Linearity Corrective Gain is 1000 (default);
   // fractional ranging is not enabled
-  uint16_t range = I2C_readRegister16bit(device_handle, RESULT_RANGE_STATUS + 10);
-
+  range = I2C_readRegister16bit(device_handle, RESULT_RANGE_STATUS + 10);
   I2C_writeRegister8bit(device_handle, SYSTEM_INTERRUPT_CLEAR, 0x01);
+
 
   return range;
 }
@@ -1044,6 +1123,9 @@ void VL53L0X_SetInterruptThresholds(I2C_dev_handles device_handle,
 
 
 /* ADXL 345 accelerometer sensor */
+
+
+
 void I2C_adxl345_init(I2C_dev_handles device_handle) {
     I2C_writeRegister8bit(device_handle, ADXL345_REG_POWER_CTL, 0x08);  // Bit 3 high to start measuring
     I2C_writeRegister8bit(device_handle, ADXL345_REG_DATA_FORMAT, 0x0B); // Plus/minus 16g, 13-bit mode
@@ -1051,17 +1133,64 @@ void I2C_adxl345_init(I2C_dev_handles device_handle) {
 
 void I2C_read_adxl345_data(I2C_dev_handles device_handle, double* x, double* y, double* z) {
     uint8_t data[6];  // Array to hold the raw sensor data
+    // Update previous values
+	static double prev_x = 0;
+	static double prev_y = 0;
+	static double prev_z = 0;
     double resolution = 1<<8;
     // Read 6 bytes from the ADXL345 starting from DATAX0
-    data[0]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAX0)>>8);
-    data[1]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAX1)>>8);
-    data[2]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAY0)>>8);
-    data[3]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAY1)>>8);
-    data[4]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAZ0)>>8);
-    data[5]=(uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_DATAZ1)>>8);
+    uint16_t temp;
+    temp = I2C_readRegister16bit(device_handle, ADXL345_REG_DATAX0);
+    data[0] =(uint8_t)(temp>>8);
+    data[1] =(uint8_t)temp;
+    temp = I2C_readRegister16bit(device_handle, ADXL345_REG_DATAY0);
+    data[2] =(uint8_t)(temp>>8);
+    data[3] =(uint8_t)temp;
+    temp = I2C_readRegister16bit(device_handle, ADXL345_REG_DATAZ0);
+    data[4] =(uint8_t)(temp>>8);
+    data[5] =(uint8_t)temp;
 
     // Combine the bytes into integers
-    *x = (double)((int16_t)(data[1] << 8 | data[0]))/resolution;
-    *y = (double)((int16_t)(data[3] << 8 | data[2]))/resolution;
-    *z = (double)((int16_t)(data[5] << 8 | data[4]))/resolution;
+    double raw_x  = (double)((int16_t)(data[1] << 8 | data[0]))/resolution;
+    double raw_y  = (double)((int16_t)(data[3] << 8 | data[2]))/resolution;
+    double raw_z  = (double)((int16_t)(data[5] << 8 | data[4]))/resolution;
+
+    // Apply low-pass filter
+   *x = ALPHA * raw_x + (1 - ALPHA) * prev_x;
+   *y = ALPHA * raw_y + (1 - ALPHA) * prev_y;
+   *z = ALPHA * raw_z + (1 - ALPHA) * prev_z;
+
+   // Update previous values
+   prev_x = *x;
+   prev_y = *y;
+   prev_z = *z;
 }
+
+void I2C_adxl345_setRate(I2C_dev_handles device_handle, double rate) {
+    uint8_t _b, _s; // Variables to hold register values
+    int v = (int) (rate / 6.25); // Convert the desired rate to a value used by the sensor
+    int r = 0; // Variable to determine the bit position for the rate setting
+
+    // Calculate the rate setting value based on the input rate
+    // This loop determines how many times the value can be shifted right
+    // before it becomes zero, effectively calculating the position of the highest set bit.
+    while (v >>= 1) {
+        r++;
+    }
+
+    // The valid range for r is 0 to 9, corresponding to available data rate settings
+    if (r <= 9) {
+        // Read the current value of the BW_RATE register
+        // The BW_RATE register controls the data rate and power mode of the sensor
+    	_b = (uint8_t)(I2C_readRegister16bit(device_handle, ADXL345_REG_BW_RATE)>>8);
+
+        // Calculate the new value for the BW_RATE register
+        // The lower 4 bits of the BW_RATE register (D3-D0) determine the output data rate
+        // We preserve the upper 4 bits (D7-D4) by masking with 0xF0 and OR with the new rate setting
+        _s = (uint8_t) (r + 6) | (_b & 0xF0);
+
+        // Write the new value to the BW_RATE register
+        I2C_writeRegister8bit(device_handle, ADXL345_REG_BW_RATE, _s);
+    }
+}
+

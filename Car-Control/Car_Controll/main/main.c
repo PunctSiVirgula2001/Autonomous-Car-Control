@@ -43,6 +43,7 @@ extern QueueHandle_t pulse_encoderQueue; // holds the trasnformed time pulse dif
 extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t steer_commandQueue;
 extern QueueHandle_t PID_commandQueue;
+extern QueueHandle_t I2C_commandQueue;
 extern QueueSetHandle_t QueueSetGeneralCommands;
 extern bool I2C_sensors_initiated;
 //#define ESP_LOGI(a,b) printf(b);
@@ -53,6 +54,7 @@ void app_main(void) {
 	pulse_encoderQueue = xQueueCreate(QUEUE_SIZE_ENCODER_PULSE, QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	speed_commandQueue = xQueueCreate(QUEUE_SIZE_SPEED, QUEUE_SIZE_DATATYPE_SPEED);
 	PID_commandQueue = xQueueCreate(5, sizeof(CarCommand));
+	I2C_commandQueue = xQueueCreate(10, I2C_COMMAND_SIZE);
 
 	/* Create a set which would hold both Autonomous mode and Diagnostic mode queues */
 	QueueSetAutonomousOrDiagnostic = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS);
@@ -60,7 +62,7 @@ void app_main(void) {
 	xQueueAddToSet(autonomousModeControlQueue, QueueSetAutonomousOrDiagnostic);
 
 	/* Create a set which holds data from all necessary queues. */
-	QueueSetGeneralCommands = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS + QUEUE_SIZE_ENCODER_PULSE);
+	QueueSetGeneralCommands = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS + QUEUE_SIZE_ENCODER_PULSE + QUEUE_SIZE_I2C);
 	configASSERT(speed_commandQueue);
 	configASSERT(pulse_encoderQueue);
 	configASSERT(speed_commandQueue);
@@ -70,12 +72,14 @@ void app_main(void) {
 	xQueueAddToSet(speed_commandQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(pulse_encoderQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(PID_commandQueue, QueueSetGeneralCommands);
+	xQueueAddToSet(I2C_commandQueue, QueueSetGeneralCommands);
 	start_I2C_devices_task();
-//	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
-//	start_network_task();
-//	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
-//	carControl_init();
-//	configureEncoderInterrupts();
-//	start_PID_task();
-//	start_UartJetson_task();
+	//vTaskDelay(pdMS_TO_TICKS(5000));
+	carControl_init();
+	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
+	start_network_task();
+	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
+	configureEncoderInterrupts();
+	start_PID_task();
+	start_UartJetson_task();
 }

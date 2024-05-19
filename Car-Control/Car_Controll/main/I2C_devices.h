@@ -14,9 +14,10 @@
 #define SCL_SPEED_FAST_MODE 400000
 #define SCL_SPEED_LOW_MODE 100000
 #define RST_PIN_MUX_I2C 23
-#define ON 1
-#define OFF 0
-#define HIGH_SPEED_MODE ON
+#define I2C_COMMAND_SIZE (sizeof(I2C_COMMAND))
+#define QUEUE_SIZE_I2C 10
+
+
 
 // I2C 8 devices connected to the I2C multiplexer. --> control register mux
 typedef enum I2C_devices_multiplexer {
@@ -43,8 +44,8 @@ typedef enum I2C_dev_handles
 {
   I2C_multiplexer_dev_handle,
   I2C_pixy2_dev_handle,
-  I2C_distance_sens1_dev_handle,
-  I2C_distance_sens2_dev_handle,
+  I2C_distance_sens1_dev_handle, // fata
+  I2C_distance_sens2_dev_handle, // spate
   I2C_temp_sens_dev_handle,
   I2C_oled_display_096_dev_handle,
   I2C_adxl345_sens_dev_handle,
@@ -53,15 +54,41 @@ typedef enum I2C_dev_handles
 
 typedef enum I2C_WRR_tokens
 {
-	pixy2 = 5,
-	distance_sens1 = 3,
-	distance_sens2 = 1,
-	adxl_acc = 2,
+	pixy2 = 0,
+	distance_sens1 = 4,
+	distance_sens2 = 0,
+	adxl_acc = 1,
 	temp_sens = 1
 }I2C_WRR_tokens;
 
+typedef enum {
+    SENSOR_IDLE,
+    SENSOR_READING,
+    SENSOR_READY
+} sensor_state_t;
 
+typedef enum
+{
+  I2C_NO_STATE,
+  I2C_STOP_MOTOR,
+  I2C_START_MOTOR,
+  I2C_NEW_STEER,
+  I2C_MOTOR_OFFSET_ACCELEROMETER
+}I2C_COMMAND_TYPE;
 
+typedef struct {
+    I2C_dev_handles device_handle;
+    I2C_devices_mux mux;
+    I2C_WRR_tokens tokens;
+    I2C_WRR_tokens tokens_remaining;
+    sensor_state_t state;
+} sensor_t;
+
+typedef struct I2C_COMMAND{
+  I2C_dev_handles sendingSensor;
+  I2C_COMMAND_TYPE command;
+  uint16_t commandValue;
+}I2C_COMMAND;
 
 // Init I2C for esp32 as master
 void I2C_master_init();
@@ -83,8 +110,6 @@ void I2C_writeRegister8bit(I2C_dev_handles device_handle, uint8_t reg, uint8_t v
 void I2C_writeRegister16bit(I2C_dev_handles device_handle, uint8_t reg, uint16_t value);
 
 void I2C_writeRegister32bit(I2C_dev_handles device_handle, uint8_t reg, uint32_t value);
-
-void I2C_probe(I2C_devices device_addr);
 
 void I2C_add_device(uint8_t device_address);
 
@@ -114,6 +139,8 @@ void I2C_read_temperature(double *fine_temp);
 void I2C_devices_task(void *pvParameters);
 
 /* VL53L0X */
+#define ALPHA_VL53L0X 0.4
+
 static uint8_t stop_variable;
 static uint16_t timeout_start_ms;
 static uint32_t measurement_timing_budget_us;
@@ -213,7 +240,7 @@ typedef enum vcselPeriodType
 	VcselPeriodFinalRange
 } vcselPeriodType;
 
-bool VL53L0X_Init(I2C_dev_handles device_handle);
+void VL53L0X_Init(I2C_dev_handles device_handle);
 bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle, uint8_t * count, bool * type_is_aperture);
 uint32_t VL53L0X_timeoutMclksToMicroseconds(uint16_t timeout_period_mclks, uint8_t vcsel_period_pclks);
 uint8_t VL53L0X_getVcselPulsePeriod(I2C_dev_handles device_handle, vcselPeriodType type);
@@ -230,9 +257,12 @@ uint16_t VL53L0X_readRangeSingleMillimeters(I2C_dev_handles device_handle);
 void VL53L0X_SetInterruptThresholds(I2C_dev_handles device_handle, uint32_t ThresholdLow ,uint32_t ThresholdHigh);
 
 /* ADXL 345 accelerometer sensor */
+#define ADXL1345_READ_RATE 200.0 // HZ
+#define ALPHA 0.5
 
 typedef enum ADX_345_reg
 {
+  ADXL345_REG_BW_RATE 	  = 0x2C,
   ADXL345_REG_POWER_CTL   = 0x2D,
   ADXL345_REG_DATA_FORMAT = 0x31,
   ADXL345_REG_DATAX0      = 0x32,
@@ -245,4 +275,5 @@ typedef enum ADX_345_reg
 
 void I2C_read_adxl345_data(I2C_dev_handles device_handle, double* x, double* y, double* z);
 void I2C_adxl345_init(I2C_dev_handles device_handle);
+void I2C_adxl345_setRate(I2C_dev_handles device_handle, double rate);
 

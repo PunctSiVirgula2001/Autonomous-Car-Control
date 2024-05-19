@@ -1,6 +1,7 @@
 #include "PID.h"
 #include "Network.h"
 #include <math.h>
+#include "I2C_devices.h"
 
 /*Init motor's PID structure*/
 PID_t motorPID;
@@ -82,11 +83,13 @@ double Sliding_Mean_Average(int newValue) {
 extern QueueHandle_t pulse_encoderQueue;
 extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t PID_commandQueue;
+extern QueueHandle_t I2C_commandQueue;
 extern QueueSetHandle_t QueueSetGeneralCommands;
 TickType_t xLastWakePulse = 0U;
 TickType_t xNewWakeTime = 0U;
 TickType_t pulse_time_ms = 0U;
 CarCommand onlyPIDValues;
+I2C_COMMAND I2C_command;
 TickType_t startInitialSendingTime = 0U;
 bool car_stays_stopped = false;
 void PIDTask(void *pvParameters) {
@@ -155,6 +158,17 @@ void PIDTask(void *pvParameters) {
 			PID_UpdateParams(&motorPID, onlyPIDValues.KP, onlyPIDValues.KI,
 					onlyPIDValues.KD);
 		}
+		if(xActivatedMember == I2C_commandQueue)
+		{
+			xQueueReceive(xActivatedMember, &I2C_command, 0);
+		}
+		if(I2C_command.command == I2C_STOP_MOTOR)
+		{
+			if((I2C_command.sendingSensor == I2C_distance_sens1_dev_handle && pulse_direction == 1) || // forward
+			   (I2C_command.sendingSensor == I2C_distance_sens2_dev_handle && pulse_direction == -1))  // backward
+			motorPID.setpoint = 0;
+		}
+		else motorPID.setpoint = setpoint_speed;
 
 		/* IN CASE OF CONFUSION:  -> Setpoint is given by the user, so only the Setpoint can
 		 * 						     decide if the car should go backwards or not.
@@ -231,17 +245,14 @@ void clamp_int(int *value, int min, int max) {
 /*PID motor backward init*/
 void PID_backward_if_detected(PID_t *motor) {
     static int backward_active = 0;
-
-    if (motor->setpoint < 0 && motor->measured >= 0) {
+    if (motor->setpoint <= 0 && motor->measured >= 0) {
     	ESP_LOGI("PID", "Speed Setpoint: %d", motor->setpoint);
-        if (!backward_active || motor->Output < 0) {
-            carControl_Backward_init();
-            motor->I_term = 0;  // Reset integral term
-            backward_active = 1;
-        }
-    } else if (motor->setpoint >= 0) {
-        backward_active = 0;  // Reset backward state only when well above the backward threshold
+    	if (motor->measured > 0)
+          carControl_Backward_init();
+		motor->I_term = 0;  // Reset integral term
+		backward_active = 1;
     }
+    else backward_active  = 0;
 }
 
 /*START PID TASK function*/
