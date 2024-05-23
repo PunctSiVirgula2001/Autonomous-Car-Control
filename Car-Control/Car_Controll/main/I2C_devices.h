@@ -55,8 +55,8 @@ typedef enum I2C_dev_handles
 typedef enum I2C_WRR_tokens
 {
 	pixy2 = 0,
-	distance_sens1 = 4,
-	distance_sens2 = 0,
+	distance_sens1 = 2,
+	distance_sens2 = 2,
 	adxl_acc = 1,
 	temp_sens = 1
 }I2C_WRR_tokens;
@@ -139,7 +139,8 @@ void I2C_read_temperature(double *fine_temp);
 void I2C_devices_task(void *pvParameters);
 
 /* VL53L0X */
-#define ALPHA_VL53L0X 0.4
+#define ALPHA_VL53L0X 0.5
+#define ALPHA_ADXL 0.3
 
 static uint8_t stop_variable;
 static uint16_t timeout_start_ms;
@@ -240,7 +241,7 @@ typedef enum vcselPeriodType
 	VcselPeriodFinalRange
 } vcselPeriodType;
 
-void VL53L0X_Init(I2C_dev_handles device_handle);
+bool VL53L0X_Init(I2C_dev_handles device_handle);
 bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle, uint8_t * count, bool * type_is_aperture);
 uint32_t VL53L0X_timeoutMclksToMicroseconds(uint16_t timeout_period_mclks, uint8_t vcsel_period_pclks);
 uint8_t VL53L0X_getVcselPulsePeriod(I2C_dev_handles device_handle, vcselPeriodType type);

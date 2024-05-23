@@ -295,6 +295,7 @@ void I2C_writeRegister32bit(I2C_dev_handles device_handle, uint8_t reg, uint32_t
 
 void I2C_devices_task(void *pvParameters) {
     I2C_sensors_initiated = false;
+    static bool dist_sens_init = false;
 
     // Initial config I2C
     config_rst_pin_i2c_mux();    // config rst pin for the mux
@@ -310,7 +311,12 @@ void I2C_devices_task(void *pvParameters) {
     double temp;
     I2C_trigger_measurement();
     ESP_LOGI(" ", "VL53L0X_Init");
-    VL53L0X_Init(I2C_distance_sens1_dev_handle);
+
+    dist_sens_init = VL53L0X_Init(I2C_distance_sens2_dev_handle);
+    while(dist_sens_init == false) {}
+    dist_sens_init = false;
+    dist_sens_init = VL53L0X_Init(I2C_distance_sens1_dev_handle);
+    while(dist_sens_init == false) {}
 
     sensor_t sensors[] = {
         {I2C_distance_sens1_dev_handle, I2C_distance_sens_1_mux, distance_sens1, distance_sens1, SENSOR_IDLE},
@@ -386,7 +392,7 @@ void I2C_devices_task(void *pvParameters) {
 
                     case I2C_distance_sens_2_mux:
                     	uint16_t readValSensor2;
-                        readValSensor2 = VL53L0X_readRangeSingleMillimeters(current_sensor->device_handle);
+                        readValSensor2 = VL53L0X_readRangeContinuousMillimeters(current_sensor->device_handle);
                         readValSensor_dist2_final = ALPHA_VL53L0X * (double)readValSensor2 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist2_prev;						// Update the previous value for the next iteration
                         readValSensor_dist2_prev = readValSensor2;
                         static int countSendStop_sens2 = 0,countSendStart_sens2 = 0;
@@ -422,6 +428,7 @@ void I2C_devices_task(void *pvParameters) {
 						// Calculate roll and pitch
 						double roll = atan2(y, sqrt(x * x + z * z)) * 180.0 / M_PI;
 						double pitch = atan2(-x, sqrt(y * y + z * z)) * 180.0 / M_PI;
+						static double roll_prev=0, pitch_prev=0, roll_final = 0, pitch_final = 0;
 						if(init_offset == false)
 						{
 							count++;
@@ -434,8 +441,15 @@ void I2C_devices_task(void *pvParameters) {
 						}
 						roll -=roll_init_offset;
 						pitch -=pitch_init_offset;
-						//ESP_LOGI("I2C", "Acceleration x=%lf y=%lf z=%lf ", x, y, z);
-						ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll, pitch);
+
+						/* Apply low pass filter */
+						roll_final = ALPHA_ADXL * (double)roll + (1 - ALPHA_ADXL) * (double)roll_prev;						// Update the previous value for the next iteration
+						roll_prev = roll;
+
+						pitch_final = ALPHA_ADXL * (double)pitch + (1 - ALPHA_ADXL) * (double)pitch_prev;						// Update the previous value for the next iteration
+						pitch_prev = pitch;
+
+						ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll_final, pitch_final);
 
 						I2C_writeRegister8bit(current_sensor->device_handle, ADXL345_REG_POWER_CTL, 0x08);
 						break;
@@ -605,7 +619,7 @@ static type_error VL53L0X_setSignalRateLimit (I2C_dev_handles device_handle, flo
    return not_err;
 }
 
-void VL53L0X_Init(I2C_dev_handles device_handle)
+bool VL53L0X_Init(I2C_dev_handles device_handle)
 {
 
 	//if(I2C_readRegister8bit(device_handle, IDENTIFICATION_MODEL_ID)!=0xEE)
@@ -647,7 +661,7 @@ void VL53L0X_Init(I2C_dev_handles device_handle)
 	  bool spad_type_is_aperture;
 	  if (!VL53L0X_getSpadInfo(device_handle ,&spad_count, &spad_type_is_aperture)) {
 		  ESP_LOGI(" ","VL53L0X_getSpadInfo false");
-
+		  return false;
 	  }
 	  ESP_LOGI("getSpadInfo", "\n");
 	  uint8_t ref_spad_map[6];
@@ -790,19 +804,23 @@ void VL53L0X_Init(I2C_dev_handles device_handle)
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
 	   if (!VL53L0X_setMeasurementTimingBudget(device_handle,measurement_timing_budget_us)) {
 		   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget false \n");
+		   return false;
 	   };
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0x01);
 	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x40)) {
 		   ESP_LOGI(" ","VL53L0X_performSingleRefCalibration1 false \n");
+		   return false;
 	   }
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0x02);
 	   if (!VL53L0X_performSingleRefCalibration(device_handle, 0x00)) {
 		   ESP_LOGI(" ","VL53L0X_performSingleRefCalibration2 false \n");
+		   return false;
 	   }
 
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
 
 	   ESP_LOGI(" ","VLX sensor init done! \n");
+	   return true;
 }
 
 uint32_t VL53L0X_getMeasurementTimingBudget(I2C_dev_handles device_handle)
@@ -1072,8 +1090,10 @@ uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
 {
   startTimeout();
   uint16_t range = 0;
-  static bool start_continuous_back2back = false;
-  if(start_continuous_back2back == false)
+  static bool start_continuous_back2back_sens1 = false;
+  static bool start_continuous_back2back_sens2 = false;
+  if((start_continuous_back2back_sens1 == false && device_handle == I2C_distance_sens1_dev_handle) ||
+	 ((start_continuous_back2back_sens2 == false && device_handle == I2C_distance_sens2_dev_handle)))
   {
 	  I2C_writeRegister8bit(device_handle, 0x80, 0x01);
 	  I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
@@ -1083,7 +1103,9 @@ uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
 	  I2C_writeRegister8bit(device_handle, 0xFF, 0x00);
 	  I2C_writeRegister8bit(device_handle, 0x80, 0x00);
 	  I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x02); // back to back mode = fast as possible
-	  start_continuous_back2back = true;
+	  if(device_handle == I2C_distance_sens1_dev_handle)
+	  start_continuous_back2back_sens1 = true;
+	  else start_continuous_back2back_sens2 = true;
 	  vTaskDelay(pdMS_TO_TICKS(20));
   }
 
