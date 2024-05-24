@@ -26,7 +26,7 @@
 #define MAX_MOTOR_FW_DUTY_US 		(1650)
 #define MIN_MOTOR_FW_DUTY_US 		(1550)
 #define MAX_MOTOR_BW_DUTY_US 		(1445)
-#define MIN_MOTOR_BW_DUTY_US 		(1250)
+#define MIN_MOTOR_BW_DUTY_US 		(1200)
 
 /*Pwm settings that are shared between servo and dc motor */
 #define LEDC_Motor_And_Servo_MODE  	LEDC_HIGH_SPEED_MODE

@@ -300,6 +300,10 @@ void I2C_devices_task(void *pvParameters) {
     // Initial config I2C
     config_rst_pin_i2c_mux();    // config rst pin for the mux
     rst_pin_i2c_mux_on();        // rst pin on
+    vTaskDelay(pdMS_TO_TICKS(500));
+    rst_pin_i2c_mux_off();        // rst pin on
+    vTaskDelay(pdMS_TO_TICKS(500));
+    rst_pin_i2c_mux_on();        // rst pin on
     I2C_master_init();           // init master
     I2C_add_device(I2C_mux_addr);// add the multiplexer to the I2C bus
     I2C_add_device(I2C_temp_sens_addr);

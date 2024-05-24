@@ -55,8 +55,8 @@ typedef enum I2C_dev_handles
 typedef enum I2C_WRR_tokens
 {
 	pixy2 = 0,
-	distance_sens1 = 2,
-	distance_sens2 = 2,
+	distance_sens1 = 3,
+	distance_sens2 = 0,
 	adxl_acc = 1,
 	temp_sens = 1
 }I2C_WRR_tokens;

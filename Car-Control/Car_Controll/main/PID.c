@@ -164,8 +164,8 @@ void PIDTask(void *pvParameters) {
 		}
 		if(I2C_command.command == I2C_STOP_MOTOR)
 		{
-			if((I2C_command.sendingSensor == I2C_distance_sens1_dev_handle && pulse_direction == 1) || // forward
-			   (I2C_command.sendingSensor == I2C_distance_sens2_dev_handle && pulse_direction == -1))  // backward
+			if((I2C_command.sendingSensor == I2C_distance_sens1_dev_handle && (pulse_direction == 1 || motorPID.setpoint > 0)) || // forward
+			   (I2C_command.sendingSensor == I2C_distance_sens2_dev_handle && (pulse_direction == -1 || motorPID.setpoint < 0)))  // backward
 			motorPID.setpoint = 0;
 		}
 		else motorPID.setpoint = setpoint_speed;
@@ -177,27 +177,29 @@ void PIDTask(void *pvParameters) {
 
 		/* Each time a pulse has happened, the task will be notified
 		 * and PID will compute next OUTPUT value. */
-		PID_Compute(&motorPID);
-
-		if(motorPID.setpoint == 0 && pulse_direction == 0)
-		{
-			/* Used a value above 0 because if I did 0, it will init the backward mode. */
-			static int confirm_not_backward = 0;
-			if(confirm_not_backward == 0)
-			{
-				motorPID.Output = 3;
-				confirm_not_backward = 1;
-			}
-			/* Output is set to 0 only when it is known that the backward state is not initiated. */
-			else if (confirm_not_backward == 1)
-			{
-				motorPID.Output = 0;
-				confirm_not_backward = 0;
-			}
-		}
-
 		/* If the Setpoint is crossing the backward moving zone, brake. */
+
+
+
+//		if(motorPID.setpoint == 0 && pulse_direction == 0)
+//		{
+//			/* Used a value above 0 because if I did 0, it will init the backward mode. */
+//			static int confirm_not_backward = 0;
+//			if(confirm_not_backward == 0)
+//			{
+//				motorPID.Output = 3;
+//				confirm_not_backward = 1;
+//			}
+//			/* Output is set to 0 only when it is known that the backward state is not initiated. */
+//			else if (confirm_not_backward == 1)
+//			{
+//				motorPID.Output = 0;
+//				confirm_not_backward = 0;
+//			}
+//		}
+
 		PID_backward_if_detected(&motorPID);
+		PID_Compute(&motorPID);
 		changeMotorSpeed(motorPID.Output);
 
 		/*If the time between pulses is too long set the measured value to 0.*/
@@ -242,18 +244,101 @@ void clamp_int(int *value, int min, int max) {
 	}
 }
 
-/*PID motor backward init*/
 void PID_backward_if_detected(PID_t *motor) {
     static int backward_active = 0;
-    if (motor->setpoint <= 0 && motor->measured >= 0) {
-    	ESP_LOGI("PID", "Speed Setpoint: %d", motor->setpoint);
-    	if (motor->measured > 0)
-          carControl_Backward_init();
-		motor->I_term = 0;  // Reset integral term
-		backward_active = 1;
+    static int braking = 0; // Flag to indicate braking state
+    static int backward_happened = 0; // Flag to indicate if backward movement has happened
+    static TickType_t braking_start_time = 0; // Timestamp for when braking starts
+    const int MAX_BRAKE_FORCE = 100; // Define a maximum brake force limit
+    const int MAX_BACKWARD_OUTPUT = -70; // Define a maximum backward output limit
+    const TickType_t BRAKING_DURATION = pdMS_TO_TICKS(300); // Define braking duration
+
+    if (motor->setpoint <= 0 && motor->measured > 0 && backward_active == 0 && braking == 0) {
+        // Calculate braking force based on initial speed
+        int brake_force = (int)(motor->measured * 10); // Example scaling factor
+        brake_force = brake_force > MAX_BRAKE_FORCE ? MAX_BRAKE_FORCE : brake_force; // Limit to max value
+
+        // Initiate aggressive braking
+        changeMotorSpeed(0);
+        vTaskDelay(pdMS_TO_TICKS(20));
+        changeMotorSpeed(-brake_force);
+        vTaskDelay(pdMS_TO_TICKS(20));
+        changeMotorSpeed(0);
+        vTaskDelay(pdMS_TO_TICKS(20));
+
+        motor->I_term = 20; // Reset integral term to prevent accumulation
+        motor->Output = -abs(motor->Output); // Ensure output is negative
+        motor->Output = motor->Output < MAX_BACKWARD_OUTPUT ? MAX_BACKWARD_OUTPUT : motor->Output; // Clamp output
+
+        // Set the braking flag and timestamp
+        braking = 1;
+        braking_start_time = xTaskGetTickCount();
+        backward_active = 0; // Ensure backward mode is not active
     }
-    else backward_active  = 0;
+    else if (braking == 1) {
+        // Continue braking if within the braking duration or until the car stops
+        if (xTaskGetTickCount() - braking_start_time <= BRAKING_DURATION && motor->measured > 0) {
+            // Calculate braking force based on current speed
+            int brake_force = (int)(motor->measured * 10); // Example scaling factor
+            brake_force = brake_force > MAX_BRAKE_FORCE ? MAX_BRAKE_FORCE : brake_force; // Limit to max value
+
+            changeMotorSpeed(0);
+            vTaskDelay(pdMS_TO_TICKS(20));
+            changeMotorSpeed(-brake_force);
+            vTaskDelay(pdMS_TO_TICKS(20));
+            changeMotorSpeed(0);
+            vTaskDelay(pdMS_TO_TICKS(20));
+
+            motor->I_term = 5; // Adjust integral term to a predefined state
+            motor->Output = 0; // Stop the car
+
+            // Maintain the braking flag
+            braking = 1;
+        } else {
+            // Reset the braking flag once braking is complete
+            braking = 0;
+            backward_happened = 0; // Reset backward movement flag
+        }
+    }
+    else if (motor->setpoint > 0) {
+        // Reset states when setpoint is positive
+        backward_active = 0;
+        braking = 0;
+        backward_happened = 0;
+    }
+    else if (motor->setpoint < 0 && backward_active == 0 && braking == 0 && backward_happened == 0) {
+        // If the setpoint is negative and braking is not active, initiate backward movement
+        carControl_Backward_init();
+        motor->I_term = 0; // Reset integral term to prevent accumulation
+        motor->Output = -abs(motor->Output); // Ensure output is negative
+        motor->Output = motor->Output < MAX_BACKWARD_OUTPUT ? MAX_BACKWARD_OUTPUT : motor->Output; // Clamp output
+
+        backward_active = 1;
+        braking = 0; // Ensure braking mode is not active
+        backward_happened = 1; // Set backward movement flag
+    }
+    else if (motor->setpoint >= 0 && motor->measured < 0 && backward_active == 1) {
+        // Braking when moving backward
+        int brake_force = (int)(-motor->measured * 10); // Example scaling factor
+        brake_force = brake_force > MAX_BRAKE_FORCE ? MAX_BRAKE_FORCE : brake_force; // Limit to max value
+
+        changeMotorSpeed(0);
+        vTaskDelay(pdMS_TO_TICKS(20));
+        changeMotorSpeed(brake_force);
+        vTaskDelay(pdMS_TO_TICKS(20));
+        changeMotorSpeed(0);
+        vTaskDelay(pdMS_TO_TICKS(20));
+
+        motor->I_term = 20; // Reset integral term to prevent accumulation
+        motor->Output = abs(motor->Output); // Ensure output is positive
+
+        // Set the braking flag and timestamp
+        braking = 1;
+        braking_start_time = xTaskGetTickCount();
+        backward_active = 0; // Reset backward active state
+    }
 }
+
 
 /*START PID TASK function*/
 
