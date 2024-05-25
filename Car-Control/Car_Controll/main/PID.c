@@ -8,6 +8,9 @@ PID_t motorPID;
 /* TODO: Add steerPID for a greater efficiency in car's control when it enters autonomous mode. */
 PID_t steerPID;
 
+bool sens_fw_has_obstacle = false;
+bool sens_bw_has_obstacle = false;
+
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
 	pid->setpoint = 0;
@@ -160,15 +163,25 @@ void PIDTask(void *pvParameters) {
 		}
 		if(xActivatedMember == I2C_commandQueue)
 		{
+
 			xQueueReceive(xActivatedMember, &I2C_command, 0);
+			if (I2C_command.sendingSensor == I2C_distance_sens1_dev_handle && I2C_command.command == I2C_STOP_MOTOR )
+				sens_fw_has_obstacle = true;
+			else  if(I2C_command.sendingSensor == I2C_distance_sens1_dev_handle && I2C_command.command == I2C_START_MOTOR)
+			{
+				sens_fw_has_obstacle = false;
+			}
+			if (I2C_command.sendingSensor == I2C_distance_sens2_dev_handle && I2C_command.command == I2C_STOP_MOTOR )
+				sens_bw_has_obstacle = true;
+			else  if(I2C_command.sendingSensor == I2C_distance_sens2_dev_handle && I2C_command.command == I2C_START_MOTOR)
+			{
+				sens_bw_has_obstacle = false;
+			}
 		}
-		if(I2C_command.command == I2C_STOP_MOTOR)
-		{
-			if((I2C_command.sendingSensor == I2C_distance_sens1_dev_handle && (pulse_direction == 1 || motorPID.setpoint > 0)) || // forward
-			   (I2C_command.sendingSensor == I2C_distance_sens2_dev_handle && (pulse_direction == -1 || motorPID.setpoint < 0)))  // backward
+
+		if((sens_fw_has_obstacle == true && motorPID.setpoint > 0) || (sens_bw_has_obstacle == true && motorPID.setpoint < 0))
 			motorPID.setpoint = 0;
-		}
-		else motorPID.setpoint = setpoint_speed;
+
 
 		/* IN CASE OF CONFUSION:  -> Setpoint is given by the user, so only the Setpoint can
 		 * 						     decide if the car should go backwards or not.
@@ -199,16 +212,17 @@ void PIDTask(void *pvParameters) {
 //		}
 
 		PID_backward_if_detected(&motorPID);
-		PID_Compute(&motorPID);
-		changeMotorSpeed(motorPID.Output);
-
 		/*If the time between pulses is too long set the measured value to 0.*/
-		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(700))
+		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(200))
 		{
 			motorPID.measured = 0;
 			if(motorPID.setpoint == 0)
 				motorPID.I_term = 0;
 		}
+		PID_Compute(&motorPID);
+		changeMotorSpeed(motorPID.Output);
+
+
 
 		/* Send diagnostic data to phone app in order to monitor the speed and behaviour of Integral value. */
 
@@ -243,30 +257,32 @@ void clamp_int(int *value, int min, int max) {
 		*value = min;
 	}
 }
-
 void PID_backward_if_detected(PID_t *motor) {
     static int backward_active = 0;
     static int braking = 0; // Flag to indicate braking state
     static int backward_happened = 0; // Flag to indicate if backward movement has happened
     static TickType_t braking_start_time = 0; // Timestamp for when braking starts
-    const int MAX_BRAKE_FORCE = 100; // Define a maximum brake force limit
-    const int MAX_BACKWARD_OUTPUT = -70; // Define a maximum backward output limit
-    const TickType_t BRAKING_DURATION = pdMS_TO_TICKS(300); // Define braking duration
+    static double last_measured = 0; // Track the last measured speed
+    const int MAX_BRAKE_FORCE = 60; // Increased maximum brake force for more aggressive braking
+    const int MAX_BACKWARD_OUTPUT = -50; // Define a maximum backward output limit
+    const TickType_t BRAKING_DURATION = pdMS_TO_TICKS(300); // Reduced braking duration for more aggressive braking
+    const double STOP_THRESHOLD = 10; // Speed threshold to consider the car stopped
+    const double SUDDEN_DROP_THRESHOLD = 5; // Threshold to detect sudden drop in speed
 
     if (motor->setpoint <= 0 && motor->measured > 0 && backward_active == 0 && braking == 0) {
         // Calculate braking force based on initial speed
-        int brake_force = (int)(motor->measured * 10); // Example scaling factor
+        int brake_force = (int)(motor->measured * 10); // Increased scaling factor for more aggressive braking
         brake_force = brake_force > MAX_BRAKE_FORCE ? MAX_BRAKE_FORCE : brake_force; // Limit to max value
 
         // Initiate aggressive braking
         changeMotorSpeed(0);
-        vTaskDelay(pdMS_TO_TICKS(20));
+        vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
         changeMotorSpeed(-brake_force);
-        vTaskDelay(pdMS_TO_TICKS(20));
+        vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
         changeMotorSpeed(0);
-        vTaskDelay(pdMS_TO_TICKS(20));
+        vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
 
-        motor->I_term = 20; // Reset integral term to prevent accumulation
+        motor->I_term = 0; // Reset integral term to prevent accumulation
         motor->Output = -abs(motor->Output); // Ensure output is negative
         motor->Output = motor->Output < MAX_BACKWARD_OUTPUT ? MAX_BACKWARD_OUTPUT : motor->Output; // Clamp output
 
@@ -276,18 +292,24 @@ void PID_backward_if_detected(PID_t *motor) {
         backward_active = 0; // Ensure backward mode is not active
     }
     else if (braking == 1) {
+        // Check for sudden drop in speed
+        if ((last_measured - motor->measured) > SUDDEN_DROP_THRESHOLD) {
+            // Sudden drop in speed detected, stop braking
+            braking = 0;
+            backward_happened = 0; // Reset backward movement flag
+        }
         // Continue braking if within the braking duration or until the car stops
-        if (xTaskGetTickCount() - braking_start_time <= BRAKING_DURATION && motor->measured > 0) {
+        else if (xTaskGetTickCount() - braking_start_time <= BRAKING_DURATION && motor->measured > 0) {
             // Calculate braking force based on current speed
-            int brake_force = (int)(motor->measured * 10); // Example scaling factor
+            int brake_force = (int)(motor->measured * 10); // Increased scaling factor for more aggressive braking
             brake_force = brake_force > MAX_BRAKE_FORCE ? MAX_BRAKE_FORCE : brake_force; // Limit to max value
 
             changeMotorSpeed(0);
-            vTaskDelay(pdMS_TO_TICKS(20));
+            vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
             changeMotorSpeed(-brake_force);
-            vTaskDelay(pdMS_TO_TICKS(20));
+            vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
             changeMotorSpeed(0);
-            vTaskDelay(pdMS_TO_TICKS(20));
+            vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
 
             motor->I_term = 5; // Adjust integral term to a predefined state
             motor->Output = 0; // Stop the car
@@ -329,7 +351,7 @@ void PID_backward_if_detected(PID_t *motor) {
         changeMotorSpeed(0);
         vTaskDelay(pdMS_TO_TICKS(20));
 
-        motor->I_term = 20; // Reset integral term to prevent accumulation
+        motor->I_term = 0; // Reset integral term to prevent accumulation
         motor->Output = abs(motor->Output); // Ensure output is positive
 
         // Set the braking flag and timestamp
@@ -337,12 +359,29 @@ void PID_backward_if_detected(PID_t *motor) {
         braking_start_time = xTaskGetTickCount();
         backward_active = 0; // Reset backward active state
     }
+
+    // Update last measured speed
+    last_measured = motor->measured;
 }
 
+///*PID motor backward init*/
+//void PID_backward_if_detected(PID_t *motor) {
+//    static int backward_active = 0;
+//
+//    if (motor->setpoint < 0 && motor->measured >= 0) {
+//        if (!backward_active || motor->Output < 0) {
+//            carControl_Backward_init();
+//            motor->I_term = 0;  // Reset integral term
+//            backward_active = 1;
+//        }
+//    } else if (motor->setpoint >= 0) {
+//        backward_active = 0;  // Reset backward state only when well above the backward threshold
+//    }
+//}
 
 /*START PID TASK function*/
 
 void start_PID_task()
 {
-	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 10, NULL, 1U);
+	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 7, NULL, 1U);
 }

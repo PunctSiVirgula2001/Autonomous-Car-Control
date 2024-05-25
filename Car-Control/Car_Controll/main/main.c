@@ -1,9 +1,9 @@
 /*Brief for on which cores are the tasks runing
-	PIDTask: 		 	Core 1, Prio 10
+	PIDTask: 		 	Core 1, Prio 7
 	CarControl_Task: 	Core 0, Prio 6
 	steer_task: 	 	Core 1, Prio 6
 	udp_server_task: 	Core 0, Prio 5
-	i2c_task: 		 	Core 1, Prio 7
+	i2c_task: 		 	Core 0, Prio 7
 	uart_Jetson_Task	Core 1, Prio 6
 */
 
@@ -48,13 +48,21 @@ extern QueueSetHandle_t QueueSetGeneralCommands;
 extern bool I2C_sensors_initiated;
 //#define ESP_LOGI(a,b) printf(b);
 void app_main(void) {
+
+    config_rst_pin_i2c_mux();    // config rst pin for the mux
+    rst_pin_i2c_mux_on();        // rst pin on
+    vTaskDelay(pdMS_TO_TICKS(500));
+    rst_pin_i2c_mux_off();        // rst pin on
+    vTaskDelay(pdMS_TO_TICKS(500));
+    rst_pin_i2c_mux_on();        // rst pin on
+
 	steer_commandQueue = xQueueCreate(20,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	diagnosticModeControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS, QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
 	autonomousModeControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS, QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
 	pulse_encoderQueue = xQueueCreate(QUEUE_SIZE_ENCODER_PULSE, QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	speed_commandQueue = xQueueCreate(QUEUE_SIZE_SPEED, QUEUE_SIZE_DATATYPE_SPEED);
 	PID_commandQueue = xQueueCreate(5, sizeof(CarCommand));
-	I2C_commandQueue = xQueueCreate(10, I2C_COMMAND_SIZE);
+	I2C_commandQueue = xQueueCreate(20, I2C_COMMAND_SIZE);
 
 	/* Create a set which would hold both Autonomous mode and Diagnostic mode queues */
 	QueueSetAutonomousOrDiagnostic = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS);
@@ -73,9 +81,8 @@ void app_main(void) {
 	xQueueAddToSet(pulse_encoderQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(PID_commandQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(I2C_commandQueue, QueueSetGeneralCommands);
-	start_I2C_devices_task();
-	//vTaskDelay(pdMS_TO_TICKS(5000));
 	carControl_init();
+	start_I2C_devices_task();
 	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
 	start_network_task();
 	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));

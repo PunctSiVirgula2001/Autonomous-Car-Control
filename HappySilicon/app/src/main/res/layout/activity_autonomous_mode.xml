@@ -62,7 +62,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/textViewCharging"
+                android:id="@+id/textViewDistSensFw"
                 android:layout_width="83dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0" />
@@ -117,7 +117,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/responseTextView1"
+            android:id="@+id/responseTextLogger"
             android:layout_width="match_parent"
             android:layout_height="226dp"
             android:layout_marginBottom="1dp"

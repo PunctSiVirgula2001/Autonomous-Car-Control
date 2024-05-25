@@ -27,11 +27,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.halfhp.fig:figlib:1.0.11'
     implementation 'androidx.test.ext:junit:1.1.5'
     implementation 'com.androidplot:androidplot-core:1.5.7'
-    implementation 'androidx.compose.ui:ui-graphics-android:1.6.4'
+    implementation 'androidx.compose.ui:ui-graphics-android:1.6.7'
     testImplementation 'junit:junit:4.13.2'
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.3")
     androidTestImplementation 'androidx.test:runner:1.5.2'

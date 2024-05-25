@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button connect_to_esp_button;
     private Button pid_settings_button;
     private Car carModel;
+
     RollingSMA sma;
     static double sumSMA = 0;
     static boolean firstSample = true;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                             carModel.setActualKI(getSaveKI());
                             carModel.setActualKD(getSaveKD());
                         }
-                        if((message).startsWith("MEASURED_VALUE"))
+                        if((message).startsWith("MEASURED_VALUE") && !Car.allowed_to_plot)
                         {
                             String[] splitedValue = message.split(" ");
                             int receivedValue = Integer.parseInt(splitedValue[1]);
@@ -76,14 +77,6 @@ public class MainActivity extends AppCompatActivity {
                                 carModel.setCarSpeed(sma.next(receivedValue));
                             else
                                 carModel.setCarSpeed(0);
-
-                            // Start the timer with the first sample
-//                            if (firstSample) {
-//                                carModel.startTimer();
-//                                carModel.setTimeOfSamplingFromEsp(0);
-//                                carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
-//                                firstSample = false;
-//                            } else {
 
                             if (carModel.isTimerRunning()) {
                                 // Use the timer to get the elapsed time in seconds since the first sample
@@ -97,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                 carModel.setResetGraph(true);
                                 carModel.startTimer();
                             }
-
-//                          }
+                            Car.allowed_to_plot = true;
                         }
                         if((message).startsWith("I_TERM_VALUE"))
                         {
@@ -117,6 +109,29 @@ public class MainActivity extends AppCompatActivity {
                             float receivedValue = Float.parseFloat(splitedValue[1]);
                             carModel.setTemperature(receivedValue);
                         }
+
+                        if((message).startsWith("ADXL_ROLL"))
+                        {
+                            String[] splitedValue = message.split(" ");
+                            carModel.setRoll(Float.parseFloat(splitedValue[1]));
+                        }
+                        if((message).startsWith("ADXL_PITCH"))
+                        {
+                            String[] splitedValue = message.split(" ");
+                            carModel.setPitch(Float.parseFloat(splitedValue[1]));
+                        }
+                        if((message).startsWith("DistSensFw"))
+                        {
+                            String[] splitedValue = message.split(" ");
+                            carModel.setDistSensFw(Float.parseFloat(splitedValue[1]));
+                        }
+
+                        if((message).startsWith("DistSensBw"))
+                        {
+                            String[] splitedValue = message.split(" ");
+                            carModel.setDistSensBw(Float.parseFloat(splitedValue[1]));
+                        }
+
 
                     });
                 });

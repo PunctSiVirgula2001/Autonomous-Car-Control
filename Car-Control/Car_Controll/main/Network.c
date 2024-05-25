@@ -11,17 +11,20 @@ char* stateSendToAppStrings[STATE_MAX] = {
     "OBSTACLE_DETECTED_VALUE",   // Corresponds to OBSTACLE_DETECTED_VALUE
 	"ERROR_PID_VALUE",			// Corresponds to ERROR_PID_VALUE
 	"ACTUAL_TIME_OF_SEND",
-	"TEMP_VALUE"
-
+	"TEMP_VALUE",
+	"DistSensFw",
+	"DistSensBw",
+	"ADXL_ROLL",
+	"ADXL_PITCH"
 };
-/*
- * 00 - measured speed
- * 01 - setpoint
- * 02 - temperature
- * 03 - obstacoll detected
- * 04 - I_term
- * 05 - error_pid
- * */ // TODO: add a function that adds the specific values to the string for each stats
+
+// * 00 - measured speed
+// * 01 - setpoint
+// * 02 - temperature
+// * 03 - obstacoll detected
+// * 04 - I_term
+// * 05 - error_pid
+
 
 //Initialize a handler for blinking led
 TaskHandle_t handlerBlinkLedTask = NULL;

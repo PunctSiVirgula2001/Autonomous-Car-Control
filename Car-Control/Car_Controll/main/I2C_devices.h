@@ -55,8 +55,8 @@ typedef enum I2C_dev_handles
 typedef enum I2C_WRR_tokens
 {
 	pixy2 = 0,
-	distance_sens1 = 3,
-	distance_sens2 = 0,
+	distance_sens1 = 6,
+	distance_sens2 = 2,
 	adxl_acc = 1,
 	temp_sens = 1
 }I2C_WRR_tokens;
@@ -141,6 +141,7 @@ void I2C_devices_task(void *pvParameters);
 /* VL53L0X */
 #define ALPHA_VL53L0X 0.5
 #define ALPHA_ADXL 0.3
+#define Threshold_dist 100
 
 static uint8_t stop_variable;
 static uint16_t timeout_start_ms;

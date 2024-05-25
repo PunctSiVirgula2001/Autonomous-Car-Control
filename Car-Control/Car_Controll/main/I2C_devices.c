@@ -102,19 +102,6 @@ void I2C_add_device(uint8_t device_address)
     }
 }
 
-
-static void i2c_manual_stop(int stop_ms) {
-    // Ensure both lines are high before generating a stop condition
-    gpio_set_level(I2C_SCL, 1);
-    gpio_set_level(I2C_SDA, 0); // SDA low while SCL is high
-
-    // Small delay to meet the timing requirements
-    vTaskDelay(pdMS_TO_TICKS(stop_ms)); // Use an appropriate delay based on your I2C clock speed
-
-    // Generate stop condition
-    gpio_set_level(I2C_SCL, 1);
-    gpio_set_level(I2C_SDA, 1); // Transition SDA to high while SCL is high
-}
 void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t write_size)
 {
 	static I2C_dev_handles old_handle=999;
@@ -263,7 +250,7 @@ void I2C_writeRegister8bit(I2C_dev_handles device_handle, uint8_t reg, uint8_t v
 
 	// Transmit both bytes at once
 	I2C_transmit(device_handle, data, 2);
-	i2c_manual_stop(pdMS_TO_TICKS(5));
+	//i2c_manual_stop(pdMS_TO_TICKS(5));
 	vTaskDelay(pdMS_TO_TICKS(5)); // Delay to allow the transaction to complete
 }
 
@@ -298,12 +285,6 @@ void I2C_devices_task(void *pvParameters) {
     static bool dist_sens_init = false;
 
     // Initial config I2C
-    config_rst_pin_i2c_mux();    // config rst pin for the mux
-    rst_pin_i2c_mux_on();        // rst pin on
-    vTaskDelay(pdMS_TO_TICKS(500));
-    rst_pin_i2c_mux_off();        // rst pin on
-    vTaskDelay(pdMS_TO_TICKS(500));
-    rst_pin_i2c_mux_on();        // rst pin on
     I2C_master_init();           // init master
     I2C_add_device(I2C_mux_addr);// add the multiplexer to the I2C bus
     I2C_add_device(I2C_temp_sens_addr);
@@ -367,8 +348,10 @@ void I2C_devices_task(void *pvParameters) {
 						// Update the previous value for the next iteration
 						readValSensor_dist1_prev = readValSensor1;
 						// Make a decision
+
+						sendCommandApp(DistSensFw, (double*)&readValSensor_dist1_final, DOUBLE);
 						static int countSendStop_sens1 = 0,countSendStart_sens1 = 0;
-						if(readValSensor_dist1_final < 800.0 && countSendStop_sens1 == 0)
+						if(readValSensor_dist1_final < Threshold_dist && countSendStop_sens1 == 0)
 						{
 							countSendStop_sens1++;
 							countSendStart_sens1=0;
@@ -378,7 +361,7 @@ void I2C_devices_task(void *pvParameters) {
 							xQueueSend(I2C_commandQueue,&i2c_command,pdMS_TO_TICKS(5000));
 							ESP_LOGI("", "Sent STOP for forward \n");
 						}
-						else if (countSendStart_sens1 == 0 && readValSensor_dist1_final >= 800.0)
+						else if (countSendStart_sens1 == 0 && readValSensor_dist1_final >= Threshold_dist)
 						{
 							countSendStop_sens1=0;
 							countSendStart_sens1++;
@@ -399,8 +382,10 @@ void I2C_devices_task(void *pvParameters) {
                         readValSensor2 = VL53L0X_readRangeContinuousMillimeters(current_sensor->device_handle);
                         readValSensor_dist2_final = ALPHA_VL53L0X * (double)readValSensor2 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist2_prev;						// Update the previous value for the next iteration
                         readValSensor_dist2_prev = readValSensor2;
+
+                        sendCommandApp(DistSensBw, (double*)&readValSensor_dist2_final, DOUBLE);
                         static int countSendStop_sens2 = 0,countSendStart_sens2 = 0;
-                        if(readValSensor_dist2_final < 800.0 && countSendStop_sens2 == 0)
+                        if(readValSensor_dist2_final < Threshold_dist && countSendStop_sens2 == 0)
 						{
                         	countSendStop_sens2++;
                         	countSendStart_sens2=0;
@@ -410,7 +395,7 @@ void I2C_devices_task(void *pvParameters) {
 							xQueueSend(I2C_commandQueue,&i2c_command,-1);
 							ESP_LOGI("", "Sent STOP for backward \n");
 						}
-                        else if (countSendStart_sens2 == 0 && readValSensor_dist2_final >= 800)
+                        else if (countSendStart_sens2 == 0 && readValSensor_dist2_final >= Threshold_dist)
                         {
                         	countSendStop_sens2=0;
                         	countSendStart_sens2++;
@@ -454,6 +439,9 @@ void I2C_devices_task(void *pvParameters) {
 						pitch_prev = pitch;
 
 						ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll_final, pitch_final);
+						sendCommandApp(ADXL_ROLL, (double*)&roll_final, DOUBLE);
+						sendCommandApp(ADXL_PITCH, (double*)&pitch_final, DOUBLE);
+
 
 						I2C_writeRegister8bit(current_sensor->device_handle, ADXL345_REG_POWER_CTL, 0x08);
 						break;
@@ -465,6 +453,7 @@ void I2C_devices_task(void *pvParameters) {
                     case I2C_temp_sens_mux:
                         I2C_read_temperature(&temp);
                         ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
+                        sendCommandApp(TEMPERATURE, (double*)&temp, DOUBLE);
                         break;
 
                     default:
@@ -484,7 +473,7 @@ void I2C_devices_task(void *pvParameters) {
                 }
                 break;
         }
-        vTaskDelay(pdMS_TO_TICKS(1));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -504,7 +493,7 @@ void rst_pin_i2c_mux_off()
 
 void start_I2C_devices_task()
 {
-	xTaskCreatePinnedToCore(I2C_devices_task, "I2C_devices_task", 4096, NULL, 7, NULL, 1);
+	xTaskCreatePinnedToCore(I2C_devices_task, "I2C_devices_task", 4096, NULL, 7, NULL, 0);
 }
 
 /******** BMP/BME280 sensor **********/
@@ -598,7 +587,7 @@ bool VL53L0X_getSpadInfo(I2C_dev_handles device_handle ,uint8_t * count, bool * 
 
   I2C_writeRegister8bit(device_handle, 0x81, 0x00);
   I2C_writeRegister8bit(device_handle, 0xFF, 0x06);
-  uint8_t data;
+//  uint8_t data;
   I2C_writeRegister8bit(device_handle, 0x83, (uint8_t)(I2C_readRegister16bit(device_handle, 0x83)>>8) & ~0x04);
   I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
   I2C_writeRegister8bit(device_handle, 0x00, 0x01);

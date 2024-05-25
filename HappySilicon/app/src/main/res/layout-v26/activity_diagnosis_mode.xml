@@ -56,6 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Rx packets:"
+                    android:textAlignment="viewStart"
                     android:textStyle="bold" />
 
                 <TextView
@@ -92,11 +93,12 @@
                     android:layout_width="114dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="@string/textViewVoltageLabel"
+                    android:text="Roll: "
+                    android:textAlignment="viewStart"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewVoltage"
+                    android:id="@+id/textViewRoll"
                     android:layout_width="83dp"
                     android:layout_height="wrap_content" />
 
@@ -104,11 +106,11 @@
                     android:layout_width="129dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="@string/textViewCurrentLabel"
+                    android:text="Pitch: "
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewCurrent"
+                    android:id="@+id/textViewPitch"
                     android:layout_width="45dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0" />
@@ -126,12 +128,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:text="@string/textViewTimeElapsed"
+                    android:textAlignment="viewStart"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textViewTimeElapsed"
                     android:layout_width="83dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="0" />
 
                 <TextView
@@ -159,26 +162,27 @@
                     android:layout_width="114dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="@string/textViewChargingState"
+                    android:text="DistSensBw [cm]:"
+                    android:textAlignment="viewStart"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewCharging"
+                    android:id="@+id/textViewDistSensBw"
                     android:layout_width="83dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0" />
 
                 <TextView
-                    android:id="@+id/textView14"
+                    android:id="@+id/textDistSens"
                     android:layout_width="129dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:text="@string/textViewDistanceTraveled"
+                    android:text="DistSensorFw [cm]:"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewDistance"
-                    android:layout_width="45dp"
+                    android:id="@+id/textViewDistSensFw"
+                    android:layout_width="83dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0" />
 
@@ -194,6 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:text="@string/textViewBattery"
+                    android:textAlignment="viewStart"
                     android:textStyle="bold" />
 
                 <TextView
@@ -224,11 +229,12 @@
             android:layout_height="338dp">
 
             <TextView
-                android:id="@+id/responseTextView1"
+                android:id="@+id/responseTextLogger"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="1dp"
                 android:textSize="12sp" />
+
         </LinearLayout>
 
         <LinearLayout

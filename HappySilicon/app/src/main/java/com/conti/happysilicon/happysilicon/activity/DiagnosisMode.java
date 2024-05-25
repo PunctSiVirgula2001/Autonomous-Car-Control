@@ -30,10 +30,11 @@ public class DiagnosisMode extends AppCompatActivity {
     //reference to textViews.
     private TextView carBatteryTextView;
     private TextView carTemperatureTextView;
-    private TextView carChargingTextView ;
+    private TextView carDistSensFw;
+    private TextView carDistSensBw;
     private TextView carSpeedTextView ;
-    private TextView carDistanceTextView ;
-    private TextView carVoltageTextView ;
+    private TextView carRollTextView;
+    private TextView carPitchTextView;
     private TextView carCurrentTextView ;
     private TextView carMotorPwmDutyTextView ;
     private TextView carTimeElapsedTextView ;
@@ -58,11 +59,11 @@ public class DiagnosisMode extends AppCompatActivity {
         //reference to textViews.
         carBatteryTextView = (TextView) findViewById(R.id.textViewBattery);
         carTemperatureTextView = (TextView) findViewById(R.id.textViewTemp);
-        carChargingTextView = (TextView) findViewById(R.id.textViewCharging);
+        carDistSensFw = (TextView) findViewById(R.id.textViewDistSensFw);
+        carDistSensBw = (TextView) findViewById(R.id.textViewDistSensBw);
         carSpeedTextView = (TextView) findViewById(R.id.textViewCarSpeed);
-        carDistanceTextView = (TextView) findViewById(R.id.textViewDistance);
-        carVoltageTextView = (TextView) findViewById(R.id.textViewVoltage);
-        carCurrentTextView = (TextView) findViewById(R.id.textViewCurrent);
+        carRollTextView = (TextView) findViewById(R.id.textViewRoll);
+        carPitchTextView = (TextView) findViewById(R.id.textViewPitch);
         carMotorPwmDutyTextView = (TextView) findViewById(R.id.textViewStepperMotorTxt);
         carTimeElapsedTextView = (TextView) findViewById(R.id.textViewTimeElapsed);
         RxTextView = (TextView) findViewById(R.id.rxTextView);
@@ -120,7 +121,7 @@ public class DiagnosisMode extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean b) {
                 udpClient.tx++;
-                udpClient.sendMessage("06"+progressValue);
+                udpClient.sendMessage("06"+(100-progressValue));
 
             }
             @Override
@@ -151,11 +152,11 @@ public class DiagnosisMode extends AppCompatActivity {
             // Update UI elements with data from carModel
             carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
             carTemperatureTextView.setText(String.valueOf(carModel.getTemperature()));
-            carChargingTextView.setText(String.valueOf(carModel.getChargingState()));
             carSpeedTextView.setText(String.valueOf(carModel.getCarSpeed()));
-            carDistanceTextView.setText(String.valueOf(carModel.getDistanceTraveled()));
-            carVoltageTextView.setText(String.valueOf(carModel.getChargingStationVoltage()));
-            carCurrentTextView.setText(String.valueOf(carModel.getCurrentDraw()));
+            carDistSensFw.setText(String.valueOf(carModel.getDistSensFw()));
+            carDistSensBw.setText(String.valueOf(carModel.getDistSensBw()));
+            carRollTextView.setText(String.valueOf(carModel.getRoll()));
+            carPitchTextView.setText(String.valueOf(carModel.getPitch()));
             carMotorPwmDutyTextView.setText(progressDCSeekBar+"%");
             carTimeElapsedTextView.setText(String.valueOf(carModel.getTimeElapsed()));
             RxTextView.setText(String.valueOf(udpClient.rx));

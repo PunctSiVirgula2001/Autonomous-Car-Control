@@ -26,7 +26,6 @@
 #define WIFI_PASS "123456789"
 #define MAX_STA_CONN 4  /*Number of maximum connections allowed on access point. */
 #define PORT 80 		/*Port at which the access point has been started. */
-#define TAG_send "SocketSender"
 #define INBUILT_LED_CONNECTED GPIO_NUM_2
 
 /*COMMANDS TO SEND TO APP*/
@@ -36,7 +35,11 @@ typedef enum {
     OBSTACLE_DETECTED_VALUE,
 	ERROR_PID_VALUE,
 	ACTUAL_TIME_OF_SEND,
-	TEMPRATURE,
+	TEMPERATURE,
+	DistSensFw,
+	DistSensBw,
+	ADXL_ROLL,
+	ADXL_PITCH,
     STATE_MAX
 } SendCommandType_app;
 

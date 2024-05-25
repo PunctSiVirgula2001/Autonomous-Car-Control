@@ -5,6 +5,7 @@ import com.conti.happysilicon.happysilicon.Utilities.SimpleTimer;
 public class Car {
     private static Car instance;
 
+
     public enum CarDirectionStatus {
         STOP,
         FORWARD,
@@ -24,7 +25,10 @@ public class Car {
     private float batteryLevel;
     private boolean chargingState;
     private float carSpeed;     // cm/s
-    private float distanceTraveled;
+    private float distSensFw;
+    private float distSensBw;
+    private float roll;
+    private float pitch;
     private CarDirectionStatus movingDirection;
 
     // TODO traffic signs and lights to be implemented
@@ -33,8 +37,6 @@ public class Car {
     // Thermals
     private float temperature;
     private float currentDraw;
-    private float chargingStationVoltage;
-    private int chargingTime; // in seconds
     private boolean rightLightToggle;
     private boolean leftLightToggle;
     
@@ -48,6 +50,7 @@ public class Car {
     private static float value_of_sampling_from_esp = 0;
     private static boolean new_data_from_esp = false;
     private static boolean reset_graph = false;
+    public static boolean allowed_to_plot = false;
     private static SimpleTimer timer; // Create a new timer instance
 
 
@@ -60,12 +63,13 @@ public class Car {
         batteryLevel = 0;
         chargingState = false;
         carSpeed = 0;
-        distanceTraveled = 0;
+        distSensFw = 0;
+        distSensBw = 0;
         movingDirection = CarDirectionStatus.STOP;
         temperature = 0;
-        chargingStationVoltage = 0;
-        chargingTime = 0;
         currentDraw = 0;
+        roll = 0;
+        pitch = 0;
         actualKP = 0;
         actualKI = 0;
         actualKD = 0;
@@ -87,14 +91,14 @@ public class Car {
     public void setBatteryLevel(float batteryLevel){ this.batteryLevel = batteryLevel; }
     public void setChargingState(boolean state){ this.chargingState = state; }
     public void setTimeElapsed(int timeElapsed){ this.timeElapsed = timeElapsed; }
-    public void setDistanceTraveled(float distanceTraveled){ this.distanceTraveled = distanceTraveled; }
+    public void setDistSensFw(float distSensFw){ this.distSensFw = distSensFw; }
+    public void setDistSensBw(float distSensBw){ this.distSensBw = distSensBw; }
+    public void setRoll(float roll) {this.roll = roll;}
+    public void setPitch(float pitch) {this.pitch = pitch;}
     public void setMovingDirection(CarDirectionStatus movingDirection) { this.movingDirection = movingDirection; }
     public void setTemperature(float temperature) { this.temperature = temperature; }
-    public void setChargingStationVoltage(float chargingStationVoltage) { this.chargingStationVoltage = chargingStationVoltage; }
-    public void setChargingTime(int chargingTime) { this.chargingTime = chargingTime; }
     public void setCarCommand(CarCommands carCommand){ this.carCommand = carCommand; }
     public void setCarLights(boolean leftLight, boolean rightLight){ this.leftLightToggle = leftLight; this.rightLightToggle = rightLight; }
-    public void setCurrentDraw(float current){ currentDraw = current; }
     public void setActualKP(float KP) {actualKP = KP;}
     public void setActualKI(float KI) {actualKI = KI;}
     public void setActualKD(float KD) {actualKD = KD;}
@@ -107,16 +111,17 @@ public class Car {
     public static void setTimer(SimpleTimer timer1) {timer = timer1;}
     public static void resetTimer() {timer.reset();}
     public static void startTimer() {timer.start();}
+
+
     // Getters
     public float getCarSpeed() { return this.carSpeed; }
     public float getBatteryLevel() { return this.batteryLevel; }
-    public boolean getChargingState() { return this.chargingState; }
+    public float getDistSensFw() { return this.distSensFw; }
+    public float getDistSensBw() { return this.distSensBw; }
+    public float getRoll() {return this.roll;}
+    public float getPitch() {return this.pitch;}
     public float getTimeElapsed() { return this.timeElapsed; }
-    public float getDistanceTraveled() { return this.distanceTraveled; }
-    public CarDirectionStatus getMovingDirection() { return this.movingDirection; }
     public float getTemperature() { return this.temperature; }
-    public float getChargingStationVoltage() { return this.chargingStationVoltage; }
-    public float getChargingTime() { return this.chargingTime; }
     public float getCurrentDraw() { return this.currentDraw; }
     public int getCarLightsState(){
         if(this.rightLightToggle&&this.leftLightToggle){

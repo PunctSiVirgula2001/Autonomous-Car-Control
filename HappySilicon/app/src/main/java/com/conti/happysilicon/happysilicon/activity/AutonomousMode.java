@@ -13,8 +13,6 @@ import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
-import java.nio.charset.StandardCharsets;
-
 public class AutonomousMode extends AppCompatActivity {
     private Car carModel;
     private TcpSocketClient tcpClient;
@@ -43,7 +41,7 @@ public class AutonomousMode extends AppCompatActivity {
         //reference to textViews.
         carBatteryTextView = findViewById(R.id.textViewBattery);
         carTemperatureTextView = findViewById(R.id.textViewTemp);
-        carChargingTextView = findViewById(R.id.textViewCharging);
+        carChargingTextView = findViewById(R.id.textViewDistSensFw);
         carSpeedTextView = findViewById(R.id.textViewCarSpeed);
         carDistanceTextView = findViewById(R.id.textViewDistance);
 
@@ -89,9 +87,8 @@ public class AutonomousMode extends AppCompatActivity {
             // Update UI elements with data from carModel
             carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
             carTemperatureTextView.setText(String.valueOf(carModel.getTemperature()));
-            carChargingTextView.setText(String.valueOf(carModel.getChargingState()));
             carSpeedTextView.setText(String.valueOf(carModel.getCarSpeed()));
-            carDistanceTextView.setText(String.valueOf(carModel.getDistanceTraveled()));
+            carDistanceTextView.setText(String.valueOf(carModel.getDistSensFw()));
         }
     }
 
