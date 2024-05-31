@@ -10,6 +10,7 @@ PID_t steerPID;
 
 bool sens_fw_has_obstacle = false;
 bool sens_bw_has_obstacle = false;
+extern int speed_distance_sens_scaling;
 
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
@@ -58,6 +59,19 @@ void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
 	// Optionally unlock the task if it was previously locked
 	// taskEXIT_CRITICAL();
 }
+
+/*Speed scaller for determining the correct threshold for distance of stop.*/
+static inline float get_speed_distance_sens_scaling(float speed) {
+    if (speed <= 5) {
+        return 1.0;
+    } else if (speed >= 30) {
+        return 5.0;
+    } else {
+        // Scale linearly between 1 and 2 for speeds between 30 and 60
+        return 1.0 + ((speed - 5.0) / 5.0);
+    }
+}
+
 
 /*SLIDING MEAN AVERAGE function*/
 double buffer[WINDOW_SIZE_SMA] = { 0.0 };
@@ -138,7 +152,7 @@ void PIDTask(void *pvParameters) {
 
 			/* Update the measured value. */
 			motorPID.measured = pulse_direction * SMA_frequency; // MEASURED
-
+			speed_distance_sens_scaling  = get_speed_distance_sens_scaling(fabs((double)motorPID.measured));
 			//ESP_LOGI("PID", "Frequency: %f", pulse_direction * SMA_frequency);
 		}
 		if (xActivatedMember == speed_commandQueue)

@@ -13,7 +13,7 @@ bool I2C_sensors_initiated = false;
 
 QueueHandle_t I2C_commandQueue;
 I2C_COMMAND i2c_command;
-
+int speed_distance_sens_scaling;
 
 // initialize I2C for esp32 as master
 void I2C_master_init()
@@ -36,7 +36,7 @@ void I2C_select_multiplexer_channel(I2C_devices_mux num_channel)
 	// Prepare the data to send: one byte where each bit represents a channel
 	uint8_t data = 1 << num_channel; // Shift 1 to the correct bit position for the channel
 	// Perform the I2C write to change the channel
-	esp_err_t ret = i2c_master_transmit(device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle], &data, 1, pdMS_TO_TICKS(100));
+	esp_err_t ret = i2c_master_transmit(device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle], &data, 1, -1);
 	// Check the result
 	//if(ret==ESP_OK)
 	//ESP_LOGI("I2C", "Channel %d selected", num_channel);
@@ -44,6 +44,8 @@ void I2C_select_multiplexer_channel(I2C_devices_mux num_channel)
 	if (ret != ESP_OK)
 	{
 		ESP_LOGI("I2C ERR", "ERROR Channel %d not selected", num_channel);
+		i2c_master_bus_wait_all_done(bus_handle_esp32_i2c_config, 50);
+		//i2c_master_bus_reset(bus_handle_esp32_i2c_config);
 	}
 }
 
@@ -142,7 +144,12 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 	 }
 	}
 	vTaskDelay(pdMS_TO_TICKS(10)); // space for the switch of the channel to happen
-	ESP_ERROR_CHECK(i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, -1)); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
+	esp_err_t ret = i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, -1); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
+	if (ret != ESP_OK) {
+		    ESP_LOGE("I2C Receive", "Failed to receive data: %s", esp_err_to_name(ret));
+		    i2c_master_bus_wait_all_done(bus_handle_esp32_i2c_config, 50);
+		   // i2c_master_bus_reset(bus_handle_esp32_i2c_config);
+		}
 }
 
 void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
@@ -190,6 +197,8 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 	esp_err_t ret = i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, read_size, -1);
 	if (ret != ESP_OK) {
 	    ESP_LOGE("I2C Receive", "Failed to receive data: %s", esp_err_to_name(ret));
+	    i2c_master_bus_wait_all_done(bus_handle_esp32_i2c_config, 100);
+	    //i2c_master_bus_reset(bus_handle_esp32_i2c_config);
 	}
 }
 
@@ -351,7 +360,7 @@ void I2C_devices_task(void *pvParameters) {
 
 						sendCommandApp(DistSensFw, (double*)&readValSensor_dist1_final, DOUBLE);
 						static int countSendStop_sens1 = 0,countSendStart_sens1 = 0;
-						if(readValSensor_dist1_final < Threshold_dist && countSendStop_sens1 == 0)
+						if(readValSensor_dist1_final < (Threshold_dist * speed_distance_sens_scaling) && countSendStop_sens1 == 0)
 						{
 							countSendStop_sens1++;
 							countSendStart_sens1=0;
@@ -385,7 +394,7 @@ void I2C_devices_task(void *pvParameters) {
 
                         sendCommandApp(DistSensBw, (double*)&readValSensor_dist2_final, DOUBLE);
                         static int countSendStop_sens2 = 0,countSendStart_sens2 = 0;
-                        if(readValSensor_dist2_final < Threshold_dist && countSendStop_sens2 == 0)
+                        if(readValSensor_dist2_final < (Threshold_dist * speed_distance_sens_scaling) && countSendStop_sens2 == 0)
 						{
                         	countSendStop_sens2++;
                         	countSendStart_sens2=0;
@@ -473,7 +482,7 @@ void I2C_devices_task(void *pvParameters) {
                 }
                 break;
         }
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 

@@ -5,10 +5,22 @@
 #include "driver/ledc.h"
 #include "esp_task_wdt.h"
 #include "driver/pulse_cnt.h"
+#include "driver/mcpwm_timer.h"
+#include "driver/mcpwm_cmpr.h"
+#include "driver/mcpwm_oper.h"
+#include "driver/mcpwm_gen.h"
+
 #include <stdbool.h> // For bool type
 #include <stdlib.h> // For atoi function
 #include <string.h> // For strlen function
 
+#define MCPWM 0U
+#define LEDC 1U
+
+/*Set which pwm source to use: MCPWM or LEDC.*/
+#define MOTOR_CONTROL MCPWM
+
+/* ---------LEDC Settings-----------*/
 
 /*Pwm settings for servo */
 #define LEDC_SERVO_TIMER          	LEDC_TIMER_0

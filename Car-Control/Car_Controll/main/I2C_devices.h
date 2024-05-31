@@ -12,7 +12,7 @@
 #define INTERNAL_PULLUPS false
 #define GLITCH_IGNORE_CNT 7
 #define SCL_SPEED_FAST_MODE 400000
-#define SCL_SPEED_LOW_MODE 100000
+#define SCL_SPEED_SLOW_MODE 100000
 #define RST_PIN_MUX_I2C 23
 #define I2C_COMMAND_SIZE (sizeof(I2C_COMMAND))
 #define QUEUE_SIZE_I2C 10
@@ -55,8 +55,8 @@ typedef enum I2C_dev_handles
 typedef enum I2C_WRR_tokens
 {
 	pixy2 = 0,
-	distance_sens1 = 6,
-	distance_sens2 = 2,
+	distance_sens1 = 3,
+	distance_sens2 = 1,
 	adxl_acc = 1,
 	temp_sens = 1
 }I2C_WRR_tokens;
@@ -141,7 +141,7 @@ void I2C_devices_task(void *pvParameters);
 /* VL53L0X */
 #define ALPHA_VL53L0X 0.5
 #define ALPHA_ADXL 0.3
-#define Threshold_dist 100
+#define Threshold_dist 250.0
 
 static uint8_t stop_variable;
 static uint16_t timeout_start_ms;
