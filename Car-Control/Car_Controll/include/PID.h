@@ -51,7 +51,7 @@ void clamp_float(float *value, float min, float max);
 void clamp_int(int *value, int min, int max);
 
 /*PID motor backward init*/
-void PID_backward_if_detected(PID_t *motor);
+void backward_if_detected(PID_t *motor);
 
 /*START PID TASK function*/
 void start_PID_task();

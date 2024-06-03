@@ -38,7 +38,7 @@ void uart_Jetson_Task (void *params)
 			uart_flush(UART_PORT);
 			xQueueReset(uartJetsonQueue);
 		}
-		else if (xQueueReceive(uartJetsonQueue, (void *)&uartJetsonEvent, (TickType_t)portMAX_DELAY))
+		else if (xQueueReceive(uartJetsonQueue, (void *)&uartJetsonEvent, portMAX_DELAY))
 		{
 			switch(uartJetsonEvent.type)
 			{
@@ -46,8 +46,8 @@ void uart_Jetson_Task (void *params)
 					ESP_ERROR_CHECK(uart_get_buffered_data_len(UART_PORT, (size_t*)&length));
 					uart_read_bytes(UART_PORT, data, length, portMAX_DELAY);
 					data[length]='\0';
-					char *data_sp = strtok(data, " ");
-					char *data_st = strtok(NULL, " ");
+					char *data_sp = strtok(data, " "); // speed
+					char *data_st = strtok(NULL, " "); // steer
 					 if (data_sp == NULL || data_st == NULL) {
 					        ESP_LOGE("UART_ERROR", "Splitting failed or incomplete command received");
 					        break; // Exit the case or handle the error appropriately
@@ -89,16 +89,4 @@ void start_UartJetson_task()
 	xTaskCreatePinnedToCore(uart_Jetson_Task, "uartJetson", 4096, NULL, 6, NULL,1U);
 }
 
-commandReceived_jetson parseJetsonData(const char *data)
-{
-//	int currentSpeed = 0;
-//	int currentSteer = 0;
-//	static int lastSpeed = 0;
-//	static int lastSteer = 0;
-	//static TickType_t newTime = 0U;
-	//static TickType_t oldTime = 0U;
-	commandReceived_jetson Jet;
-	memset(&Jet, 0, sizeof(Jet));
-	sscanf(data, "st=%d sp=%d", &Jet.Speed, &Jet.Steer);
-	return Jet;
-}
+

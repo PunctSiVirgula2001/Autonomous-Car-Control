@@ -93,7 +93,7 @@ double Sliding_Mean_Average(int newValue) {
 	return mean;
 }
 
-/*CONFIG_FREERTOS_HZ is set to 1000, this means the operating system tick rate is 100 ticks per second. Each tick would
+/*CONFIG_FREERTOS_HZ is set to 1000, this means the operating system tick rate is 1000 ticks per second. Each tick would
  therefore represent 1 millisecond (since 1000 milliseconds / 1000 ticks = 1 millisecond per tick).
  To convert a tick count to milliseconds, you can multiply the number of ticks by 1*/
 
@@ -107,6 +107,7 @@ TickType_t xNewWakeTime = 0U;
 TickType_t pulse_time_ms = 0U;
 CarCommand onlyPIDValues;
 I2C_COMMAND I2C_command;
+int old_setpoint;
 TickType_t startInitialSendingTime = 0U;
 bool car_stays_stopped = false;
 void PIDTask(void *pvParameters) {
@@ -139,10 +140,7 @@ void PIDTask(void *pvParameters) {
 			if (pulse_direction > 0)
 				pulse_direction = 1;
 			else if (pulse_direction < 0)
-			{
 				pulse_direction = -1;
-				newTime_backward = xTaskGetTickCount();
-			}
 
 			/* Calculate time between each series of pulses and then convert it to HZ. */
 			xNewWakeTime = xTaskGetTickCount();
@@ -194,7 +192,12 @@ void PIDTask(void *pvParameters) {
 		}
 
 		if((sens_fw_has_obstacle == true && motorPID.setpoint > 0) || (sens_bw_has_obstacle == true && motorPID.setpoint < 0))
+		{
+			old_setpoint = motorPID.setpoint;
 			motorPID.setpoint = 0;
+		}
+		else
+			motorPID.setpoint = old_setpoint;
 
 
 		/* IN CASE OF CONFUSION:  -> Setpoint is given by the user, so only the Setpoint can
@@ -208,24 +211,8 @@ void PIDTask(void *pvParameters) {
 
 
 
-//		if(motorPID.setpoint == 0 && pulse_direction == 0)
-//		{
-//			/* Used a value above 0 because if I did 0, it will init the backward mode. */
-//			static int confirm_not_backward = 0;
-//			if(confirm_not_backward == 0)
-//			{
-//				motorPID.Output = 3;
-//				confirm_not_backward = 1;
-//			}
-//			/* Output is set to 0 only when it is known that the backward state is not initiated. */
-//			else if (confirm_not_backward == 1)
-//			{
-//				motorPID.Output = 0;
-//				confirm_not_backward = 0;
-//			}
-//		}
 
-		PID_backward_if_detected(&motorPID);
+		backward_if_detected(&motorPID);
 		/*If the time between pulses is too long set the measured value to 0.*/
 		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(200))
 		{
@@ -271,7 +258,7 @@ void clamp_int(int *value, int min, int max) {
 		*value = min;
 	}
 }
-void PID_backward_if_detected(PID_t *motor) {
+void backward_if_detected(PID_t *motor) {
     static int backward_active = 0;
     static int braking = 0; // Flag to indicate braking state
     static int backward_happened = 0; // Flag to indicate if backward movement has happened
@@ -318,12 +305,7 @@ void PID_backward_if_detected(PID_t *motor) {
             int brake_force = (int)(motor->measured * 10); // Increased scaling factor for more aggressive braking
             brake_force = brake_force > MAX_BRAKE_FORCE ? MAX_BRAKE_FORCE : brake_force; // Limit to max value
 
-            changeMotorSpeed(0);
-            vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
-            changeMotorSpeed(-brake_force);
-            vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
-            changeMotorSpeed(0);
-            vTaskDelay(pdMS_TO_TICKS(10)); // Reduced delay for more aggressive braking
+            carControl_Backward_init(brake_force);
 
             motor->I_term = 5; // Adjust integral term to a predefined state
             motor->Output = 0; // Stop the car
@@ -344,7 +326,7 @@ void PID_backward_if_detected(PID_t *motor) {
     }
     else if (motor->setpoint < 0 && backward_active == 0 && braking == 0 && backward_happened == 0) {
         // If the setpoint is negative and braking is not active, initiate backward movement
-        carControl_Backward_init();
+        carControl_Backward_init(40);
         motor->I_term = 0; // Reset integral term to prevent accumulation
         motor->Output = -abs(motor->Output); // Ensure output is negative
         motor->Output = motor->Output < MAX_BACKWARD_OUTPUT ? MAX_BACKWARD_OUTPUT : motor->Output; // Clamp output

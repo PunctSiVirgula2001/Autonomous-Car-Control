@@ -42,6 +42,6 @@ typedef struct {
 void JetsonUartConfig();
 void uart_Jetson_Task (void *params);
 void start_UartJetson_task();
-commandReceived_jetson parseJetsonData(const char *data);
+
 
 #endif /* MAIN_UART_JETSON_H_ */

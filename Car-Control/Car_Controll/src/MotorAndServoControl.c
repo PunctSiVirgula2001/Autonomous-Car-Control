@@ -51,8 +51,6 @@ void init_servo_pwm() {
 
 	ESP_ERROR_CHECK(mcpwm_new_timer(&config, &timer_servo));
 
-
-
 	// Configure MCPWM operator
 	mcpwm_operator_config_t operator_config = {
 		.group_id = 0,
@@ -251,7 +249,7 @@ void changeMotorSpeed(int value) {
 QueueHandle_t pulse_encoderQueue;
 pcnt_unit_handle_t pcnt_unit = NULL;
 
-bool example_pcnt_on_reach(pcnt_unit_handle_t unit,
+bool IRAM_ATTR example_pcnt_on_reach(pcnt_unit_handle_t unit,
 		const pcnt_watch_event_data_t *edata, void *user_ctx) {
 	BaseType_t high_task_wakeup;
 	QueueHandle_t queue = (QueueHandle_t) user_ctx;
@@ -343,11 +341,11 @@ CarCommand parseCommand(const char *commandStr)
 	return cmd;
 }
 
-void carControl_Backward_init()
+void carControl_Backward_init(int break_value)
 {
 	changeMotorSpeed(0);
 	vTaskDelay(pdMS_TO_TICKS(50));
-	changeMotorSpeed(-40);
+	changeMotorSpeed(-break_value);
 	vTaskDelay(pdMS_TO_TICKS(50));
 	changeMotorSpeed(0);
 	vTaskDelay(pdMS_TO_TICKS(50));
@@ -363,7 +361,7 @@ void carControl_calibrate_motor()
 	vTaskDelay(pdMS_TO_TICKS(3000));
 	update_motor_pwm(1500);
 	vTaskDelay(pdMS_TO_TICKS(3000));
-	ESP_LOGI(" ", "ESC Calibration over.");
+	//ESP_LOGI(" ", "ESC Calibration over.");
 	calib_motor_done = true;
 }
 
@@ -410,23 +408,19 @@ void carControl_Task(void *pvParameters) {
 				}
 			}
 
-
-				//ESP_LOGI(" ", "%d %d", cmd.command, cmd.command_value);
 				switch (cmd.command) {
 				case StopReceived:
-					speed =0;
+					speed = 0;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					speed_multiplier = 0;
 					break;
 				case ForwardReceived:
-					//ESP_LOGI(" ", "ForwardReceived");
 					speed_multiplier = 1;
 					speed = speed_multiplier * last_motor_speed;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					HLD_SendMessage("OKFWD!");
 					break;
 				case BackwardReceived:
-					//ESP_LOGI(" ", "BackwardReceived");
 					speed_multiplier = -1;
 					speed = speed_multiplier * last_motor_speed;
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
@@ -440,16 +434,13 @@ void carControl_Task(void *pvParameters) {
 
 					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					last_motor_speed = cmd.command_value;
-					//ESP_LOGI(" ", "SpeedReceived %d", speed_multiplier);
 					HLD_SendMessage("OKSPEED!");
 					break;
 				case SteerReceived:
-					//changeSTEER(cmd.command_value);
 					xQueueSend(steer_commandQueue,&cmd.command_value,portMAX_DELAY);
 					HLD_SendMessage("OKSTEER!");
 					break;
 				case AutonomousReceived:
-					//ESP_LOGI(" ", "AutonomousReceived");
 					AutonomousMode = true;
 					break;
 				case PID_Changed:
