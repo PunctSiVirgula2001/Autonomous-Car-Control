@@ -56,8 +56,8 @@ typedef enum I2C_WRR_tokens
 {
 	pixy2 = 0,
 	distance_sens1 = 3,
-	distance_sens2 = 1,
-	adxl_acc = 1,
+	distance_sens2 = 2,
+	adxl_acc = 2,
 	temp_sens = 1
 }I2C_WRR_tokens;
 
@@ -139,8 +139,8 @@ void I2C_read_temperature(double *fine_temp);
 void I2C_devices_task(void *pvParameters);
 
 /* VL53L0X */
-#define ALPHA_VL53L0X 0.5
-#define ALPHA_ADXL 0.3
+#define ALPHA_VL53L0X 0.8
+#define ALPHA_ADXL 0.8
 #define Threshold_dist 250.0
 
 static uint8_t stop_variable;
@@ -260,7 +260,7 @@ void VL53L0X_SetInterruptThresholds(I2C_dev_handles device_handle, uint32_t Thre
 
 /* ADXL 345 accelerometer sensor */
 #define ADXL1345_READ_RATE 200.0 // HZ
-#define ALPHA 0.5
+#define ALPHA 0.8
 
 typedef enum ADX_345_reg
 {

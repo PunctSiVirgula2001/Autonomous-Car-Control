@@ -345,9 +345,11 @@ void carControl_Backward_init(int break_value)
 {
 	changeMotorSpeed(0);
 	vTaskDelay(pdMS_TO_TICKS(50));
-	changeMotorSpeed(-break_value);
+	changeMotorSpeed(break_value);
 	vTaskDelay(pdMS_TO_TICKS(50));
 	changeMotorSpeed(0);
+	vTaskDelay(pdMS_TO_TICKS(50));
+	changeMotorSpeed(break_value);
 	vTaskDelay(pdMS_TO_TICKS(50));
 }
 

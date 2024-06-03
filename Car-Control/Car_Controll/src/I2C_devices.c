@@ -342,7 +342,7 @@ void I2C_devices_task(void *pvParameters) {
         switch (current_sensor->state) {
             case SENSOR_IDLE:
                 I2C_select_multiplexer_channel(current_sensor->mux);
-                vTaskDelay(pdMS_TO_TICKS(10)); // Allow for multiplexer switch
+                vTaskDelay(pdMS_TO_TICKS(5)); // Allow for multiplexer switch
                 current_sensor->state = SENSOR_READING;
                 break;
 
@@ -353,9 +353,10 @@ void I2C_devices_task(void *pvParameters) {
                     	// Read new sensor value
 						readValSensor1 = VL53L0X_readRangeContinuousMillimeters(I2C_distance_sens1_dev_handle);
 						// Apply low-pass filter
-						readValSensor_dist1_final = ALPHA_VL53L0X * (double)readValSensor1 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist1_prev;
+						readValSensor_dist1_final = readValSensor1;
+						//readValSensor_dist1_final = ALPHA_VL53L0X * (double)readValSensor1 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist1_prev;
 						// Update the previous value for the next iteration
-						readValSensor_dist1_prev = readValSensor1;
+						//readValSensor_dist1_prev = readValSensor1;
 						// Make a decision
 
 						sendCommandApp(DistSensFw, (double*)&readValSensor_dist1_final, DOUBLE);
@@ -370,7 +371,7 @@ void I2C_devices_task(void *pvParameters) {
 							xQueueSend(I2C_commandQueue,&i2c_command,pdMS_TO_TICKS(5000));
 							ESP_LOGI("", "Sent STOP for forward \n");
 						}
-						else if (countSendStart_sens1 == 0 && readValSensor_dist1_final >= Threshold_dist)
+						else if (countSendStart_sens1 == 0 && readValSensor_dist1_final >= (Threshold_dist * speed_distance_sens_scaling))
 						{
 							countSendStop_sens1=0;
 							countSendStart_sens1++;
@@ -389,9 +390,9 @@ void I2C_devices_task(void *pvParameters) {
                     case I2C_distance_sens_2_mux:
                     	uint16_t readValSensor2;
                         readValSensor2 = VL53L0X_readRangeContinuousMillimeters(current_sensor->device_handle);
-                        readValSensor_dist2_final = ALPHA_VL53L0X * (double)readValSensor2 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist2_prev;						// Update the previous value for the next iteration
-                        readValSensor_dist2_prev = readValSensor2;
-
+//                        readValSensor_dist2_final = ALPHA_VL53L0X * (double)readValSensor2 + (1 - ALPHA_VL53L0X) * (double)readValSensor_dist2_prev;						// Update the previous value for the next iteration
+//                        readValSensor_dist2_prev = readValSensor2;
+                        readValSensor_dist2_final = readValSensor2;
                         sendCommandApp(DistSensBw, (double*)&readValSensor_dist2_final, DOUBLE);
                         static int countSendStop_sens2 = 0,countSendStart_sens2 = 0;
                         if(readValSensor_dist2_final < (Threshold_dist * speed_distance_sens_scaling) && countSendStop_sens2 == 0)
@@ -402,9 +403,9 @@ void I2C_devices_task(void *pvParameters) {
 							i2c_command.commandValue = 0;
 							i2c_command.sendingSensor = I2C_distance_sens2_dev_handle;
 							xQueueSend(I2C_commandQueue,&i2c_command,-1);
-							//ESP_LOGI("", "Sent STOP for backward \n");
+							ESP_LOGI("", "Sent STOP for backward \n");
 						}
-                        else if (countSendStart_sens2 == 0 && readValSensor_dist2_final >= Threshold_dist)
+                        else if (countSendStart_sens2 == 0 && readValSensor_dist2_final >= (Threshold_dist * speed_distance_sens_scaling))
                         {
                         	countSendStop_sens2=0;
                         	countSendStart_sens2++;
@@ -413,8 +414,8 @@ void I2C_devices_task(void *pvParameters) {
                         	i2c_command.sendingSensor = I2C_distance_sens2_dev_handle;
                         	xQueueSend(I2C_commandQueue,&i2c_command,-1);
                         }
-                        						// Log the filtered value
-                        //ESP_LOGI("I2C", "Range2: [ %.2lf ]", readValSensor_dist2_final);
+                          // Log the filtered value
+                        ESP_LOGI("I2C", "Range2: [ %.2lf ]", readValSensor_dist2_final);
                         break;
 
                     case I2C_adxl345_sens_mux: // if
@@ -447,12 +448,11 @@ void I2C_devices_task(void *pvParameters) {
 						pitch_final = ALPHA_ADXL * (double)pitch + (1 - ALPHA_ADXL) * (double)pitch_prev;						// Update the previous value for the next iteration
 						pitch_prev = pitch;
 
-						//ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll_final, pitch_final);
+						ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll_final, pitch_final);
+
 						sendCommandApp(ADXL_ROLL, (double*)&roll_final, DOUBLE);
 						sendCommandApp(ADXL_PITCH, (double*)&pitch_final, DOUBLE);
 
-
-						I2C_writeRegister8bit(current_sensor->device_handle, ADXL345_REG_POWER_CTL, 0x08);
 						break;
 
                     case I2C_pixy2_camera_mux:
@@ -461,7 +461,7 @@ void I2C_devices_task(void *pvParameters) {
 
                     case I2C_temp_sens_mux:
                         I2C_read_temperature(&temp);
-                        //ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
+                        ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
                         sendCommandApp(TEMPERATURE, (double*)&temp, DOUBLE);
                         break;
 
@@ -482,7 +482,7 @@ void I2C_devices_task(void *pvParameters) {
                 }
                 break;
         }
-        vTaskDelay(pdMS_TO_TICKS(5));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
 
@@ -802,9 +802,9 @@ bool VL53L0X_Init(I2C_dev_handles device_handle)
 	   I2C_writeRegister8bit(device_handle, SYSTEM_INTERRUPT_CLEAR, 0x01);
 
 	   measurement_timing_budget_us = VL53L0X_getMeasurementTimingBudget(device_handle);
-
+	   ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget %"PRIu32" \n", measurement_timing_budget_us);
 	   I2C_writeRegister8bit(device_handle, SYSTEM_SEQUENCE_CONFIG, 0xE8);
-	   if (!VL53L0X_setMeasurementTimingBudget(device_handle,measurement_timing_budget_us)) {
+	   if (!VL53L0X_setMeasurementTimingBudget(device_handle,measurement_timing_budget_us-10)) {
 		   //ESP_LOGI(" ","VL53L0X_setMeasurementTimingBudget false \n");
 		   return false;
 	   };
@@ -1153,6 +1153,7 @@ void VL53L0X_SetInterruptThresholds(I2C_dev_handles device_handle,
 void I2C_adxl345_init(I2C_dev_handles device_handle) {
     I2C_writeRegister8bit(device_handle, ADXL345_REG_POWER_CTL, 0x08);  // Bit 3 high to start measuring
     I2C_writeRegister8bit(device_handle, ADXL345_REG_DATA_FORMAT, 0x0B); // Plus/minus 16g, 13-bit mode
+    I2C_writeRegister8bit(device_handle, ADXL345_REG_BW_RATE, 0x0B); // Set data rate to 100 Hz (example)
 }
 
 void I2C_read_adxl345_data(I2C_dev_handles device_handle, double* x, double* y, double* z) {

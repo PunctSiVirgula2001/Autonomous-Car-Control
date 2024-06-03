@@ -60,17 +60,19 @@ void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
 	// taskEXIT_CRITICAL();
 }
 
-/*Speed scaller for determining the correct threshold for distance of stop.*/
+/* Speed scaler for determining the correct threshold for distance of stop. */
 static inline float get_speed_distance_sens_scaling(float speed) {
     if (speed <= 5) {
         return 1.0;
     } else if (speed >= 30) {
         return 5.0;
     } else {
-        // Scale linearly between 1 and 2 for speeds between 30 and 60
-        return 1.0 + ((speed - 5.0) / 5.0);
+        // Quadratic scaling between 1.0 and 5.0 for speeds between 5 and 30
+        float t = (speed - 5.0) / 25.0; // Normalized speed in range [0, 1]
+        return 1.0 + t * t * (5.0 - 1.0); // Quadratic interpolation
     }
 }
+
 
 
 /*SLIDING MEAN AVERAGE function*/
@@ -196,9 +198,10 @@ void PIDTask(void *pvParameters) {
 			old_setpoint = motorPID.setpoint;
 			motorPID.setpoint = 0;
 		}
-		else
-			motorPID.setpoint = old_setpoint;
-
+//		else if(motorPID.setpoint == 0){
+//			motorPID.setpoint = old_setpoint;
+//
+//		}
 
 		/* IN CASE OF CONFUSION:  -> Setpoint is given by the user, so only the Setpoint can
 		 * 						     decide if the car should go backwards or not.
@@ -212,7 +215,7 @@ void PIDTask(void *pvParameters) {
 
 
 
-		backward_if_detected(&motorPID);
+		//backward_if_detected(&motorPID);
 		/*If the time between pulses is too long set the measured value to 0.*/
 		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(200))
 		{
@@ -221,6 +224,16 @@ void PIDTask(void *pvParameters) {
 				motorPID.I_term = 0;
 		}
 		PID_Compute(&motorPID);
+		static bool backward = false;
+		if(motorPID.Output < 0 && backward == false){
+		carControl_Backward_init(3*motorPID.Output);
+		backward = true;
+		printf("Backward\n");
+		}
+		else if(motorPID.Output >= 0)
+			backward = false;
+		printf("Output %d \n", motorPID.Output);
+
 		changeMotorSpeed(motorPID.Output);
 
 

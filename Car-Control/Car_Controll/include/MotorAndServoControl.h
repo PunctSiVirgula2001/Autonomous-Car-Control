@@ -61,8 +61,8 @@ void changeMotorSpeed(int value);
 /*Encoder*/
 #define QUEUE_SIZE_ENCODER_PULSE 		   20
 #define QUEUE_SIZE_DATATYPE_ENCODER_PULSE (sizeof(int))
-#define PCNT_HIGH_LIMIT_WATCHPOINT 		   3 // at every 6 pulses forward the car has moved half a wheel and the callback is called
-#define PCNT_LOW_LIMIT_WATCHPOINT  		  -3 // at every 6 pulses backward the car has moved half a wheel and the callback is called
+#define PCNT_HIGH_LIMIT_WATCHPOINT 		   4 // at every 6 pulses forward the car has moved half a wheel and the callback is called
+#define PCNT_LOW_LIMIT_WATCHPOINT  		  -4// at every 6 pulses backward the car has moved half a wheel and the callback is called
 #define encoderGPIO_A 			    	   35
 #define encoderGPIO_B 					   14
 bool example_pcnt_on_reach(pcnt_unit_handle_t unit,const pcnt_watch_event_data_t *edata, void *user_ctx);
