@@ -47,6 +47,7 @@ extern QueueHandle_t I2C_commandQueue;
 extern QueueSetHandle_t QueueSetGeneralCommands;
 extern bool I2C_sensors_initiated;
 //#define ESP_LOGI(a,b) printf(b);
+
 void app_main(void) {
 
     config_rst_pin_i2c_mux();    // config rst pin for the mux

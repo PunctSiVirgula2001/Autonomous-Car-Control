@@ -12,6 +12,42 @@ bool sens_fw_has_obstacle = false;
 bool sens_bw_has_obstacle = false;
 extern int speed_distance_sens_scaling;
 
+
+void speedCheckTickHook(void) {
+    static unsigned int old_speed = 0U;
+    static unsigned int new_speed = 0U;
+    static uint32_t unchanged_ticks = 0; // Counter for unchanged ticks
+
+    new_speed = motorPID.measured;
+
+    if (new_speed == old_speed) {
+        unchanged_ticks++;
+    } else {
+        unchanged_ticks = 0;
+        old_speed = new_speed;
+    }
+
+    if (unchanged_ticks >= 200) { // If speed hasn't changed for 1000 ticks (1 second if tick rate is 1 ms)
+        motorPID.measured = 0;     // Reset measured speed to 0
+        if(motorPID.setpoint == 0)
+        	motorPID.I_term = 0;
+        unchanged_ticks = 0;       // Reset the unchanged ticks counter
+    }
+
+}
+
+
+void init_speedCheckTickHook(void) {
+    esp_err_t err;
+    UBaseType_t cpuid = 1U; // Get the ID of the current core
+
+    err = esp_register_freertos_tick_hook_for_cpu(speedCheckTickHook, cpuid);
+    if (err != ESP_OK) {
+        // Handle error
+    }
+}
+
+
 // PID Initialization
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
 	pid->setpoint = 0;
@@ -213,16 +249,8 @@ void PIDTask(void *pvParameters) {
 		/* If the Setpoint is crossing the backward moving zone, brake. */
 
 
-
-
-		//backward_if_detected(&motorPID);
 		/*If the time between pulses is too long set the measured value to 0.*/
-		if (xTaskGetTickCount()-xLastWakePulse > pdMS_TO_TICKS(200))
-		{
-			motorPID.measured = 0;
-			if(motorPID.setpoint == 0)
-				motorPID.I_term = 0;
-		}
+
 		PID_Compute(&motorPID);
 		static bool backward = false;
 		if(motorPID.Output < 0 && backward == false){
@@ -373,24 +401,10 @@ void backward_if_detected(PID_t *motor) {
     last_measured = motor->measured;
 }
 
-///*PID motor backward init*/
-//void PID_backward_if_detected(PID_t *motor) {
-//    static int backward_active = 0;
-//
-//    if (motor->setpoint < 0 && motor->measured >= 0) {
-//        if (!backward_active || motor->Output < 0) {
-//            carControl_Backward_init();
-//            motor->I_term = 0;  // Reset integral term
-//            backward_active = 1;
-//        }
-//    } else if (motor->setpoint >= 0) {
-//        backward_active = 0;  // Reset backward state only when well above the backward threshold
-//    }
-//}
-
 /*START PID TASK function*/
 
 void start_PID_task()
 {
+	init_speedCheckTickHook();
 	xTaskCreatePinnedToCore(PIDTask, "PIDTask", 4096, NULL, 7, NULL, 1U);
 }

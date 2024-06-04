@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_freertos_hooks.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -56,3 +57,5 @@ void backward_if_detected(PID_t *motor);
 /*START PID TASK function*/
 void start_PID_task();
 
+void speedCheckTickHook(void);
+void init_speedCheckTickHook(void);
