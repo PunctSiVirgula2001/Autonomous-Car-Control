@@ -1,7 +1,7 @@
+#include "I2C_common.h"
 #include "PID.h"
 #include "Network.h"
 #include <math.h>
-#include "I2C_devices.h"
 
 /*Init motor's PID structure*/
 PID_t motorPID;
@@ -27,7 +27,7 @@ void speedCheckTickHook(void) {
         old_speed = new_speed;
     }
 
-    if (unchanged_ticks >= 200) { // If speed hasn't changed for 1000 ticks (1 second if tick rate is 1 ms)
+    if (unchanged_ticks >= 200) { // If speed hasn't changed for 200 ticks (1 second if tick rate is 1 ms)
         motorPID.measured = 0;     // Reset measured speed to 0
         if(motorPID.setpoint == 0)
         	motorPID.I_term = 0;
@@ -60,21 +60,42 @@ void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
 	pid->P_term = 0;
 	pid->I_term = 0;
 	pid->D_term = 0;
+#if low_pass_filter_derivative_chan == ON
+    pid->previous_D_term = 0; // Add this to store the previous derivative term
+    pid->alpha = 0;           // Smoothing factor for the low-pass filter
+#endif
 }
 
 // Compute PID
 void PID_Compute(PID_t *pid) {
-	float error = pid->setpoint - pid->measured;
-	pid->P_term = pid->Kp * error;
-	pid->I_term += (pid->Ki * error);
-	clamp_float(&(pid->I_term), -40, 40);  // Ensure I_term is within bounds
-	pid->D_term = pid->Kd * (error - pid->previous_error);
-	pid->Output = pid->P_term + pid->I_term + pid->D_term;
-	clamp_int(&(pid->Output), -100, 100);  // Ensure Output is within bounds
-	pid->previous_error = error;
+    float error = pid->setpoint - pid->measured;
 
-	//TODO: Reset the I_term once in a while.
-	// ... and other necessary computations ...
+    // Proportional term
+    pid->P_term = pid->Kp * error;
+
+    // Integral term
+    pid->I_term += (pid->Ki * error);
+    clamp_float(&(pid->I_term), -40, 40);  // Ensure I_term is within bounds
+
+#if low_pass_filter_derivative_chan == ON
+    // Derivative term with low-pass filter
+    float raw_D_term = error - pid->previous_error;
+    pid->D_term = pid->alpha * pid->previous_D_term + (1 - pid->alpha) * raw_D_term;
+    pid->D_term *= pid->Kd;
+#else
+    // Derivative term without low-pass filter
+    pid->D_term = pid->Kd * (error - pid->previous_error);
+#endif
+
+    // Calculate output
+    pid->Output = pid->P_term + pid->I_term + pid->D_term;
+    clamp_int(&(pid->Output), -100, 100);  // Ensure Output is within bounds
+
+    // Update previous values for next iteration
+    pid->previous_error = error;
+#if low_pass_filter_derivative_chan == ON
+    pid->previous_D_term = raw_D_term;
+#endif
 }
 
 void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
@@ -97,7 +118,7 @@ void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
 }
 
 /* Speed scaler for determining the correct threshold for distance of stop. */
-static inline float get_speed_distance_sens_scaling(float speed) {
+float get_speed_distance_sens_scaling(float speed) {
     if (speed <= 5) {
         return 1.0;
     } else if (speed >= 30) {
@@ -254,13 +275,13 @@ void PIDTask(void *pvParameters) {
 		PID_Compute(&motorPID);
 		static bool backward = false;
 		if(motorPID.Output < 0 && backward == false){
-		carControl_Backward_init(3*motorPID.Output);
+		carControl_Backward_init(2*motorPID.Output);
 		backward = true;
 		printf("Backward\n");
 		}
 		else if(motorPID.Output >= 0)
 			backward = false;
-		printf("Output %d \n", motorPID.Output);
+		//printf("Output %d \n", motorPID.Output);
 
 		changeMotorSpeed(motorPID.Output);
 

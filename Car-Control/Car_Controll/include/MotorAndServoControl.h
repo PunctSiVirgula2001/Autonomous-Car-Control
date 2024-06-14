@@ -14,6 +14,11 @@
 #include <stdlib.h> // For atoi function
 #include <string.h> // For strlen function
 
+#define ON 0U
+#define OFF 1U
+
+#define MOTOR_MOCK_TEST OFF
+
 #define MCPWM 0U
 #define LEDC 1U
 

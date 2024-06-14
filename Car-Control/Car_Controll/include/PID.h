@@ -1,18 +1,13 @@
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "esp_freertos_hooks.h"
-#include <stdio.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <string.h>
-#include "esp_log.h"
 #include "MotorAndServoControl.h"
+#include "I2C_sensorControl.h"
+
 
 /* PID settings */
 #define PID_MAX_WINDUP 5 // Maximum windup value for the PID controller (to be tested)
 #define PID_D_TERM_FILTER_COEFFICIENT 0.5 // Coefficient for filtering the derivative term (to be tested)
 #define PID_OUT_LIMIT_RATE_CHANGE 5 // Maximum rate of change for the PID output (represents the difference between outputs)
+#define low_pass_filter_derivative_chan ON  // Set to ON or OFF
 
 // PID Structure
 typedef struct {
@@ -27,6 +22,10 @@ typedef struct {
     float I_term;     // Integral term
     float D_term;     // Derivative term
     int Output;       // PID output
+#if low_pass_filter_derivative_chan == ON
+    float previous_D_term; // Add this to store the previous derivative term
+    float alpha;           // Smoothing factor for the low-pass filter
+#endif
 } PID_t;
 
 // PID Initialization
@@ -53,6 +52,8 @@ void clamp_int(int *value, int min, int max);
 
 /*START PID TASK function*/
 void start_PID_task();
+
+float get_speed_distance_sens_scaling(float speed);
 
 /* Tick hook for continuosly updating car's speed to 0 when's needed. */
 void speedCheckTickHook(void);

@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                             carModel.setDistSensBw(Float.parseFloat(splitedValue[1]));
                         }
 
-
                     });
                 });
             });

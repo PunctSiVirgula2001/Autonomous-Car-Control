@@ -1,3 +1,6 @@
+#ifndef NETWORK_H
+#define NETWORK_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "esp_task_wdt.h"
@@ -66,3 +69,5 @@ void config_Connected_led();
 void turnOnLED_connected();
 void complement_connected_led();
 void blink_led_task(void *pvParameters);
+
+#endif /* NETWORK_H */

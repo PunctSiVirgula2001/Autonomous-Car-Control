@@ -134,78 +134,80 @@ void changeSTEER(int value) {
 void init_motor_pwm() {
 #if (MOTOR_CONTROL == LEDC)
 	// Timer configuration
-	ledc_timer_config_t ledc_timer = { .speed_mode = LEDC_Motor_And_Servo_MODE,
-			.duty_resolution = LEDC_MOTOR_DUTY_RESOLUTION, .timer_num =
-			LEDC_MOTOR_TIMER,  // Different timer for motor
-			.freq_hz = LEDC_Motor_And_Servo_FREQ, };
+	ledc_timer_config_t ledc_timer =
+	{
+		.speed_mode = LEDC_Motor_And_Servo_MODE,
+		.duty_resolution = LEDC_MOTOR_DUTY_RESOLUTION,
+		.timer_num = LEDC_MOTOR_TIMER,  				// Different timer for motor
+		.freq_hz = LEDC_Motor_And_Servo_FREQ,
+	};
 	ledc_timer_config(&ledc_timer);
 
 	// Channel configuration, similar to steering but different channel and GPIO
-	ledc_channel_config_t ledc_channel = { .channel = LEDC_MOTOR_CH1_CHANNEL, // Different channel for motor
-			.duty = 0, .gpio_num = LEDC_MOTOR_GPIO,  // Different GPIO for motor
-			.speed_mode = LEDC_Motor_And_Servo_MODE, .timer_sel =
-			LEDC_MOTOR_TIMER,    // Different timer for motor
-			};
+	ledc_channel_config_t ledc_channel =
+	{
+		.channel = LEDC_MOTOR_CH1_CHANNEL, 		 // Different channel for motor
+		.duty = 0,
+		.gpio_num = LEDC_MOTOR_GPIO,  			 // Different GPIO for motor
+		.speed_mode = LEDC_Motor_And_Servo_MODE,
+		.timer_sel = LEDC_MOTOR_TIMER,    		 // Different timer for motor
+	};
 	ledc_channel_config(&ledc_channel);
 #elif (MOTOR_CONTROL == MCPWM)
 
 	// Configure MCPWM timer
-		mcpwm_timer_config_t config =
-		{
-			.group_id = 1,
-			//.intr_priority = 0,
-			.clk_src = MCPWM_TIMER_CLK_SRC_DEFAULT,
-			// period_ticks=Desired Period * Resolution
-			// period_ticks= 20000 microseconds * 1 microsecond
-			// 1MHZ => 1 tick = 1/1000000 = 1 microsecond each tick
-			.resolution_hz = 1000000,
-			// 20000 * 1 microsecond = 20000 microseconds => 0.02 seconds => 50 hz
-			.period_ticks = 20000,
-			.count_mode = MCPWM_TIMER_COUNT_MODE_UP,
-		};
+	mcpwm_timer_config_t config =
+	{
+		.group_id = 1,
+		//.intr_priority = 0,
+		.clk_src = MCPWM_TIMER_CLK_SRC_DEFAULT,
+		// period_ticks=Desired Period * Resolution
+		// period_ticks= 20000 microseconds * 1 microsecond
+		.resolution_hz = 1000000, // 1MHZ => 1 tick = 1/1000000 = 1 microsecond each tick
+		.period_ticks = 20000,    // 20000 * 1 microsecond = 20000 microseconds => 0.02 seconds => 50 hz
+		.count_mode = MCPWM_TIMER_COUNT_MODE_UP,
+	};
 
-		ESP_ERROR_CHECK(mcpwm_new_timer(&config, &timer_dc_motor));
+	ESP_ERROR_CHECK(mcpwm_new_timer(&config, &timer_dc_motor));
 
+	// Configure MCPWM operator
+	mcpwm_operator_config_t operator_config = {
+		.group_id = 1,
+		.flags.update_gen_action_on_tez = 1, // Update generator action when timer counts to zero
+	};
 
+	ESP_ERROR_CHECK(mcpwm_new_operator(&operator_config, &operator_dc_motor));
+	ESP_ERROR_CHECK(mcpwm_operator_connect_timer(operator_dc_motor, timer_dc_motor));
 
-		// Configure MCPWM operator
-		mcpwm_operator_config_t operator_config = {
-			.group_id = 1,
-			.flags.update_gen_action_on_tez = 1, // Update generator action when timer counts to zero
-		};
+	// Configure MCPWM comparator
+	mcpwm_comparator_config_t comparator_config =
+	{
+			.flags.update_cmp_on_tez = 1,
+	};
 
-		ESP_ERROR_CHECK(mcpwm_new_operator(&operator_config, &operator_dc_motor));
-		ESP_ERROR_CHECK(mcpwm_operator_connect_timer(operator_dc_motor, timer_dc_motor));
+	ESP_ERROR_CHECK(mcpwm_new_comparator(operator_dc_motor, &comparator_config, &comparator_dc_motor));
 
-		// Configure MCPWM comparator
-		mcpwm_comparator_config_t comparator_config =
-		{
-				.flags.update_cmp_on_tez = 1,
-		};
+	// Configure MCPWM generator
+	mcpwm_generator_config_t generator_config = {
+		.gen_gpio_num = LEDC_MOTOR_GPIO, // Set the GPIO number used by the generator
+	};
 
-		ESP_ERROR_CHECK(mcpwm_new_comparator(operator_dc_motor, &comparator_config, &comparator_dc_motor));
+	ESP_ERROR_CHECK(mcpwm_new_generator(operator_dc_motor, &generator_config, &generator_dc_motor));
 
-		// Configure MCPWM generator
-		mcpwm_generator_config_t generator_config = {
-		    .gen_gpio_num = LEDC_MOTOR_GPIO, // Set the GPIO number used by the generator
-		};
+	// Set the generator actions
+	 // go high on counter empty
+	ESP_ERROR_CHECK(mcpwm_generator_set_action_on_timer_event(generator_dc_motor,
+															  MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH)));
+	// go low on compare threshold
+	ESP_ERROR_CHECK(mcpwm_generator_set_action_on_compare_event(generator_dc_motor,
+																MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, comparator_dc_motor, MCPWM_GEN_ACTION_LOW)));
 
-		ESP_ERROR_CHECK(mcpwm_new_generator(operator_dc_motor, &generator_config, &generator_dc_motor));
+	// Set the duty cycle for the servo
+	ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator_dc_motor, 1500)); // 1.5ms pulse width for neutral position
 
-		// Set the generator actions
-		 // go high on counter empty
-		ESP_ERROR_CHECK(mcpwm_generator_set_action_on_timer_event(generator_dc_motor,
-																  MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH)));
-		// go low on compare threshold
-		ESP_ERROR_CHECK(mcpwm_generator_set_action_on_compare_event(generator_dc_motor,
-																	MCPWM_GEN_COMPARE_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, comparator_dc_motor, MCPWM_GEN_ACTION_LOW)));
-
-		// Set the duty cycle for the servo
-		ESP_ERROR_CHECK(mcpwm_comparator_set_compare_value(comparator_dc_motor, 1500)); // 1.5ms pulse width for neutral position
-
-		// Start the MCPWM timer
-		ESP_ERROR_CHECK(mcpwm_timer_enable(timer_dc_motor));
-		ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer_dc_motor, MCPWM_TIMER_START_NO_STOP));
+	// Start the MCPWM timer
+	ESP_ERROR_CHECK(mcpwm_timer_enable(timer_dc_motor));
+	ESP_ERROR_CHECK(mcpwm_timer_start_stop(timer_dc_motor, MCPWM_TIMER_START_NO_STOP));
 
 
 #endif
@@ -258,6 +260,8 @@ bool IRAM_ATTR example_pcnt_on_reach(pcnt_unit_handle_t unit,
 	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	return (high_task_wakeup == pdTRUE);
 }
+
+
 void configureEncoderInterrupts() {
 
 	pcnt_unit_config_t unit_config = { .high_limit = PCNT_HIGH_LIMIT_WATCHPOINT,
@@ -272,13 +276,17 @@ void configureEncoderInterrupts() {
 	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, PCNT_HIGH_LIMIT_WATCHPOINT)); // watch point which will trigger the callback function when
 	ESP_ERROR_CHECK(pcnt_unit_add_watch_point(pcnt_unit, PCNT_LOW_LIMIT_WATCHPOINT)); // a pulse is generated
 
-	pcnt_chan_config_t chan_a_config = { .edge_gpio_num = encoderGPIO_B,
-			.level_gpio_num = encoderGPIO_A, };
+	pcnt_chan_config_t chan_a_config = {
+			.edge_gpio_num = encoderGPIO_B,
+			.level_gpio_num = encoderGPIO_A,
+	};
 	pcnt_channel_handle_t pcnt_chan_a = NULL;
 	ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit, &chan_a_config, &pcnt_chan_a));
 
-	pcnt_chan_config_t chan_b_config = { .edge_gpio_num = encoderGPIO_A,
-			.level_gpio_num = encoderGPIO_B, };
+	pcnt_chan_config_t chan_b_config = {
+			.edge_gpio_num = encoderGPIO_A,
+			.level_gpio_num = encoderGPIO_B,
+	};
 	pcnt_channel_handle_t pcnt_chan_b = NULL;
 	ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit, &chan_b_config, &pcnt_chan_b));
 
@@ -295,14 +303,13 @@ void configureEncoderInterrupts() {
 					PCNT_CHANNEL_EDGE_ACTION_INCREASE,
 					PCNT_CHANNEL_EDGE_ACTION_DECREASE));
 	ESP_ERROR_CHECK(
-			pcnt_channel_set_level_action(pcnt_chan_b,
-					PCNT_CHANNEL_LEVEL_ACTION_KEEP,
-					PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
+		pcnt_channel_set_level_action(pcnt_chan_b,
+				PCNT_CHANNEL_LEVEL_ACTION_KEEP,
+				PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
 
 	pcnt_event_callbacks_t cbs = { .on_reach = example_pcnt_on_reach, };
 
-	ESP_ERROR_CHECK(
-			pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, pulse_encoderQueue));
+	ESP_ERROR_CHECK(pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, pulse_encoderQueue));
 	ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
 	ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
@@ -367,6 +374,30 @@ void carControl_calibrate_motor()
 	calib_motor_done = true;
 }
 
+static void mock_forward_and_backward_test_5_seconds()
+{
+
+	/* MOVING FORWARD */
+	update_motor_pwm(1600);
+	vTaskDelay(pdMS_TO_TICKS(5000));
+
+	/*BACKWARD MODE INIT*/
+	update_motor_pwm(1500);
+	vTaskDelay(pdMS_TO_TICKS(1000));
+	update_motor_pwm(1400);
+	vTaskDelay(pdMS_TO_TICKS(1000));
+	update_motor_pwm(1500);
+	vTaskDelay(pdMS_TO_TICKS(1000));
+
+	/* MOVING BACKWARD */
+	update_motor_pwm(1400);
+	vTaskDelay(pdMS_TO_TICKS(5000));
+
+	/*STOP*/
+	update_motor_pwm(1500);
+	vTaskDelay(pdMS_TO_TICKS(5000));
+}
+
 QueueHandle_t diagnosticModeControlQueue = NULL;
 QueueHandle_t autonomousModeControlQueue = NULL;
 QueueHandle_t speed_commandQueue = NULL;
@@ -377,6 +408,13 @@ QueueSetHandle_t QueueSetAutonomousOrDiagnostic = NULL;
 /* This variable allows the uart_task to fill Autonomous Queue for controlling the car. */
 bool AutonomousMode = false;
 void carControl_Task(void *pvParameters) {
+
+#if (MOTOR_MOCK_TEST == ON)
+	while(1)
+	{
+		mock_forward_and_backward_test_5_seconds();
+	}
+#elif (MOTOR_MOCK_TEST == OFF)
 	CarCommand cmd = { StopReceived, 0, false, 0.0f, 0.0f, 0.0f };
 	int last_motor_speed = 0;
 	int speed_multiplier = 0;
@@ -454,6 +492,7 @@ void carControl_Task(void *pvParameters) {
 		} else
 			vTaskDelay(pdMS_TO_TICKS(250));
 	}
+#endif
 }
 
 void steer_task(void *pvParameters) {
@@ -473,6 +512,7 @@ void carControl_init() {
 	init_servo_pwm();
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init
+	vTaskDelay(pdMS_TO_TICKS(2000));
 	update_motor_pwm(1500);
 	//carControl_calibrate_motor();
 	//while(calib_motor_done!=true) vTaskDelay(pdMS_TO_TICKS(50));

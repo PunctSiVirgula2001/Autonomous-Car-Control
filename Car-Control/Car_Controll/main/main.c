@@ -25,7 +25,7 @@
 #include "MotorAndServoControl.h"
 #include "PID.h"
 #include "Network.h"
-#include "I2C_devices.h"
+#include "../include/I2C/I2C_sensorControl.h"
 #include "UART_Jetson.h"
 
 extern bool allowed_to_send;
@@ -44,18 +44,14 @@ extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t steer_commandQueue;
 extern QueueHandle_t PID_commandQueue;
 extern QueueHandle_t I2C_commandQueue;
+
 extern QueueSetHandle_t QueueSetGeneralCommands;
+
 extern bool I2C_sensors_initiated;
 //#define ESP_LOGI(a,b) printf(b);
 
 void app_main(void) {
 
-    config_rst_pin_i2c_mux();    // config rst pin for the mux
-    rst_pin_i2c_mux_on();        // rst pin on
-    vTaskDelay(pdMS_TO_TICKS(500));
-    rst_pin_i2c_mux_off();        // rst pin on
-    vTaskDelay(pdMS_TO_TICKS(500));
-    rst_pin_i2c_mux_on();        // rst pin on
 
 	steer_commandQueue = xQueueCreate(20,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	diagnosticModeControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS, QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
@@ -83,6 +79,7 @@ void app_main(void) {
 	xQueueAddToSet(PID_commandQueue, QueueSetGeneralCommands);
 	xQueueAddToSet(I2C_commandQueue, QueueSetGeneralCommands);
 	carControl_init();
+#if (MOTOR_MOCK_TEST == OFF)
 	start_I2C_devices_task();
 	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
 	start_network_task();
@@ -90,4 +87,5 @@ void app_main(void) {
 	configureEncoderInterrupts();
 	start_PID_task();
 	start_UartJetson_task();
+#endif
 }
