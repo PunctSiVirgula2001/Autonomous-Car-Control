@@ -51,11 +51,9 @@ double Sliding_Mean_Average(int newValue);
 void clamp_float(float *value, float min, float max);
 void clamp_int(int *value, int min, int max);
 
-/*PID motor backward init*/
-void backward_if_detected(PID_t *motor);
-
 /*START PID TASK function*/
 void start_PID_task();
 
+/* Tick hook for continuosly updating car's speed to 0 when's needed. */
 void speedCheckTickHook(void);
 void init_speedCheckTickHook(void);
