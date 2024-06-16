@@ -3,7 +3,7 @@
 
 extern bool AutonomousMode;
 QueueHandle_t uartJetsonQueue;
-extern QueueHandle_t autonomousModeControlQueue;
+extern QueueHandle_t autonomousModeControlUartQueue;
 
 void JetsonUartConfig()
 {
@@ -52,10 +52,10 @@ void uart_Jetson_Task (void *params)
 					        ESP_LOGE("UART_ERROR", "Splitting failed or incomplete command received");
 					        break; // Exit the case or handle the error appropriately
 					    }
-					if (xQueueSend(autonomousModeControlQueue, &data_sp, portMAX_DELAY) != pdPASS) {
+					if (xQueueSend(autonomousModeControlUartQueue, &data_sp, portMAX_DELAY) != pdPASS) {
 						ESP_LOGE("Error uart", "Unable to send to queue");
 					}
-					if (xQueueSend(autonomousModeControlQueue, &data_st, portMAX_DELAY) != pdPASS) {
+					if (xQueueSend(autonomousModeControlUartQueue, &data_st, portMAX_DELAY) != pdPASS) {
 						ESP_LOGE("Error uart", "Unable to send to queue");
 					}
 

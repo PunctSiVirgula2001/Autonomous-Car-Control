@@ -31,8 +31,8 @@ typedef enum I2C_devices_multiplexer {
     I2C_distance_sens_2_mux  = 1,
 	I2C_adxl345_sens_mux 	 = 3,
 	I2C_temp_sens_mux		 = 2,
-	I2C_oled_display_096_mux = 4,
-    I2C_pixy2_camera_mux 	 = 5,
+	I2C_oled_display_096_mux = 5,
+    I2C_pixy2_camera_mux 	 = 4,
 }I2C_devices_mux;
 
 // Each device connected to the car that works with I2C. --> device address

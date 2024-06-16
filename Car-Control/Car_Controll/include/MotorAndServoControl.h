@@ -32,8 +32,8 @@
 #define LEDC_SERVO_GPIO       	  	(27)
 #define LEDC_SERVO_CH0_CHANNEL    	LEDC_CHANNEL_0
 #define LEDC_SERVO_DUTY_RESOLUTION  LEDC_TIMER_16_BIT
-#define MAX_SERVO_DUTY_US 			(1650)
-#define MIN_SERVO_DUTY_US 			(1350)
+#define MAX_SERVO_DUTY_US 			(1700)
+#define MIN_SERVO_DUTY_US 			(1300)
 
 /*Pwm settings for dc motor */
 #define LEDC_MOTOR_TIMER 			LEDC_TIMER_1

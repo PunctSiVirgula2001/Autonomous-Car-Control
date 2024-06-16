@@ -8,9 +8,12 @@
 #include "I2C_sensorControl.h"
 
 QueueHandle_t I2C_commandQueue;
+extern QueueHandle_t autonomousModeControlPixyQueue;
 bool I2C_sensors_initiated = false;
 I2C_COMMAND i2c_command;
 int speed_distance_sens_scaling;
+Pixy2Lines lines;
+extern bool AutonomousMode;
 
 
 void I2C_devices_task(void *pvParameters) {
@@ -172,7 +175,26 @@ void I2C_devices_task(void *pvParameters) {
 						break;
 
                     case I2C_pixy2_camera_mux:
-                        // Implement camera read logic here
+#if (PIXY_DETECTION == ON)
+                    	Vector goodVecLeft = {0};
+                    	Vector  goodVecRight = {0};
+                    	pixy2Commands commandAutonomous;
+                    	bool left = false;
+                    	bool right = false;
+                    	getPixy2Lines(I2C_pixy2_dev_handle, LINE_VECTOR , true, &lines); // Get all features (vectors, intersections, barcodes) with wait
+                    	left = getBestVectorLeft(&lines, &goodVecLeft);
+                    	right = getBestVectorRight(&lines, &goodVecRight);
+                    	computeSpeedAndSteer(goodVecLeft, goodVecRight, left, right, &commandAutonomous);
+if(AutonomousMode == true){
+                    	if (xQueueSend(autonomousModeControlPixyQueue, &commandAutonomous.computedSpeedSetpoint, portMAX_DELAY) != pdPASS) {
+							ESP_LOGE("Error uart", "Unable to send to queue");
+						}
+						if (xQueueSend(autonomousModeControlPixyQueue, &commandAutonomous.computedSteerSetpoint, portMAX_DELAY) != pdPASS) {
+							ESP_LOGE("Error uart", "Unable to send to queue");
+						}
+}
+
+#endif
                         break;
 
                     case I2C_temp_sens_mux:
@@ -207,7 +229,7 @@ bool I2C_addAndInitialiseSensors()
 {
     config_rst_pin_i2c_mux();       // config rst pin for the mux
     rst_pin_i2c_mux_off();          // rst pin on
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(2000));
     rst_pin_i2c_mux_on();           // rst pin on
 
 	//Add sensors
@@ -215,6 +237,10 @@ bool I2C_addAndInitialiseSensors()
 	I2C_add_device(I2C_temp_sens_addr);
 	I2C_add_device(I2C_distance_sens_addr);
 	I2C_add_device(I2C_adxl345_sens_addr);
+	I2C_add_device(I2C_pixy2_camera_addr);
+
+	//Check Pixy2 camera version
+	requestPixy2Version(I2C_pixy2_dev_handle);
 
 	//Init sensors
 	I2C_adxl345_init(I2C_adxl345_sens_dev_handle);

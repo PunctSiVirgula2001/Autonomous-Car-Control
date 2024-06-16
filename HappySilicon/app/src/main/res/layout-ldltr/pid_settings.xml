@@ -143,13 +143,11 @@
             android:layout_marginTop="96dp"
             android:layout_marginBottom="-2dp"
             android:orientation="vertical">
-
-            <com.androidplot.xy.XYPlot
-                android:id="@+id/linearChart"
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/lineChart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:background="#FFFFFF" />
+                android:layout_height="match_parent"/>
+
         </LinearLayout>
 
         <LinearLayout

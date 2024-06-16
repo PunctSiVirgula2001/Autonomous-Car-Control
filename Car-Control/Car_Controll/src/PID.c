@@ -118,15 +118,15 @@ void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
 }
 
 /* Speed scaler for determining the correct threshold for distance of stop. */
-float get_speed_distance_sens_scaling(float speed) {
-    if (speed <= 5) {
+float get_speed_distance_sens_scaling(float speed, float speed_min, float speed_max) {
+    if (speed <= speed_min) {
         return 1.0;
-    } else if (speed >= 30) {
+    } else if (speed >= speed_max) {
         return 5.0;
     } else {
-        // Quadratic scaling between 1.0 and 5.0 for speeds between 5 and 30
-        float t = (speed - 5.0) / 25.0; // Normalized speed in range [0, 1]
-        return 1.0 + t * t * (5.0 - 1.0); // Quadratic interpolation
+        // Linear scaling between 1.0 and 5.0 for speeds between speed_min and speed_max
+        float t = (speed - speed_min) / (speed_max - speed_min); // Normalized speed in range [0, 1]
+        return 1.0 + t * (5.0 - 1.0); // Linear interpolation
     }
 }
 
@@ -209,7 +209,7 @@ void PIDTask(void *pvParameters) {
 
 			/* Update the measured value. */
 			motorPID.measured = pulse_direction * SMA_frequency; // MEASURED
-			speed_distance_sens_scaling  = get_speed_distance_sens_scaling(fabs((double)motorPID.measured));
+			speed_distance_sens_scaling  = get_speed_distance_sens_scaling(fabs((double)motorPID.measured),5,40);
 			//ESP_LOGI("PID", "Frequency: %f", pulse_direction * SMA_frequency);
 		}
 		if (xActivatedMember == speed_commandQueue)
@@ -274,10 +274,10 @@ void PIDTask(void *pvParameters) {
 
 		PID_Compute(&motorPID);
 		static bool backward = false;
-		if(motorPID.Output < 0 && backward == false){
-		carControl_Backward_init(2*motorPID.Output);
-		backward = true;
-		printf("Backward\n");
+		if(motorPID.Output < 0 && backward == false)
+		{
+			carControl_Backward_init(4*motorPID.Output);
+			backward = true;
 		}
 		else if(motorPID.Output >= 0)
 			backward = false;
@@ -294,13 +294,13 @@ void PIDTask(void *pvParameters) {
 		static int old_abs_measured;
 		static float old_abs_I_term;
 		/* Send only the data the is different from the one sent before. */
-		if(abs_measured != old_abs_measured || abs_I_term != old_abs_I_term)
-		{
+		//if(abs_measured != old_abs_measured || abs_I_term != old_abs_I_term)
+	//	{
 		sendCommandApp(MEASURED_VALUE, (int*)&abs_measured, INT);
 		sendCommandApp(I_TERM_VALUE, (float*)&abs_I_term, FLOAT);
-		old_abs_measured = abs_measured;
-		old_abs_I_term = abs_I_term;
-		}
+//		old_abs_measured = abs_measured;
+//		old_abs_I_term = abs_I_term;
+//		}
 	}
 }
 

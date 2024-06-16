@@ -1,5 +1,6 @@
 #include "MotorAndServoControl.h"
 /*Include Network.h to send back to app diagnostics from the car*/
+#include "I2C_cameraSensor.h"
 #include "Network.h"
 
 mcpwm_timer_handle_t timer_servo;
@@ -14,6 +15,7 @@ mcpwm_gen_handle_t generator_dc_motor;
 
 //Queue set which adds all data from all queues.
 QueueSetHandle_t QueueSetGeneralCommands;
+extern QueueHandle_t autonomousModeControlPixyQueue;
 
 // Initialize PWM for SERVO
 void init_servo_pwm() {
@@ -399,7 +401,7 @@ static void mock_forward_and_backward_test_5_seconds()
 }
 
 QueueHandle_t diagnosticModeControlQueue = NULL;
-QueueHandle_t autonomousModeControlQueue = NULL;
+QueueHandle_t autonomousModeControlUartQueue = NULL;
 QueueHandle_t speed_commandQueue = NULL;
 QueueHandle_t steer_commandQueue = NULL;
 QueueHandle_t PID_commandQueue = NULL;
@@ -423,7 +425,7 @@ void carControl_Task(void *pvParameters) {
 	QueueSetMemberHandle_t xActivatedModeAorM_Member;
 
 	while (1) {
-		if (diagnosticModeControlQueue != NULL && autonomousModeControlQueue != NULL) {
+		if (diagnosticModeControlQueue != NULL && (autonomousModeControlUartQueue != NULL || autonomousModeControlPixyQueue != NULL)) {
 			xActivatedModeAorM_Member = xQueueSelectFromSet(QueueSetAutonomousOrDiagnostic, portMAX_DELAY);
 
 			if(xActivatedModeAorM_Member == diagnosticModeControlQueue)
@@ -432,7 +434,8 @@ void carControl_Task(void *pvParameters) {
 				xQueueReceive(xActivatedModeAorM_Member, &command, 0);
 				cmd = parseCommand(command);
 			}
-			else if(xActivatedModeAorM_Member == autonomousModeControlQueue)
+#if (PIXY_DETECTION == OFF)
+			else if(xActivatedModeAorM_Member == autonomousModeControlUartQueue)
 			{
 				xQueueReceive(xActivatedModeAorM_Member, &command, 0);
 
@@ -447,6 +450,28 @@ void carControl_Task(void *pvParameters) {
 					cmd.command = SteerReceived;
 				}
 			}
+#elif (PIXY_DETECTION == ON)
+			else if(xActivatedModeAorM_Member == autonomousModeControlPixyQueue)
+			{
+				static uint8_t nrCmd = 0U;
+				nrCmd++;
+				xQueueReceive(xActivatedModeAorM_Member, &cmd.command_value, 0);
+				if(nrCmd == 1U)
+				{
+					cmd.command = SpeedReceived;
+					ESP_LOGI("PIXY","Speed: %d", cmd.command_value);
+				}
+				else if(nrCmd == 2U)
+				{
+					cmd.command = SteerReceived;
+					ESP_LOGI("PIXY","Steer: %d", cmd.command_value);
+					nrCmd = 0U;
+				}
+
+
+			}
+#endif
+
 
 				switch (cmd.command) {
 				case StopReceived:
@@ -482,6 +507,7 @@ void carControl_Task(void *pvParameters) {
 					break;
 				case AutonomousReceived:
 					AutonomousMode = true;
+					ESP_LOGI("Auton", "");
 					break;
 				case PID_Changed:
 					xQueueSend(PID_commandQueue,&cmd,portMAX_DELAY);

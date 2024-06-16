@@ -1,11 +1,8 @@
 package com.conti.happysilicon.happysilicon.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,14 +14,7 @@ import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.Utilities.RollingSMA;
 import com.conti.happysilicon.happysilicon.Utilities.SimpleTimer;
 import com.conti.happysilicon.happysilicon.model.Car;
-import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
-
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private Button diagnosis_mode_button;
@@ -68,29 +58,30 @@ public class MainActivity extends AppCompatActivity {
                             carModel.setActualKI(getSaveKI());
                             carModel.setActualKD(getSaveKD());
                         }
-                        if((message).startsWith("MEASURED_VALUE") && !Car.allowed_to_plot)
+                        if((message).startsWith("MEASURED_VALUE") && Car.allowed_to_receive)
                         {
                             String[] splitedValue = message.split(" ");
                             int receivedValue = Integer.parseInt(splitedValue[1]);
-                            carModel.setNewDataFromEsp(true);
+                            Car.setNewDataFromEsp(true);
                             if(receivedValue != 0)
                                 carModel.setCarSpeed(sma.next(receivedValue));
                             else
                                 carModel.setCarSpeed(0);
 
-                            if (carModel.isTimerRunning()) {
+
+                            if (Car.isTimerRunning()) {
                                 // Use the timer to get the elapsed time in seconds since the first sample
-                                float elapsedSeconds = carModel.getElapsedTimeSecs();
+                                float elapsedSeconds = Car.getElapsedTimeSecs();
                                 System.out.println("Elapsed time: " + elapsedSeconds);
-                                carModel.setTimeOfSamplingFromEsp(elapsedSeconds);
-                                carModel.setValueOfSamplingFromEsp(carModel.getCarSpeed());
+                                Car.setTimeOfSamplingFromEsp(elapsedSeconds);
+                                Car.setValueOfSamplingFromEsp(carModel.getCarSpeed());
                             }
-                            if(carModel.getElapsedTimeSecs() > 60.0f){
-                                carModel.resetTimer();
-                                carModel.setResetGraph(true);
-                                carModel.startTimer();
+                            if(Car.getElapsedTimeSecs() > 60.0f){
+                                Car.resetTimer();
+                                Car.setResetGraph(true);
+                                Car.startTimer();
                             }
-                            Car.allowed_to_plot = true;
+                            Car.allowed_to_receive = false;
                         }
                         if((message).startsWith("I_TERM_VALUE"))
                         {

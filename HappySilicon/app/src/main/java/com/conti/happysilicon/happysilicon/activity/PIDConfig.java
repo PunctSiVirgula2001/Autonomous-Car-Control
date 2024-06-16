@@ -3,7 +3,6 @@ package com.conti.happysilicon.happysilicon.activity;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -20,20 +19,13 @@ import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
-import com.androidplot.xy.BoundaryMode;
-import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.XYPlot;
-import com.androidplot.xy.XYSeries;
-import com.androidplot.xy.XYGraphWidget;
-
-import android.graphics.Color;
-import android.graphics.Paint;
-
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,21 +49,22 @@ public class PIDConfig extends AppCompatActivity {
     private TextView plainTextKD;
     private final Handler handler = new Handler();
     private boolean pid_data_recovered = false;
-    private List<Entry> entries = new ArrayList<Entry>();
-    private XYPlot plot;
-
-
-
+    List<Entry> entries = new ArrayList<Entry>();
+    XAxis xAxis;
+    YAxis leftAxis;
+    YAxis rightAxis;
+    LineChart chart;
+    LineDataSet dataSet;
+    LineData lineData;
+    boolean chartReseted = true;
     private ArrayList<Entry> buffer = new ArrayList<>();
     private static final int BUFFER_SIZE = 2; // Update the chart after every 5 entries
+    boolean start_new_command_after_reset = false;
 
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pid_settings);
-
-        plot = findViewById(R.id.linearChart);
-        configurePlot();
 
         MyApp app = (MyApp) getApplicationContext();
         udpClient = app.getUdpSocketClient();
@@ -112,17 +105,19 @@ public class PIDConfig extends AppCompatActivity {
             carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
             udpClient.tx++;
+            start_new_command_after_reset = true;
         });
         sendTestFWD.setOnClickListener(view -> {  //TEST FORWARD BUTTON
             carModel.setCarCommand(Car.CarCommands.FORWARD);
             udpClient.sendMessage("01");
             udpClient.tx++;
-
+            start_new_command_after_reset = true;
         });
         sendTestBWD.setOnClickListener(view -> { //TEST BACKWARD BUTTON
             carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage("02");
             udpClient.tx++;
+            start_new_command_after_reset = true;
         });
 
         // Start the Runnable for updating UI
@@ -130,7 +125,15 @@ public class PIDConfig extends AppCompatActivity {
         handler.post(myRunnable);
 
         // Create the chart for printing current value for speed.
-
+        chart = findViewById(R.id.lineChart);;
+        xAxis = chart.getXAxis();
+        leftAxis = chart.getAxisLeft();
+        rightAxis = chart.getAxisRight();
+        xAxis.setAxisMaximum(60f); // max = 60 seconds
+        xAxis.setAxisMinimum(0f);   // min = 0 seconds
+        leftAxis.setAxisMaximum(100f); // max = 100
+        leftAxis.setAxisMinimum(0f);   // min = 0
+        rightAxis.setEnabled(false);
 
         plainTextKP.addTextChangedListener(new TextWatcher() {
             @Override
@@ -217,7 +220,7 @@ public class PIDConfig extends AppCompatActivity {
             measuredValue.setText(String.valueOf(carModel.getCarSpeed()));
             testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
 
-            if (Car.allowed_to_plot) {
+            if (!Car.allowed_to_receive) {
                 float time = Car.getTimeOfSamplingFromEsp();
                 float data = Car.getValueOfSamplingFromEsp();
                 buffer.add(new Entry(time, data));
@@ -227,17 +230,39 @@ public class PIDConfig extends AppCompatActivity {
                     }
                     buffer.clear(); // Clear the buffer after updating the chart
                 }
-                Car.allowed_to_plot = false;
+                Car.allowed_to_receive = true;
             }
 
-            if (Car.isResetGraph()) {
+            if(Car.isResetGraph()) {
+                chartReseted = true;
+                chart.invalidate();
+                entries.clear();
+                if (dataSet != null) {
+                    dataSet.clear();
+                    dataSet = null;
+                }
+                if (lineData != null) {
+                    lineData.clearValues();
+                }
+                chart.clear();
+                chart.setData(null); // Ensure chart is fully cleared
+
+                // Create the chart for printing current value for speed.
+                chart = findViewById(R.id.lineChart);;
+                xAxis = chart.getXAxis();
+                leftAxis = chart.getAxisLeft();
+                rightAxis = chart.getAxisRight();
+                xAxis.setAxisMaximum(60f); // max = 60 seconds
+                xAxis.setAxisMinimum(0f);   // min = 0 seconds
+                leftAxis.setAxisMaximum(100f); // max = 100
+                leftAxis.setAxisMinimum(0f);   // min = 0
+                rightAxis.setEnabled(false);
+
                 Car.setResetGraph(false);
+
                 Car.resetTimer();
                 Car.startTimer();
-                entries.clear(); // Clear entries when resetting the graph
-                plot.clear();    // Clear the plot
-                configurePlot(); // Reconfigure the plot
-                plot.redraw();   // Redraw the plot
+                Log.d("ChartDebug2", "Entries count after reset: " + entries.size());
             }
 
         }
@@ -254,74 +279,6 @@ public class PIDConfig extends AppCompatActivity {
         }
     }
 
-    private void configurePlot() {
-        plot.setRangeBoundaries(0, 100, BoundaryMode.FIXED);
-        plot.setDomainBoundaries(0, 60, BoundaryMode.FIXED);
-
-        // Set the format for the labels
-        plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setFormat(new DecimalFormat("0"));
-        plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new DecimalFormat("0"));
-
-        // Set the background color of the plot to white
-        plot.getGraph().getGridBackgroundPaint().setColor(Color.WHITE);
-
-        // Set the grid lines to another color if needed
-        Paint gridLinePaint = new Paint();
-        gridLinePaint.setColor(Color.LTGRAY);
-        gridLinePaint.setStrokeWidth(6); // Set the grid line thickness
-        plot.getGraph().setDomainGridLinePaint(gridLinePaint);
-        plot.getGraph().setRangeGridLinePaint(gridLinePaint);
-
-        // Set the border for the plot
-        plot.getBorderPaint().setColor(Color.LTGRAY);
-        plot.getBorderPaint().setStrokeWidth(10); // Set the border thickness
-
-        // Adjust padding to ensure labels are not cut off
-        plot.getGraph().setPaddingLeft(0);
-        plot.getGraph().setPaddingRight(30);
-        plot.getGraph().setPaddingTop(0);
-        plot.getGraph().setPaddingBottom(0);
-
-        // Move the label position by modifying the Paint object
-        Paint leftLabelPaint = plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).getPaint();
-        leftLabelPaint.setTextAlign(Paint.Align.RIGHT);
-        leftLabelPaint.setTextSize(20); // Increase text size for visibility
-        plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setPaint(leftLabelPaint);
-
-        Paint bottomLabelPaint = plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).getPaint();
-        bottomLabelPaint.setTextAlign(Paint.Align.CENTER);
-        bottomLabelPaint.setTextSize(20); // Increase text size for visibility
-        plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setPaint(bottomLabelPaint);
-
-        // Set thicker line for the series
-        LineAndPointFormatter seriesFormat = new LineAndPointFormatter(Color.RED, null, null, null);
-        seriesFormat.getLinePaint().setStrokeWidth(10); // Set the line thickness
-
-
-        plot.addSeries(new SimpleXYSeries(new ArrayList<>(), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Series"), seriesFormat);
-    }
-
-
-
-    private void updatePlot() {
-        List<Number> xVals = new ArrayList<>();
-        List<Number> yVals = new ArrayList<>();
-
-        for (Entry entry : entries) {
-            xVals.add(entry.getX());
-            yVals.add(entry.getY());
-        }
-
-        XYSeries series = new SimpleXYSeries(xVals, yVals, "null");
-        LineAndPointFormatter seriesFormat = new LineAndPointFormatter(Color.RED, null, null, null);
-        seriesFormat.getLinePaint().setStrokeWidth(10); // Set the line thickness
-
-        plot.clear();
-        plot.addSeries(series, seriesFormat);
-        plot.redraw();
-    }
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -337,11 +294,26 @@ public class PIDConfig extends AppCompatActivity {
 
         return "08" + plainTextKP1 + " " + plainTextKI1 + " " + plainTextKD1;
     }
+    
 
     public void add_data_to_graph(float time, float data) {
         entries.add(new Entry(time, data));
-        updatePlot();
+        if (dataSet == null) {
+            dataSet = new LineDataSet(entries, "Measured Value");
+            dataSet.setColor(Color.BLUE);
+            dataSet.setLineWidth(3f);
+            dataSet.setDrawCircles(false); // Disable drawing circles
+            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER); // Set line mode to cubic bezier
+            lineData = new LineData(dataSet);
+            chart.setData(lineData);
+        } else {
+            lineData.notifyDataChanged();
+            chart.notifyDataSetChanged();
+        }
+        
+        // Set zoom to horizontal
+        chart.zoom(1f, 1f, 0f, 0f);
+        chart.invalidate();
     }
-
 
 }

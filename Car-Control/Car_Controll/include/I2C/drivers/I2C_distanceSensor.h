@@ -17,7 +17,7 @@ static uint32_t measurement_timing_budget_us;
 
 #define ALPHA_VL53L0X 0.8
 #define ALPHA_ADXL 0.8
-#define Threshold_dist 250.0
+#define Threshold_dist 350.0
 #define io_timeout 100
 #define millis() (pdTICKS_TO_MS(xTaskGetTickCount()))
 #define checkTimeoutExpired() (io_timeout > 0 && ((uint16_t)(millis() - timeout_start_ms)) > io_timeout)

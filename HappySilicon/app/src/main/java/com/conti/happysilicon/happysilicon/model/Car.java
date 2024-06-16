@@ -50,7 +50,7 @@ public class Car {
     private static float value_of_sampling_from_esp = 0;
     private static boolean new_data_from_esp = false;
     private static boolean reset_graph = false;
-    public static boolean allowed_to_plot = false;
+    public static boolean allowed_to_receive = false;
     private static SimpleTimer timer; // Create a new timer instance
 
 
@@ -126,9 +126,9 @@ public class Car {
     public int getCarLightsState(){
         if(this.rightLightToggle&&this.leftLightToggle){
             return 0;
-        }else if(this.rightLightToggle&&!this.leftLightToggle){
+        }else if(this.rightLightToggle && !this.leftLightToggle){
             return 1;
-        }else if(!this.rightLightToggle&&this.leftLightToggle){
+        }else if(!this.rightLightToggle && this.leftLightToggle){
             return 2;
         }else{
             return 3;
