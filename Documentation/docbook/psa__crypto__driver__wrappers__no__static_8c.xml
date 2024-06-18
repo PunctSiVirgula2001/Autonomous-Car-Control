@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_psa__crypto__driver__wrappers__no__static_8c" xml:lang="en-US">
+<title>build/esp-idf/mbedtls/mbedtls/library/psa_crypto_driver_wrappers_no_static.c File Reference</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls/library/psa_crypto_driver_wrappers_no_static.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;common.h&quot;<?linebreak?>#include &quot;psa_crypto_aead.h&quot;<?linebreak?>#include &quot;psa_crypto_cipher.h&quot;<?linebreak?>#include &quot;psa_crypto_core.h&quot;<?linebreak?>#include &quot;psa_crypto_driver_wrappers_no_static.h&quot;<?linebreak?>#include &quot;psa_crypto_hash.h&quot;<?linebreak?>#include &quot;psa_crypto_mac.h&quot;<?linebreak?>#include &quot;psa_crypto_pake.h&quot;<?linebreak?>#include &quot;psa_crypto_rsa.h&quot;<?linebreak?>#include &quot;mbedtls/platform.h&quot;<?linebreak?></programlisting>Include dependency graph for psa_crypto_driver_wrappers_no_static.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="psa__crypto__driver__wrappers__no__static_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+</section>

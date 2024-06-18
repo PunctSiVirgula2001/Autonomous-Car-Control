@@ -1,0 +1,161 @@
+\doxysection{include/\+I2\+C/drivers/\+I2\+C\+\_\+accelerometer\+Sensor.h File Reference}
+\label{_i2_c__accelerometer_sensor_8h}\index{include/I2C/drivers/I2C\_accelerometerSensor.h@{include/I2C/drivers/I2C\_accelerometerSensor.h}}
+{\ttfamily \#include "{}I2\+C\+\_\+common.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+accelerometer\+Sensor.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ ADXL1345\+\_\+\+READ\+\_\+\+RATE}~200.\+0
+\item 
+\#define \textbf{ ALPHA}~0.\+8
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ ADXL\+\_\+345\+\_\+reg} \textbf{ ADX\+\_\+345\+\_\+reg}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ ADXL\+\_\+345\+\_\+reg} \{ \newline
+\textbf{ ADXL345\+\_\+\+REG\+\_\+\+BW\+\_\+\+RATE} = 0x2C
+, \textbf{ ADXL345\+\_\+\+REG\+\_\+\+POWER\+\_\+\+CTL} = 0x2D
+, \textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATA\+\_\+\+FORMAT} = 0x31
+, \textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATAX0} = 0x32
+, \newline
+\textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATAX1} = 0x33
+, \textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATAY0} = 0x34
+, \textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATAY1} = 0x35
+, \textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATAZ0} = 0x36
+, \newline
+\textbf{ ADXL345\+\_\+\+REG\+\_\+\+DATAZ1} = 0x37
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ I2\+C\+\_\+read\+\_\+adxl345\+\_\+data} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, double $\ast$x, double $\ast$y, double $\ast$z)
+\item 
+void \textbf{ I2\+C\+\_\+adxl345\+\_\+init} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+void \textbf{ I2\+C\+\_\+adxl345\+\_\+set\+Rate} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, double rate)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL1345\_READ\_RATE@{ADXL1345\_READ\_RATE}}
+\index{ADXL1345\_READ\_RATE@{ADXL1345\_READ\_RATE}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{ADXL1345\_READ\_RATE}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_ac8af332c74b5b3043d69274f6000220e} 
+\#define ADXL1345\+\_\+\+READ\+\_\+\+RATE~200.\+0}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ I2\+C\+\_\+accelerometer\+Sensor.\+h}.
+
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ALPHA@{ALPHA}}
+\index{ALPHA@{ALPHA}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{ALPHA}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_af5abd28c44c29b7397c84f1fec4b1d84} 
+\#define ALPHA~0.\+8}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ I2\+C\+\_\+accelerometer\+Sensor.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADX\_345\_reg@{ADX\_345\_reg}}
+\index{ADX\_345\_reg@{ADX\_345\_reg}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{ADX\_345\_reg}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_a0dd61becdbde3180f6905837de61840b} 
+typedef enum \textbf{ ADXL\+\_\+345\+\_\+reg} \textbf{ ADX\+\_\+345\+\_\+reg}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL\_345\_reg@{ADXL\_345\_reg}}
+\index{ADXL\_345\_reg@{ADXL\_345\_reg}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{ADXL\_345\_reg}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+enum \textbf{ ADXL\+\_\+345\+\_\+reg}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_BW\_RATE@{ADXL345\_REG\_BW\_RATE}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_BW\_RATE@{ADXL345\_REG\_BW\_RATE}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+BW\+\_\+\+RATE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_POWER\_CTL@{ADXL345\_REG\_POWER\_CTL}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_POWER\_CTL@{ADXL345\_REG\_POWER\_CTL}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+POWER\+\_\+\+CTL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATA\_FORMAT@{ADXL345\_REG\_DATA\_FORMAT}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATA\_FORMAT@{ADXL345\_REG\_DATA\_FORMAT}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATA\+\_\+\+FORMAT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATAX0@{ADXL345\_REG\_DATAX0}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATAX0@{ADXL345\_REG\_DATAX0}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATAX0&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATAX1@{ADXL345\_REG\_DATAX1}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATAX1@{ADXL345\_REG\_DATAX1}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATAX1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATAY0@{ADXL345\_REG\_DATAY0}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATAY0@{ADXL345\_REG\_DATAY0}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATAY0&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATAY1@{ADXL345\_REG\_DATAY1}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATAY1@{ADXL345\_REG\_DATAY1}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATAY1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATAZ0@{ADXL345\_REG\_DATAZ0}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATAZ0@{ADXL345\_REG\_DATAZ0}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATAZ0&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL345\_REG\_DATAZ1@{ADXL345\_REG\_DATAZ1}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!ADXL345\_REG\_DATAZ1@{ADXL345\_REG\_DATAZ1}}}\label{_i2_c__accelerometer_sensor_8h_aa287a6b30dc1c628ba7e0418d0252d07} 
+ADXL345\+\_\+\+REG\+\_\+\+DATAZ1&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 17} of file \textbf{ I2\+C\+\_\+accelerometer\+Sensor.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!I2C\_adxl345\_init@{I2C\_adxl345\_init}}
+\index{I2C\_adxl345\_init@{I2C\_adxl345\_init}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{I2C\_adxl345\_init()}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_af4369ee1e11eacb96049536d1b18a94e} 
+void I2\+C\+\_\+adxl345\+\_\+init (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ I2\+C\+\_\+accelerometer\+Sensor.\+c}.
+
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!I2C\_adxl345\_setRate@{I2C\_adxl345\_setRate}}
+\index{I2C\_adxl345\_setRate@{I2C\_adxl345\_setRate}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{I2C\_adxl345\_setRate()}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_a5daa89461a8c123f61a7e7e89a799bb2} 
+void I2\+C\+\_\+adxl345\+\_\+set\+Rate (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{double}]{rate}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 54} of file \textbf{ I2\+C\+\_\+accelerometer\+Sensor.\+c}.
+
+\index{I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}!I2C\_read\_adxl345\_data@{I2C\_read\_adxl345\_data}}
+\index{I2C\_read\_adxl345\_data@{I2C\_read\_adxl345\_data}!I2C\_accelerometerSensor.h@{I2C\_accelerometerSensor.h}}
+\doxysubsubsection{I2C\_read\_adxl345\_data()}
+{\footnotesize\ttfamily \label{_i2_c__accelerometer_sensor_8h_aeac395349fd0cb9b64e9dba9799e64e9} 
+void I2\+C\+\_\+read\+\_\+adxl345\+\_\+data (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{double $\ast$}]{x}{, }\item[{double $\ast$}]{y}{, }\item[{double $\ast$}]{z}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ I2\+C\+\_\+accelerometer\+Sensor.\+c}.
+

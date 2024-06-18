@@ -1,0 +1,83 @@
+\doxysection{encoder.\+c}
+\label{encoder_8c_source}\index{src/motors/drivers/encoder.c@{src/motors/drivers/encoder.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ encoder.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 18\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}encoder.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*\ Encoder\ */}}
+\DoxyCodeLine{00011\ QueueHandle\_t\ pulse\_encoderQueue;}
+\DoxyCodeLine{00012\ pcnt\_unit\_handle\_t\ pcnt\_unit\ =\ NULL;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{bool}\ IRAM\_ATTR\ example\_pcnt\_on\_reach(pcnt\_unit\_handle\_t\ unit,}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{const}\ pcnt\_watch\_event\_data\_t\ *edata,\ \textcolor{keywordtype}{void}\ *user\_ctx)\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ BaseType\_t\ high\_task\_wakeup;}
+\DoxyCodeLine{00017\ \ \ \ \ QueueHandle\_t\ queue\ =\ (QueueHandle\_t)\ user\_ctx;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ send\ event\ data\ to\ queue,\ from\ this\ interrupt\ callback}}
+\DoxyCodeLine{00019\ \ \ \ \ xQueueSendFromISR(queue,\ \&(edata-\/>watch\_point\_value),\ \&high\_task\_wakeup);}
+\DoxyCodeLine{00020\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_clear\_count(pcnt\_unit));}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordflow}{return}\ (high\_task\_wakeup\ ==\ pdTRUE);}
+\DoxyCodeLine{00022\ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ configureEncoderInterrupts()\ \{}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ pcnt\_unit\_config\_t\ unit\_config\ =\ \{\ .high\_limit\ =\ PCNT\_HIGH\_LIMIT\_WATCHPOINT,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ .low\_limit\ =\ PCNT\_LOW\_LIMIT\_WATCHPOINT,\ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_new\_unit(\&unit\_config,\ \&pcnt\_unit));}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ pcnt\_glitch\_filter\_config\_t\ filter\_config\ =\ \{\ \textcolor{comment}{//\ debouncer,\ lower\ value\ ==>\ higher\ the\ chance\ to\ act\ as\ low\ pass\ filter.}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ .max\_glitch\_ns\ =\ 1000,\ \};}
+\DoxyCodeLine{00034\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_set\_glitch\_filter(pcnt\_unit,\ \&filter\_config));}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_add\_watch\_point(pcnt\_unit,\ PCNT\_HIGH\_LIMIT\_WATCHPOINT));\ \textcolor{comment}{//\ watch\ point\ which\ will\ trigger\ the\ callback\ function\ when}}
+\DoxyCodeLine{00037\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_add\_watch\_point(pcnt\_unit,\ PCNT\_LOW\_LIMIT\_WATCHPOINT));\ \textcolor{comment}{//\ a\ pulse\ is\ generated}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ pcnt\_chan\_config\_t\ chan\_a\_config\ =\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ .edge\_gpio\_num\ =\ encoderGPIO\_B,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ .level\_gpio\_num\ =\ encoderGPIO\_A,}
+\DoxyCodeLine{00042\ \ \ \ \ \};}
+\DoxyCodeLine{00043\ \ \ \ \ pcnt\_channel\_handle\_t\ pcnt\_chan\_a\ =\ NULL;}
+\DoxyCodeLine{00044\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_new\_channel(pcnt\_unit,\ \&chan\_a\_config,\ \&pcnt\_chan\_a));}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ pcnt\_chan\_config\_t\ chan\_b\_config\ =\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ .edge\_gpio\_num\ =\ encoderGPIO\_A,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ .level\_gpio\_num\ =\ encoderGPIO\_B,}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ \ \ \ \ pcnt\_channel\_handle\_t\ pcnt\_chan\_b\ =\ NULL;}
+\DoxyCodeLine{00051\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_new\_channel(pcnt\_unit,\ \&chan\_b\_config,\ \&pcnt\_chan\_b));}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ ESP\_ERROR\_CHECK(}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ pcnt\_channel\_set\_edge\_action(pcnt\_chan\_a,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_EDGE\_ACTION\_DECREASE,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_EDGE\_ACTION\_INCREASE));}
+\DoxyCodeLine{00057\ \ \ \ \ ESP\_ERROR\_CHECK(}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ pcnt\_channel\_set\_level\_action(pcnt\_chan\_a,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_LEVEL\_ACTION\_KEEP,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_LEVEL\_ACTION\_INVERSE));}
+\DoxyCodeLine{00061\ \ \ \ \ ESP\_ERROR\_CHECK(}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ pcnt\_channel\_set\_edge\_action(pcnt\_chan\_b,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_EDGE\_ACTION\_INCREASE,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_EDGE\_ACTION\_DECREASE));}
+\DoxyCodeLine{00065\ \ \ \ \ ESP\_ERROR\_CHECK(}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ pcnt\_channel\_set\_level\_action(pcnt\_chan\_b,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_LEVEL\_ACTION\_KEEP,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PCNT\_CHANNEL\_LEVEL\_ACTION\_INVERSE));}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ pcnt\_event\_callbacks\_t\ cbs\ =\ \{\ .on\_reach\ =\ example\_pcnt\_on\_reach,\ \};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_register\_event\_callbacks(pcnt\_unit,\ \&cbs,\ pulse\_encoderQueue));}
+\DoxyCodeLine{00073\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_enable(pcnt\_unit));}
+\DoxyCodeLine{00074\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_clear\_count(pcnt\_unit));}
+\DoxyCodeLine{00075\ \ \ \ \ ESP\_ERROR\_CHECK(pcnt\_unit\_start(pcnt\_unit));}
+\DoxyCodeLine{00076\ \}}
+\DoxyCodeLine{00077\ }
+
+\end{DoxyCode}

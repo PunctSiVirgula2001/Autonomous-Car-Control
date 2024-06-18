@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__camera_sensor_8c" xml:lang="en-US">
+<title>src/I2C/drivers/I2C_cameraSensor.c File Reference</title>
+<indexterm><primary>src/I2C/drivers/I2C_cameraSensor.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_cameraSensor.h&quot;<?linebreak?>#include &quot;MotorAndServoControl.h&quot;<?linebreak?>#include &quot;PID.h&quot;<?linebreak?>#include &quot;esp_log.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_cameraSensor.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__camera_sensor_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>&#160;&#160;&#160;&quot;PIXY2&quot;</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8c_1af4f906437da52520077add92dc3de52e">MAX_VECTORS</link>&#160;&#160;&#160;100</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8c_1a017600a7956da0f432bbd877932f6ac2">requestPixy2Version</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8c_1a787fec0fc98224e131b01cdefb3cb8ed">setPixy2CameraBrightness</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t brightness)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8c_1a7605d4b46b66c3378b326dbd298af8eb">setPixy2LED</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t r, uint8_t g, uint8_t b)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8c_1a3a0289ef7a1f4c39e1136f055d5aa52c">setPixy2Lamp</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t upper, uint8_t lower)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8c_1a59aa0718e545daa3e789822a7083071a">getPixy2Lines</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t features, bool wait, <link linkend="_struct_pixy2_lines">Pixy2Lines</link> *<link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link>)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__camera_sensor_8c_1a159c619bbd072d296d8caf684332b02a">getBestVectorLeft</link> (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> *<link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link>, <link linkend="_struct_vector">Vector</link> *vec)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__camera_sensor_8c_1a7a16c5ef87bf82cd88751462ced8c749">getBestVectorRight</link> (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> *<link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link>, <link linkend="_struct_vector">Vector</link> *vec)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8c_1ae51dba7e896d5485d4aaf8a4247438bb">computeSpeedAndSteer</link> (<link linkend="_struct_vector">Vector</link> vecLeft, <link linkend="_struct_vector">Vector</link> vecRight, bool existsGoodVecLeft, bool existsGoodVecRight, <link linkend="_structpixy2_commands">pixy2Commands</link> *commands)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>QueueHandle_t <link linkend="__i2_c__camera_sensor_8c_1ae0a77b0cf83af5755b406387533338e7">autonomousModeControlPixyQueue</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__i2_c__camera_sensor_8c_1af4f906437da52520077add92dc3de52e"/><section>
+    <title>MAX_VECTORS</title>
+<indexterm><primary>MAX_VECTORS</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>MAX_VECTORS</secondary></indexterm>
+<para><computeroutput>#define MAX_VECTORS&#160;&#160;&#160;100</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00098">98</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2"/><section>
+    <title>TAG</title>
+<indexterm><primary>TAG</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>TAG</secondary></indexterm>
+<para><computeroutput>#define TAG&#160;&#160;&#160;&quot;PIXY2&quot;</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00013">13</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__camera_sensor_8c_1ae51dba7e896d5485d4aaf8a4247438bb"/><section>
+    <title>computeSpeedAndSteer()</title>
+<indexterm><primary>computeSpeedAndSteer</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>computeSpeedAndSteer</secondary></indexterm>
+<para><computeroutput>void computeSpeedAndSteer (<link linkend="_struct_vector">Vector</link> vecLeft, <link linkend="_struct_vector">Vector</link> vecRight, bool existsGoodVecLeft, bool existsGoodVecRight, <link linkend="_structpixy2_commands">pixy2Commands</link> * commands)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00215">215</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a159c619bbd072d296d8caf684332b02a"/><section>
+    <title>getBestVectorLeft()</title>
+<indexterm><primary>getBestVectorLeft</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>getBestVectorLeft</secondary></indexterm>
+<para><computeroutput>bool getBestVectorLeft (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> * lines, <link linkend="_struct_vector">Vector</link> * vec)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00161">161</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a7a16c5ef87bf82cd88751462ced8c749"/><section>
+    <title>getBestVectorRight()</title>
+<indexterm><primary>getBestVectorRight</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>getBestVectorRight</secondary></indexterm>
+<para><computeroutput>bool getBestVectorRight (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> * lines, <link linkend="_struct_vector">Vector</link> * vec)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00188">188</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a59aa0718e545daa3e789822a7083071a"/><section>
+    <title>getPixy2Lines()</title>
+<indexterm><primary>getPixy2Lines</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>getPixy2Lines</secondary></indexterm>
+<para><computeroutput>void getPixy2Lines (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t features, bool wait, <link linkend="_struct_pixy2_lines">Pixy2Lines</link> * lines)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00100">100</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a017600a7956da0f432bbd877932f6ac2"/><section>
+    <title>requestPixy2Version()</title>
+<indexterm><primary>requestPixy2Version</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>requestPixy2Version</secondary></indexterm>
+<para><computeroutput>void requestPixy2Version (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00018">18</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a787fec0fc98224e131b01cdefb3cb8ed"/><section>
+    <title>setPixy2CameraBrightness()</title>
+<indexterm><primary>setPixy2CameraBrightness</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>setPixy2CameraBrightness</secondary></indexterm>
+<para><computeroutput>void setPixy2CameraBrightness (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t brightness)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00063">63</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a3a0289ef7a1f4c39e1136f055d5aa52c"/><section>
+    <title>setPixy2Lamp()</title>
+<indexterm><primary>setPixy2Lamp</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>setPixy2Lamp</secondary></indexterm>
+<para><computeroutput>void setPixy2Lamp (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t upper, uint8_t lower)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00086">86</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8c_1a7605d4b46b66c3378b326dbd298af8eb"/><section>
+    <title>setPixy2LED()</title>
+<indexterm><primary>setPixy2LED</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>setPixy2LED</secondary></indexterm>
+<para><computeroutput>void setPixy2LED (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t r, uint8_t g, uint8_t b)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00075">75</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__i2_c__camera_sensor_8c_1ae0a77b0cf83af5755b406387533338e7"/><section>
+    <title>autonomousModeControlPixyQueue</title>
+<indexterm><primary>autonomousModeControlPixyQueue</primary><secondary>I2C_cameraSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.c</primary><secondary>autonomousModeControlPixyQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t autonomousModeControlPixyQueue</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00015">15</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+</section>
+</section>

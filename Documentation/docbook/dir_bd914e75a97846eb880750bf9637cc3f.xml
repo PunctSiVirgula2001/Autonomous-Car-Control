@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_bd914e75a97846eb880750bf9637cc3f" xml:lang="en-US">
+<title>build/bootloader/CMakeFiles/3.24.0/CompilerIdCXX Directory Reference</title>
+<indexterm><primary>build/bootloader/CMakeFiles/3.24.0/CompilerIdCXX Directory Reference</primary></indexterm>
+Directory dependency graph for CompilerIdCXX:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_bd914e75a97846eb880750bf9637cc3f_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="_bootloader_2_c_make_files_23_824_80_2_compiler_id_c_x_x_2_c_make_c_x_x_compiler_id_8cpp">CMakeCXXCompilerId.cpp</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

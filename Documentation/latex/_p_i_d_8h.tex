@@ -1,0 +1,218 @@
+\doxysection{include/\+PID.h File Reference}
+\label{_p_i_d_8h}\index{include/PID.h@{include/PID.h}}
+{\ttfamily \#include "{}esp\+\_\+freertos\+\_\+hooks.\+h"{}}\newline
+{\ttfamily \#include "{}Motor\+And\+Servo\+Control.\+h"{}}\newline
+{\ttfamily \#include "{}I2\+C\+\_\+sensor\+Control.\+h"{}}\newline
+Include dependency graph for PID.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ PID\+\_\+t}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ PID\+\_\+\+MAX\+\_\+\+WINDUP}~5
+\item 
+\#define \textbf{ PID\+\_\+\+D\+\_\+\+TERM\+\_\+\+FILTER\+\_\+\+COEFFICIENT}~0.\+5
+\item 
+\#define \textbf{ PID\+\_\+\+OUT\+\_\+\+LIMIT\+\_\+\+RATE\+\_\+\+CHANGE}~5
+\item 
+\#define \textbf{ low\+\_\+pass\+\_\+filter\+\_\+derivative\+\_\+chan}~\textbf{ ON}
+\item 
+\#define \textbf{ WINDOW\+\_\+\+SIZE\+\_\+\+SMA}~15
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ PID\+\_\+\+Init} (\textbf{ PID\+\_\+t} $\ast$pid, float Kp, float Ki, float Kd)
+\item 
+void \textbf{ PID\+\_\+\+Compute} (\textbf{ PID\+\_\+t} $\ast$pid)
+\item 
+void \textbf{ PID\+\_\+\+Update\+Params} (\textbf{ PID\+\_\+t} $\ast$pid, float new\+\_\+\+Kp, float new\+\_\+\+Ki, float new\+\_\+\+Kd)
+\item 
+void \textbf{ PIDTask} (void $\ast$pv\+Parameters)
+\item 
+double \textbf{ Sliding\+\_\+\+Mean\+\_\+\+Average} (int new\+Value)
+\item 
+void \textbf{ clamp\+\_\+float} (float $\ast$value, float min, float max)
+\item 
+void \textbf{ clamp\+\_\+int} (int $\ast$value, int min, int max)
+\item 
+void \textbf{ start\+\_\+\+PID\+\_\+task} ()
+\item 
+float \textbf{ get\+\_\+speed\+\_\+distance\+\_\+sens\+\_\+scaling} (float speed, float speed\+\_\+min, float speed\+\_\+max)
+\item 
+void \textbf{ speed\+Check\+Tick\+Hook} (void)
+\item 
+void \textbf{ init\+\_\+speed\+Check\+Tick\+Hook} (void)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{PID.h@{PID.h}!low\_pass\_filter\_derivative\_chan@{low\_pass\_filter\_derivative\_chan}}
+\index{low\_pass\_filter\_derivative\_chan@{low\_pass\_filter\_derivative\_chan}!PID.h@{PID.h}}
+\doxysubsubsection{low\_pass\_filter\_derivative\_chan}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a038513bad8c72a54a00551fc2448c546} 
+\#define low\+\_\+pass\+\_\+filter\+\_\+derivative\+\_\+chan~\textbf{ ON}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ PID.\+h}.
+
+\index{PID.h@{PID.h}!PID\_D\_TERM\_FILTER\_COEFFICIENT@{PID\_D\_TERM\_FILTER\_COEFFICIENT}}
+\index{PID\_D\_TERM\_FILTER\_COEFFICIENT@{PID\_D\_TERM\_FILTER\_COEFFICIENT}!PID.h@{PID.h}}
+\doxysubsubsection{PID\_D\_TERM\_FILTER\_COEFFICIENT}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a38bf51002d82306531629d65d518ac46} 
+\#define PID\+\_\+\+D\+\_\+\+TERM\+\_\+\+FILTER\+\_\+\+COEFFICIENT~0.\+5}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ PID.\+h}.
+
+\index{PID.h@{PID.h}!PID\_MAX\_WINDUP@{PID\_MAX\_WINDUP}}
+\index{PID\_MAX\_WINDUP@{PID\_MAX\_WINDUP}!PID.h@{PID.h}}
+\doxysubsubsection{PID\_MAX\_WINDUP}
+{\footnotesize\ttfamily \label{_p_i_d_8h_adc355b3d08d4e503e9067cf00bc8d30b} 
+\#define PID\+\_\+\+MAX\+\_\+\+WINDUP~5}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ PID.\+h}.
+
+\index{PID.h@{PID.h}!PID\_OUT\_LIMIT\_RATE\_CHANGE@{PID\_OUT\_LIMIT\_RATE\_CHANGE}}
+\index{PID\_OUT\_LIMIT\_RATE\_CHANGE@{PID\_OUT\_LIMIT\_RATE\_CHANGE}!PID.h@{PID.h}}
+\doxysubsubsection{PID\_OUT\_LIMIT\_RATE\_CHANGE}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a10cc9812fdaf0a487eefbf2711f08257} 
+\#define PID\+\_\+\+OUT\+\_\+\+LIMIT\+\_\+\+RATE\+\_\+\+CHANGE~5}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ PID.\+h}.
+
+\index{PID.h@{PID.h}!WINDOW\_SIZE\_SMA@{WINDOW\_SIZE\_SMA}}
+\index{WINDOW\_SIZE\_SMA@{WINDOW\_SIZE\_SMA}!PID.h@{PID.h}}
+\doxysubsubsection{WINDOW\_SIZE\_SMA}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a4976bce6bc5be73bd93625c12b853e70} 
+\#define WINDOW\+\_\+\+SIZE\+\_\+\+SMA~15}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ PID.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{PID.h@{PID.h}!clamp\_float@{clamp\_float}}
+\index{clamp\_float@{clamp\_float}!PID.h@{PID.h}}
+\doxysubsubsection{clamp\_float()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a616f6b0cb89c5861abaa85bbd1058645} 
+void clamp\+\_\+float (\begin{DoxyParamCaption}\item[{float $\ast$}]{value}{, }\item[{float}]{min}{, }\item[{float}]{max}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 332} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!clamp\_int@{clamp\_int}}
+\index{clamp\_int@{clamp\_int}!PID.h@{PID.h}}
+\doxysubsubsection{clamp\_int()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a7a4dd36c5f2e49d4aa2f2f48fdd0aabe} 
+void clamp\+\_\+int (\begin{DoxyParamCaption}\item[{int $\ast$}]{value}{, }\item[{int}]{min}{, }\item[{int}]{max}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 340} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!get\_speed\_distance\_sens\_scaling@{get\_speed\_distance\_sens\_scaling}}
+\index{get\_speed\_distance\_sens\_scaling@{get\_speed\_distance\_sens\_scaling}!PID.h@{PID.h}}
+\doxysubsubsection{get\_speed\_distance\_sens\_scaling()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_aabae7507a2291726cf102c305e3f02c5} 
+float get\+\_\+speed\+\_\+distance\+\_\+sens\+\_\+scaling (\begin{DoxyParamCaption}\item[{float}]{speed}{, }\item[{float}]{speed\+\_\+min}{, }\item[{float}]{speed\+\_\+max}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 155} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!init\_speedCheckTickHook@{init\_speedCheckTickHook}}
+\index{init\_speedCheckTickHook@{init\_speedCheckTickHook}!PID.h@{PID.h}}
+\doxysubsubsection{init\_speedCheckTickHook()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_ab1cfced9ea996bf91c861133e0d91e49} 
+void init\+\_\+speed\+Check\+Tick\+Hook (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!PID\_Compute@{PID\_Compute}}
+\index{PID\_Compute@{PID\_Compute}!PID.h@{PID.h}}
+\doxysubsubsection{PID\_Compute()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a6120ff3d44feed1033e54547b47c7856} 
+void PID\+\_\+\+Compute (\begin{DoxyParamCaption}\item[{\textbf{ PID\+\_\+t} $\ast$}]{pid}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 82} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!PID\_Init@{PID\_Init}}
+\index{PID\_Init@{PID\_Init}!PID.h@{PID.h}}
+\doxysubsubsection{PID\_Init()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a26c8b95db9397895630f51f4d291aab5} 
+void PID\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\textbf{ PID\+\_\+t} $\ast$}]{pid}{, }\item[{float}]{Kp}{, }\item[{float}]{Ki}{, }\item[{float}]{Kd}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!PID\_UpdateParams@{PID\_UpdateParams}}
+\index{PID\_UpdateParams@{PID\_UpdateParams}!PID.h@{PID.h}}
+\doxysubsubsection{PID\_UpdateParams()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_ad55b9d5b8311b147f528a7e6d0fba01c} 
+void PID\+\_\+\+Update\+Params (\begin{DoxyParamCaption}\item[{\textbf{ PID\+\_\+t} $\ast$}]{pid}{, }\item[{float}]{new\+\_\+\+Kp}{, }\item[{float}]{new\+\_\+\+Ki}{, }\item[{float}]{new\+\_\+\+Kd}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 135} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!PIDTask@{PIDTask}}
+\index{PIDTask@{PIDTask}!PID.h@{PID.h}}
+\doxysubsubsection{PIDTask()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a0b5432e9eb596af445a114d06ffccd81} 
+void PIDTask (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 203} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!Sliding\_Mean\_Average@{Sliding\_Mean\_Average}}
+\index{Sliding\_Mean\_Average@{Sliding\_Mean\_Average}!PID.h@{PID.h}}
+\doxysubsubsection{Sliding\_Mean\_Average()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_aa67df0089f15bc7920286170fbdf904b} 
+double Sliding\+\_\+\+Mean\+\_\+\+Average (\begin{DoxyParamCaption}\item[{int}]{new\+Value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 174} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!speedCheckTickHook@{speedCheckTickHook}}
+\index{speedCheckTickHook@{speedCheckTickHook}!PID.h@{PID.h}}
+\doxysubsubsection{speedCheckTickHook()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_affd6ece3243c73ae7033a9e67d3f23c2} 
+void speed\+Check\+Tick\+Hook (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ PID.\+c}.
+
+\index{PID.h@{PID.h}!start\_PID\_task@{start\_PID\_task}}
+\index{start\_PID\_task@{start\_PID\_task}!PID.h@{PID.h}}
+\doxysubsubsection{start\_PID\_task()}
+{\footnotesize\ttfamily \label{_p_i_d_8h_a9e7e9a86b0b7bb64ee265afc5cb27264} 
+void start\+\_\+\+PID\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 350} of file \textbf{ PID.\+c}.
+

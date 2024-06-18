@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__servo_motor_8h" xml:lang="en-US">
+<title>include/motors/drivers/ServoMotor.h File Reference</title>
+<indexterm><primary>include/motors/drivers/ServoMotor.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;motors_common.h&quot;<?linebreak?></programlisting>Include dependency graph for ServoMotor.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_servo_motor_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_servo_motor_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__servo_motor_8h_1a9597e59d40c94263bc1a883914f2d309">LEDC_SERVO_GPIO</link>&#160;&#160;&#160;(27)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__servo_motor_8h_1a58568c21d74e00bb66060888632e220c">LEDC_SERVO_TIMER</link>&#160;&#160;&#160;LEDC_TIMER_0</para>
+</listitem>
+            <listitem><para>#define <link linkend="__servo_motor_8h_1aed5b7c798fceeba9adeb55c73045b24d">LEDC_SERVO_CH0_CHANNEL</link>&#160;&#160;&#160;LEDC_CHANNEL_0</para>
+</listitem>
+            <listitem><para>#define <link linkend="__servo_motor_8h_1a55e2b6eba98c6bb89e853502cc490254">LEDC_SERVO_DUTY_RESOLUTION</link>&#160;&#160;&#160;LEDC_TIMER_16_BIT</para>
+</listitem>
+            <listitem><para>#define <link linkend="__servo_motor_8h_1a460ef6ce131fa79ad8ba76277a2476ef">MAX_SERVO_DUTY_US</link>&#160;&#160;&#160;(1700)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__servo_motor_8h_1ad5a4d81410d62a1454276c98458d7b05">MIN_SERVO_DUTY_US</link>&#160;&#160;&#160;(1300)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__servo_motor_8h_1a471346290cd96bae9ad577caa60fce18">init_servo_pwm</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__servo_motor_8h_1af33292d0ddf5be1cc69616acceb92a3a">update_servo_pwm</link> (int pulse_width_us)</para>
+</listitem>
+            <listitem><para>void <link linkend="__servo_motor_8h_1ad0d869b0abb9912862634615c3563d9c">changeSTEER</link> (int value)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__servo_motor_8h_1aed5b7c798fceeba9adeb55c73045b24d"/><section>
+    <title>LEDC_SERVO_CH0_CHANNEL</title>
+<indexterm><primary>LEDC_SERVO_CH0_CHANNEL</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>LEDC_SERVO_CH0_CHANNEL</secondary></indexterm>
+<para><computeroutput>#define LEDC_SERVO_CH0_CHANNEL&#160;&#160;&#160;LEDC_CHANNEL_0</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8h_source_1l00017">17</link> of file <link linkend="__servo_motor_8h_source">ServoMotor.h</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1a55e2b6eba98c6bb89e853502cc490254"/><section>
+    <title>LEDC_SERVO_DUTY_RESOLUTION</title>
+<indexterm><primary>LEDC_SERVO_DUTY_RESOLUTION</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>LEDC_SERVO_DUTY_RESOLUTION</secondary></indexterm>
+<para><computeroutput>#define LEDC_SERVO_DUTY_RESOLUTION&#160;&#160;&#160;LEDC_TIMER_16_BIT</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8h_source_1l00018">18</link> of file <link linkend="__servo_motor_8h_source">ServoMotor.h</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1a9597e59d40c94263bc1a883914f2d309"/><section>
+    <title>LEDC_SERVO_GPIO</title>
+<indexterm><primary>LEDC_SERVO_GPIO</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>LEDC_SERVO_GPIO</secondary></indexterm>
+<para><computeroutput>#define LEDC_SERVO_GPIO&#160;&#160;&#160;(27)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8h_source_1l00014">14</link> of file <link linkend="__servo_motor_8h_source">ServoMotor.h</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1a58568c21d74e00bb66060888632e220c"/><section>
+    <title>LEDC_SERVO_TIMER</title>
+<indexterm><primary>LEDC_SERVO_TIMER</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>LEDC_SERVO_TIMER</secondary></indexterm>
+<para><computeroutput>#define LEDC_SERVO_TIMER&#160;&#160;&#160;LEDC_TIMER_0</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8h_source_1l00016">16</link> of file <link linkend="__servo_motor_8h_source">ServoMotor.h</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1a460ef6ce131fa79ad8ba76277a2476ef"/><section>
+    <title>MAX_SERVO_DUTY_US</title>
+<indexterm><primary>MAX_SERVO_DUTY_US</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>MAX_SERVO_DUTY_US</secondary></indexterm>
+<para><computeroutput>#define MAX_SERVO_DUTY_US&#160;&#160;&#160;(1700)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8h_source_1l00021">21</link> of file <link linkend="__servo_motor_8h_source">ServoMotor.h</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1ad5a4d81410d62a1454276c98458d7b05"/><section>
+    <title>MIN_SERVO_DUTY_US</title>
+<indexterm><primary>MIN_SERVO_DUTY_US</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>MIN_SERVO_DUTY_US</secondary></indexterm>
+<para><computeroutput>#define MIN_SERVO_DUTY_US&#160;&#160;&#160;(1300)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8h_source_1l00022">22</link> of file <link linkend="__servo_motor_8h_source">ServoMotor.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__servo_motor_8h_1ad0d869b0abb9912862634615c3563d9c"/><section>
+    <title>changeSTEER()</title>
+<indexterm><primary>changeSTEER</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>changeSTEER</secondary></indexterm>
+<para><computeroutput>void changeSTEER (int value)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00117">117</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1a471346290cd96bae9ad577caa60fce18"/><section>
+    <title>init_servo_pwm()</title>
+<indexterm><primary>init_servo_pwm</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>init_servo_pwm</secondary></indexterm>
+<para><computeroutput>void init_servo_pwm ( )</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00016">16</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8h_1af33292d0ddf5be1cc69616acceb92a3a"/><section>
+    <title>update_servo_pwm()</title>
+<indexterm><primary>update_servo_pwm</primary><secondary>ServoMotor.h</secondary></indexterm>
+<indexterm><primary>ServoMotor.h</primary><secondary>update_servo_pwm</secondary></indexterm>
+<para><computeroutput>void update_servo_pwm (int pulse_width_us)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00106">106</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+</section>
+</section>

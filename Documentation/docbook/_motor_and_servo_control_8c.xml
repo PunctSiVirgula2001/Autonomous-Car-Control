@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__motor_and_servo_control_8c" xml:lang="en-US">
+<title>src/motors/MotorAndServoControl.c File Reference</title>
+<indexterm><primary>src/motors/MotorAndServoControl.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;MotorAndServoControl.h&quot;<?linebreak?>#include &quot;I2C_cameraSensor.h&quot;<?linebreak?>#include &quot;Network.h&quot;<?linebreak?></programlisting>Include dependency graph for MotorAndServoControl.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_motor_and_servo_control_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="_struct_car_command">CarCommand</link> <link linkend="__motor_and_servo_control_8c_1a5bdc71d98132147d476bffaf9a319080">parseCommand</link> (const char *commandStr)</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8c_1a64174a9e686c6f19ea9dc54d1d47085b">carControl_Backward_init</link> (int break_value)</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8c_1aacc86a8fac6d46c80e8c5c41ea7786b6">carControl_calibrate_motor</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8c_1a356958ec8c1d6b214ec4228ce5ae6f56">carControl_Task</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8c_1a111cf66cc0671765a5325a79a37773a2">steer_task</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8c_1a3b1a84c1a0e08894d761413c5c66c701">carControl_init</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>QueueSetHandle_t <link linkend="__motor_and_servo_control_8c_1a5c87d10806c8bb41d42841fc2fb559d9">QueueSetPIDNecessaryCommands</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__motor_and_servo_control_8c_1ae0a77b0cf83af5755b406387533338e7">autonomousModeControlPixyQueue</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="__motor_and_servo_control_8c_1ade0f598b8a5a524e52c60c286fcee6db">calib_motor_done</link> = false</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__motor_and_servo_control_8c_1a731dce19cc17cfa0419781203697bf14">diagnosticModeControlQueue</link> = NULL</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__motor_and_servo_control_8c_1a692b48efecf30c3cea7e1271c249b331">autonomousModeControlUartQueue</link> = NULL</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__motor_and_servo_control_8c_1adb1f977be6734adfcc8e37d4f2659ec5">speed_commandQueue</link> = NULL</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__motor_and_servo_control_8c_1a4c4e2a762a11fd2e1ddee7045c9bae56">steer_commandQueue</link> = NULL</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__motor_and_servo_control_8c_1a52c196f65d55f3b464764bf630e6f05e">PID_commandQueue</link> = NULL</para>
+</listitem>
+            <listitem><para>QueueSetHandle_t <link linkend="__motor_and_servo_control_8c_1a35af4e2fb01eed708c67a42aad85cebf">QueueSetAutonomousOrDiagnostic</link> = NULL</para>
+</listitem>
+            <listitem><para>bool <link linkend="__motor_and_servo_control_8c_1aaa8698890fe268d44ede1ad83c711ffb">AutonomousMode</link> = false</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__motor_and_servo_control_8c_1a64174a9e686c6f19ea9dc54d1d47085b"/><section>
+    <title>carControl_Backward_init()</title>
+<indexterm><primary>carControl_Backward_init</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>carControl_Backward_init</secondary></indexterm>
+<para><computeroutput>void carControl_Backward_init (int break_value)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00042">42</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1aacc86a8fac6d46c80e8c5c41ea7786b6"/><section>
+    <title>carControl_calibrate_motor()</title>
+<indexterm><primary>carControl_calibrate_motor</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>carControl_calibrate_motor</secondary></indexterm>
+<para><computeroutput>void carControl_calibrate_motor ( )</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00056">56</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a3b1a84c1a0e08894d761413c5c66c701"/><section>
+    <title>carControl_init()</title>
+<indexterm><primary>carControl_init</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>carControl_init</secondary></indexterm>
+<para><computeroutput>void carControl_init ( )</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00239">239</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a356958ec8c1d6b214ec4228ce5ae6f56"/><section>
+    <title>carControl_Task()</title>
+<indexterm><primary>carControl_Task</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>carControl_Task</secondary></indexterm>
+<para><computeroutput>void carControl_Task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00112">112</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a5bdc71d98132147d476bffaf9a319080"/><section>
+    <title>parseCommand()</title>
+<indexterm><primary>parseCommand</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>parseCommand</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_car_command">CarCommand</link> parseCommand (const char * commandStr)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00009">9</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a111cf66cc0671765a5325a79a37773a2"/><section>
+    <title>steer_task()</title>
+<indexterm><primary>steer_task</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>steer_task</secondary></indexterm>
+<para><computeroutput>void steer_task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00227">227</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__motor_and_servo_control_8c_1aaa8698890fe268d44ede1ad83c711ffb"/><section>
+    <title>AutonomousMode</title>
+<indexterm><primary>AutonomousMode</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>AutonomousMode</secondary></indexterm>
+<para><computeroutput>bool AutonomousMode = false</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00111">111</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1ae0a77b0cf83af5755b406387533338e7"/><section>
+    <title>autonomousModeControlPixyQueue</title>
+<indexterm><primary>autonomousModeControlPixyQueue</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>autonomousModeControlPixyQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t autonomousModeControlPixyQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00015">15</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a692b48efecf30c3cea7e1271c249b331"/><section>
+    <title>autonomousModeControlUartQueue</title>
+<indexterm><primary>autonomousModeControlUartQueue</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>autonomousModeControlUartQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t autonomousModeControlUartQueue = NULL</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00104">104</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1ade0f598b8a5a524e52c60c286fcee6db"/><section>
+    <title>calib_motor_done</title>
+<indexterm><primary>calib_motor_done</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>calib_motor_done</secondary></indexterm>
+<para><computeroutput>bool calib_motor_done = false</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00055">55</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a731dce19cc17cfa0419781203697bf14"/><section>
+    <title>diagnosticModeControlQueue</title>
+<indexterm><primary>diagnosticModeControlQueue</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>diagnosticModeControlQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t diagnosticModeControlQueue = NULL</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00103">103</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a52c196f65d55f3b464764bf630e6f05e"/><section>
+    <title>PID_commandQueue</title>
+<indexterm><primary>PID_commandQueue</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>PID_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t PID_commandQueue = NULL</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00107">107</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a35af4e2fb01eed708c67a42aad85cebf"/><section>
+    <title>QueueSetAutonomousOrDiagnostic</title>
+<indexterm><primary>QueueSetAutonomousOrDiagnostic</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>QueueSetAutonomousOrDiagnostic</secondary></indexterm>
+<para><computeroutput>QueueSetHandle_t QueueSetAutonomousOrDiagnostic = NULL</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00108">108</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a5c87d10806c8bb41d42841fc2fb559d9"/><section>
+    <title>QueueSetPIDNecessaryCommands</title>
+<indexterm><primary>QueueSetPIDNecessaryCommands</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>QueueSetPIDNecessaryCommands</secondary></indexterm>
+<para><computeroutput>QueueSetHandle_t QueueSetPIDNecessaryCommands</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00006">6</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1adb1f977be6734adfcc8e37d4f2659ec5"/><section>
+    <title>speed_commandQueue</title>
+<indexterm><primary>speed_commandQueue</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>speed_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t speed_commandQueue = NULL</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00105">105</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8c_1a4c4e2a762a11fd2e1ddee7045c9bae56"/><section>
+    <title>steer_commandQueue</title>
+<indexterm><primary>steer_commandQueue</primary><secondary>MotorAndServoControl.c</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.c</primary><secondary>steer_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t steer_commandQueue = NULL</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00106">106</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+</section>
+</section>

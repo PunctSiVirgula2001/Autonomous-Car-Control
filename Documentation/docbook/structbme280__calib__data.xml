@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structbme280__calib__data" xml:lang="en-US">
+<title>bme280_calib_data Struct Reference</title>
+<indexterm><primary>bme280_calib_data</primary></indexterm>
+<para>
+<computeroutput>#include &lt;I2C_temperatureSensor.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>uint16_t <link linkend="_structbme280__calib__data_1a730ed166c629bded674b13faffe9cef7">dig_T1</link></para>
+</listitem>
+            <listitem><para>int16_t <link linkend="_structbme280__calib__data_1ab5c023a004c0497ba616d916155c85bb">dig_T2</link></para>
+</listitem>
+            <listitem><para>int16_t <link linkend="_structbme280__calib__data_1a9536e89c30bbd791153ac9e407b0752b">dig_T3</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__i2_c__temperature_sensor_8h_source_1l00014">14</link> of file <link linkend="__i2_c__temperature_sensor_8h_source">I2C_temperatureSensor.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_structbme280__calib__data_1a730ed166c629bded674b13faffe9cef7"/><section>
+    <title>dig_T1</title>
+<indexterm><primary>dig_T1</primary><secondary>bme280_calib_data</secondary></indexterm>
+<indexterm><primary>bme280_calib_data</primary><secondary>dig_T1</secondary></indexterm>
+<para><computeroutput>uint16_t dig_T1</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__temperature_sensor_8h_source_1l00015">15</link> of file <link linkend="__i2_c__temperature_sensor_8h_source">I2C_temperatureSensor.h</link>.</para>
+</section>
+<anchor xml:id="_structbme280__calib__data_1ab5c023a004c0497ba616d916155c85bb"/><section>
+    <title>dig_T2</title>
+<indexterm><primary>dig_T2</primary><secondary>bme280_calib_data</secondary></indexterm>
+<indexterm><primary>bme280_calib_data</primary><secondary>dig_T2</secondary></indexterm>
+<para><computeroutput>int16_t dig_T2</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__temperature_sensor_8h_source_1l00016">16</link> of file <link linkend="__i2_c__temperature_sensor_8h_source">I2C_temperatureSensor.h</link>.</para>
+</section>
+<anchor xml:id="_structbme280__calib__data_1a9536e89c30bbd791153ac9e407b0752b"/><section>
+    <title>dig_T3</title>
+<indexterm><primary>dig_T3</primary><secondary>bme280_calib_data</secondary></indexterm>
+<indexterm><primary>bme280_calib_data</primary><secondary>dig_T3</secondary></indexterm>
+<para><computeroutput>int16_t dig_T3</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__temperature_sensor_8h_source_1l00017">17</link> of file <link linkend="__i2_c__temperature_sensor_8h_source">I2C_temperatureSensor.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/I2C/drivers/<link linkend="__i2_c__temperature_sensor_8h">I2C_temperatureSensor.h</link></section>
+</section>

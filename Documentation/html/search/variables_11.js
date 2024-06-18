@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['secondarysmoothingfactor_0',['secondarySmoothingFactor',['../_p_i_d_8c.html#ad064e89649dcb2aeffc176cd64738ca2',1,'PID.c']]],
+  ['sendingsensor_1',['sendingSensor',['../struct_i2_c___c_o_m_m_a_n_d.html#af093706b79cdd89f26148de82c235225',1,'I2C_COMMAND']]],
+  ['sens_5fbw_5fhas_5fobstacle_2',['sens_bw_has_obstacle',['../_p_i_d_8c.html#a117fa0cc46d9de108be106975435dd62',1,'PID.c']]],
+  ['sens_5ffw_5fhas_5fobstacle_3',['sens_fw_has_obstacle',['../_p_i_d_8c.html#a23e5064cecba4d74af07c3eb5cd7c7ba',1,'PID.c']]],
+  ['setpoint_4',['setpoint',['../struct_p_i_d__t.html#af92a67282f64b636796ff0120d21310f',1,'PID_t']]],
+  ['sock_5fglobal_5',['sock_global',['../_network_8c.html#a66d70c4b1933243b27cf9451b07de225',1,'Network.c']]],
+  ['source_5faddr_5fglobal_6',['source_addr_global',['../_network_8c.html#a53049234aa6eaa663203a7d6d2201e20',1,'Network.c']]],
+  ['speed_7',['Speed',['../structcommand_received__jetson.html#a04caa6dcdf90645ea95e5f3281d780cd',1,'commandReceived_jetson']]],
+  ['speed_5fcommandqueue_8',['speed_commandQueue',['../main_8c.html#adb1f977be6734adfcc8e37d4f2659ec5',1,'speed_commandQueue:&#160;MotorAndServoControl.c'],['../_motor_and_servo_control_8c.html#adb1f977be6734adfcc8e37d4f2659ec5',1,'speed_commandQueue:&#160;MotorAndServoControl.c'],['../_p_i_d_8c.html#adb1f977be6734adfcc8e37d4f2659ec5',1,'speed_commandQueue:&#160;MotorAndServoControl.c']]],
+  ['speed_5fdistance_5fsens_5fscaling_9',['speed_distance_sens_scaling',['../_i2_c__sensor_control_8c.html#a798a61f7f4a9d94f40e4a0c59bece8a0',1,'speed_distance_sens_scaling:&#160;I2C_sensorControl.c'],['../_p_i_d_8c.html#a798a61f7f4a9d94f40e4a0c59bece8a0',1,'speed_distance_sens_scaling:&#160;I2C_sensorControl.c']]],
+  ['startinitialsendingtime_10',['startInitialSendingTime',['../_p_i_d_8c.html#ad13f649750458a5efd053ba378823d4a',1,'PID.c']]],
+  ['state_11',['state',['../structsensor__t.html#a72d0c88c8a136c777fb251336bedcce9',1,'sensor_t::state'],['../structcommand_received__jetson.html#af7504fc0e249186b115eb5f51a297878',1,'commandReceived_jetson::state']]],
+  ['statesendtoappstrings_12',['stateSendToAppStrings',['../_network_8c.html#a2fa235ed0bc5b7bb6f442944f98abb31',1,'Network.c']]],
+  ['steer_13',['Steer',['../structcommand_received__jetson.html#a708891e917f5094fa0804de4af0a3445',1,'commandReceived_jetson']]],
+  ['steer_5fcommandqueue_14',['steer_commandQueue',['../main_8c.html#a4c4e2a762a11fd2e1ddee7045c9bae56',1,'steer_commandQueue:&#160;MotorAndServoControl.c'],['../_motor_and_servo_control_8c.html#a4c4e2a762a11fd2e1ddee7045c9bae56',1,'steer_commandQueue:&#160;MotorAndServoControl.c']]],
+  ['steerpid_15',['steerPID',['../_p_i_d_8c.html#aef9aaf46d3a817fcb1cf11d655d3bebe',1,'PID.c']]],
+  ['sum_16',['sum',['../_p_i_d_8c.html#a2943e5895f5488ed44ed4a86e59dcf1b',1,'PID.c']]]
+];

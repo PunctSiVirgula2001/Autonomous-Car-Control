@@ -1,0 +1,37 @@
+\doxysection{Servo\+Motor.\+h}
+\label{_servo_motor_8h_source}\index{include/motors/drivers/ServoMotor.h@{include/motors/drivers/ServoMotor.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ ServoMotor.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 18\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ INCLUDE\_MOTORS\_SERVOMOTOR\_H\_}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ INCLUDE\_MOTORS\_SERVOMOTOR\_H\_}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}motors\_common.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ LEDC\_SERVO\_GPIO\ \ \ \ \ \ \ \ \ \ \ \ \ (27)}}
+\DoxyCodeLine{00015\ \textcolor{comment}{/*Pwm\ settings\ for\ servo\ LEDC\ */}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ LEDC\_SERVO\_TIMER\ \ \ \ \ \ \ \ \ \ \ \ LEDC\_TIMER\_0}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ LEDC\_SERVO\_CH0\_CHANNEL\ \ \ \ \ \ LEDC\_CHANNEL\_0}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ LEDC\_SERVO\_DUTY\_RESOLUTION\ \ LEDC\_TIMER\_16\_BIT}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{/*\ Pwm\ settings\ for\ servo\ general*/}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ MAX\_SERVO\_DUTY\_US\ \ \ \ \ \ \ \ \ \ \ (1700)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ MIN\_SERVO\_DUTY\_US\ \ \ \ \ \ \ \ \ \ \ (1300)}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Servo\ functions\ */}}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ init\_servo\_pwm();}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ update\_servo\_pwm(\textcolor{keywordtype}{int}\ pulse\_width\_us);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ changeSTEER(\textcolor{keywordtype}{int}\ value);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ INCLUDE\_MOTORS\_SERVOMOTOR\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

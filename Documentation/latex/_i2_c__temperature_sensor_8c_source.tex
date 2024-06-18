@@ -1,0 +1,77 @@
+\doxysection{I2\+C\+\_\+temperature\+Sensor.\+c}
+\label{_i2_c__temperature_sensor_8c_source}\index{src/I2C/drivers/I2C\_temperatureSensor.c@{src/I2C/drivers/I2C\_temperatureSensor.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_temperatureSensor.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{/********\ BMP/BME280\ sensor\ **********/}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//I2C\ functions\ for\ accessing\ the\ BMP/BME280\ sensor\ :\ temperature,\ pressure,\ humidity}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}I2C\_temperatureSensor.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{struct\ }bme280\_calib\_data\ temp\_calibration;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ I2C\ temperature\ sensor\ BMP\ functions}}
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{void}\ I2C\_temperatureSensor\_trigger\_measurement()\{}
+\DoxyCodeLine{00018\ \ \ \ \ uint8\_t\ calib[24];}
+\DoxyCodeLine{00019\ \ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{0x88\},1);}
+\DoxyCodeLine{00020\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00021\ \ \ \ \ I2C\_receive(I2C\_temp\_sens\_dev\_handle,\ calib,24);}
+\DoxyCodeLine{00022\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ Convert\ the\ bytes\ into\ calibration\ data}}
+\DoxyCodeLine{00024\ \ \ \ \ temp\_calibration.dig\_T1\ =\ (uint16\_t)(calib[1]\ <<\ 8)\ |\ calib[0];}
+\DoxyCodeLine{00025\ \ \ \ \ temp\_calibration.dig\_T2\ =\ (int16\_t)(calib[3]\ <<\ 8)\ |\ calib[2];}
+\DoxyCodeLine{00026\ \ \ \ \ temp\_calibration.dig\_T3\ =\ (int16\_t)(calib[5]\ <<\ 8)\ |\ calib[4];}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{//\ Define\ the\ control\ register\ address\ for\ BMP280/BME280}}
+\DoxyCodeLine{00029\ \ \ \ \ uint8\_t\ ctrl\_meas\_reg\ =\ 0xF4;}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{//\ Write\ a\ value\ to\ trigger\ a\ measurement:\ use\ 0x2X\ for\ force\ mode,\ 0x3X\ for\ normal\ mode}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ The\ 'X'\ should\ be\ replaced\ with\ the\ combination\ of\ temperature\ and\ pressure\ oversampling}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//\ Example:\ 0x27\ for\ normal\ mode,\ oversampling\ x1\ for\ both\ temperature\ and\ pressure}}
+\DoxyCodeLine{00033\ \ \ \ \ uint8\_t\ ctrl\_meas\_value\ =\ 0x27;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ address\ and\ the\ value}}
+\DoxyCodeLine{00035\ \ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{ctrl\_meas\_reg,\ ctrl\_meas\_value\},2);}
+\DoxyCodeLine{00036\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ I2C\_read\_temperature(\textcolor{keywordtype}{double}\ *fine\_temp)}
+\DoxyCodeLine{00039\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ Read\ temperature\ registers}}
+\DoxyCodeLine{00041\ \ \ \ \ uint8\_t\ temp\_msb;}
+\DoxyCodeLine{00042\ \ \ \ \ uint8\_t\ temp\_lsb;}
+\DoxyCodeLine{00043\ \ \ \ \ uint8\_t\ temp\_xlsb;}
+\DoxyCodeLine{00044\ \ \ \ \ uint32\_t\ raw\_temp;}
+\DoxyCodeLine{00045\ \ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{0xFA\},1);}
+\DoxyCodeLine{00046\ \ \ \ \ I2C\_receive(I2C\_temp\_sens\_dev\_handle,\ \&temp\_msb,8);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{0xFB\},1);}
+\DoxyCodeLine{00049\ \ \ \ \ I2C\_receive(I2C\_temp\_sens\_dev\_handle,\ \&temp\_lsb,8);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{0xFC\},1);}
+\DoxyCodeLine{00052\ \ \ \ \ I2C\_receive(I2C\_temp\_sens\_dev\_handle,\ \&temp\_xlsb,4);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ Combine\ bytes\ to\ get\ the\ raw\ temperature\ value}}
+\DoxyCodeLine{00054\ \ \ \ \ raw\_temp\ =\ ((uint32\_t)temp\_msb\ <<\ 12)\ |\ ((uint32\_t)temp\_lsb\ <<\ 4)\ |\ (temp\_xlsb\ >>\ 4);}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{double}\ var1,\ var2;}
+\DoxyCodeLine{00057\ \ \ \ \ var1\ \ =\ (((double)raw\_temp)/16384.0-\/((double)temp\_calibration.dig\_T1)/1024.0)\ *\ ((\textcolor{keywordtype}{double})temp\_calibration.dig\_T2);}
+\DoxyCodeLine{00058\ \ \ \ \ var2\ \ =\ ((((double)raw\_temp)/131072.0-\/((double)temp\_calibration.dig\_T1)/8192.0)\ *(((\textcolor{keywordtype}{double})raw\_temp)/131072.0-\/((\textcolor{keywordtype}{double})\ temp\_calibration.dig\_T1)/8192.0))\ *\ ((\textcolor{keywordtype}{double})temp\_calibration.dig\_T3);}
+\DoxyCodeLine{00059\ \ \ \ \ *fine\_temp\ \ =\ (var1\ +\ var2)\ /\ 5120.0;}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{comment}{//\ I2c\ pressure\ sensor\ BME\ functions}}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ I2C\_set\_pressure\_register()}
+\DoxyCodeLine{00064\ \{}
+\DoxyCodeLine{00065\ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{0xF7\},1);\ \textcolor{comment}{//\ Pressure\ register\ address}}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{//\ I2c\ humidity\ sensor\ BME/BMP\ functions}}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ I2C\_set\_humidity\_register()\{}
+\DoxyCodeLine{00070\ \ \ \ I2C\_transmit(I2C\_temp\_sens\_dev\_handle,\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}[])\{0xFD\},1);\ \textcolor{comment}{//\ Humidity\ register\ address}}
+\DoxyCodeLine{00071\ \}}
+
+\end{DoxyCode}

@@ -47,6 +47,8 @@ void I2C_devices_task(void *pvParameters) {
     sensor_t *current_sensor = &sensors[current_sensor_index];
 
     while (1) {
+
+    	//ESP_LOG("I2C_TASK","%u ms",pdTICKS_TO_MS(xTaskGetTickCount()));
         // Skip sensors with 0 tokens
         while (current_sensor->tokens == 0) {
             current_sensor_index = (current_sensor_index + 1) % sensor_count;
@@ -88,7 +90,7 @@ void I2C_devices_task(void *pvParameters) {
 							i2c_command.commandValue = 0;
 							i2c_command.sendingSensor = I2C_distance_sens1_dev_handle;
 							xQueueSend(I2C_commandQueue,&i2c_command,pdMS_TO_TICKS(5000));
-							ESP_LOGI("", "Sent STOP for forward \n");
+							//ESP_LOGI("", "Sent STOP for forward \n");
 						}
 						else if (countSendStart_sens1 == 0 && readValSensor_dist1_final >= (Threshold_dist * speed_distance_sens_scaling))
 						{
@@ -98,11 +100,11 @@ void I2C_devices_task(void *pvParameters) {
 							i2c_command.commandValue = 0;
 							i2c_command.sendingSensor = I2C_distance_sens1_dev_handle;
 							xQueueSend(I2C_commandQueue,&i2c_command,pdMS_TO_TICKS(5000));
-							ESP_LOGI("", "Sent START for forward \n");
+							//ESP_LOGI("", "Sent START for forward \n");
 						}
 
 						// Log the filtered value
-						ESP_LOGI("I2C", "Range1: [ %.2lf ]", readValSensor_dist1_final);
+						//ESP_LOGI("I2C", "Range1: [ %.2lf ]", readValSensor_dist1_final);
                         //vTaskDelay(pdMS_TO_TICKS(50)); // Allow for multiplexer switch
                         break;
 
@@ -122,7 +124,7 @@ void I2C_devices_task(void *pvParameters) {
 							i2c_command.commandValue = 0;
 							i2c_command.sendingSensor = I2C_distance_sens2_dev_handle;
 							xQueueSend(I2C_commandQueue,&i2c_command,-1);
-							ESP_LOGI("", "Sent STOP for backward \n");
+							//ESP_LOGI("", "Sent STOP for backward \n");
 						}
                         else if (countSendStart_sens2 == 0 && readValSensor_dist2_final >= (Threshold_dist * speed_distance_sens_scaling))
                         {
@@ -134,7 +136,7 @@ void I2C_devices_task(void *pvParameters) {
                         	xQueueSend(I2C_commandQueue,&i2c_command,-1);
                         }
                           // Log the filtered value
-                        ESP_LOGI("I2C", "Range2: [ %.2lf ]", readValSensor_dist2_final);
+                        //ESP_LOGI("I2C", "Range2: [ %.2lf ]", readValSensor_dist2_final);
                         break;
 
                     case I2C_adxl345_sens_mux: // if
@@ -167,7 +169,7 @@ void I2C_devices_task(void *pvParameters) {
 						pitch_final = ALPHA_ADXL * (double)pitch + (1 - ALPHA_ADXL) * (double)pitch_prev;						// Update the previous value for the next iteration
 						pitch_prev = pitch;
 
-						ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll_final, pitch_final);
+						//ESP_LOGI("I2C", "Orientation roll=%lf pitch=%lf ", roll_final, pitch_final);
 
 						sendCommandApp(ADXL_ROLL, (double*)&roll_final, DOUBLE);
 						sendCommandApp(ADXL_PITCH, (double*)&pitch_final, DOUBLE);
@@ -199,7 +201,7 @@ if(AutonomousMode == true){
 
                     case I2C_temp_sens_mux:
                         I2C_read_temperature(&temp);
-                        ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
+                        //ESP_LOGI("I2C", "Temp: [ %lf ]", temp);
                         sendCommandApp(TEMPERATURE, (double*)&temp, DOUBLE);
                         break;
 

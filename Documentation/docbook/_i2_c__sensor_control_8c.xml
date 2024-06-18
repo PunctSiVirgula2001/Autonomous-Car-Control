@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__sensor_control_8c" xml:lang="en-US">
+<title>src/I2C/I2C_sensorControl.c File Reference</title>
+<indexterm><primary>src/I2C/I2C_sensorControl.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_sensorControl.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_sensorControl.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__sensor_control_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__sensor_control_8c_1a223d018b44dccfa36c89dcbcc975bef1">I2C_devices_task</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__sensor_control_8c_1a634afb850adbac31a4c7bd552156d2e0">I2C_addAndInitialiseSensors</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__sensor_control_8c_1af25a3b4136659e2a41e7012d181ca9ad">start_I2C_devices_task</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>QueueHandle_t <link linkend="__i2_c__sensor_control_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f">I2C_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__i2_c__sensor_control_8c_1ae0a77b0cf83af5755b406387533338e7">autonomousModeControlPixyQueue</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__sensor_control_8c_1a6a07f60157030f413311bca2bcd05350">I2C_sensors_initiated</link> = false</para>
+</listitem>
+            <listitem><para><link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link> <link linkend="__i2_c__sensor_control_8c_1af8709299f1795dd960e64b0f618534cc">i2c_command</link></para>
+</listitem>
+            <listitem><para>int <link linkend="__i2_c__sensor_control_8c_1a798a61f7f4a9d94f40e4a0c59bece8a0">speed_distance_sens_scaling</link></para>
+</listitem>
+            <listitem><para><link linkend="_struct_pixy2_lines">Pixy2Lines</link> <link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__sensor_control_8c_1aaa8698890fe268d44ede1ad83c711ffb">AutonomousMode</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__sensor_control_8c_1a634afb850adbac31a4c7bd552156d2e0"/><section>
+    <title>I2C_addAndInitialiseSensors()</title>
+<indexterm><primary>I2C_addAndInitialiseSensors</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>I2C_addAndInitialiseSensors</secondary></indexterm>
+<para><computeroutput>bool I2C_addAndInitialiseSensors ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00230">230</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1a223d018b44dccfa36c89dcbcc975bef1"/><section>
+    <title>I2C_devices_task()</title>
+<indexterm><primary>I2C_devices_task</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>I2C_devices_task</secondary></indexterm>
+<para><computeroutput>void I2C_devices_task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00019">19</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1af25a3b4136659e2a41e7012d181ca9ad"/><section>
+    <title>start_I2C_devices_task()</title>
+<indexterm><primary>start_I2C_devices_task</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>start_I2C_devices_task</secondary></indexterm>
+<para><computeroutput>void start_I2C_devices_task ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00260">260</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__i2_c__sensor_control_8c_1aaa8698890fe268d44ede1ad83c711ffb"/><section>
+    <title>AutonomousMode</title>
+<indexterm><primary>AutonomousMode</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>AutonomousMode</secondary></indexterm>
+<para><computeroutput>bool AutonomousMode<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00111">111</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1ae0a77b0cf83af5755b406387533338e7"/><section>
+    <title>autonomousModeControlPixyQueue</title>
+<indexterm><primary>autonomousModeControlPixyQueue</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>autonomousModeControlPixyQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t autonomousModeControlPixyQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00015">15</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1af8709299f1795dd960e64b0f618534cc"/><section>
+    <title>i2c_command</title>
+<indexterm><primary>i2c_command</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>i2c_command</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link> i2c_command</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00013">13</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f"/><section>
+    <title>I2C_commandQueue</title>
+<indexterm><primary>I2C_commandQueue</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>I2C_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t I2C_commandQueue</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00010">10</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1a6a07f60157030f413311bca2bcd05350"/><section>
+    <title>I2C_sensors_initiated</title>
+<indexterm><primary>I2C_sensors_initiated</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>I2C_sensors_initiated</secondary></indexterm>
+<para><computeroutput>bool I2C_sensors_initiated = false</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00012">12</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca"/><section>
+    <title>lines</title>
+<indexterm><primary>lines</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>lines</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_pixy2_lines">Pixy2Lines</link> lines</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00015">15</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8c_1a798a61f7f4a9d94f40e4a0c59bece8a0"/><section>
+    <title>speed_distance_sens_scaling</title>
+<indexterm><primary>speed_distance_sens_scaling</primary><secondary>I2C_sensorControl.c</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.c</primary><secondary>speed_distance_sens_scaling</secondary></indexterm>
+<para><computeroutput>int speed_distance_sens_scaling</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00014">14</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+</section>
+</section>

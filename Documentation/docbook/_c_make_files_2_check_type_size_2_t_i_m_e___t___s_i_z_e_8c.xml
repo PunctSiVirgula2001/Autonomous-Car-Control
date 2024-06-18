@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c" xml:lang="en-US">
+<title>build/CMakeFiles/CheckTypeSize/TIME_T_SIZE.c File Reference</title>
+<indexterm><primary>build/CMakeFiles/CheckTypeSize/TIME_T_SIZE.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &lt;sys/types.h&gt;<?linebreak?>#include &lt;stdint.h&gt;<?linebreak?>#include &lt;stddef.h&gt;<?linebreak?></programlisting>Include dependency graph for TIME_T_SIZE.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_1a70ed59adcb4159ac551058053e649640">SIZE</link>&#160;&#160;&#160;(sizeof(time_t))</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>int <link linkend="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_1a0ddf1224851353fc92bfbff6f499fa97">main</link> (int argc, char *argv[])</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_1a70ed59adcb4159ac551058053e649640"/><section>
+    <title>SIZE</title>
+<indexterm><primary>SIZE</primary><secondary>TIME_T_SIZE.c</secondary></indexterm>
+<indexterm><primary>TIME_T_SIZE.c</primary><secondary>SIZE</secondary></indexterm>
+<para><computeroutput>#define SIZE&#160;&#160;&#160;(sizeof(time_t))</computeroutput></para><para>
+Definition at line <link linkend="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_source_1l00027">27</link> of file <link linkend="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_source">TIME_T_SIZE.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_1a0ddf1224851353fc92bfbff6f499fa97"/><section>
+    <title>main()</title>
+<indexterm><primary>main</primary><secondary>TIME_T_SIZE.c</secondary></indexterm>
+<indexterm><primary>TIME_T_SIZE.c</primary><secondary>main</secondary></indexterm>
+<para><computeroutput>int main (int argc, char * argv[])</computeroutput></para><para>
+Definition at line <link linkend="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_source_1l00043">43</link> of file <link linkend="__c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_source">TIME_T_SIZE.c</link>.</para>
+</section>
+</section>
+</section>

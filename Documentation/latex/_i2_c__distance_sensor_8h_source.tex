@@ -1,0 +1,142 @@
+\doxysection{I2\+C\+\_\+distance\+Sensor.\+h}
+\label{_i2_c__distance_sensor_8h_source}\index{include/I2C/drivers/I2C\_distanceSensor.h@{include/I2C/drivers/I2C\_distanceSensor.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_distanceSensor.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ INCLUDE\_I2C\_I2C\_DISTANCESENSOR\_H\_}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ INCLUDE\_I2C\_I2C\_DISTANCESENSOR\_H\_}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}I2C\_common.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*\ VL53L0X\ */}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{static}\ uint8\_t\ stop\_variable;}
+\DoxyCodeLine{00015\ \textcolor{keyword}{static}\ uint16\_t\ timeout\_start\_ms;}
+\DoxyCodeLine{00016\ \textcolor{keyword}{static}\ uint32\_t\ measurement\_timing\_budget\_us;}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ ALPHA\_VL53L0X\ 0.8}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ ALPHA\_ADXL\ 0.8}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ Threshold\_dist\ 350.0}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ io\_timeout\ 100}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ millis()\ (pdTICKS\_TO\_MS(xTaskGetTickCount()))}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ checkTimeoutExpired()\ (io\_timeout\ >\ 0\ \&\&\ ((uint16\_t)(millis()\ -\/\ timeout\_start\_ms))\ >\ io\_timeout)}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ Record\ the\ current\ time\ to\ check\ an\ upcoming\ timeout\ against}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ startTimeout()\ (timeout\_start\_ms\ =\ millis())}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ Check\ if\ timeout\ is\ enabled\ (set\ to\ nonzero\ value)\ and\ has\ expired}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ calcMacroPeriod(vcsel\_period\_pclks)\ ((((uint32\_t)2304\ *\ (vcsel\_period\_pclks)\ *\ 1655)\ +\ 500)\ /\ 1000)}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ decodeVcselPeriod(reg\_val)\ \ \ \ \ \ (((reg\_val)\ +\ 1)\ <<\ 1)}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ uint16\_t\ VL53L0X\_readDistance(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00031\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ dist\_sens\_registers}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ SYSRANGE\_START\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x00,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ SYSTEM\_THRESH\_HIGH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x0C,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ SYSTEM\_THRESH\_LOW\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x0E,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ SYSTEM\_SEQUENCE\_CONFIG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x01,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ SYSTEM\_RANGE\_CONFIG\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x09,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ SYSTEM\_INTERMEASUREMENT\_PERIOD\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x04,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ SYSTEM\_INTERRUPT\_CONFIG\_GPIO\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x0A,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ GPIO\_HV\_MUX\_ACTIVE\_HIGH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x84,}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ SYSTEM\_INTERRUPT\_CLEAR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x0B,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ RESULT\_INTERRUPT\_STATUS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x13,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ RESULT\_RANGE\_STATUS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x14,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_RTN\ \ \ \ \ \ \ =\ 0xBC,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_RTN\ \ \ \ \ \ \ \ =\ 0xC0,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_REF\ \ \ \ \ \ \ =\ 0xD0,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_REF\ \ \ \ \ \ \ \ =\ 0xD4,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ RESULT\_PEAK\_SIGNAL\_RATE\_REF\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB6,}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ ALGO\_PART\_TO\_PART\_RANGE\_OFFSET\_MM\ \ \ \ \ \ \ \ \ \ \ =\ 0x28,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ I2C\_SLAVE\_DEVICE\_ADDRESS\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x8A,}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ MSRC\_CONFIG\_CONTROL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x60,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_MIN\_SNR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x27,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_VALID\_PHASE\_LOW\ \ \ \ \ \ \ \ \ \ \ \ =\ 0x56,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH\ \ \ \ \ \ \ \ \ \ \ =\ 0x57,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ PRE\_RANGE\_MIN\_COUNT\_RATE\_RTN\_LIMIT\ \ \ \ \ \ \ \ \ \ =\ 0x64,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_MIN\_SNR\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x67,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_LOW\ \ \ \ \ \ \ \ \ \ =\ 0x47,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH\ \ \ \ \ \ \ \ \ =\ 0x48,}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_MIN\_COUNT\_RATE\_RTN\_LIMIT\ =\ 0x44,}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_HI\ \ \ \ \ \ \ \ \ \ \ \ =\ 0x61,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_LO\ \ \ \ \ \ \ \ \ \ \ \ =\ 0x62,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_VCSEL\_PERIOD\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x50,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI\ \ \ \ \ \ \ \ \ \ =\ 0x51,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO\ \ \ \ \ \ \ \ \ \ =\ 0x52,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ SYSTEM\_HISTOGRAM\_BIN\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x81,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ HISTOGRAM\_CONFIG\_INITIAL\_PHASE\_SELECT\ \ \ \ \ \ \ =\ 0x33,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ HISTOGRAM\_CONFIG\_READOUT\_CTRL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x55,}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_VCSEL\_PERIOD\ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x70,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI\ \ \ \ \ \ \ \ =\ 0x71,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO\ \ \ \ \ \ \ \ =\ 0x72,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ CROSSTALK\_COMPENSATION\_PEAK\_RATE\_MCPS\ \ \ \ \ \ \ =\ 0x20,}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ MSRC\_CONFIG\_TIMEOUT\_MACROP\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x46,}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ SOFT\_RESET\_GO2\_SOFT\_RESET\_N\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0xBF,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ IDENTIFICATION\_MODEL\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0xC0,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ IDENTIFICATION\_REVISION\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0xC2,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ OSC\_CALIBRATE\_VAL\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0xF8,}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ GLOBAL\_CONFIG\_VCSEL\_WIDTH\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x32,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_0\ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB0,}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_1\ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB1,}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_2\ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB2,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_3\ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB3,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_4\ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB4,}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_5\ \ \ \ \ \ \ \ \ \ \ \ =\ 0xB5,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ GLOBAL\_CONFIG\_REF\_EN\_START\_SELECT\ \ \ \ \ \ \ \ \ \ \ =\ 0xB6,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ DYNAMIC\_SPAD\_NUM\_REQUESTED\_REF\_SPAD\ \ \ \ \ \ \ \ \ =\ 0x4E,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ DYNAMIC\_SPAD\_REF\_EN\_START\_OFFSET\ \ \ \ \ \ \ \ \ \ \ \ =\ 0x4F,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ POWER\_MANAGEMENT\_GO1\_POWER\_FORCE\ \ \ \ \ \ \ \ \ \ \ \ =\ 0x80,}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ VHV\_CONFIG\_PAD\_SCL\_SDA\_\_EXTSUP\_HV\ \ \ \ \ \ \ \ \ \ \ =\ 0x89,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ ALGO\_PHASECAL\_LIM\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x30,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ ALGO\_PHASECAL\_CONFIG\_TIMEOUT\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x30,}
+\DoxyCodeLine{00091\ \}dist\_sens\_registers;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }SequenceStepEnables}
+\DoxyCodeLine{00094\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{bool}\ tcc;}
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{bool}\ dss;}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{keywordtype}{bool}\ msrc;}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{bool}\ pre\_range;}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{bool}\ final\_range;}
+\DoxyCodeLine{00100\ \}\ SequenceStepEnables;}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }SequenceStepTimeouts}
+\DoxyCodeLine{00103\ \{}
+\DoxyCodeLine{00104\ \ \ uint16\_t\ pre\_range\_vcsel\_period\_pclks,\ final\_range\_vcsel\_period\_pclks;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ uint16\_t\ msrc\_dss\_tcc\_mclks,\ pre\_range\_mclks,\ final\_range\_mclks;}
+\DoxyCodeLine{00107\ \ \ uint32\_t\ msrc\_dss\_tcc\_us,\ \ \ \ pre\_range\_us,\ \ \ \ final\_range\_us;}
+\DoxyCodeLine{00108\ \}\ SequenceStepTimeouts;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ vcselPeriodType}
+\DoxyCodeLine{00111\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ VcselPeriodPreRange,}
+\DoxyCodeLine{00113\ \ \ \ \ VcselPeriodFinalRange}
+\DoxyCodeLine{00114\ \}\ vcselPeriodType;}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{bool}\ VL53L0X\_Init(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{bool}\ VL53L0X\_getSpadInfo(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ *\ count,\ \textcolor{keywordtype}{bool}\ *\ type\_is\_aperture);}
+\DoxyCodeLine{00118\ uint32\_t\ VL53L0X\_timeoutMclksToMicroseconds(uint16\_t\ timeout\_period\_mclks,\ uint8\_t\ vcsel\_period\_pclks);}
+\DoxyCodeLine{00119\ uint8\_t\ VL53L0X\_getVcselPulsePeriod(I2C\_dev\_handles\ device\_handle,\ vcselPeriodType\ type);}
+\DoxyCodeLine{00120\ uint16\_t\ VL53L0X\_decodeTimeout(uint16\_t\ reg\_val);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ VL53L0X\_getSequenceStepTimeouts(I2C\_dev\_handles\ device\_handle,\ SequenceStepEnables\ \textcolor{keyword}{const}\ *\ enables,\ SequenceStepTimeouts\ *\ timeouts);}
+\DoxyCodeLine{00122\ uint32\_t\ VL53L0X\_getMeasurementTimingBudget(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{void}\ VL53L0X\_getSequenceStepEnables(I2C\_dev\_handles\ device\_handle,\ SequenceStepEnables\ *\ enables);}
+\DoxyCodeLine{00124\ uint32\_t\ VL53L0X\_timeoutMicrosecondsToMclks(uint32\_t\ timeout\_period\_us,\ uint8\_t\ vcsel\_period\_pclks);}
+\DoxyCodeLine{00125\ uint16\_t\ VL53L0X\_encodeTimeout(uint32\_t\ timeout\_mclks);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{bool}\ VL53L0X\_setMeasurementTimingBudget(I2C\_dev\_handles\ device\_handle,\ uint32\_t\ budget\_us);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{bool}\ VL53L0X\_performSingleRefCalibration(I2C\_dev\_handles\ device\_handle\ ,uint8\_t\ vhv\_init\_byte);}
+\DoxyCodeLine{00128\ uint16\_t\ VL53L0X\_readRangeContinuousMillimeters(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00129\ uint16\_t\ VL53L0X\_readRangeSingleMillimeters(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ VL53L0X\_SetInterruptThresholds(I2C\_dev\_handles\ device\_handle,\ uint32\_t\ ThresholdLow\ ,uint32\_t\ ThresholdHigh);}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ VL53L0X\_setupI2CRegisters(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ INCLUDE\_I2C\_I2C\_DISTANCESENSOR\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__servo_motor_8c" xml:lang="en-US">
+<title>src/motors/drivers/ServoMotor.c File Reference</title>
+<indexterm><primary>src/motors/drivers/ServoMotor.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;ServoMotor.h&quot;<?linebreak?></programlisting>Include dependency graph for ServoMotor.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_servo_motor_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__servo_motor_8c_1a471346290cd96bae9ad577caa60fce18">init_servo_pwm</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__servo_motor_8c_1af33292d0ddf5be1cc69616acceb92a3a">update_servo_pwm</link> (int pulse_width_us)</para>
+</listitem>
+            <listitem><para>void <link linkend="__servo_motor_8c_1ad0d869b0abb9912862634615c3563d9c">changeSTEER</link> (int value)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>mcpwm_timer_handle_t <link linkend="__servo_motor_8c_1ac3f9f79f59aa30f4f4987ab730d793cd">timer_servo</link></para>
+</listitem>
+            <listitem><para>mcpwm_oper_handle_t <link linkend="__servo_motor_8c_1a9ad03663eb7ccd1cd1f766118388db1f">operator_servo</link></para>
+</listitem>
+            <listitem><para>mcpwm_cmpr_handle_t <link linkend="__servo_motor_8c_1afedf2a5cd4e679796468a2ba14271578">comparator_servo</link></para>
+</listitem>
+            <listitem><para>mcpwm_gen_handle_t <link linkend="__servo_motor_8c_1aecf411879bfce26772456a0c8bae8b03">generator_servo</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__servo_motor_8c_1ad0d869b0abb9912862634615c3563d9c"/><section>
+    <title>changeSTEER()</title>
+<indexterm><primary>changeSTEER</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>changeSTEER</secondary></indexterm>
+<para><computeroutput>void changeSTEER (int value)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00117">117</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8c_1a471346290cd96bae9ad577caa60fce18"/><section>
+    <title>init_servo_pwm()</title>
+<indexterm><primary>init_servo_pwm</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>init_servo_pwm</secondary></indexterm>
+<para><computeroutput>void init_servo_pwm ( )</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00016">16</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8c_1af33292d0ddf5be1cc69616acceb92a3a"/><section>
+    <title>update_servo_pwm()</title>
+<indexterm><primary>update_servo_pwm</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>update_servo_pwm</secondary></indexterm>
+<para><computeroutput>void update_servo_pwm (int pulse_width_us)</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00106">106</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__servo_motor_8c_1afedf2a5cd4e679796468a2ba14271578"/><section>
+    <title>comparator_servo</title>
+<indexterm><primary>comparator_servo</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>comparator_servo</secondary></indexterm>
+<para><computeroutput>mcpwm_cmpr_handle_t comparator_servo</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00012">12</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8c_1aecf411879bfce26772456a0c8bae8b03"/><section>
+    <title>generator_servo</title>
+<indexterm><primary>generator_servo</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>generator_servo</secondary></indexterm>
+<para><computeroutput>mcpwm_gen_handle_t generator_servo</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00013">13</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8c_1a9ad03663eb7ccd1cd1f766118388db1f"/><section>
+    <title>operator_servo</title>
+<indexterm><primary>operator_servo</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>operator_servo</secondary></indexterm>
+<para><computeroutput>mcpwm_oper_handle_t operator_servo</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00011">11</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+<anchor xml:id="__servo_motor_8c_1ac3f9f79f59aa30f4f4987ab730d793cd"/><section>
+    <title>timer_servo</title>
+<indexterm><primary>timer_servo</primary><secondary>ServoMotor.c</secondary></indexterm>
+<indexterm><primary>ServoMotor.c</primary><secondary>timer_servo</secondary></indexterm>
+<para><computeroutput>mcpwm_timer_handle_t timer_servo</computeroutput></para><para>
+Definition at line <link linkend="__servo_motor_8c_source_1l00010">10</link> of file <link linkend="__servo_motor_8c_source">ServoMotor.c</link>.</para>
+</section>
+</section>
+</section>

@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_encoder_8h_source" xml:lang="en-US">
+<title>encoder.h</title>
+<indexterm><primary>include/motors/drivers/encoder.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="_encoder_8h_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;encoder.h</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Created&#32;on:&#32;18&#32;iun.&#32;2024</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;&#32;&#32;&#32;&#32;Author:&#32;racov</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00006"/>00006 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00007"/>00007 
+<anchor xml:id="_encoder_8h_source_1l00008"/>00008 <emphasis role="preprocessor">#ifndef&#32;INCLUDE_MOTORS_ENCODER_H_</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00009"/>00009 <emphasis role="preprocessor">#define&#32;INCLUDE_MOTORS_ENCODER_H_</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00010"/>00010 
+<anchor xml:id="_encoder_8h_source_1l00011"/>00011 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="_motors__common_8h">motors_common.h</link>&quot;</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00012"/>00012 
+<anchor xml:id="_encoder_8h_source_1l00013"/>00013 <emphasis role="comment">/*Encoder*/</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00014"/><link linkend="_encoder_8h_1afedb249703350ba8ef0b6c591f0891cc">00014</link> <emphasis role="preprocessor">#define&#32;QUEUE_SIZE_ENCODER_PULSE&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;20</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00015"/><link linkend="_encoder_8h_1a7286adb75de013565be5bba181749db3">00015</link> <emphasis role="preprocessor">#define&#32;QUEUE_SIZE_DATATYPE_ENCODER_PULSE&#32;(sizeof(int))</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00016"/><link linkend="_encoder_8h_1aee5fc9c5b11218b66cdde67f9dc40926">00016</link> <emphasis role="preprocessor">#define&#32;PCNT_HIGH_LIMIT_WATCHPOINT&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;4&#32;</emphasis><emphasis role="comment">//&#32;at&#32;every&#32;6&#32;pulses&#32;forward&#32;the&#32;car&#32;has&#32;moved&#32;half&#32;a&#32;wheel&#32;and&#32;the&#32;callback&#32;is&#32;called</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00017"/><link linkend="_encoder_8h_1a144826d61042c284d1e9390af5039857">00017</link> <emphasis role="preprocessor">#define&#32;PCNT_LOW_LIMIT_WATCHPOINT&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;-4</emphasis><emphasis role="comment">//&#32;at&#32;every&#32;6&#32;pulses&#32;backward&#32;the&#32;car&#32;has&#32;moved&#32;half&#32;a&#32;wheel&#32;and&#32;the&#32;callback&#32;is&#32;called</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00018"/><link linkend="_encoder_8h_1a2963f69d0020917a6ab12f36c4849e3a">00018</link> <emphasis role="preprocessor">#define&#32;encoderGPIO_A&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;35</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00019"/><link linkend="_encoder_8h_1a37e7e189eff6f1915eb646f2bc237be2">00019</link> <emphasis role="preprocessor">#define&#32;encoderGPIO_B&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;14</emphasis>
+<anchor xml:id="_encoder_8h_source_1l00020"/>00020 <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="_encoder_8h_1a87512eb7bfce47cf96e5fbd5bd0c2f3c">example_pcnt_on_reach</link>(pcnt_unit_handle_t&#32;unit,<emphasis role="keyword">const</emphasis>&#32;pcnt_watch_event_data_t&#32;*edata,&#32;<emphasis role="keywordtype">void</emphasis>&#32;*user_ctx);
+<anchor xml:id="_encoder_8h_source_1l00021"/>00021 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_encoder_8h_1a3924b07647d86be798a086541d2c13d7">configureEncoderInterrupts</link>();
+<anchor xml:id="_encoder_8h_source_1l00022"/>00022 
+<anchor xml:id="_encoder_8h_source_1l00023"/>00023 
+<anchor xml:id="_encoder_8h_source_1l00024"/>00024 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;INCLUDE_MOTORS_ENCODER_H_&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

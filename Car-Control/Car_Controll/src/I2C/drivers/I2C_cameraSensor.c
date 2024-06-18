@@ -8,6 +8,8 @@
 #include "I2C_cameraSensor.h"
 #include "MotorAndServoControl.h"
 #include "PID.h"
+#include "esp_log.h"
+
 #define TAG "PIXY2"
 
 QueueHandle_t autonomousModeControlPixyQueue;
@@ -152,7 +154,7 @@ void getPixy2Lines(I2C_dev_handles pixy2_handle, uint8_t features, bool wait, Pi
             index += 2 + featureLength; // Move to the next feature
         }
     } else {
-        ESP_LOGI(TAG, "Invalid response from Pixy2");
+        //ESP_LOGI(TAG, "Invalid response from Pixy2");
     }
 }
 

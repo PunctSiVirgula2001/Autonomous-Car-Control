@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__temperature_sensor_8h_source" xml:lang="en-US">
+<title>I2C_temperatureSensor.h</title>
+<indexterm><primary>include/I2C/drivers/I2C_temperatureSensor.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;I2C_temperatureSensor.h</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Created&#32;on:&#32;14&#32;iun.&#32;2024</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;&#32;&#32;&#32;&#32;Author:&#32;racov</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00006"/>00006 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00007"/>00007 
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00008"/>00008 <emphasis role="preprocessor">#ifndef&#32;INCLUDE_I2C_I2C_TEMPERATURESENSOR_H_</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00009"/>00009 <emphasis role="preprocessor">#define&#32;INCLUDE_I2C_I2C_TEMPERATURESENSOR_H_</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00010"/>00010 
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00011"/>00011 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__i2_c__common_8h">I2C_common.h</link>&quot;</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00012"/>00012 
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00013"/>00013 <emphasis role="comment">/********&#32;BMP/BME280&#32;sensor&#32;**********/</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00014"/><link linkend="_structbme280__calib__data">00014</link> <emphasis role="keyword">struct&#32;</emphasis><link linkend="_structbme280__calib__data">bme280_calib_data</link>&#32;{
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00015"/><link linkend="_structbme280__calib__data_1a730ed166c629bded674b13faffe9cef7">00015</link> &#32;&#32;&#32;&#32;uint16_t&#32;<link linkend="_structbme280__calib__data_1a730ed166c629bded674b13faffe9cef7">dig_T1</link>;
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00016"/><link linkend="_structbme280__calib__data_1ab5c023a004c0497ba616d916155c85bb">00016</link> &#32;&#32;&#32;&#32;int16_t&#32;<link linkend="_structbme280__calib__data_1ab5c023a004c0497ba616d916155c85bb">dig_T2</link>;
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00017"/><link linkend="_structbme280__calib__data_1a9536e89c30bbd791153ac9e407b0752b">00017</link> &#32;&#32;&#32;&#32;int16_t&#32;<link linkend="_structbme280__calib__data_1a9536e89c30bbd791153ac9e407b0752b">dig_T3</link>;
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00018"/>00018 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Add&#32;humidity&#32;calibration&#32;data&#32;here&#32;if&#32;needed</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00019"/>00019 };
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00020"/>00020 <emphasis role="comment">//&#32;I2C&#32;temperature&#32;sensor&#32;BMP&#32;functions</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00021"/>00021 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__temperature_sensor_8h_1ab6eab86afbe85c747fb125447b03042a">I2C_temperatureSensor_trigger_measurement</link>();
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00022"/>00022 <emphasis role="comment">//&#32;I2C&#32;pressure&#32;sensor&#32;BME&#32;functions</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00023"/>00023 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__temperature_sensor_8h_1a44194928f3e30fdf7e00538e7e541b1f">I2C_set_pressure_register</link>();
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00024"/>00024 <emphasis role="comment">//&#32;I2C&#32;humidity&#32;sensor&#32;BME/BMP&#32;functions</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00025"/>00025 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__temperature_sensor_8h_1ae3ce61debefab5396fdbab660884f5ed">I2C_set_humidity_register</link>();
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00026"/>00026 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__temperature_sensor_8h_1adb1e5f7b5ee5e6c3f2263b6e600603b5">I2C_read_temperature</link>(<emphasis role="keywordtype">double</emphasis>&#32;*fine_temp);
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00027"/>00027 <emphasis role="comment">//&#32;Task&#32;for&#32;I2C&#32;devices</emphasis>
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00028"/>00028 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__temperature_sensor_8h_1a223d018b44dccfa36c89dcbcc975bef1">I2C_devices_task</link>(<emphasis role="keywordtype">void</emphasis>&#32;*pvParameters);
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00029"/>00029 
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00030"/>00030 
+<anchor xml:id="__i2_c__temperature_sensor_8h_source_1l00031"/>00031 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;INCLUDE_I2C_I2C_TEMPERATURESENSOR_H_&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

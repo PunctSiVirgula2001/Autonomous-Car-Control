@@ -1,0 +1,896 @@
+\doxysection{error.\+c}
+\label{error_8c_source}\index{build/esp-\/idf/mbedtls/mbedtls/library/error.c@{build/esp-\/idf/mbedtls/mbedtls/library/error.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ \ Error\ message\ information}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Copyright\ The\ Mbed\ TLS\ Contributors}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ SPDX-\/License-\/Identifier:\ Apache-\/2.0}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ \ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});\ you\ may}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ \ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ \ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ \ http://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ \ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,\ WITHOUT}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ \ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}common.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}mbedtls/error.h"{}}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ERROR\_C)\ ||\ defined(MBEDTLS\_ERROR\_STRERROR\_DUMMY)}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ERROR\_C)}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}mbedtls/platform.h"{}}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_C)}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}mbedtls/aes.h"{}}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ARIA\_C)}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ "{}mbedtls/aria.h"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ASN1\_PARSE\_C)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#include\ "{}mbedtls/asn1.h"{}}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_BASE64\_C)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#include\ "{}mbedtls/base64.h"{}}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_BIGNUM\_C)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#include\ "{}mbedtls/bignum.h"{}}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CAMELLIA\_C)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#include\ "{}mbedtls/camellia.h"{}}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CCM\_C)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#include\ "{}mbedtls/ccm.h"{}}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHA20\_C)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#include\ "{}mbedtls/chacha20.h"{}}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHAPOLY\_C)}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#include\ "{}mbedtls/chachapoly.h"{}}}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_C)}}
+\DoxyCodeLine{00070\ \textcolor{preprocessor}{\#include\ "{}mbedtls/cipher.h"{}}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CTR\_DRBG\_C)}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#include\ "{}mbedtls/ctr\_drbg.h"{}}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES\_C)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#include\ "{}mbedtls/des.h"{}}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DHM\_C)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#include\ "{}mbedtls/dhm.h"{}}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_C)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#include\ "{}mbedtls/ecp.h"{}}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ENTROPY\_C)}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#include\ "{}mbedtls/entropy.h"{}}}
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ERROR\_C)}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\#include\ "{}mbedtls/error.h"{}}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_C)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#include\ "{}mbedtls/platform.h"{}}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_GCM\_C)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#include\ "{}mbedtls/gcm.h"{}}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HKDF\_C)}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#include\ "{}mbedtls/hkdf.h"{}}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HMAC\_DRBG\_C)}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#include\ "{}mbedtls/hmac\_drbg.h"{}}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_LMS\_C)}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#include\ "{}mbedtls/lms.h"{}}}
+\DoxyCodeLine{00115\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MD\_C)}}
+\DoxyCodeLine{00118\ \textcolor{preprocessor}{\#include\ "{}mbedtls/md.h"{}}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NET\_C)}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#include\ "{}mbedtls/net\_sockets.h"{}}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_OID\_C)}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#include\ "{}mbedtls/oid.h"{}}}
+\DoxyCodeLine{00127\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PEM\_PARSE\_C)\ ||\ defined(MBEDTLS\_PEM\_WRITE\_C)}}
+\DoxyCodeLine{00130\ \textcolor{preprocessor}{\#include\ "{}mbedtls/pem.h"{}}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_C)}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#include\ "{}mbedtls/pk.h"{}}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS12\_C)}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#include\ "{}mbedtls/pkcs12.h"{}}}
+\DoxyCodeLine{00139\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS5\_C)}}
+\DoxyCodeLine{00142\ \textcolor{preprocessor}{\#include\ "{}mbedtls/pkcs5.h"{}}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS7\_C)}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#include\ "{}mbedtls/pkcs7.h"{}}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_POLY1305\_C)}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#include\ "{}mbedtls/poly1305.h"{}}}
+\DoxyCodeLine{00151\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RSA\_C)}}
+\DoxyCodeLine{00154\ \textcolor{preprocessor}{\#include\ "{}mbedtls/rsa.h"{}}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA1\_C)}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#include\ "{}mbedtls/sha1.h"{}}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_C)}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#include\ "{}mbedtls/sha256.h"{}}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA3\_C)}}
+\DoxyCodeLine{00166\ \textcolor{preprocessor}{\#include\ "{}mbedtls/sha3.h"{}}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_C)}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#include\ "{}mbedtls/sha512.h"{}}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS\_C)}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#include\ "{}mbedtls/ssl.h"{}}}
+\DoxyCodeLine{00175\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_THREADING\_C)}}
+\DoxyCodeLine{00178\ \textcolor{preprocessor}{\#include\ "{}mbedtls/threading.h"{}}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_USE\_C)\ ||\ defined(MBEDTLS\_X509\_CREATE\_C)}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#include\ "{}mbedtls/x509.h"{}}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mbedtls\_high\_level\_strerr(\textcolor{keywordtype}{int}\ error\_code)}
+\DoxyCodeLine{00187\ \{}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keywordtype}{int}\ high\_level\_error\_code;}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_code\ <\ 0)\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ error\_code\ =\ -\/error\_code;}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{comment}{/*\ Extract\ the\ high-\/level\ part\ from\ the\ error\ code.\ */}}
+\DoxyCodeLine{00195\ \ \ \ \ high\_level\_error\_code\ =\ error\_code\ \&\ 0xFF80;}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordflow}{switch}\ (high\_level\_error\_code)\ \{}
+\DoxyCodeLine{00198\ \ \ \ \ \textcolor{comment}{/*\ Begin\ Auto-\/Generated\ Code.\ */}}
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\ \ \ \ \#if\ defined(MBEDTLS\_CIPHER\_C)}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ The\ selected\ feature\ is\ not\ available"{}}\ );}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ Bad\ input\ parameters"{}}\ );}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_ALLOC\_FAILED):}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ Failed\ to\ allocate\ memory"{}}\ );}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_INVALID\_PADDING):}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ Input\ data\ contains\ invalid\ padding\ and\ is\ rejected"{}}\ );}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_FULL\_BLOCK\_EXPECTED):}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ Decryption\ of\ block\ requires\ a\ full\ block"{}}\ );}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_AUTH\_FAILED):}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ Authentication\ failed\ (for\ AEAD\ modes)"{}}\ );}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CIPHER\_INVALID\_CONTEXT):}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CIPHER\ -\/\ The\ context\ is\ invalid.\ For\ example,\ because\ it\ was\ freed"{}}\ );}
+\DoxyCodeLine{00214\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DHM\_C)}}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Bad\ input\ parameters"{}}\ );}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_READ\_PARAMS\_FAILED):}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Reading\ of\ the\ DHM\ parameters\ failed"{}}\ );}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_MAKE\_PARAMS\_FAILED):}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Making\ of\ the\ DHM\ parameters\ failed"{}}\ );}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_READ\_PUBLIC\_FAILED):}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Reading\ of\ the\ public\ values\ failed"{}}\ );}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_MAKE\_PUBLIC\_FAILED):}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Making\ of\ the\ public\ value\ failed"{}}\ );}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_CALC\_SECRET\_FAILED):}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Calculation\ of\ the\ DHM\ secret\ failed"{}}\ );}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_INVALID\_FORMAT):}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ The\ ASN.1\ data\ is\ not\ formatted\ correctly"{}}\ );}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_ALLOC\_FAILED):}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Allocation\ of\ memory\ failed"{}}\ );}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Read\ or\ write\ of\ file\ failed"{}}\ );}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DHM\_SET\_GROUP\_FAILED):}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DHM\ -\/\ Setting\ the\ modulus\ and\ generator\ failed"{}}\ );}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DHM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_C)}}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ The\ buffer\ is\ too\ small\ to\ write\ to"{}}\ );}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ The\ requested\ feature\ is\ not\ available,\ for\ example,\ the\ requested\ curve\ is\ not\ supported"{}}\ );}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_VERIFY\_FAILED):}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ The\ signature\ is\ not\ valid"{}}\ );}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_ALLOC\_FAILED):}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ Memory\ allocation\ failed"{}}\ );}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_RANDOM\_FAILED):}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ Generation\ of\ random\ value,\ such\ as\ ephemeral\ key,\ failed"{}}\ );}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_INVALID\_KEY):}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ Invalid\ private\ or\ public\ key"{}}\ );}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_SIG\_LEN\_MISMATCH):}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ The\ buffer\ contains\ a\ valid\ signature\ followed\ by\ more\ data"{}}\ );}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ECP\_IN\_PROGRESS):}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ECP\ -\/\ Operation\ in\ progress,\ call\ again\ with\ the\ same\ parameters\ to\ continue"{}}\ );}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MD\_C)}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MD\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}MD\ -\/\ The\ selected\ feature\ is\ not\ available"{}}\ );}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MD\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}MD\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MD\_ALLOC\_FAILED):}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}MD\ -\/\ Failed\ to\ allocate\ memory"{}}\ );}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MD\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}MD\ -\/\ Opening\ or\ reading\ of\ file\ failed"{}}\ );}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MD\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PEM\_PARSE\_C)\ ||\ defined(MBEDTLS\_PEM\_WRITE\_C)}}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_NO\_HEADER\_FOOTER\_PRESENT):}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ No\ PEM\ header\ or\ footer\ found"{}}\ );}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_INVALID\_DATA):}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ PEM\ string\ is\ not\ as\ expected"{}}\ );}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_ALLOC\_FAILED):}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ Failed\ to\ allocate\ memory"{}}\ );}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_INVALID\_ENC\_IV):}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ RSA\ IV\ is\ not\ in\ hex-\/format"{}}\ );}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_UNKNOWN\_ENC\_ALG):}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ Unsupported\ key\ encryption\ algorithm"{}}\ );}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_PASSWORD\_REQUIRED):}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ Private\ key\ password\ can't\ be\ empty"{}}\ );}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_PASSWORD\_MISMATCH):}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ Given\ private\ key\ password\ does\ not\ allow\ for\ correct\ decryption"{}}\ );}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ Unavailable\ feature,\ e.g.\ hashing/encryption\ combination"{}}\ );}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PEM\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PEM\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00290\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PEM\_PARSE\_C\ ||\ MBEDTLS\_PEM\_WRITE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_C)}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_ALLOC\_FAILED):}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Memory\ allocation\ failed"{}}\ );}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_TYPE\_MISMATCH):}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Type\ mismatch,\ eg\ attempt\ to\ encrypt\ with\ an\ ECDSA\ key"{}}\ );}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Read/write\ of\ file\ failed"{}}\ );}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_KEY\_INVALID\_VERSION):}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Unsupported\ key\ version"{}}\ );}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_KEY\_INVALID\_FORMAT):}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Invalid\ key\ tag\ or\ value"{}}\ );}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_UNKNOWN\_PK\_ALG):}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Key\ algorithm\ is\ unsupported\ (only\ RSA\ and\ EC\ are\ supported)"{}}\ );}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_PASSWORD\_REQUIRED):}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Private\ key\ password\ can't\ be\ empty"{}}\ );}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_PASSWORD\_MISMATCH):}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Given\ private\ key\ password\ does\ not\ allow\ for\ correct\ decryption"{}}\ );}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_INVALID\_PUBKEY):}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ The\ pubkey\ tag\ or\ value\ is\ invalid\ (only\ RSA\ and\ EC\ are\ supported)"{}}\ );}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_INVALID\_ALG):}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ The\ algorithm\ tag\ or\ value\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_UNKNOWN\_NAMED\_CURVE):}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Elliptic\ curve\ is\ unsupported\ (only\ NIST\ curves\ are\ supported)"{}}\ );}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ Unavailable\ feature,\ e.g.\ RSA\ disabled\ for\ RSA\ key"{}}\ );}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_SIG\_LEN\_MISMATCH):}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ The\ buffer\ contains\ a\ valid\ signature\ followed\ by\ more\ data"{}}\ );}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PK\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PK\ -\/\ The\ output\ buffer\ is\ too\ small"{}}\ );}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS12\_C)}}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS12\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS12\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS12\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS12\ -\/\ Feature\ not\ available,\ e.g.\ unsupported\ encryption\ scheme"{}}\ );}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS12\_PBE\_INVALID\_FORMAT):}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS12\ -\/\ PBE\ ASN.1\ data\ not\ as\ expected"{}}\ );}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS12\_PASSWORD\_MISMATCH):}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS12\ -\/\ Given\ private\ key\ password\ does\ not\ allow\ for\ correct\ decryption"{}}\ );}
+\DoxyCodeLine{00334\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS12\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS5\_C)}}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS5\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS5\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS5\_INVALID\_FORMAT):}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS5\ -\/\ Unexpected\ ASN.1\ data"{}}\ );}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS5\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS5\ -\/\ Requested\ encryption\ or\ digest\ alg\ not\ available"{}}\ );}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS5\_PASSWORD\_MISMATCH):}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS5\ -\/\ Given\ private\ key\ password\ does\ not\ allow\ for\ correct\ decryption"{}}\ );}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS5\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS7\_C)}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_FORMAT):}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ The\ format\ is\ invalid,\ e.g.\ different\ type\ expected"{}}\ );}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ Unavailable\ feature,\ e.g.\ anything\ other\ than\ signed\ data"{}}\ );}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_VERSION):}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ The\ PKCS\ \#7\ version\ element\ is\ invalid\ or\ cannot\ be\ parsed"{}}\ );}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_CONTENT\_INFO):}
+\DoxyCodeLine{00355\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ The\ PKCS\ \#7\ content\ info\ is\ invalid\ or\ cannot\ be\ parsed"{}}\ );}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_ALG):}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ The\ algorithm\ tag\ or\ value\ is\ invalid\ or\ cannot\ be\ parsed"{}}\ );}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_CERT):}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ The\ certificate\ tag\ or\ value\ is\ invalid\ or\ cannot\ be\ parsed"{}}\ );}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_SIGNATURE):}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ Error\ parsing\ the\ signature"{}}\ );}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_INVALID\_SIGNER\_INFO):}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ Error\ parsing\ the\ signer's\ info"{}}\ );}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ Input\ invalid"{}}\ );}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_ALLOC\_FAILED):}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ Allocation\ of\ memory\ failed"{}}\ );}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_VERIFY\_FAIL):}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ Verification\ Failed"{}}\ );}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PKCS7\_CERT\_DATE\_INVALID):}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PKCS7\ -\/\ The\ PKCS\ \#7\ date\ issued/expired\ dates\ are\ invalid"{}}\ );}
+\DoxyCodeLine{00372\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS7\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00373\ }
+\DoxyCodeLine{00374\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RSA\_C)}}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_INVALID\_PADDING):}
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ Input\ data\ contains\ invalid\ padding\ and\ is\ rejected"{}}\ );}
+\DoxyCodeLine{00379\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_KEY\_GEN\_FAILED):}
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ Something\ failed\ during\ generation\ of\ a\ key"{}}\ );}
+\DoxyCodeLine{00381\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_KEY\_CHECK\_FAILED):}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ Key\ failed\ to\ pass\ the\ validity\ check\ of\ the\ library"{}}\ );}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_PUBLIC\_FAILED):}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ The\ public\ key\ operation\ failed"{}}\ );}
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_PRIVATE\_FAILED):}
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ The\ private\ key\ operation\ failed"{}}\ );}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_VERIFY\_FAILED):}
+\DoxyCodeLine{00388\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ The\ PKCS\#1\ verification\ failed"{}}\ );}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_OUTPUT\_TOO\_LARGE):}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ The\ output\ buffer\ for\ decryption\ is\ not\ large\ enough"{}}\ );}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_RSA\_RNG\_FAILED):}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}RSA\ -\/\ The\ random\ generator\ failed\ to\ generate\ non-\/zeros"{}}\ );}
+\DoxyCodeLine{00393\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RSA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00394\ }
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS\_C)}}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CRYPTO\_IN\_PROGRESS):}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ A\ cryptographic\ operation\ is\ in\ progress.\ Try\ again\ later"{}}\ );}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ requested\ feature\ is\ not\ available"{}}\ );}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_INVALID\_MAC):}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Verification\ of\ the\ message\ MAC\ failed"{}}\ );}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_INVALID\_RECORD):}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ An\ invalid\ SSL\ record\ was\ received"{}}\ );}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CONN\_EOF):}
+\DoxyCodeLine{00407\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ connection\ indicated\ an\ EOF"{}}\ );}
+\DoxyCodeLine{00408\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_DECODE\_ERROR):}
+\DoxyCodeLine{00409\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ A\ message\ could\ not\ be\ parsed\ due\ to\ a\ syntactic\ error"{}}\ );}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_NO\_RNG):}
+\DoxyCodeLine{00411\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ No\ RNG\ was\ provided\ to\ the\ SSL\ module"{}}\ );}
+\DoxyCodeLine{00412\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_NO\_CLIENT\_CERTIFICATE):}
+\DoxyCodeLine{00413\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ No\ client\ certification\ received\ from\ the\ client,\ but\ required\ by\ the\ authentication\ mode"{}}\ );}
+\DoxyCodeLine{00414\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_UNSUPPORTED\_EXTENSION):}
+\DoxyCodeLine{00415\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Client\ received\ an\ extended\ server\ hello\ containing\ an\ unsupported\ extension"{}}\ );}
+\DoxyCodeLine{00416\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_NO\_APPLICATION\_PROTOCOL):}
+\DoxyCodeLine{00417\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ No\ ALPN\ protocols\ supported\ that\ the\ client\ advertises"{}}\ );}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_PRIVATE\_KEY\_REQUIRED):}
+\DoxyCodeLine{00419\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ own\ private\ key\ or\ pre-\/shared\ key\ is\ not\ set,\ but\ needed"{}}\ );}
+\DoxyCodeLine{00420\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CA\_CHAIN\_REQUIRED):}
+\DoxyCodeLine{00421\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ No\ CA\ Chain\ is\ set,\ but\ required\ to\ operate"{}}\ );}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_UNEXPECTED\_MESSAGE):}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ An\ unexpected\ message\ was\ received\ from\ our\ peer"{}}\ );}
+\DoxyCodeLine{00424\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_FATAL\_ALERT\_MESSAGE):}
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ A\ fatal\ alert\ message\ was\ received\ from\ our\ peer"{}}\ );}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_UNRECOGNIZED\_NAME):}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ No\ server\ could\ be\ identified\ matching\ the\ client's\ SNI"{}}\ );}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_PEER\_CLOSE\_NOTIFY):}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ peer\ notified\ us\ that\ the\ connection\ is\ going\ to\ be\ closed"{}}\ );}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_BAD\_CERTIFICATE):}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Processing\ of\ the\ Certificate\ handshake\ message\ failed"{}}\ );}
+\DoxyCodeLine{00432\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_RECEIVED\_NEW\_SESSION\_TICKET):}
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ *\ Received\ NewSessionTicket\ Post\ Handshake\ Message.\ This\ error\ code\ is\ experimental\ and\ may\ be\ changed\ or\ removed\ without\ notice"{}}\ );}
+\DoxyCodeLine{00434\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CANNOT\_READ\_EARLY\_DATA):}
+\DoxyCodeLine{00435\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Not\ possible\ to\ read\ early\ data"{}}\ );}
+\DoxyCodeLine{00436\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CANNOT\_WRITE\_EARLY\_DATA):}
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Not\ possible\ to\ write\ early\ data"{}}\ );}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CACHE\_ENTRY\_NOT\_FOUND):}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Cache\ entry\ not\ found"{}}\ );}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_ALLOC\_FAILED):}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Memory\ allocation\ failed"{}}\ );}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_HW\_ACCEL\_FAILED):}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Hardware\ acceleration\ function\ returned\ with\ error"{}}\ );}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_HW\_ACCEL\_FALLTHROUGH):}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Hardware\ acceleration\ function\ skipped\ /\ left\ alone\ data"{}}\ );}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_BAD\_PROTOCOL\_VERSION):}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Handshake\ protocol\ not\ within\ min/max\ boundaries"{}}\ );}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_HANDSHAKE\_FAILURE):}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ handshake\ negotiation\ failed"{}}\ );}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_SESSION\_TICKET\_EXPIRED):}
+\DoxyCodeLine{00451\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Session\ ticket\ has\ expired"{}}\ );}
+\DoxyCodeLine{00452\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_PK\_TYPE\_MISMATCH):}
+\DoxyCodeLine{00453\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Public\ key\ type\ mismatch\ (eg,\ asked\ for\ RSA\ key\ exchange\ and\ presented\ EC\ key)"{}}\ );}
+\DoxyCodeLine{00454\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_UNKNOWN\_IDENTITY):}
+\DoxyCodeLine{00455\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Unknown\ identity\ received\ (eg,\ PSK\ identity)"{}}\ );}
+\DoxyCodeLine{00456\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_INTERNAL\_ERROR):}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Internal\ error\ (eg,\ unexpected\ failure\ in\ lower-\/level\ module)"{}}\ );}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_COUNTER\_WRAPPING):}
+\DoxyCodeLine{00459\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ A\ counter\ would\ wrap\ (eg,\ too\ many\ messages\ exchanged)"{}}\ );}
+\DoxyCodeLine{00460\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_WAITING\_SERVER\_HELLO\_RENEGO):}
+\DoxyCodeLine{00461\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Unexpected\ message\ at\ ServerHello\ in\ renegotiation"{}}\ );}
+\DoxyCodeLine{00462\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_HELLO\_VERIFY\_REQUIRED):}
+\DoxyCodeLine{00463\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ DTLS\ client\ must\ retry\ for\ hello\ verification"{}}\ );}
+\DoxyCodeLine{00464\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00465\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ A\ buffer\ is\ too\ small\ to\ receive\ or\ write\ a\ message"{}}\ );}
+\DoxyCodeLine{00466\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_WANT\_READ):}
+\DoxyCodeLine{00467\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ No\ data\ of\ requested\ type\ currently\ available\ on\ underlying\ transport"{}}\ );}
+\DoxyCodeLine{00468\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_WANT\_WRITE):}
+\DoxyCodeLine{00469\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Connection\ requires\ a\ write\ call"{}}\ );}
+\DoxyCodeLine{00470\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_TIMEOUT):}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ operation\ timed\ out"{}}\ );}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CLIENT\_RECONNECT):}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ client\ initiated\ a\ reconnect\ from\ the\ same\ port"{}}\ );}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_UNEXPECTED\_RECORD):}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Record\ header\ looks\ valid\ but\ is\ not\ expected"{}}\ );}
+\DoxyCodeLine{00476\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_NON\_FATAL):}
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ alert\ message\ received\ indicates\ a\ non-\/fatal\ error"{}}\ );}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_ILLEGAL\_PARAMETER):}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ A\ field\ in\ a\ message\ was\ incorrect\ or\ inconsistent\ with\ other\ fields"{}}\ );}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_CONTINUE\_PROCESSING):}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Internal-\/only\ message\ signaling\ that\ further\ message-\/processing\ should\ be\ done"{}}\ );}
+\DoxyCodeLine{00482\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_ASYNC\_IN\_PROGRESS):}
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ The\ asynchronous\ operation\ is\ not\ completed\ yet"{}}\ );}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_EARLY\_MESSAGE):}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Internal-\/only\ message\ signaling\ that\ a\ message\ arrived\ early"{}}\ );}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_UNEXPECTED\_CID):}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ An\ encrypted\ DTLS-\/frame\ with\ an\ unexpected\ CID\ was\ received"{}}\ );}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_VERSION\_MISMATCH):}
+\DoxyCodeLine{00489\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ An\ operation\ failed\ due\ to\ an\ unexpected\ version\ or\ configuration"{}}\ );}
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SSL\_BAD\_CONFIG):}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SSL\ -\/\ Invalid\ value\ in\ SSL\ config"{}}\ );}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00493\ }
+\DoxyCodeLine{00494\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_USE\_C)\ ||\ defined(MBEDTLS\_X509\_CREATE\_C)}}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_FEATURE\_UNAVAILABLE):}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Unavailable\ feature,\ e.g.\ RSA\ hashing/encryption\ combination"{}}\ );}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_UNKNOWN\_OID):}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Requested\ OID\ is\ unknown"{}}\ );}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_FORMAT):}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ CRT/CRL/CSR\ format\ is\ invalid,\ e.g.\ different\ type\ expected"{}}\ );}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_VERSION):}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ CRT/CRL/CSR\ version\ element\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_SERIAL):}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ serial\ tag\ or\ value\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_ALG):}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ algorithm\ tag\ or\ value\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_NAME):}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ name\ tag\ or\ value\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_DATE):}
+\DoxyCodeLine{00510\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ date\ tag\ or\ value\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00511\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_SIGNATURE):}
+\DoxyCodeLine{00512\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ signature\ tag\ or\ value\ invalid"{}}\ );}
+\DoxyCodeLine{00513\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_INVALID\_EXTENSIONS):}
+\DoxyCodeLine{00514\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ The\ extension\ tag\ or\ value\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00515\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_UNKNOWN\_VERSION):}
+\DoxyCodeLine{00516\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ CRT/CRL/CSR\ has\ an\ unsupported\ version\ number"{}}\ );}
+\DoxyCodeLine{00517\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_UNKNOWN\_SIG\_ALG):}
+\DoxyCodeLine{00518\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Signature\ algorithm\ (oid)\ is\ unsupported"{}}\ );}
+\DoxyCodeLine{00519\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_SIG\_MISMATCH):}
+\DoxyCodeLine{00520\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Signature\ algorithms\ do\ not\ match.\ (see\ \(\backslash\)\(\backslash\)c\ ::mbedtls\_x509\_crt\ sig\_oid)"{}}\ );}
+\DoxyCodeLine{00521\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_CERT\_VERIFY\_FAILED):}
+\DoxyCodeLine{00522\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Certificate\ verification\ failed,\ e.g.\ CRL,\ CA\ or\ signature\ check\ failed"{}}\ );}
+\DoxyCodeLine{00523\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_CERT\_UNKNOWN\_FORMAT):}
+\DoxyCodeLine{00524\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Format\ not\ recognized\ as\ DER\ or\ PEM"{}}\ );}
+\DoxyCodeLine{00525\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00526\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Input\ invalid"{}}\ );}
+\DoxyCodeLine{00527\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_ALLOC\_FAILED):}
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Allocation\ of\ memory\ failed"{}}\ );}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Read/write\ of\ file\ failed"{}}\ );}
+\DoxyCodeLine{00531\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ Destination\ buffer\ is\ too\ small"{}}\ );}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_X509\_FATAL\_ERROR):}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}X509\ -\/\ A\ fatal\ error\ occurred,\ eg\ the\ chain\ is\ too\ long\ or\ the\ vrfy\ callback\ failed"{}}\ );}
+\DoxyCodeLine{00535\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_USE\_C\ ||\ MBEDTLS\_X509\_CREATE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ End\ Auto-\/Generated\ Code.\ */}}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00539\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00540\ \ \ \ \ \}}
+\DoxyCodeLine{00541\ }
+\DoxyCodeLine{00542\ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00543\ \}}
+\DoxyCodeLine{00544\ }
+\DoxyCodeLine{00545\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *mbedtls\_low\_level\_strerr(\textcolor{keywordtype}{int}\ error\_code)}
+\DoxyCodeLine{00546\ \{}
+\DoxyCodeLine{00547\ \ \ \ \ \textcolor{keywordtype}{int}\ low\_level\_error\_code;}
+\DoxyCodeLine{00548\ }
+\DoxyCodeLine{00549\ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_code\ <\ 0)\ \{}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ error\_code\ =\ -\/error\_code;}
+\DoxyCodeLine{00551\ \ \ \ \ \}}
+\DoxyCodeLine{00552\ }
+\DoxyCodeLine{00553\ \ \ \ \ \textcolor{comment}{/*\ Extract\ the\ low-\/level\ part\ from\ the\ error\ code.\ */}}
+\DoxyCodeLine{00554\ \ \ \ \ low\_level\_error\_code\ =\ error\_code\ \&\ \string~0xFF80;}
+\DoxyCodeLine{00555\ }
+\DoxyCodeLine{00556\ \ \ \ \ \textcolor{keywordflow}{switch}\ (low\_level\_error\_code)\ \{}
+\DoxyCodeLine{00557\ \ \ \ \ \textcolor{comment}{/*\ Begin\ Auto-\/Generated\ Code.\ */}}
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\ \ \ \ \#if\ defined(MBEDTLS\_AES\_C)}}
+\DoxyCodeLine{00559\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_AES\_INVALID\_KEY\_LENGTH):}
+\DoxyCodeLine{00560\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}AES\ -\/\ Invalid\ key\ length"{}}\ );}
+\DoxyCodeLine{00561\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_AES\_INVALID\_INPUT\_LENGTH):}
+\DoxyCodeLine{00562\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}AES\ -\/\ Invalid\ data\ input\ length"{}}\ );}
+\DoxyCodeLine{00563\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_AES\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00564\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}AES\ -\/\ Invalid\ input\ data"{}}\ );}
+\DoxyCodeLine{00565\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00566\ }
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ARIA\_C)}}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ARIA\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ARIA\ -\/\ Bad\ input\ data"{}}\ );}
+\DoxyCodeLine{00570\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ARIA\_INVALID\_INPUT\_LENGTH):}
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ARIA\ -\/\ Invalid\ data\ input\ length"{}}\ );}
+\DoxyCodeLine{00572\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ARIA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00573\ }
+\DoxyCodeLine{00574\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ASN1\_PARSE\_C)}}
+\DoxyCodeLine{00575\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_OUT\_OF\_DATA):}
+\DoxyCodeLine{00576\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ Out\ of\ data\ when\ parsing\ an\ ASN1\ data\ structure"{}}\ );}
+\DoxyCodeLine{00577\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_UNEXPECTED\_TAG):}
+\DoxyCodeLine{00578\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ ASN1\ tag\ was\ of\ an\ unexpected\ value"{}}\ );}
+\DoxyCodeLine{00579\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_INVALID\_LENGTH):}
+\DoxyCodeLine{00580\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ Error\ when\ trying\ to\ determine\ the\ length\ or\ invalid\ length"{}}\ );}
+\DoxyCodeLine{00581\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_LENGTH\_MISMATCH):}
+\DoxyCodeLine{00582\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ Actual\ length\ differs\ from\ expected\ length"{}}\ );}
+\DoxyCodeLine{00583\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_INVALID\_DATA):}
+\DoxyCodeLine{00584\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ Data\ is\ invalid"{}}\ );}
+\DoxyCodeLine{00585\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_ALLOC\_FAILED):}
+\DoxyCodeLine{00586\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ Memory\ allocation\ failed"{}}\ );}
+\DoxyCodeLine{00587\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ASN1\_BUF\_TOO\_SMALL):}
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ASN1\ -\/\ Buffer\ too\ small\ when\ writing\ ASN.1\ data\ structure"{}}\ );}
+\DoxyCodeLine{00589\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ASN1\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_BASE64\_C)}}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_BASE64\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00593\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BASE64\ -\/\ Output\ buffer\ too\ small"{}}\ );}
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_BASE64\_INVALID\_CHARACTER):}
+\DoxyCodeLine{00595\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BASE64\ -\/\ Invalid\ character\ in\ input"{}}\ );}
+\DoxyCodeLine{00596\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_BASE64\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00597\ }
+\DoxyCodeLine{00598\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_BIGNUM\_C)}}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ An\ error\ occurred\ while\ reading\ from\ or\ writing\ to\ a\ file"{}}\ );}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00603\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_INVALID\_CHARACTER):}
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ There\ is\ an\ invalid\ character\ in\ the\ digit\ string"{}}\ );}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ The\ buffer\ is\ too\ small\ to\ write\ to"{}}\ );}
+\DoxyCodeLine{00607\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_NEGATIVE\_VALUE):}
+\DoxyCodeLine{00608\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ The\ input\ arguments\ are\ negative\ or\ result\ in\ illegal\ output"{}}\ );}
+\DoxyCodeLine{00609\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_DIVISION\_BY\_ZERO):}
+\DoxyCodeLine{00610\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ The\ input\ argument\ for\ division\ is\ zero,\ which\ is\ not\ allowed"{}}\ );}
+\DoxyCodeLine{00611\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_NOT\_ACCEPTABLE):}
+\DoxyCodeLine{00612\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ The\ input\ arguments\ are\ not\ acceptable"{}}\ );}
+\DoxyCodeLine{00613\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_MPI\_ALLOC\_FAILED):}
+\DoxyCodeLine{00614\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}BIGNUM\ -\/\ Memory\ allocation\ failed"{}}\ );}
+\DoxyCodeLine{00615\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_BIGNUM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00616\ }
+\DoxyCodeLine{00617\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CAMELLIA\_C)}}
+\DoxyCodeLine{00618\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CAMELLIA\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00619\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CAMELLIA\ -\/\ Bad\ input\ data"{}}\ );}
+\DoxyCodeLine{00620\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CAMELLIA\_INVALID\_INPUT\_LENGTH):}
+\DoxyCodeLine{00621\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CAMELLIA\ -\/\ Invalid\ data\ input\ length"{}}\ );}
+\DoxyCodeLine{00622\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CAMELLIA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00623\ }
+\DoxyCodeLine{00624\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CCM\_C)}}
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CCM\_BAD\_INPUT):}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CCM\ -\/\ Bad\ input\ parameters\ to\ the\ function"{}}\ );}
+\DoxyCodeLine{00627\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CCM\_AUTH\_FAILED):}
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CCM\ -\/\ Authenticated\ decryption\ failed"{}}\ );}
+\DoxyCodeLine{00629\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CCM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00630\ }
+\DoxyCodeLine{00631\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHA20\_C)}}
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CHACHA20\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CHACHA20\ -\/\ Invalid\ input\ parameter(s)"{}}\ );}
+\DoxyCodeLine{00634\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHACHA20\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00635\ }
+\DoxyCodeLine{00636\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHAPOLY\_C)}}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CHACHAPOLY\_BAD\_STATE):}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CHACHAPOLY\ -\/\ The\ requested\ operation\ is\ not\ permitted\ in\ the\ current\ state"{}}\ );}
+\DoxyCodeLine{00639\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CHACHAPOLY\_AUTH\_FAILED):}
+\DoxyCodeLine{00640\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CHACHAPOLY\ -\/\ Authenticated\ decryption\ failed:\ data\ was\ not\ authentic"{}}\ );}
+\DoxyCodeLine{00641\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHACHAPOLY\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00642\ }
+\DoxyCodeLine{00643\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CTR\_DRBG\_C)}}
+\DoxyCodeLine{00644\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CTR\_DRBG\_ENTROPY\_SOURCE\_FAILED):}
+\DoxyCodeLine{00645\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CTR\_DRBG\ -\/\ The\ entropy\ source\ failed"{}}\ );}
+\DoxyCodeLine{00646\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CTR\_DRBG\_REQUEST\_TOO\_BIG):}
+\DoxyCodeLine{00647\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CTR\_DRBG\ -\/\ The\ requested\ random\ buffer\ length\ is\ too\ big"{}}\ );}
+\DoxyCodeLine{00648\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CTR\_DRBG\_INPUT\_TOO\_BIG):}
+\DoxyCodeLine{00649\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CTR\_DRBG\ -\/\ The\ input\ (entropy\ +\ additional\ data)\ is\ too\ large"{}}\ );}
+\DoxyCodeLine{00650\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_CTR\_DRBG\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00651\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}CTR\_DRBG\ -\/\ Read\ or\ write\ error\ in\ file"{}}\ );}
+\DoxyCodeLine{00652\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CTR\_DRBG\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00653\ }
+\DoxyCodeLine{00654\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES\_C)}}
+\DoxyCodeLine{00655\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_DES\_INVALID\_INPUT\_LENGTH):}
+\DoxyCodeLine{00656\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}DES\ -\/\ The\ data\ input\ has\ an\ invalid\ length"{}}\ );}
+\DoxyCodeLine{00657\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DES\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00658\ }
+\DoxyCodeLine{00659\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ENTROPY\_C)}}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ENTROPY\_SOURCE\_FAILED):}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ENTROPY\ -\/\ Critical\ entropy\ source\ failure"{}}\ );}
+\DoxyCodeLine{00662\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ENTROPY\_MAX\_SOURCES):}
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ENTROPY\ -\/\ No\ more\ sources\ can\ be\ added"{}}\ );}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ENTROPY\_NO\_SOURCES\_DEFINED):}
+\DoxyCodeLine{00665\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ENTROPY\ -\/\ No\ sources\ have\ been\ added\ to\ poll"{}}\ );}
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ENTROPY\_NO\_STRONG\_SOURCE):}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ENTROPY\ -\/\ No\ strong\ sources\ have\ been\ added\ to\ poll"{}}\ );}
+\DoxyCodeLine{00668\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ENTROPY\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ENTROPY\ -\/\ Read/write\ error\ in\ file"{}}\ );}
+\DoxyCodeLine{00670\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ENTROPY\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00671\ }
+\DoxyCodeLine{00672\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ERROR\_C)}}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ERROR\_GENERIC\_ERROR):}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ERROR\ -\/\ Generic\ error"{}}\ );}
+\DoxyCodeLine{00675\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_ERROR\_CORRUPTION\_DETECTED):}
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}ERROR\ -\/\ This\ is\ a\ bug\ in\ the\ library"{}}\ );}
+\DoxyCodeLine{00677\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ERROR\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00678\ }
+\DoxyCodeLine{00679\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_C)}}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PLATFORM\_HW\_ACCEL\_FAILED):}
+\DoxyCodeLine{00681\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PLATFORM\ -\/\ Hardware\ accelerator\ failed"{}}\ );}
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_PLATFORM\_FEATURE\_UNSUPPORTED):}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}PLATFORM\ -\/\ The\ requested\ feature\ is\ not\ supported\ by\ the\ platform"{}}\ );}
+\DoxyCodeLine{00684\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00686\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_GCM\_C)}}
+\DoxyCodeLine{00687\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_GCM\_AUTH\_FAILED):}
+\DoxyCodeLine{00688\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}GCM\ -\/\ Authenticated\ decryption\ failed"{}}\ );}
+\DoxyCodeLine{00689\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_GCM\_BAD\_INPUT):}
+\DoxyCodeLine{00690\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}GCM\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00691\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_GCM\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00692\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}GCM\ -\/\ An\ output\ buffer\ is\ too\ small"{}}\ );}
+\DoxyCodeLine{00693\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_GCM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00694\ }
+\DoxyCodeLine{00695\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HKDF\_C)}}
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_HKDF\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}HKDF\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00698\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HKDF\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00699\ }
+\DoxyCodeLine{00700\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HMAC\_DRBG\_C)}}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_HMAC\_DRBG\_REQUEST\_TOO\_BIG):}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}HMAC\_DRBG\ -\/\ Too\ many\ random\ requested\ in\ single\ call"{}}\ );}
+\DoxyCodeLine{00703\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_HMAC\_DRBG\_INPUT\_TOO\_BIG):}
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}HMAC\_DRBG\ -\/\ Input\ too\ large\ (Entropy\ +\ additional)"{}}\ );}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_HMAC\_DRBG\_FILE\_IO\_ERROR):}
+\DoxyCodeLine{00706\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}HMAC\_DRBG\ -\/\ Read/write\ error\ in\ file"{}}\ );}
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_HMAC\_DRBG\_ENTROPY\_SOURCE\_FAILED):}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}HMAC\_DRBG\ -\/\ The\ entropy\ source\ failed"{}}\ );}
+\DoxyCodeLine{00709\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HMAC\_DRBG\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00710\ }
+\DoxyCodeLine{00711\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_LMS\_C)}}
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_LMS\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}LMS\ -\/\ Bad\ data\ has\ been\ input\ to\ an\ LMS\ function"{}}\ );}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_LMS\_OUT\_OF\_PRIVATE\_KEYS):}
+\DoxyCodeLine{00715\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}LMS\ -\/\ Specified\ LMS\ key\ has\ utilised\ all\ of\ its\ private\ keys"{}}\ );}
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_LMS\_VERIFY\_FAILED):}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}LMS\ -\/\ LMS\ signature\ verification\ failed"{}}\ );}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_LMS\_ALLOC\_FAILED):}
+\DoxyCodeLine{00719\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}LMS\ -\/\ LMS\ failed\ to\ allocate\ space\ for\ a\ private\ key"{}}\ );}
+\DoxyCodeLine{00720\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_LMS\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00721\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}LMS\ -\/\ Input/output\ buffer\ is\ too\ small\ to\ contain\ requited\ data"{}}\ );}
+\DoxyCodeLine{00722\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_LMS\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00723\ }
+\DoxyCodeLine{00724\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NET\_C)}}
+\DoxyCodeLine{00725\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_SOCKET\_FAILED):}
+\DoxyCodeLine{00726\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Failed\ to\ open\ a\ socket"{}}\ );}
+\DoxyCodeLine{00727\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_CONNECT\_FAILED):}
+\DoxyCodeLine{00728\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ The\ connection\ to\ the\ given\ server\ /\ port\ failed"{}}\ );}
+\DoxyCodeLine{00729\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_BIND\_FAILED):}
+\DoxyCodeLine{00730\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Binding\ of\ the\ socket\ failed"{}}\ );}
+\DoxyCodeLine{00731\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_LISTEN\_FAILED):}
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Could\ not\ listen\ on\ the\ socket"{}}\ );}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_ACCEPT\_FAILED):}
+\DoxyCodeLine{00734\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Could\ not\ accept\ the\ incoming\ connection"{}}\ );}
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_RECV\_FAILED):}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Reading\ information\ from\ the\ socket\ failed"{}}\ );}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_SEND\_FAILED):}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Sending\ information\ through\ the\ socket\ failed"{}}\ );}
+\DoxyCodeLine{00739\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_CONN\_RESET):}
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Connection\ was\ reset\ by\ peer"{}}\ );}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_UNKNOWN\_HOST):}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Failed\ to\ get\ an\ IP\ address\ for\ the\ given\ hostname"{}}\ );}
+\DoxyCodeLine{00743\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_BUFFER\_TOO\_SMALL):}
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Buffer\ is\ too\ small\ to\ hold\ the\ data"{}}\ );}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_INVALID\_CONTEXT):}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ The\ context\ is\ invalid,\ eg\ because\ it\ was\ free()ed"{}}\ );}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_POLL\_FAILED):}
+\DoxyCodeLine{00748\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Polling\ the\ net\ context\ failed"{}}\ );}
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_NET\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}NET\ -\/\ Input\ invalid"{}}\ );}
+\DoxyCodeLine{00751\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NET\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00752\ }
+\DoxyCodeLine{00753\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_OID\_C)}}
+\DoxyCodeLine{00754\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_OID\_NOT\_FOUND):}
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}OID\ -\/\ OID\ is\ not\ found"{}}\ );}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_OID\_BUF\_TOO\_SMALL):}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}OID\ -\/\ output\ buffer\ is\ too\ small"{}}\ );}
+\DoxyCodeLine{00758\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_OID\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00759\ }
+\DoxyCodeLine{00760\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_POLY1305\_C)}}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_POLY1305\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00762\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}POLY1305\ -\/\ Invalid\ input\ parameter(s)"{}}\ );}
+\DoxyCodeLine{00763\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_POLY1305\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00764\ }
+\DoxyCodeLine{00765\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA1\_C)}}
+\DoxyCodeLine{00766\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SHA1\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00767\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SHA1\ -\/\ SHA-\/1\ input\ data\ was\ malformed"{}}\ );}
+\DoxyCodeLine{00768\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA1\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00769\ }
+\DoxyCodeLine{00770\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_C)}}
+\DoxyCodeLine{00771\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SHA256\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00772\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SHA256\ -\/\ SHA-\/256\ input\ data\ was\ malformed"{}}\ );}
+\DoxyCodeLine{00773\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00774\ }
+\DoxyCodeLine{00775\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA3\_C)}}
+\DoxyCodeLine{00776\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SHA3\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SHA3\ -\/\ SHA-\/3\ input\ data\ was\ malformed"{}}\ );}
+\DoxyCodeLine{00778\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA3\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00779\ }
+\DoxyCodeLine{00780\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_C)}}
+\DoxyCodeLine{00781\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_SHA512\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}SHA512\ -\/\ SHA-\/512\ input\ data\ was\ malformed"{}}\ );}
+\DoxyCodeLine{00783\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00784\ }
+\DoxyCodeLine{00785\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_THREADING\_C)}}
+\DoxyCodeLine{00786\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_THREADING\_BAD\_INPUT\_DATA):}
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}THREADING\ -\/\ Bad\ input\ parameters\ to\ function"{}}\ );}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ -\/(MBEDTLS\_ERR\_THREADING\_MUTEX\_ERROR):}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ return(\ \textcolor{stringliteral}{"{}THREADING\ -\/\ Locking\ /\ unlocking\ /\ free\ failed\ with\ error\ code"{}}\ );}
+\DoxyCodeLine{00790\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_THREADING\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ End\ Auto-\/Generated\ Code.\ */}}
+\DoxyCodeLine{00792\ }
+\DoxyCodeLine{00793\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00795\ \ \ \ \ \}}
+\DoxyCodeLine{00796\ }
+\DoxyCodeLine{00797\ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00798\ \}}
+\DoxyCodeLine{00799\ }
+\DoxyCodeLine{00800\ \textcolor{keywordtype}{void}\ mbedtls\_strerror(\textcolor{keywordtype}{int}\ ret,\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buflen)}
+\DoxyCodeLine{00801\ \{}
+\DoxyCodeLine{00802\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len;}
+\DoxyCodeLine{00803\ \ \ \ \ \textcolor{keywordtype}{int}\ use\_ret;}
+\DoxyCodeLine{00804\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *high\_level\_error\_description\ =\ NULL;}
+\DoxyCodeLine{00805\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *low\_level\_error\_description\ =\ NULL;}
+\DoxyCodeLine{00806\ }
+\DoxyCodeLine{00807\ \ \ \ \ \textcolor{keywordflow}{if}\ (buflen\ ==\ 0)\ \{}
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00809\ \ \ \ \ \}}
+\DoxyCodeLine{00810\ }
+\DoxyCodeLine{00811\ \ \ \ \ memset(buf,\ 0x00,\ buflen);}
+\DoxyCodeLine{00812\ }
+\DoxyCodeLine{00813\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ <\ 0)\ \{}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ ret\ =\ -\/ret;}
+\DoxyCodeLine{00815\ \ \ \ \ \}}
+\DoxyCodeLine{00816\ }
+\DoxyCodeLine{00817\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ \&\ 0xFF80)\ \{}
+\DoxyCodeLine{00818\ \ \ \ \ \ \ \ \ use\_ret\ =\ ret\ \&\ 0xFF80;}
+\DoxyCodeLine{00819\ }
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Translate\ high\ level\ error\ code.}}
+\DoxyCodeLine{00821\ \ \ \ \ \ \ \ \ high\_level\_error\_description\ =\ mbedtls\_high\_level\_strerr(ret);}
+\DoxyCodeLine{00822\ }
+\DoxyCodeLine{00823\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (high\_level\_error\_description\ ==\ NULL)\ \{}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \ \ \ \ mbedtls\_snprintf(buf,\ buflen,\ \textcolor{stringliteral}{"{}UNKNOWN\ ERROR\ CODE\ (\%04X)"{}},\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})\ use\_ret);}
+\DoxyCodeLine{00825\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00826\ \ \ \ \ \ \ \ \ \ \ \ \ mbedtls\_snprintf(buf,\ buflen,\ \textcolor{stringliteral}{"{}\%s"{}},\ high\_level\_error\_description);}
+\DoxyCodeLine{00827\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS\_C)}}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Early\ return\ in\ case\ of\ a\ fatal\ error\ -\/\ do\ not\ try\ to\ translate\ low}}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ level\ code.}}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (use\_ret\ ==\ -\/(MBEDTLS\_ERR\_SSL\_FATAL\_ALERT\_MESSAGE))\ \{}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00835\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00836\ \ \ \ \ \}}
+\DoxyCodeLine{00837\ }
+\DoxyCodeLine{00838\ \ \ \ \ use\_ret\ =\ ret\ \&\ \string~0xFF80;}
+\DoxyCodeLine{00839\ }
+\DoxyCodeLine{00840\ \ \ \ \ \textcolor{keywordflow}{if}\ (use\_ret\ ==\ 0)\ \{}
+\DoxyCodeLine{00841\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00842\ \ \ \ \ \}}
+\DoxyCodeLine{00843\ }
+\DoxyCodeLine{00844\ \ \ \ \ \textcolor{comment}{//\ If\ high\ level\ code\ is\ present,\ make\ a\ concatenation\ between\ both}}
+\DoxyCodeLine{00845\ \ \ \ \ \textcolor{comment}{//\ error\ strings.}}
+\DoxyCodeLine{00846\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00847\ \ \ \ \ len\ =\ strlen(buf);}
+\DoxyCodeLine{00848\ }
+\DoxyCodeLine{00849\ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ >\ 0)\ \{}
+\DoxyCodeLine{00850\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buflen\ -\/\ len\ <\ 5)\ \{}
+\DoxyCodeLine{00851\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00852\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00853\ }
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ mbedtls\_snprintf(buf\ +\ len,\ buflen\ -\/\ len,\ \textcolor{stringliteral}{"{}\ :\ "{}});}
+\DoxyCodeLine{00855\ }
+\DoxyCodeLine{00856\ \ \ \ \ \ \ \ \ buf\ +=\ len\ +\ 3;}
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ buflen\ -\/=\ len\ +\ 3;}
+\DoxyCodeLine{00858\ \ \ \ \ \}}
+\DoxyCodeLine{00859\ }
+\DoxyCodeLine{00860\ \ \ \ \ \textcolor{comment}{//\ Translate\ low\ level\ error\ code.}}
+\DoxyCodeLine{00861\ \ \ \ \ low\_level\_error\_description\ =\ mbedtls\_low\_level\_strerr(ret);}
+\DoxyCodeLine{00862\ }
+\DoxyCodeLine{00863\ \ \ \ \ \textcolor{keywordflow}{if}\ (low\_level\_error\_description\ ==\ NULL)\ \{}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ mbedtls\_snprintf(buf,\ buflen,\ \textcolor{stringliteral}{"{}UNKNOWN\ ERROR\ CODE\ (\%04X)"{}},\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})\ use\_ret);}
+\DoxyCodeLine{00865\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00866\ \ \ \ \ \ \ \ \ mbedtls\_snprintf(buf,\ buflen,\ \textcolor{stringliteral}{"{}\%s"{}},\ low\_level\_error\_description);}
+\DoxyCodeLine{00867\ \ \ \ \ \}}
+\DoxyCodeLine{00868\ \}}
+\DoxyCodeLine{00869\ }
+\DoxyCodeLine{00870\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{/*\ MBEDTLS\_ERROR\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00871\ }
+\DoxyCodeLine{00872\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00873\ \textcolor{comment}{\ *\ Provide\ a\ dummy\ implementation\ when\ MBEDTLS\_ERROR\_C\ is\ not\ defined}}
+\DoxyCodeLine{00874\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00875\ \textcolor{keywordtype}{void}\ mbedtls\_strerror(\textcolor{keywordtype}{int}\ ret,\ \textcolor{keywordtype}{char}\ *buf,\ \textcolor{keywordtype}{size\_t}\ buflen)}
+\DoxyCodeLine{00876\ \{}
+\DoxyCodeLine{00877\ \ \ \ \ ((void)\ ret);}
+\DoxyCodeLine{00878\ }
+\DoxyCodeLine{00879\ \ \ \ \ \textcolor{keywordflow}{if}\ (buflen\ >\ 0)\ \{}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ buf[0]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00881\ \ \ \ \ \}}
+\DoxyCodeLine{00882\ \}}
+\DoxyCodeLine{00883\ }
+\DoxyCodeLine{00884\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ERROR\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00885\ }
+\DoxyCodeLine{00886\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_TEST\_HOOKS)}}
+\DoxyCodeLine{00887\ void\ (*mbedtls\_test\_hook\_error\_add)(int,\ int,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *,\ int);}
+\DoxyCodeLine{00888\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00889\ }
+\DoxyCodeLine{00890\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ERROR\_C\ ||\ MBEDTLS\_ERROR\_STRERROR\_DUMMY\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

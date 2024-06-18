@@ -1,0 +1,259 @@
+\doxysection{psa\+\_\+crypto\+\_\+driver\+\_\+wrappers\+\_\+no\+\_\+static.\+c}
+\label{psa__crypto__driver__wrappers__no__static_8c_source}\index{build/esp-\/idf/mbedtls/mbedtls/library/psa\_crypto\_driver\_wrappers\_no\_static.c@{build/esp-\/idf/mbedtls/mbedtls/library/psa\_crypto\_driver\_wrappers\_no\_static.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ \ Functions\ to\ delegate\ cryptographic\ operations\ to\ an\ available}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *\ \ and\ appropriate\ accelerator.}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Warning:\ This\ file\ is\ now\ auto-\/generated.}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00006\ \textcolor{comment}{/*\ \ Copyright\ The\ Mbed\ TLS\ Contributors}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ \ SPDX-\/License-\/Identifier:\ Apache-\/2.0}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ \ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});\ you\ may}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ \ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ \ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ http://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,\ WITHOUT}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ \ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ *\ \ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ *\ \ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{comment}{/*\ BEGIN-\/common\ headers\ */}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}common.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_aead.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_cipher.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_core.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_driver\_wrappers\_no\_static.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_hash.h"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_mac.h"{}}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_pake.h"{}}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_rsa.h"{}}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#include\ "{}mbedtls/platform.h"{}}}
+\DoxyCodeLine{00035\ \textcolor{comment}{/*\ END-\/common\ headers\ */}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_C)}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ BEGIN-\/driver\ headers\ */}}
+\DoxyCodeLine{00040\ \textcolor{comment}{/*\ Headers\ for\ mbedtls\_test\ opaque\ driver\ */}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#if\ defined(PSA\_CRYPTO\_DRIVER\_TEST)}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#include\ "{}test/drivers/test\_driver.h"{}}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00045\ \textcolor{comment}{/*\ Headers\ for\ mbedtls\_test\ transparent\ driver\ */}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#if\ defined(PSA\_CRYPTO\_DRIVER\_TEST)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#include\ "{}test/drivers/test\_driver.h"{}}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00050\ \textcolor{comment}{/*\ Headers\ for\ p256\ transparent\ driver\ */}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_P256M\_DRIVER\_ENABLED)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#include\ "{}../3rdparty/p256-\/m/p256-\/m\_driver\_entrypoints.h"{}}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{/*\ END-\/driver\ headers\ */}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{/*\ Auto-\/generated\ values\ depending\ on\ which\ drivers\ are\ registered.}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ *\ ID\ 0\ is\ reserved\ for\ unallocated\ operations.}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ *\ ID\ 1\ is\ reserved\ for\ the\ Mbed\ TLS\ software\ driver.\ */}}
+\DoxyCodeLine{00061\ \textcolor{comment}{/*\ BEGIN-\/driver\ id\ definition\ */}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ PSA\_CRYPTO\_MBED\_TLS\_DRIVER\_ID\ (1)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#define\ MBEDTLS\_TEST\_OPAQUE\_DRIVER\_ID\ (2)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ MBEDTLS\_TEST\_TRANSPARENT\_DRIVER\_ID\ (3)}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ P256\_TRANSPARENT\_DRIVER\_ID\ (4)}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{comment}{/*\ END-\/driver\ id\ */}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{/*\ BEGIN-\/Common\ Macro\ definitions\ */}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{/*\ END-\/Common\ Macro\ definitions\ */}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{comment}{/*\ Support\ the\ 'old'\ SE\ interface\ when\ asked\ to\ */}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_SE\_C)}}
+\DoxyCodeLine{00075\ \textcolor{comment}{/*\ PSA\_CRYPTO\_DRIVER\_PRESENT\ is\ defined\ when\ either\ a\ new-\/style\ or\ old-\/style}}
+\DoxyCodeLine{00076\ \textcolor{comment}{\ *\ SE\ driver\ is\ present,\ to\ avoid\ unused\ argument\ errors\ at\ compile\ time.\ */}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#ifndef\ PSA\_CRYPTO\_DRIVER\_PRESENT}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ PSA\_CRYPTO\_DRIVER\_PRESENT}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#include\ "{}psa\_crypto\_se.h"{}}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00098\ psa\_status\_t\ psa\_driver\_wrapper\_get\_key\_buffer\_size(}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{const}\ psa\_key\_attributes\_t\ *attributes,}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ *key\_buffer\_size\ )}
+\DoxyCodeLine{00101\ \{}
+\DoxyCodeLine{00102\ \ \ \ \ psa\_key\_location\_t\ location\ =\ PSA\_KEY\_LIFETIME\_GET\_LOCATION(\ attributes-\/>core.lifetime\ );}
+\DoxyCodeLine{00103\ \ \ \ \ psa\_key\_type\_t\ key\_type\ =\ attributes-\/>core.type;}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ key\_bits\ =\ attributes-\/>core.bits;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ *key\_buffer\_size\ =\ 0;}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keywordflow}{switch}(\ location\ )}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#if\ defined(PSA\_CRYPTO\_DRIVER\_TEST)}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PSA\_CRYPTO\_TEST\_DRIVER\_LOCATION:}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_BUILTIN\_KEYS)}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Emulate\ property\ 'builtin\_key\_size'\ */}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\ psa\_key\_id\_is\_builtin(}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MBEDTLS\_SVC\_KEY\_ID\_GET\_KEY\_ID(}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psa\_get\_key\_id(\ attributes\ )\ )\ )\ )}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *key\_buffer\_size\ =\ \textcolor{keyword}{sizeof}(\ psa\_drv\_slot\_number\_t\ );}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ PSA\_SUCCESS\ );}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_BUILTIN\_KEYS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ *key\_buffer\_size\ =\ mbedtls\_test\_opaque\_size\_function(\ key\_type,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_bits\ );}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ (\ *key\_buffer\_size\ !=\ 0\ )\ ?}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ PSA\_SUCCESS\ :\ PSA\_ERROR\_NOT\_SUPPORTED\ );}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ PSA\_CRYPTO\_DRIVER\_TEST\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ (void)key\_type;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ (void)key\_bits;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ PSA\_ERROR\_INVALID\_ARGUMENT\ );}
+\DoxyCodeLine{00131\ \ \ \ \ \}}
+\DoxyCodeLine{00132\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ psa\_status\_t\ psa\_driver\_wrapper\_export\_public\_key(}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{const}\ psa\_key\_attributes\_t\ *attributes,}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *key\_buffer,\ \textcolor{keywordtype}{size\_t}\ key\_buffer\_size,}
+\DoxyCodeLine{00137\ \ \ \ \ uint8\_t\ *data,\ \textcolor{keywordtype}{size\_t}\ data\_size,\ \textcolor{keywordtype}{size\_t}\ *data\_length\ )}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \{}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ psa\_status\_t\ status\ =\ PSA\_ERROR\_INVALID\_ARGUMENT;}
+\DoxyCodeLine{00142\ \ \ \ \ psa\_key\_location\_t\ location\ =\ PSA\_KEY\_LIFETIME\_GET\_LOCATION(}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ psa\_get\_key\_lifetime(\ attributes\ )\ );}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{/*\ Try\ dynamically-\/registered\ SE\ interface\ first\ */}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_SE\_C)}}
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keyword}{const}\ psa\_drv\_se\_t\ *drv;}
+\DoxyCodeLine{00148\ \ \ \ \ psa\_drv\_se\_context\_t\ *drv\_context;}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keywordflow}{if}(\ psa\_get\_se\_driver(\ attributes-\/>core.lifetime,\ \&drv,\ \&drv\_context\ )\ )}
+\DoxyCodeLine{00151\ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\ (\ drv-\/>key\_management\ ==\ NULL\ )\ ||}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ (\ drv-\/>key\_management-\/>p\_export\_public\ ==\ NULL\ )\ )}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ PSA\_ERROR\_NOT\_SUPPORTED\ );}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ drv-\/>key\_management-\/>p\_export\_public(}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drv\_context,}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *(\ (psa\_key\_slot\_number\_t\ *)key\_buffer\ ),}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,\ data\_size,\ data\_length\ )\ );}
+\DoxyCodeLine{00162\ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_SE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \textcolor{keywordflow}{switch}(\ location\ )}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PSA\_KEY\_LOCATION\_LOCAL\_STORAGE:}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Key\ is\ stored\ in\ the\ slot\ in\ export\ representation,\ so}}
+\DoxyCodeLine{00169\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ cycle\ through\ all\ known\ transparent\ accelerators\ */}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#if\ defined(PSA\_CRYPTO\_ACCELERATOR\_DRIVER\_PRESENT)}}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{preprocessor}{\#if\ (defined(PSA\_CRYPTO\_DRIVER\_TEST)\ )}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ status\ =\ mbedtls\_test\_transparent\_export\_public\_key}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (attributes,}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer,}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer\_size,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_size,}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_length}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ );}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\ status\ !=\ PSA\_ERROR\_NOT\_SUPPORTED\ )}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ status\ );}
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#if\ (defined(MBEDTLS\_PSA\_P256M\_DRIVER\_ENABLED)\ )}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ status\ =\ p256\_transparent\_export\_public\_key}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (attributes,}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer,}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer\_size,}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_size,}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_length}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ );}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\ status\ !=\ PSA\_ERROR\_NOT\_SUPPORTED\ )}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ status\ );}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ PSA\_CRYPTO\_ACCELERATOR\_DRIVER\_PRESENT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Fell\ through,\ meaning\ no\ accelerator\ supports\ this\ operation\ */}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ psa\_export\_public\_key\_internal(\ attributes,}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer,}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer\_size,}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_size,}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_length\ )\ );}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Add\ cases\ for\ opaque\ driver\ here\ */}}
+\DoxyCodeLine{00211\ \textcolor{preprocessor}{\#if\ defined(PSA\_CRYPTO\_ACCELERATOR\_DRIVER\_PRESENT)}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#if\ (defined(PSA\_CRYPTO\_DRIVER\_TEST)\ )}}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x7fffff:}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ mbedtls\_test\_opaque\_export\_public\_key}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ (attributes,}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer,}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer\_size,}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data,}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_size,}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data\_length}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ ));}
+\DoxyCodeLine{00223\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ PSA\_CRYPTO\_ACCELERATOR\_DRIVER\_PRESENT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Key\ is\ declared\ with\ a\ lifetime\ not\ known\ to\ us\ */}}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ status\ );}
+\DoxyCodeLine{00230\ \ \ \ \ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \}}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ psa\_status\_t\ psa\_driver\_wrapper\_get\_builtin\_key(}
+\DoxyCodeLine{00235\ \ \ \ \ psa\_drv\_slot\_number\_t\ slot\_number,}
+\DoxyCodeLine{00236\ \ \ \ \ psa\_key\_attributes\_t\ *attributes,}
+\DoxyCodeLine{00237\ \ \ \ \ uint8\_t\ *key\_buffer,\ \textcolor{keywordtype}{size\_t}\ key\_buffer\_size,\ \textcolor{keywordtype}{size\_t}\ *key\_buffer\_length\ )}
+\DoxyCodeLine{00238\ \{}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ psa\_key\_location\_t\ location\ =\ PSA\_KEY\_LIFETIME\_GET\_LOCATION(\ attributes-\/>core.lifetime\ );}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{keywordflow}{switch}(\ location\ )}
+\DoxyCodeLine{00242\ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#if\ defined(PSA\_CRYPTO\_DRIVER\_TEST)}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#if\ (defined(PSA\_CRYPTO\_DRIVER\_TEST)\ )}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x7fffff:}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ mbedtls\_test\_opaque\_get\_builtin\_key}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ (slot\_number,}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ attributes,}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer\_size,}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ key\_buffer\_length}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ ));}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ PSA\_CRYPTO\_DRIVER\_TEST\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ (void)\ slot\_number;}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ (void)\ key\_buffer;}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ (void)\ key\_buffer\_size;}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ (void)\ key\_buffer\_length;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}(\ PSA\_ERROR\_DOES\_NOT\_EXIST\ );}
+\DoxyCodeLine{00264\ \ \ \ \ \}}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_C\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

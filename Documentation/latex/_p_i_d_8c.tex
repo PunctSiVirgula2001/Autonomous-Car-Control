@@ -1,0 +1,428 @@
+\doxysection{src/\+PID.c File Reference}
+\label{_p_i_d_8c}\index{src/PID.c@{src/PID.c}}
+{\ttfamily \#include "{}I2\+C\+\_\+common.\+h"{}}\newline
+{\ttfamily \#include "{}PID.\+h"{}}\newline
+{\ttfamily \#include "{}Network.\+h"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+Include dependency graph for PID.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ speed\+Check\+Tick\+Hook} (void)
+\item 
+void \textbf{ init\+\_\+speed\+Check\+Tick\+Hook} (void)
+\item 
+void \textbf{ PID\+\_\+\+Init} (\textbf{ PID\+\_\+t} $\ast$pid, float Kp, float Ki, float Kd)
+\item 
+void \textbf{ PID\+\_\+\+Compute} (\textbf{ PID\+\_\+t} $\ast$pid)
+\item 
+void \textbf{ PID\+\_\+\+Update\+Params} (\textbf{ PID\+\_\+t} $\ast$pid, float new\+\_\+\+Kp, float new\+\_\+\+Ki, float new\+\_\+\+Kd)
+\item 
+float \textbf{ get\+\_\+speed\+\_\+distance\+\_\+sens\+\_\+scaling} (float speed, float speed\+\_\+min, float speed\+\_\+max)
+\item 
+double \textbf{ Sliding\+\_\+\+Mean\+\_\+\+Average} (int new\+Value)
+\item 
+void \textbf{ PIDTask} (void $\ast$pv\+Parameters)
+\item 
+void \textbf{ clamp\+\_\+float} (float $\ast$value, float min, float max)
+\item 
+void \textbf{ clamp\+\_\+int} (int $\ast$value, int min, int max)
+\item 
+void \textbf{ start\+\_\+\+PID\+\_\+task} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ PID\+\_\+t} \textbf{ motor\+PID}
+\item 
+\textbf{ PID\+\_\+t} \textbf{ steer\+PID}
+\item 
+bool \textbf{ sens\+\_\+fw\+\_\+has\+\_\+obstacle} = false
+\item 
+bool \textbf{ sens\+\_\+bw\+\_\+has\+\_\+obstacle} = false
+\item 
+int \textbf{ speed\+\_\+distance\+\_\+sens\+\_\+scaling}
+\item 
+Tick\+Type\+\_\+t \textbf{ x\+Last\+Wake\+Pulse} = 0U
+\item 
+Tick\+Type\+\_\+t \textbf{ x\+New\+Wake\+Time} = 0U
+\item 
+Tick\+Type\+\_\+t \textbf{ pulse\+\_\+time\+\_\+ms} = 0U
+\item 
+const float \textbf{ primary\+Smoothing\+Factor} = 0.\+1
+\item 
+const float \textbf{ secondary\+Smoothing\+Factor} = 0.\+05
+\item 
+const float \textbf{ max\+Change\+Per\+Cycle} = 5.\+0
+\item 
+double \textbf{ buffer} [\textbf{ WINDOW\+\_\+\+SIZE\+\_\+\+SMA}] = \{ 0.\+0 \}
+\item 
+double \textbf{ sum} = 0.\+0
+\item 
+Queue\+Handle\+\_\+t \textbf{ pulse\+\_\+encoder\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ speed\+\_\+command\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ PID\+\_\+command\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ I2\+C\+\_\+command\+Queue}
+\item 
+Queue\+Set\+Handle\+\_\+t \textbf{ Queue\+Set\+PIDNecessary\+Commands}
+\item 
+\textbf{ Car\+Command} \textbf{ only\+PIDValues}
+\item 
+\textbf{ I2\+C\+\_\+\+COMMAND} \textbf{ I2\+C\+\_\+command}
+\item 
+int \textbf{ old\+\_\+setpoint}
+\item 
+Tick\+Type\+\_\+t \textbf{ start\+Initial\+Sending\+Time} = 0U
+\item 
+bool \textbf{ car\+\_\+stays\+\_\+stopped} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{PID.c@{PID.c}!clamp\_float@{clamp\_float}}
+\index{clamp\_float@{clamp\_float}!PID.c@{PID.c}}
+\doxysubsubsection{clamp\_float()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a616f6b0cb89c5861abaa85bbd1058645} 
+void clamp\+\_\+float (\begin{DoxyParamCaption}\item[{float $\ast$}]{value}{, }\item[{float}]{min}{, }\item[{float}]{max}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 332} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!clamp\_int@{clamp\_int}}
+\index{clamp\_int@{clamp\_int}!PID.c@{PID.c}}
+\doxysubsubsection{clamp\_int()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a7a4dd36c5f2e49d4aa2f2f48fdd0aabe} 
+void clamp\+\_\+int (\begin{DoxyParamCaption}\item[{int $\ast$}]{value}{, }\item[{int}]{min}{, }\item[{int}]{max}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 340} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!get\_speed\_distance\_sens\_scaling@{get\_speed\_distance\_sens\_scaling}}
+\index{get\_speed\_distance\_sens\_scaling@{get\_speed\_distance\_sens\_scaling}!PID.c@{PID.c}}
+\doxysubsubsection{get\_speed\_distance\_sens\_scaling()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_aabae7507a2291726cf102c305e3f02c5} 
+float get\+\_\+speed\+\_\+distance\+\_\+sens\+\_\+scaling (\begin{DoxyParamCaption}\item[{float}]{speed}{, }\item[{float}]{speed\+\_\+min}{, }\item[{float}]{speed\+\_\+max}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 155} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!init\_speedCheckTickHook@{init\_speedCheckTickHook}}
+\index{init\_speedCheckTickHook@{init\_speedCheckTickHook}!PID.c@{PID.c}}
+\doxysubsubsection{init\_speedCheckTickHook()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ab1cfced9ea996bf91c861133e0d91e49} 
+void init\+\_\+speed\+Check\+Tick\+Hook (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 45} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!PID\_Compute@{PID\_Compute}}
+\index{PID\_Compute@{PID\_Compute}!PID.c@{PID.c}}
+\doxysubsubsection{PID\_Compute()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a6120ff3d44feed1033e54547b47c7856} 
+void PID\+\_\+\+Compute (\begin{DoxyParamCaption}\item[{\textbf{ PID\+\_\+t} $\ast$}]{pid}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 82} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!PID\_Init@{PID\_Init}}
+\index{PID\_Init@{PID\_Init}!PID.c@{PID.c}}
+\doxysubsubsection{PID\_Init()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a26c8b95db9397895630f51f4d291aab5} 
+void PID\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\textbf{ PID\+\_\+t} $\ast$}]{pid}{, }\item[{float}]{Kp}{, }\item[{float}]{Ki}{, }\item[{float}]{Kd}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 57} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!PID\_UpdateParams@{PID\_UpdateParams}}
+\index{PID\_UpdateParams@{PID\_UpdateParams}!PID.c@{PID.c}}
+\doxysubsubsection{PID\_UpdateParams()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ad55b9d5b8311b147f528a7e6d0fba01c} 
+void PID\+\_\+\+Update\+Params (\begin{DoxyParamCaption}\item[{\textbf{ PID\+\_\+t} $\ast$}]{pid}{, }\item[{float}]{new\+\_\+\+Kp}{, }\item[{float}]{new\+\_\+\+Ki}{, }\item[{float}]{new\+\_\+\+Kd}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 135} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!PIDTask@{PIDTask}}
+\index{PIDTask@{PIDTask}!PID.c@{PID.c}}
+\doxysubsubsection{PIDTask()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a0b5432e9eb596af445a114d06ffccd81} 
+void PIDTask (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 203} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!Sliding\_Mean\_Average@{Sliding\_Mean\_Average}}
+\index{Sliding\_Mean\_Average@{Sliding\_Mean\_Average}!PID.c@{PID.c}}
+\doxysubsubsection{Sliding\_Mean\_Average()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_aa67df0089f15bc7920286170fbdf904b} 
+double Sliding\+\_\+\+Mean\+\_\+\+Average (\begin{DoxyParamCaption}\item[{int}]{new\+Value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 174} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!speedCheckTickHook@{speedCheckTickHook}}
+\index{speedCheckTickHook@{speedCheckTickHook}!PID.c@{PID.c}}
+\doxysubsubsection{speedCheckTickHook()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_affd6ece3243c73ae7033a9e67d3f23c2} 
+void speed\+Check\+Tick\+Hook (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!start\_PID\_task@{start\_PID\_task}}
+\index{start\_PID\_task@{start\_PID\_task}!PID.c@{PID.c}}
+\doxysubsubsection{start\_PID\_task()}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a9e7e9a86b0b7bb64ee265afc5cb27264} 
+void start\+\_\+\+PID\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 350} of file \textbf{ PID.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{PID.c@{PID.c}!buffer@{buffer}}
+\index{buffer@{buffer}!PID.c@{PID.c}}
+\doxysubsubsection{buffer}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a121db7071e2b0e646e8ef5ab354e8627} 
+double buffer[\textbf{ WINDOW\+\_\+\+SIZE\+\_\+\+SMA}] = \{ 0.\+0 \}}
+
+
+
+Definition at line \textbf{ 170} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!car\_stays\_stopped@{car\_stays\_stopped}}
+\index{car\_stays\_stopped@{car\_stays\_stopped}!PID.c@{PID.c}}
+\doxysubsubsection{car\_stays\_stopped}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a0812e85483a0266e964dfe718008bd95} 
+bool car\+\_\+stays\+\_\+stopped = false}
+
+
+
+Definition at line \textbf{ 202} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!I2C\_command@{I2C\_command}}
+\index{I2C\_command@{I2C\_command}!PID.c@{PID.c}}
+\doxysubsubsection{I2C\_command}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ac9b783e0f4c9361c5894c7a7dd7996ff} 
+\textbf{ I2\+C\+\_\+\+COMMAND} I2\+C\+\_\+command}
+
+
+
+Definition at line \textbf{ 199} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!I2C\_commandQueue@{I2C\_commandQueue}}
+\index{I2C\_commandQueue@{I2C\_commandQueue}!PID.c@{PID.c}}
+\doxysubsubsection{I2C\_commandQueue}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ad6d46a9e7610ddf0423e1a5e2e9bfc4f} 
+Queue\+Handle\+\_\+t I2\+C\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{PID.c@{PID.c}!maxChangePerCycle@{maxChangePerCycle}}
+\index{maxChangePerCycle@{maxChangePerCycle}!PID.c@{PID.c}}
+\doxysubsubsection{maxChangePerCycle}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a168a8ff637383086cadfea00ae95ef77} 
+const float max\+Change\+Per\+Cycle = 5.\+0}
+
+
+
+Definition at line \textbf{ 77} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!motorPID@{motorPID}}
+\index{motorPID@{motorPID}!PID.c@{PID.c}}
+\doxysubsubsection{motorPID}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ad50fee9031092ad3e701f5792d0021f9} 
+\textbf{ PID\+\_\+t} motor\+PID}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!old\_setpoint@{old\_setpoint}}
+\index{old\_setpoint@{old\_setpoint}!PID.c@{PID.c}}
+\doxysubsubsection{old\_setpoint}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a8080e5c331191a287a253bd49be7fb4d} 
+int old\+\_\+setpoint}
+
+
+
+Definition at line \textbf{ 200} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!onlyPIDValues@{onlyPIDValues}}
+\index{onlyPIDValues@{onlyPIDValues}!PID.c@{PID.c}}
+\doxysubsubsection{onlyPIDValues}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a2588eb1c369a6e0fe260908e9bd50eb6} 
+\textbf{ Car\+Command} only\+PIDValues}
+
+
+
+Definition at line \textbf{ 198} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!PID\_commandQueue@{PID\_commandQueue}}
+\index{PID\_commandQueue@{PID\_commandQueue}!PID.c@{PID.c}}
+\doxysubsubsection{PID\_commandQueue}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a52c196f65d55f3b464764bf630e6f05e} 
+Queue\+Handle\+\_\+t PID\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 107} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{PID.c@{PID.c}!primarySmoothingFactor@{primarySmoothingFactor}}
+\index{primarySmoothingFactor@{primarySmoothingFactor}!PID.c@{PID.c}}
+\doxysubsubsection{primarySmoothingFactor}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a04e33c17501dc544f4f170a5fdd10d98} 
+const float primary\+Smoothing\+Factor = 0.\+1}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!pulse\_encoderQueue@{pulse\_encoderQueue}}
+\index{pulse\_encoderQueue@{pulse\_encoderQueue}!PID.c@{PID.c}}
+\doxysubsubsection{pulse\_encoderQueue}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a745d4a6c288386e09694294a5f19410a} 
+Queue\+Handle\+\_\+t pulse\+\_\+encoder\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ encoder.\+c}.
+
+\index{PID.c@{PID.c}!pulse\_time\_ms@{pulse\_time\_ms}}
+\index{pulse\_time\_ms@{pulse\_time\_ms}!PID.c@{PID.c}}
+\doxysubsubsection{pulse\_time\_ms}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a3b0c3fc0d365276e3572f2c6e0b117e7} 
+Tick\+Type\+\_\+t pulse\+\_\+time\+\_\+ms = 0U}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!QueueSetPIDNecessaryCommands@{QueueSetPIDNecessaryCommands}}
+\index{QueueSetPIDNecessaryCommands@{QueueSetPIDNecessaryCommands}!PID.c@{PID.c}}
+\doxysubsubsection{QueueSetPIDNecessaryCommands}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a5c87d10806c8bb41d42841fc2fb559d9} 
+Queue\+Set\+Handle\+\_\+t Queue\+Set\+PIDNecessary\+Commands\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{PID.c@{PID.c}!secondarySmoothingFactor@{secondarySmoothingFactor}}
+\index{secondarySmoothingFactor@{secondarySmoothingFactor}!PID.c@{PID.c}}
+\doxysubsubsection{secondarySmoothingFactor}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ad064e89649dcb2aeffc176cd64738ca2} 
+const float secondary\+Smoothing\+Factor = 0.\+05}
+
+
+
+Definition at line \textbf{ 76} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!sens\_bw\_has\_obstacle@{sens\_bw\_has\_obstacle}}
+\index{sens\_bw\_has\_obstacle@{sens\_bw\_has\_obstacle}!PID.c@{PID.c}}
+\doxysubsubsection{sens\_bw\_has\_obstacle}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a117fa0cc46d9de108be106975435dd62} 
+bool sens\+\_\+bw\+\_\+has\+\_\+obstacle = false}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!sens\_fw\_has\_obstacle@{sens\_fw\_has\_obstacle}}
+\index{sens\_fw\_has\_obstacle@{sens\_fw\_has\_obstacle}!PID.c@{PID.c}}
+\doxysubsubsection{sens\_fw\_has\_obstacle}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a23e5064cecba4d74af07c3eb5cd7c7ba} 
+bool sens\+\_\+fw\+\_\+has\+\_\+obstacle = false}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!speed\_commandQueue@{speed\_commandQueue}}
+\index{speed\_commandQueue@{speed\_commandQueue}!PID.c@{PID.c}}
+\doxysubsubsection{speed\_commandQueue}
+{\footnotesize\ttfamily \label{_p_i_d_8c_adb1f977be6734adfcc8e37d4f2659ec5} 
+Queue\+Handle\+\_\+t speed\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 105} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{PID.c@{PID.c}!speed\_distance\_sens\_scaling@{speed\_distance\_sens\_scaling}}
+\index{speed\_distance\_sens\_scaling@{speed\_distance\_sens\_scaling}!PID.c@{PID.c}}
+\doxysubsubsection{speed\_distance\_sens\_scaling}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a798a61f7f4a9d94f40e4a0c59bece8a0} 
+int speed\+\_\+distance\+\_\+sens\+\_\+scaling\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{PID.c@{PID.c}!startInitialSendingTime@{startInitialSendingTime}}
+\index{startInitialSendingTime@{startInitialSendingTime}!PID.c@{PID.c}}
+\doxysubsubsection{startInitialSendingTime}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ad13f649750458a5efd053ba378823d4a} 
+Tick\+Type\+\_\+t start\+Initial\+Sending\+Time = 0U}
+
+
+
+Definition at line \textbf{ 201} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!steerPID@{steerPID}}
+\index{steerPID@{steerPID}!PID.c@{PID.c}}
+\doxysubsubsection{steerPID}
+{\footnotesize\ttfamily \label{_p_i_d_8c_aef9aaf46d3a817fcb1cf11d655d3bebe} 
+\textbf{ PID\+\_\+t} steer\+PID}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!sum@{sum}}
+\index{sum@{sum}!PID.c@{PID.c}}
+\doxysubsubsection{sum}
+{\footnotesize\ttfamily \label{_p_i_d_8c_a2943e5895f5488ed44ed4a86e59dcf1b} 
+double sum = 0.\+0}
+
+
+
+Definition at line \textbf{ 171} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!xLastWakePulse@{xLastWakePulse}}
+\index{xLastWakePulse@{xLastWakePulse}!PID.c@{PID.c}}
+\doxysubsubsection{xLastWakePulse}
+{\footnotesize\ttfamily \label{_p_i_d_8c_adf2bc2f5a2cb2f6d8e95dc0f9762180f} 
+Tick\+Type\+\_\+t x\+Last\+Wake\+Pulse = 0U}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ PID.\+c}.
+
+\index{PID.c@{PID.c}!xNewWakeTime@{xNewWakeTime}}
+\index{xNewWakeTime@{xNewWakeTime}!PID.c@{PID.c}}
+\doxysubsubsection{xNewWakeTime}
+{\footnotesize\ttfamily \label{_p_i_d_8c_ace114d5e7194cfd2e47d5de531a270dc} 
+Tick\+Type\+\_\+t x\+New\+Wake\+Time = 0U}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ PID.\+c}.
+

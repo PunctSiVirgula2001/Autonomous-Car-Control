@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__sensor_control_8h" xml:lang="en-US">
+<title>include/I2C/I2C_sensorControl.h File Reference</title>
+<indexterm><primary>include/I2C/I2C_sensorControl.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;drivers/I2C_accelerometerSensor.h&quot;<?linebreak?>#include &quot;drivers/I2C_cameraSensor.h&quot;<?linebreak?>#include &quot;drivers/I2C_distanceSensor.h&quot;<?linebreak?>#include &quot;drivers/I2C_temperatureSensor.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_sensorControl.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__sensor_control_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__sensor_control_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Data Structures    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_structsensor__t">sensor_t</link></para>
+</listitem>
+            <listitem><para>struct <link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Typedefs    </title>
+        <itemizedlist>
+            <listitem><para>typedef enum <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> <link linkend="__i2_c__sensor_control_8h_1ad2c3480f550dc0d7ed486015a4cc4307">I2C_WRR_tokens</link></para>
+</listitem>
+            <listitem><para>typedef struct I2C_COMMAND <link linkend="__i2_c__sensor_control_8h_1aef8e3d32225106983adfde4222628a28">I2C_COMMAND</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Enumerations    </title>
+        <itemizedlist>
+            <listitem><para>enum <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> { <?linebreak?><link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea5cf7d6de0e15f0c2defea2a399035379">pixy2</link> = 0
+, <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea8bdc4a1b37a7ae051a37b3a0c7f1da00">distance_sens1</link> = 0
+, <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea3256cb98ccbbe742388ee16237c7859b">distance_sens2</link> = 0
+, <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea96326bbbfbd898bbd0b50617db47528c">adxl_acc</link> = 0
+, <?linebreak?><link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9eab5d1317da0789d76987df6c4c8a5add4">temp_sens</link> = 1
+ }</para>
+</listitem>
+            <listitem><para>enum <link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718">sensor_state_t</link> { <link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718a9975a8a9955ad85474b858ac0b25dfab">SENSOR_IDLE</link>
+, <link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718a5fe6c45c6b2f94ff82e9f440bae7f019">SENSOR_READING</link>
+, <link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718ac785071fd2b2091f55ca6915a58a2e56">SENSOR_READY</link>
+ }</para>
+</listitem>
+            <listitem><para>enum <link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53">I2C_COMMAND_TYPE</link> { <?linebreak?><link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53acb899ed7e5bc4b0c0141629a62ca0947">I2C_NO_STATE</link>
+, <link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a975499341bc3acadc20fde0e2e00f4e1">I2C_STOP_MOTOR</link>
+, <link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53aac41faa6d3b03bb6bd35322356468386">I2C_START_MOTOR</link>
+, <link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a842bd54ee18a7c8c09fee58f22d2bdb1">I2C_NEW_STEER</link>
+, <?linebreak?><link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a7224a9d9c03d013ed35800b16823e48f">I2C_MOTOR_OFFSET_ACCELEROMETER</link>
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__sensor_control_8h_1af25a3b4136659e2a41e7012d181ca9ad">start_I2C_devices_task</link> ()</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__sensor_control_8h_1a634afb850adbac31a4c7bd552156d2e0">I2C_addAndInitialiseSensors</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__sensor_control_8h_1a223d018b44dccfa36c89dcbcc975bef1">I2C_devices_task</link> (void *pvParameters)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Typedef Documentation</title>
+<anchor xml:id="__i2_c__sensor_control_8h_1aef8e3d32225106983adfde4222628a28"/><section>
+    <title>I2C_COMMAND</title>
+<indexterm><primary>I2C_COMMAND</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_COMMAND</secondary></indexterm>
+<para><computeroutput>typedef struct I2C_COMMAND I2C_COMMAND</computeroutput></para></section>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad2c3480f550dc0d7ed486015a4cc4307"/><section>
+    <title>I2C_WRR_tokens</title>
+<indexterm><primary>I2C_WRR_tokens</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_WRR_tokens</secondary></indexterm>
+<para><computeroutput>typedef enum <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link></computeroutput></para></section>
+</section>
+<section>
+<title>Enumeration Type Documentation</title>
+<anchor xml:id="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53"/><section>
+    <title>I2C_COMMAND_TYPE</title>
+<indexterm><primary>I2C_COMMAND_TYPE</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_COMMAND_TYPE</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53">I2C_COMMAND_TYPE</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>I2C_NO_STATE</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_NO_STATE</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53acb899ed7e5bc4b0c0141629a62ca0947"/>I2C_NO_STATE</entry><entry></entry></row><row><entry><indexterm><primary>I2C_STOP_MOTOR</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_STOP_MOTOR</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a975499341bc3acadc20fde0e2e00f4e1"/>I2C_STOP_MOTOR</entry><entry></entry></row><row><entry><indexterm><primary>I2C_START_MOTOR</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_START_MOTOR</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53aac41faa6d3b03bb6bd35322356468386"/>I2C_START_MOTOR</entry><entry></entry></row><row><entry><indexterm><primary>I2C_NEW_STEER</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_NEW_STEER</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a842bd54ee18a7c8c09fee58f22d2bdb1"/>I2C_NEW_STEER</entry><entry></entry></row><row><entry><indexterm><primary>I2C_MOTOR_OFFSET_ACCELEROMETER</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_MOTOR_OFFSET_ACCELEROMETER</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a7224a9d9c03d013ed35800b16823e48f"/>I2C_MOTOR_OFFSET_ACCELEROMETER</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00031">31</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e"/><section>
+    <title>I2C_WRR_tokens</title>
+<indexterm><primary>I2C_WRR_tokens</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_WRR_tokens</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>pixy2</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>pixy2</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea5cf7d6de0e15f0c2defea2a399035379"/>pixy2</entry><entry></entry></row><row><entry><indexterm><primary>distance_sens1</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>distance_sens1</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea8bdc4a1b37a7ae051a37b3a0c7f1da00"/>distance_sens1</entry><entry></entry></row><row><entry><indexterm><primary>distance_sens2</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>distance_sens2</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea3256cb98ccbbe742388ee16237c7859b"/>distance_sens2</entry><entry></entry></row><row><entry><indexterm><primary>adxl_acc</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>adxl_acc</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9ea96326bbbfbd898bbd0b50617db47528c"/>adxl_acc</entry><entry></entry></row><row><entry><indexterm><primary>temp_sens</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>temp_sens</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9eab5d1317da0789d76987df6c4c8a5add4"/>temp_sens</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00016">16</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718"/><section>
+    <title>sensor_state_t</title>
+<indexterm><primary>sensor_state_t</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>sensor_state_t</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718">sensor_state_t</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>SENSOR_IDLE</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>SENSOR_IDLE</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718a9975a8a9955ad85474b858ac0b25dfab"/>SENSOR_IDLE</entry><entry></entry></row><row><entry><indexterm><primary>SENSOR_READING</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>SENSOR_READING</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718a5fe6c45c6b2f94ff82e9f440bae7f019"/>SENSOR_READING</entry><entry></entry></row><row><entry><indexterm><primary>SENSOR_READY</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>SENSOR_READY</secondary></indexterm>
+<anchor xml:id="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718ac785071fd2b2091f55ca6915a58a2e56"/>SENSOR_READY</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00025">25</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__sensor_control_8h_1a634afb850adbac31a4c7bd552156d2e0"/><section>
+    <title>I2C_addAndInitialiseSensors()</title>
+<indexterm><primary>I2C_addAndInitialiseSensors</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_addAndInitialiseSensors</secondary></indexterm>
+<para><computeroutput>bool I2C_addAndInitialiseSensors ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00230">230</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8h_1a223d018b44dccfa36c89dcbcc975bef1"/><section>
+    <title>I2C_devices_task()</title>
+<indexterm><primary>I2C_devices_task</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>I2C_devices_task</secondary></indexterm>
+<para><computeroutput>void I2C_devices_task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00019">19</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__sensor_control_8h_1af25a3b4136659e2a41e7012d181ca9ad"/><section>
+    <title>start_I2C_devices_task()</title>
+<indexterm><primary>start_I2C_devices_task</primary><secondary>I2C_sensorControl.h</secondary></indexterm>
+<indexterm><primary>I2C_sensorControl.h</primary><secondary>start_I2C_devices_task</secondary></indexterm>
+<para><computeroutput>void start_I2C_devices_task ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00260">260</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+</section>
+</section>

@@ -1,10 +1,10 @@
-/*Brief for on which cores are the tasks runing
+/*Brief for on which cores are the tasks running
 	PIDTask: 		 	Core 1, Prio 7
-	CarControl_Task: 	Core 0, Prio 6
-	steer_task: 	 	Core 1, Prio 6
-	udp_server_task: 	Core 0, Prio 5
-	i2c_task: 		 	Core 0, Prio 7
-	uart_Jetson_Task	Core 1, Prio 6
+	CarControlTask: 	Core 0, Prio 6
+	SteerTask: 	 		Core 1, Prio 6
+	UdpAccessPointTask: Core 0, Prio 5
+	I2cTask: 		 	Core 0, Prio 7
+	UartJetsonTask		Core 1, Prio 6
 */
 
 /*Brief for the main function
@@ -28,6 +28,7 @@
 #include "../include/I2C/I2C_sensorControl.h"
 #include "UART_Jetson.h"
 
+
 extern bool allowed_to_send;
 extern char rx_buffer[128];
 
@@ -49,7 +50,7 @@ extern QueueHandle_t steer_commandQueue;
 extern QueueHandle_t PID_commandQueue;
 extern QueueHandle_t I2C_commandQueue;
 
-extern QueueSetHandle_t QueueSetGeneralCommands;
+extern QueueSetHandle_t QueueSetPIDNecessaryCommands;
 
 extern bool I2C_sensors_initiated;
 //#define ESP_LOGI(a,b) printf(b);
@@ -79,28 +80,33 @@ void app_main(void) {
 #endif
 
 	/* Create a set which holds data from all necessary queues. */
-	QueueSetGeneralCommands = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS + QUEUE_SIZE_ENCODER_PULSE + QUEUE_SIZE_I2C);
+	QueueSetPIDNecessaryCommands = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS + QUEUE_SIZE_ENCODER_PULSE + QUEUE_SIZE_I2C);
 	configASSERT(speed_commandQueue);
 	configASSERT(pulse_encoderQueue);
 	configASSERT(speed_commandQueue);
 	configASSERT(PID_commandQueue);
 	configASSERT(steer_commandQueue);
-	configASSERT(QueueSetGeneralCommands);
-	xQueueAddToSet(speed_commandQueue, QueueSetGeneralCommands);
-	xQueueAddToSet(pulse_encoderQueue, QueueSetGeneralCommands);
-	xQueueAddToSet(PID_commandQueue, QueueSetGeneralCommands);
-	xQueueAddToSet(I2C_commandQueue, QueueSetGeneralCommands);
+	configASSERT(QueueSetPIDNecessaryCommands);
+	xQueueAddToSet(speed_commandQueue, QueueSetPIDNecessaryCommands);
+	xQueueAddToSet(pulse_encoderQueue, QueueSetPIDNecessaryCommands);
+	xQueueAddToSet(PID_commandQueue, QueueSetPIDNecessaryCommands);
+	xQueueAddToSet(I2C_commandQueue, QueueSetPIDNecessaryCommands);
+
+	/* Start application tasks */
 	carControl_init();
+	initializeEncoder();
 #if (MOTOR_MOCK_TEST == OFF)
 	start_I2C_devices_task();
 	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
+#endif
 	start_network_task();
+#if (MOTOR_MOCK_TEST == OFF)
 	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
-	configureEncoderInterrupts();
+#endif
 	start_PID_task();
 #if (PIXY_DETECTION == OFF)
 	start_UartJetson_task();
 #endif
 
-#endif
+
 }

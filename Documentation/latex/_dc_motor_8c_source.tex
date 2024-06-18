@@ -1,0 +1,137 @@
+\doxysection{Dc\+Motor.\+c}
+\label{_dc_motor_8c_source}\index{src/motors/drivers/DcMotor.c@{src/motors/drivers/DcMotor.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ DcMotor.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 18\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}DcMotor.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ mcpwm\_timer\_handle\_t\ timer\_dc\_motor;}
+\DoxyCodeLine{00010\ mcpwm\_oper\_handle\_t\ operator\_dc\_motor;}
+\DoxyCodeLine{00011\ mcpwm\_cmpr\_handle\_t\ comparator\_dc\_motor;}
+\DoxyCodeLine{00012\ mcpwm\_gen\_handle\_t\ generator\_dc\_motor;}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Initialize\ PWM\ for\ Motor}}
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{void}\ init\_motor\_pwm()\ \{}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#if\ (MOTOR\_CONTROL\ ==\ LEDC)}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ Timer\ configuration}}
+\DoxyCodeLine{00019\ \ \ \ \ ledc\_timer\_config\_t\ ledc\_timer\ =}
+\DoxyCodeLine{00020\ \ \ \ \ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ .speed\_mode\ =\ LEDC\_Motor\_And\_Servo\_MODE,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ .duty\_resolution\ =\ LEDC\_MOTOR\_DUTY\_RESOLUTION,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ .timer\_num\ =\ LEDC\_MOTOR\_TIMER,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Different\ timer\ for\ motor}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ .freq\_hz\ =\ LEDC\_Motor\_And\_Servo\_FREQ,}
+\DoxyCodeLine{00025\ \ \ \ \ \};}
+\DoxyCodeLine{00026\ \ \ \ \ ledc\_timer\_config(\&ledc\_timer);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{//\ Channel\ configuration,\ similar\ to\ steering\ but\ different\ channel\ and\ GPIO}}
+\DoxyCodeLine{00029\ \ \ \ \ ledc\_channel\_config\_t\ ledc\_channel\ =}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ .channel\ =\ LEDC\_MOTOR\_CH1\_CHANNEL,\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Different\ channel\ for\ motor}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ .duty\ =\ 0,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ .gpio\_num\ =\ LEDC\_MOTOR\_GPIO,\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Different\ GPIO\ for\ motor}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ .speed\_mode\ =\ LEDC\_Motor\_And\_Servo\_MODE,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ .timer\_sel\ =\ LEDC\_MOTOR\_TIMER,\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Different\ timer\ for\ motor}}
+\DoxyCodeLine{00036\ \ \ \ \ \};}
+\DoxyCodeLine{00037\ \ \ \ \ ledc\_channel\_config(\&ledc\_channel);}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#elif\ (MOTOR\_CONTROL\ ==\ MCPWM)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ timer}}
+\DoxyCodeLine{00041\ \ \ \ \ mcpwm\_timer\_config\_t\ config\ =}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ .group\_id\ =\ 1,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{comment}{//.intr\_priority\ =\ 0,}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ .clk\_src\ =\ MCPWM\_TIMER\_CLK\_SRC\_DEFAULT,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ period\_ticks=Desired Period\ *\ Resolution}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ period\_ticks=\ 20000\ microseconds\ *\ 1\ microsecond}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ .resolution\_hz\ =\ 1000000,\ \textcolor{comment}{//\ 1MHZ\ =>\ 1\ tick\ =\ 1/1000000\ =\ 1\ microsecond\ each\ tick}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ .period\_ticks\ =\ 20000,\ \ \ \ \textcolor{comment}{//\ 20000\ *\ 1\ microsecond\ =\ 20000\ microseconds\ =>\ 0.02\ seconds\ =>\ 50\ hz}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ .count\_mode\ =\ MCPWM\_TIMER\_COUNT\_MODE\_UP,}
+\DoxyCodeLine{00051\ \ \ \ \ \};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_timer(\&config,\ \&timer\_dc\_motor));}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ operator}}
+\DoxyCodeLine{00056\ \ \ \ \ mcpwm\_operator\_config\_t\ operator\_config\ =\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ .group\_id\ =\ 1,}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ .flags.update\_gen\_action\_on\_tez\ =\ 1,\ \textcolor{comment}{//\ Update\ generator\ action\ when\ timer\ counts\ to\ zero}}
+\DoxyCodeLine{00059\ \ \ \ \ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_operator(\&operator\_config,\ \&operator\_dc\_motor));}
+\DoxyCodeLine{00062\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_operator\_connect\_timer(operator\_dc\_motor,\ timer\_dc\_motor));}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ comparator}}
+\DoxyCodeLine{00065\ \ \ \ \ mcpwm\_comparator\_config\_t\ comparator\_config\ =}
+\DoxyCodeLine{00066\ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ .flags.update\_cmp\_on\_tez\ =\ 1,}
+\DoxyCodeLine{00068\ \ \ \ \ \};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_comparator(operator\_dc\_motor,\ \&comparator\_config,\ \&comparator\_dc\_motor));}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ generator}}
+\DoxyCodeLine{00073\ \ \ \ \ mcpwm\_generator\_config\_t\ generator\_config\ =\ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ .gen\_gpio\_num\ =\ LEDC\_MOTOR\_GPIO,\ \textcolor{comment}{//\ Set\ the\ GPIO\ number\ used\ by\ the\ generator}}
+\DoxyCodeLine{00075\ \ \ \ \ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_generator(operator\_dc\_motor,\ \&generator\_config,\ \&generator\_dc\_motor));}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ Set\ the\ generator\ actions}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \textcolor{comment}{//\ go\ high\ on\ counter\ empty}}
+\DoxyCodeLine{00081\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_generator\_set\_action\_on\_timer\_event(generator\_dc\_motor,}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MCPWM\_GEN\_TIMER\_EVENT\_ACTION(MCPWM\_TIMER\_DIRECTION\_UP,\ MCPWM\_TIMER\_EVENT\_EMPTY,\ MCPWM\_GEN\_ACTION\_HIGH)));}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{//\ go\ low\ on\ compare\ threshold}}
+\DoxyCodeLine{00084\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_generator\_set\_action\_on\_compare\_event(generator\_dc\_motor,}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MCPWM\_GEN\_COMPARE\_EVENT\_ACTION(MCPWM\_TIMER\_DIRECTION\_UP,\ comparator\_dc\_motor,\ MCPWM\_GEN\_ACTION\_LOW)));}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ Set\ the\ duty\ cycle\ for\ the\ servo}}
+\DoxyCodeLine{00088\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_comparator\_set\_compare\_value(comparator\_dc\_motor,\ 1500));\ \textcolor{comment}{//\ 1.5ms\ pulse\ width\ for\ neutral\ position}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{comment}{//\ Start\ the\ MCPWM\ timer}}
+\DoxyCodeLine{00091\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_timer\_enable(timer\_dc\_motor));}
+\DoxyCodeLine{00092\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_timer\_start\_stop(timer\_dc\_motor,\ MCPWM\_TIMER\_START\_NO\_STOP));}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00096\ \}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{comment}{//\ Update\ the\ PWM\ for\ Motor,\ similar\ to\ update\_servo\_pwm\ function}}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{void}\ update\_motor\_pwm(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ pulse\_width\_us)\ \{}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#if\ (MOTOR\_CONTROL\ ==\ LEDC)}}
+\DoxyCodeLine{00101\ \ \ \ \ uint32\_t\ duty\ =\ (pulse\_width\_us\ *\ ((1\ <<\ LEDC\_MOTOR\_DUTY\_RESOLUTION)\ -\/\ 1))}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ /\ 20000;}
+\DoxyCodeLine{00103\ \ \ \ \ ledc\_set\_duty(LEDC\_Motor\_And\_Servo\_MODE,\ LEDC\_MOTOR\_CH1\_CHANNEL,\ duty);}
+\DoxyCodeLine{00104\ \ \ \ \ ledc\_update\_duty(LEDC\_Motor\_And\_Servo\_MODE,\ LEDC\_MOTOR\_CH1\_CHANNEL);}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#elif\ (MOTOR\_CONTROL\ ==\ MCPWM)}}
+\DoxyCodeLine{00106\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_comparator\_set\_compare\_value(comparator\_dc\_motor,\ pulse\_width\_us));}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}pulse\_width\_us"{},\ "{}us\ =\ \%d"{},\ pulse\_width\_us);}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00109\ \}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{/*\ Change\ Motor\ Speed,\ similar\ to\ changeSTEER\ function\ */}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ changeMotorSpeed(\textcolor{keywordtype}{int}\ value)\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordtype}{int}\ pulse\_width\_us;}
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}value\ \%d"{},\ value);}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{if}(value\ >\ 100)}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ value\ =\ 100;}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}(value\ <\ -\/100)}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ value\ =\ -\/100;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (value\ ==\ 0)}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ pulse\_width\_us\ =\ 1500;}
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (value\ >=\ 1)\ \{\ \textcolor{comment}{//\ FORWARD}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Forward\ mode:\ Scale\ between\ 1545\ and\ 1700}}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ pulse\_width\_us\ =\ MIN\_MOTOR\_FW\_DUTY\_US\ +\ (value\ *\ (MAX\_MOTOR\_FW\_DUTY\_US\ -\/\ MIN\_MOTOR\_FW\_DUTY\_US)\ /\ 100);}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}pwm\_us\ \%d"{},\ pulse\_width\_us);}}
+\DoxyCodeLine{00126\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ BACKWARD}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ pulse\_width\_us\ =\ MAX\_MOTOR\_BW\_DUTY\_US\ -\/\ ((-\/value)\ *\ (MAX\_MOTOR\_BW\_DUTY\_US\ -\/\ MIN\_MOTOR\_BW\_DUTY\_US)\ /\ 100);}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}pwm\_us\ \%d"{},\ pulse\_width\_us);}}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+\DoxyCodeLine{00130\ \ \ \ \ update\_motor\_pwm(pulse\_width\_us);}
+\DoxyCodeLine{00131\ \}}
+
+\end{DoxyCode}

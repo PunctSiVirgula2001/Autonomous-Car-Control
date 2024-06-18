@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['d_5fterm_0',['D_term',['../struct_p_i_d__t.html#ac5a0f95bee23553dab250fd0d16a89b6',1,'PID_t']]],
+  ['data_5ftype_5fto_5fsend_1',['data_type_to_send',['../_network_8h.html#a05e8c8420da1c24552059209fc234b2f',1,'data_type_to_send:&#160;Network.h'],['../_network_8h.html#ad8f97e88259cf600da25c064ceb711eb',1,'data_type_to_send:&#160;Network.h']]],
+  ['dcmotor_2ec_2',['DcMotor.c',['../_dc_motor_8c.html',1,'']]],
+  ['dcmotor_2eh_3',['DcMotor.h',['../_dc_motor_8h.html',1,'']]],
+  ['dec_4',['DEC',['../bootloader_2_c_make_files_23_824_80_2_compiler_id_c_2_c_make_c_compiler_id_8c.html#ad1280362da42492bbc11aa78cbf776ad',1,'DEC:&#160;CMakeCCompilerId.c'],['../bootloader_2_c_make_files_23_824_80_2_compiler_id_c_x_x_2_c_make_c_x_x_compiler_id_8cpp.html#ad1280362da42492bbc11aa78cbf776ad',1,'DEC:&#160;CMakeCXXCompilerId.cpp'],['../_c_make_files_23_824_80_2_compiler_id_c_2_c_make_c_compiler_id_8c.html#ad1280362da42492bbc11aa78cbf776ad',1,'DEC:&#160;CMakeCCompilerId.c'],['../_c_make_files_23_824_80_2_compiler_id_c_x_x_2_c_make_c_x_x_compiler_id_8cpp.html#ad1280362da42492bbc11aa78cbf776ad',1,'DEC:&#160;CMakeCXXCompilerId.cpp']]],
+  ['decodevcselperiod_5',['decodeVcselPeriod',['../_i2_c__distance_sensor_8h.html#a7dcb8458d7b06d003fc1c4786c492efa',1,'I2C_distanceSensor.h']]],
+  ['det_5fconfidence_6',['det_confidence',['../structcommand_received__jetson.html#a87106f120edc8abd5df178ccfa4a1306',1,'commandReceived_jetson']]],
+  ['detect_5fcompiler_5fbuiltins_2ec_7',['detect_compiler_builtins.c',['../detect__compiler__builtins_8c.html',1,'']]],
+  ['detect_5fcompiler_5fbuiltins_2ecpp_8',['detect_compiler_builtins.cpp',['../detect__compiler__builtins_8cpp.html',1,'']]],
+  ['device_5fhandle_9',['device_handle',['../structsensor__t.html#a4e96223c314d688cc40a539d4e363258',1,'sensor_t']]],
+  ['device_5fhandle_5fesp32_5fi2c_5fconfig_10',['device_handle_esp32_i2c_config',['../_i2_c__common_8c.html#a9fc620c13c757764c70d47d6bfabdf90',1,'I2C_common.c']]],
+  ['diagnosticmodecontrolqueue_11',['diagnosticModeControlQueue',['../main_8c.html#a731dce19cc17cfa0419781203697bf14',1,'diagnosticModeControlQueue:&#160;MotorAndServoControl.c'],['../_motor_and_servo_control_8c.html#a731dce19cc17cfa0419781203697bf14',1,'diagnosticModeControlQueue:&#160;MotorAndServoControl.c'],['../_network_8c.html#a731dce19cc17cfa0419781203697bf14',1,'diagnosticModeControlQueue:&#160;MotorAndServoControl.c']]],
+  ['dig_5ft1_12',['dig_T1',['../structbme280__calib__data.html#a730ed166c629bded674b13faffe9cef7',1,'bme280_calib_data']]],
+  ['dig_5ft2_13',['dig_T2',['../structbme280__calib__data.html#ab5c023a004c0497ba616d916155c85bb',1,'bme280_calib_data']]],
+  ['dig_5ft3_14',['dig_T3',['../structbme280__calib__data.html#a9536e89c30bbd791153ac9e407b0752b',1,'bme280_calib_data']]],
+  ['dist_5fsens_5fregisters_15',['dist_sens_registers',['../_i2_c__distance_sensor_8h.html#ab68be3b9b657a41381e5c06de09f80bb',1,'dist_sens_registers:&#160;I2C_distanceSensor.h'],['../_i2_c__distance_sensor_8h.html#a7e893cb0e6a08860276de756a8016d48',1,'dist_sens_registers:&#160;I2C_distanceSensor.h']]],
+  ['distance_5fsens1_16',['distance_sens1',['../_i2_c__sensor_control_8h.html#ad4fa48dd63f483f21c3767c3665bbe9ea8bdc4a1b37a7ae051a37b3a0c7f1da00',1,'I2C_sensorControl.h']]],
+  ['distance_5fsens2_17',['distance_sens2',['../_i2_c__sensor_control_8h.html#ad4fa48dd63f483f21c3767c3665bbe9ea3256cb98ccbbe742388ee16237c7859b',1,'I2C_sensorControl.h']]],
+  ['distsensbw_18',['DistSensBw',['../_network_8h.html#a57a739fb3d417e5abded6e0ac98c115bad0ea62e65fa39f2c36d6c5267af85178',1,'Network.h']]],
+  ['distsensfw_19',['DistSensFw',['../_network_8h.html#a57a739fb3d417e5abded6e0ac98c115ba1397744e3bab2c358b7250d459aef0f4',1,'Network.h']]],
+  ['double_20',['DOUBLE',['../_network_8h.html#a05e8c8420da1c24552059209fc234b2fa33465d1d419b1074fb259ef444609e92',1,'Network.h']]],
+  ['drivingjetson_21',['DrivingJetson',['../_u_a_r_t___jetson_8h.html#a5a6ac81c5b288287712ca7e703a69300aee92692ff87d042462127e8686851f1f',1,'UART_Jetson.h']]],
+  ['dss_22',['dss',['../struct_sequence_step_enables.html#aa737187fd2160f74fc9b61607f9faee2',1,'SequenceStepEnables']]],
+  ['dynamic_5fspad_5fnum_5frequested_5fref_5fspad_23',['DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD',['../_i2_c__distance_sensor_8h.html#ab68be3b9b657a41381e5c06de09f80bba074e077a78f07f8198e457bb47919166',1,'I2C_distanceSensor.h']]],
+  ['dynamic_5fspad_5fref_5fen_5fstart_5foffset_24',['DYNAMIC_SPAD_REF_EN_START_OFFSET',['../_i2_c__distance_sensor_8h.html#ab68be3b9b657a41381e5c06de09f80bbaa59c9def7b0d4c9988d4587c439f80f7',1,'I2C_distanceSensor.h']]]
+];

@@ -1,0 +1,235 @@
+\doxysection{src/\+I2\+C/drivers/\+I2\+C\+\_\+common.c File Reference}
+\label{_i2_c__common_8c}\index{src/I2C/drivers/I2C\_common.c@{src/I2C/drivers/I2C\_common.c}}
+{\ttfamily \#include "{}Network.\+h"{}}\newline
+{\ttfamily \#include "{}math.\+h"{}}\newline
+{\ttfamily \#include "{}I2\+C\+\_\+common.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+common.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ I2\+C\+\_\+master\+\_\+init} ()
+\item 
+void \textbf{ I2\+C\+\_\+select\+\_\+multiplexer\+\_\+channel} (\textbf{ I2\+C\+\_\+devices\+\_\+mux} num\+\_\+channel)
+\item 
+void \textbf{ I2\+C\+\_\+add\+\_\+device} (uint8\+\_\+t device\+\_\+address)
+\item 
+void \textbf{ I2\+C\+\_\+transmit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, unsigned char $\ast$data, size\+\_\+t write\+\_\+size)
+\item 
+void \textbf{ I2\+C\+\_\+receive} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t $\ast$data, size\+\_\+t read\+\_\+size)
+\item 
+void \textbf{ write\+Multiple\+Registers} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, const uint8\+\_\+t($\ast$regs\+\_\+vals)[2], size\+\_\+t count)
+\item 
+uint8\+\_\+t \textbf{ I2\+C\+\_\+read\+Register8bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg)
+\item 
+uint16\+\_\+t \textbf{ I2\+C\+\_\+read\+Register16bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg)
+\item 
+uint32\+\_\+t \textbf{ I2\+C\+\_\+read\+Register32bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg)
+\item 
+void \textbf{ I2\+C\+\_\+write\+Register8bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg, uint8\+\_\+t value)
+\item 
+void \textbf{ I2\+C\+\_\+write\+Register16bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg, uint16\+\_\+t value)
+\item 
+void \textbf{ I2\+C\+\_\+write\+Register32bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg, uint32\+\_\+t value)
+\item 
+void \textbf{ config\+\_\+rst\+\_\+pin\+\_\+i2c\+\_\+mux} ()
+\item 
+void \textbf{ rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+on} ()
+\item 
+void \textbf{ rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+off} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+i2c\+\_\+master\+\_\+bus\+\_\+config\+\_\+t \textbf{ esp32\+\_\+i2c\+\_\+config}
+\item 
+i2c\+\_\+master\+\_\+bus\+\_\+handle\+\_\+t \textbf{ bus\+\_\+handle\+\_\+esp32\+\_\+i2c\+\_\+config}
+\item 
+i2c\+\_\+master\+\_\+dev\+\_\+handle\+\_\+t \textbf{ device\+\_\+handle\+\_\+esp32\+\_\+i2c\+\_\+config} [\textbf{ I2\+C\+\_\+\+MAX\+\_\+\+Num\+\_\+of\+\_\+dev\+\_\+handles}]
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_common.c@{I2C\_common.c}!config\_rst\_pin\_i2c\_mux@{config\_rst\_pin\_i2c\_mux}}
+\index{config\_rst\_pin\_i2c\_mux@{config\_rst\_pin\_i2c\_mux}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{config\_rst\_pin\_i2c\_mux()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a793ef527029215fa4b7539adcc14e5e0} 
+void config\+\_\+rst\+\_\+pin\+\_\+i2c\+\_\+mux (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 297} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_add\_device@{I2C\_add\_device}}
+\index{I2C\_add\_device@{I2C\_add\_device}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_add\_device()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_ab80632e89563cc7cffa2bd9b6f301fcd} 
+void I2\+C\+\_\+add\+\_\+device (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{device\+\_\+address}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_master\_init@{I2C\_master\_init}}
+\index{I2C\_master\_init@{I2C\_master\_init}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_master\_init()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a195e5504c89aeda3a53f31710e405623} 
+void I2\+C\+\_\+master\+\_\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_readRegister16bit@{I2C\_readRegister16bit}}
+\index{I2C\_readRegister16bit@{I2C\_readRegister16bit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_readRegister16bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a795f59e507c5791c2e125c2f9a34f831} 
+uint16\+\_\+t I2\+C\+\_\+read\+Register16bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 220} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_readRegister32bit@{I2C\_readRegister32bit}}
+\index{I2C\_readRegister32bit@{I2C\_readRegister32bit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_readRegister32bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a6aea245d443d9090e23b331c086433b6} 
+uint32\+\_\+t I2\+C\+\_\+read\+Register32bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 236} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_readRegister8bit@{I2C\_readRegister8bit}}
+\index{I2C\_readRegister8bit@{I2C\_readRegister8bit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_readRegister8bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_ae9d6e477c0e54827a4bb9bbf8aa301d3} 
+uint8\+\_\+t I2\+C\+\_\+read\+Register8bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 210} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_receive@{I2C\_receive}}
+\index{I2C\_receive@{I2C\_receive}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_receive()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_aee26da50da18a761354c3d05c6ab0145} 
+void I2\+C\+\_\+receive (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t $\ast$}]{data}{, }\item[{size\+\_\+t}]{read\+\_\+size}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 153} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_select\_multiplexer\_channel@{I2C\_select\_multiplexer\_channel}}
+\index{I2C\_select\_multiplexer\_channel@{I2C\_select\_multiplexer\_channel}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_select\_multiplexer\_channel()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_aef48213de5230add491038aa4c4eb05a} 
+void I2\+C\+\_\+select\+\_\+multiplexer\+\_\+channel (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+devices\+\_\+mux}}]{num\+\_\+channel}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_transmit@{I2C\_transmit}}
+\index{I2C\_transmit@{I2C\_transmit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_transmit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_acd828c8912cd4c39d94408126b8ac7db} 
+void I2\+C\+\_\+transmit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{unsigned char $\ast$}]{data}{, }\item[{size\+\_\+t}]{write\+\_\+size}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 105} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_writeRegister16bit@{I2C\_writeRegister16bit}}
+\index{I2C\_writeRegister16bit@{I2C\_writeRegister16bit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_writeRegister16bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a08e5e4ac56fb1d15beeb7997e2fa97de} 
+void I2\+C\+\_\+write\+Register16bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint16\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 271} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_writeRegister32bit@{I2C\_writeRegister32bit}}
+\index{I2C\_writeRegister32bit@{I2C\_writeRegister32bit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_writeRegister32bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a4ba94f60644888082c968d910dd4c20e} 
+void I2\+C\+\_\+write\+Register32bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint32\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 283} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!I2C\_writeRegister8bit@{I2C\_writeRegister8bit}}
+\index{I2C\_writeRegister8bit@{I2C\_writeRegister8bit}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{I2C\_writeRegister8bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a122086f1509f736c9ccde786beb5b419} 
+void I2\+C\+\_\+write\+Register8bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 259} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!rst\_pin\_i2c\_mux\_off@{rst\_pin\_i2c\_mux\_off}}
+\index{rst\_pin\_i2c\_mux\_off@{rst\_pin\_i2c\_mux\_off}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{rst\_pin\_i2c\_mux\_off()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a0ac33d5cead56645b2d38faf5ff80e05} 
+void rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+off (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 306} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!rst\_pin\_i2c\_mux\_on@{rst\_pin\_i2c\_mux\_on}}
+\index{rst\_pin\_i2c\_mux\_on@{rst\_pin\_i2c\_mux\_on}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{rst\_pin\_i2c\_mux\_on()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a0606cd7138b8af0f8a5b55f87d85849e} 
+void rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+on (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 301} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!writeMultipleRegisters@{writeMultipleRegisters}}
+\index{writeMultipleRegisters@{writeMultipleRegisters}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{writeMultipleRegisters()}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a12e39c7748d800e1fc75f5242b56db82} 
+void write\+Multiple\+Registers (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{const uint8\+\_\+t($\ast$)}]{regs\+\_\+vals}{[2], }\item[{size\+\_\+t}]{count}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 204} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{I2C\_common.c@{I2C\_common.c}!bus\_handle\_esp32\_i2c\_config@{bus\_handle\_esp32\_i2c\_config}}
+\index{bus\_handle\_esp32\_i2c\_config@{bus\_handle\_esp32\_i2c\_config}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{bus\_handle\_esp32\_i2c\_config}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a7ddae96b23b9a5652bcac1bbcc2ebd29} 
+i2c\+\_\+master\+\_\+bus\+\_\+handle\+\_\+t bus\+\_\+handle\+\_\+esp32\+\_\+i2c\+\_\+config}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!device\_handle\_esp32\_i2c\_config@{device\_handle\_esp32\_i2c\_config}}
+\index{device\_handle\_esp32\_i2c\_config@{device\_handle\_esp32\_i2c\_config}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{device\_handle\_esp32\_i2c\_config}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_a9fc620c13c757764c70d47d6bfabdf90} 
+i2c\+\_\+master\+\_\+dev\+\_\+handle\+\_\+t device\+\_\+handle\+\_\+esp32\+\_\+i2c\+\_\+config[\textbf{ I2\+C\+\_\+\+MAX\+\_\+\+Num\+\_\+of\+\_\+dev\+\_\+handles}]}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.c@{I2C\_common.c}!esp32\_i2c\_config@{esp32\_i2c\_config}}
+\index{esp32\_i2c\_config@{esp32\_i2c\_config}!I2C\_common.c@{I2C\_common.c}}
+\doxysubsubsection{esp32\_i2c\_config}
+{\footnotesize\ttfamily \label{_i2_c__common_8c_aeaa85f14122a67a965fc43735fa7784e} 
+i2c\+\_\+master\+\_\+bus\+\_\+config\+\_\+t esp32\+\_\+i2c\+\_\+config}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ I2\+C\+\_\+common.\+c}.
+

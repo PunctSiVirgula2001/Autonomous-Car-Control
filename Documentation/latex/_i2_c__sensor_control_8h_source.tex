@@ -1,0 +1,64 @@
+\doxysection{I2\+C\+\_\+sensor\+Control.\+h}
+\label{_i2_c__sensor_control_8h_source}\index{include/I2C/I2C\_sensorControl.h@{include/I2C/I2C\_sensorControl.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_sensorControl.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ I2C\_SENSOR\_CONTROL\_H}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ I2C\_SENSOR\_CONTROL\_H}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}drivers/I2C\_accelerometerSensor.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}drivers/I2C\_cameraSensor.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}drivers/I2C\_distanceSensor.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}drivers/I2C\_temperatureSensor.h"{}}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ I2C\_WRR\_tokens}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ pixy2\ =\ 0,}
+\DoxyCodeLine{00019\ \ \ \ \ distance\_sens1\ =\ 0,}
+\DoxyCodeLine{00020\ \ \ \ \ distance\_sens2\ =\ 0,}
+\DoxyCodeLine{00021\ \ \ \ \ adxl\_acc\ =\ 0,}
+\DoxyCodeLine{00022\ \ \ \ \ temp\_sens\ =\ 1}
+\DoxyCodeLine{00023\ \}I2C\_WRR\_tokens;}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ SENSOR\_IDLE,}
+\DoxyCodeLine{00027\ \ \ \ \ SENSOR\_READING,}
+\DoxyCodeLine{00028\ \ \ \ \ SENSOR\_READY}
+\DoxyCodeLine{00029\ \}\ sensor\_state\_t;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ I2C\_NO\_STATE,}
+\DoxyCodeLine{00034\ \ \ I2C\_STOP\_MOTOR,}
+\DoxyCodeLine{00035\ \ \ I2C\_START\_MOTOR,}
+\DoxyCodeLine{00036\ \ \ I2C\_NEW\_STEER,}
+\DoxyCodeLine{00037\ \ \ I2C\_MOTOR\_OFFSET\_ACCELEROMETER}
+\DoxyCodeLine{00038\ \}I2C\_COMMAND\_TYPE;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00041\ \ \ \ \ I2C\_dev\_handles\ device\_handle;}
+\DoxyCodeLine{00042\ \ \ \ \ I2C\_devices\_mux\ mux;}
+\DoxyCodeLine{00043\ \ \ \ \ I2C\_WRR\_tokens\ tokens;}
+\DoxyCodeLine{00044\ \ \ \ \ I2C\_WRR\_tokens\ tokens\_remaining;}
+\DoxyCodeLine{00045\ \ \ \ \ sensor\_state\_t\ state;}
+\DoxyCodeLine{00046\ \}\ sensor\_t;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }I2C\_COMMAND\{}
+\DoxyCodeLine{00049\ \ \ I2C\_dev\_handles\ sendingSensor;}
+\DoxyCodeLine{00050\ \ \ I2C\_COMMAND\_TYPE\ command;}
+\DoxyCodeLine{00051\ \ \ uint16\_t\ commandValue;}
+\DoxyCodeLine{00052\ \}I2C\_COMMAND;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ start\_I2C\_devices\_task();}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{bool}\ I2C\_addAndInitialiseSensors();}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ I2C\_devices\_task(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ I2C\_SENSOR\_CONTROL\_H}}
+
+\end{DoxyCode}

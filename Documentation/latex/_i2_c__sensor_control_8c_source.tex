@@ -1,0 +1,271 @@
+\doxysection{I2\+C\+\_\+sensor\+Control.\+c}
+\label{_i2_c__sensor_control_8c_source}\index{src/I2C/I2C\_sensorControl.c@{src/I2C/I2C\_sensorControl.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_sensorControl.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}I2C\_sensorControl.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ QueueHandle\_t\ I2C\_commandQueue;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{extern}\ QueueHandle\_t\ autonomousModeControlPixyQueue;}
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{bool}\ I2C\_sensors\_initiated\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00013\ I2C\_COMMAND\ i2c\_command;}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{int}\ speed\_distance\_sens\_scaling;}
+\DoxyCodeLine{00015\ Pixy2Lines\ lines;}
+\DoxyCodeLine{00016\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{bool}\ AutonomousMode;}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ I2C\_devices\_task(\textcolor{keywordtype}{void}\ *pvParameters)\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{double}\ temp;}
+\DoxyCodeLine{00021\ \ \ \ \ I2C\_sensors\_initiated\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ Initialize\ ESP32\ as\ master.}}
+\DoxyCodeLine{00024\ \ \ \ \ I2C\_master\_init();}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}I2C\_sensors"{}},\ \textcolor{stringliteral}{"{}Sensors\ init\ start!"{}});}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{//\ Initialize\ sensors.}}
+\DoxyCodeLine{00028\ \ \ \ \ I2C\_sensors\_initiated\ =\ I2C\_addAndInitialiseSensors();}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordflow}{if}(I2C\_sensors\_initiated\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}I2C\_sensors"{}},\ \textcolor{stringliteral}{"{}Sensors\ init\ failed!"{}});}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}I2C\_sensors"{}},\ \textcolor{stringliteral}{"{}Sensors\ successfully\ initiated!"{}});}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Create\ structure\ for\ managing\ each\ sensor.}}
+\DoxyCodeLine{00035\ \ \ \ \ sensor\_t\ sensors[]\ =\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \{I2C\_distance\_sens1\_dev\_handle,\ I2C\_distance\_sens\_1\_mux,\ distance\_sens1,\ distance\_sens1,\ SENSOR\_IDLE\},}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \{I2C\_distance\_sens2\_dev\_handle,\ I2C\_distance\_sens\_2\_mux,\ distance\_sens2,\ distance\_sens2,\ SENSOR\_IDLE\},}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \{I2C\_adxl345\_sens\_dev\_handle,\ I2C\_adxl345\_sens\_mux,\ adxl\_acc,\ adxl\_acc,\ SENSOR\_IDLE\},}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \{I2C\_pixy2\_dev\_handle,\ I2C\_pixy2\_camera\_mux,\ pixy2,\ pixy2,\ SENSOR\_IDLE\},}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \{I2C\_temp\_sens\_dev\_handle,\ I2C\_temp\_sens\_mux,\ temp\_sens,\ temp\_sens,\ SENSOR\_IDLE\}}
+\DoxyCodeLine{00041\ \ \ \ \ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ I2C\_COMMAND\ i2c\_command\ =\ \{0,\ 0,\ 0\};}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ sensor\_count\ =\ \textcolor{keyword}{sizeof}(sensors)\ /\ \textcolor{keyword}{sizeof}(sensor\_t);}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ current\_sensor\_index\ =\ 0;}
+\DoxyCodeLine{00047\ \ \ \ \ sensor\_t\ *current\_sensor\ =\ \&sensors[current\_sensor\_index];}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOG("{}I2C\_TASK"{},"{}\%u\ ms"{},pdTICKS\_TO\_MS(xTaskGetTickCount()));}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Skip\ sensors\ with\ 0\ tokens}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (current\_sensor-\/>tokens\ ==\ 0)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor\_index\ =\ (current\_sensor\_index\ +\ 1)\ \%\ sensor\_count;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor\ =\ \&sensors[current\_sensor\_index];}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ uint16\_t\ readValSensor\_dist1\_prev\ =\ 0;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ readValSensor\_dist1\_final\ =\ 0;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ uint16\_t\ readValSensor\_dist2\_prev\ =\ 0;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ readValSensor\_dist2\_final\ =\ 0;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (current\_sensor-\/>state)\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ SENSOR\_IDLE:}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(current\_sensor-\/>mux);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(5));\ \textcolor{comment}{//\ Allow\ for\ multiplexer\ switch}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor-\/>state\ =\ SENSOR\_READING;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ SENSOR\_READING:}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (current\_sensor-\/>mux)\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens\_1\_mux:}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ readValSensor1;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ new\ sensor\ value}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readValSensor1\ =\ VL53L0X\_readRangeContinuousMillimeters(I2C\_distance\_sens1\_dev\_handle);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Apply\ low-\/pass\ filter}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readValSensor\_dist1\_final\ =\ readValSensor1;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//readValSensor\_dist1\_final\ =\ ALPHA\_VL53L0X\ *\ (double)readValSensor1\ +\ (1\ -\/\ ALPHA\_VL53L0X)\ *\ (double)readValSensor\_dist1\_prev;}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ previous\ value\ for\ the\ next\ iteration}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//readValSensor\_dist1\_prev\ =\ readValSensor1;}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Make\ a\ decision}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendCommandApp(DistSensFw,\ (\textcolor{keywordtype}{double}*)\&readValSensor\_dist1\_final,\ DOUBLE);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ countSendStop\_sens1\ =\ 0,countSendStart\_sens1\ =\ 0;}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(readValSensor\_dist1\_final\ <\ (Threshold\_dist\ *\ speed\_distance\_sens\_scaling)\ \&\&\ countSendStop\_sens1\ ==\ 0)}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStop\_sens1++;}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStart\_sens1=0;}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.command\ =\ I2C\_STOP\_MOTOR;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.commandValue\ =\ 0;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.sendingSensor\ =\ I2C\_distance\_sens1\_dev\_handle;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(I2C\_commandQueue,\&i2c\_command,pdMS\_TO\_TICKS(5000));}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}Sent\ STOP\ for\ forward\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (countSendStart\_sens1\ ==\ 0\ \&\&\ readValSensor\_dist1\_final\ >=\ (Threshold\_dist\ *\ speed\_distance\_sens\_scaling))}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStop\_sens1=0;}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStart\_sens1++;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.command\ =\ I2C\_START\_MOTOR;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.commandValue\ =\ 0;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.sendingSensor\ =\ I2C\_distance\_sens1\_dev\_handle;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(I2C\_commandQueue,\&i2c\_command,pdMS\_TO\_TICKS(5000));}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}Sent\ START\ for\ forward\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Log\ the\ filtered\ value}}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}I2C"{},\ "{}Range1:\ [\ \%.2lf\ ]"{},\ readValSensor\_dist1\_final);}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//vTaskDelay(pdMS\_TO\_TICKS(50));\ //\ Allow\ for\ multiplexer\ switch}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens\_2\_mux:}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ readValSensor2;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readValSensor2\ =\ VL53L0X\_readRangeContinuousMillimeters(current\_sensor-\/>device\_handle);}
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readValSensor\_dist2\_final\ =\ ALPHA\_VL53L0X\ *\ (double)readValSensor2\ +\ (1\ -\/\ ALPHA\_VL53L0X)\ *\ (double)readValSensor\_dist2\_prev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ //\ Update\ the\ previous\ value\ for\ the\ next\ iteration}}
+\DoxyCodeLine{00115\ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readValSensor\_dist2\_prev\ =\ readValSensor2;}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ readValSensor\_dist2\_final\ =\ readValSensor2;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendCommandApp(DistSensBw,\ (\textcolor{keywordtype}{double}*)\&readValSensor\_dist2\_final,\ DOUBLE);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ countSendStop\_sens2\ =\ 0,countSendStart\_sens2\ =\ 0;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(readValSensor\_dist2\_final\ <\ (Threshold\_dist\ *\ speed\_distance\_sens\_scaling)\ \&\&\ countSendStop\_sens2\ ==\ 0)}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStop\_sens2++;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStart\_sens2=0;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.command\ =\ I2C\_STOP\_MOTOR;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.commandValue\ =\ 0;}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.sendingSensor\ =\ I2C\_distance\_sens2\_dev\_handle;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(I2C\_commandQueue,\&i2c\_command,-\/1);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}Sent\ STOP\ for\ backward\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (countSendStart\_sens2\ ==\ 0\ \&\&\ readValSensor\_dist2\_final\ >=\ (Threshold\_dist\ *\ speed\_distance\_sens\_scaling))}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStop\_sens2=0;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ countSendStart\_sens2++;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.command\ =\ I2C\_START\_MOTOR;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.commandValue\ =\ 0;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_command.sendingSensor\ =\ I2C\_distance\_sens2\_dev\_handle;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(I2C\_commandQueue,\&i2c\_command,-\/1);}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Log\ the\ filtered\ value}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}I2C"{},\ "{}Range2:\ [\ \%.2lf\ ]"{},\ readValSensor\_dist2\_final);}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_adxl345\_sens\_mux:\ \textcolor{comment}{//\ if}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ x,\ y,\ z;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ roll\_init\_offset\ =\ 0,\ pitch\_init\_offset\ =\ 0,\ count\ =\ 0;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ init\_offset\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_read\_adxl345\_data(current\_sensor-\/>device\_handle,\ \&x,\ \&y,\ \&z);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ roll\ and\ pitch}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ roll\ =\ atan2(y,\ sqrt(x\ *\ x\ +\ z\ *\ z))\ *\ 180.0\ /\ M\_PI;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ pitch\ =\ atan2(-\/x,\ sqrt(y\ *\ y\ +\ z\ *\ z))\ *\ 180.0\ /\ M\_PI;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ roll\_prev=0,\ pitch\_prev=0,\ roll\_final\ =\ 0,\ pitch\_final\ =\ 0;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(init\_offset\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(count<6)}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ init\_offset\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roll\_init\_offset\ =\ roll;}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pitch\_init\_offset\ =\ pitch;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roll\ -\/=roll\_init\_offset;}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pitch\ -\/=pitch\_init\_offset;}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Apply\ low\ pass\ filter\ */}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roll\_final\ =\ ALPHA\_ADXL\ *\ (double)roll\ +\ (1\ -\/\ ALPHA\_ADXL)\ *\ (double)roll\_prev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ previous\ value\ for\ the\ next\ iteration}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ roll\_prev\ =\ roll;}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pitch\_final\ =\ ALPHA\_ADXL\ *\ (double)pitch\ +\ (1\ -\/\ ALPHA\_ADXL)\ *\ (double)pitch\_prev;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ the\ previous\ value\ for\ the\ next\ iteration}}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pitch\_prev\ =\ pitch;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}I2C"{},\ "{}Orientation\ roll=\%lf\ pitch=\%lf\ "{},\ roll\_final,\ pitch\_final);}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendCommandApp(ADXL\_ROLL,\ (\textcolor{keywordtype}{double}*)\&roll\_final,\ DOUBLE);}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendCommandApp(ADXL\_PITCH,\ (\textcolor{keywordtype}{double}*)\&pitch\_final,\ DOUBLE);}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_pixy2\_camera\_mux:}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#if\ (PIXY\_DETECTION\ ==\ ON)}}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ goodVecLeft\ =\ \{0\};}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector\ \ goodVecRight\ =\ \{0\};}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pixy2Commands\ commandAutonomous;}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ left\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ right\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ getPixy2Lines(I2C\_pixy2\_dev\_handle,\ LINE\_VECTOR\ ,\ \textcolor{keyword}{true},\ \&lines);\ \textcolor{comment}{//\ Get\ all\ features\ (vectors,\ intersections,\ barcodes)\ with\ wait}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ left\ =\ getBestVectorLeft(\&lines,\ \&goodVecLeft);}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ right\ =\ getBestVectorRight(\&lines,\ \&goodVecRight);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ computeSpeedAndSteer(goodVecLeft,\ goodVecRight,\ left,\ right,\ \&commandAutonomous);}
+\DoxyCodeLine{00190\ \textcolor{keywordflow}{if}(AutonomousMode\ ==\ \textcolor{keyword}{true})\{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xQueueSend(autonomousModeControlPixyQueue,\ \&commandAutonomous.computedSpeedSetpoint,\ portMAX\_DELAY)\ !=\ pdPASS)\ \{}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}Error\ uart"{}},\ \textcolor{stringliteral}{"{}Unable\ to\ send\ to\ queue"{}});}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xQueueSend(autonomousModeControlPixyQueue,\ \&commandAutonomous.computedSteerSetpoint,\ portMAX\_DELAY)\ !=\ pdPASS)\ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}Error\ uart"{}},\ \textcolor{stringliteral}{"{}Unable\ to\ send\ to\ queue"{}});}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00197\ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_temp\_sens\_mux:}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_read\_temperature(\&temp);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}I2C"{},\ "{}Temp:\ [\ \%lf\ ]"{},\ temp);}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendCommandApp(TEMPERATURE,\ (\textcolor{keywordtype}{double}*)\&temp,\ DOUBLE);}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor-\/>state\ =\ SENSOR\_READY;}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ SENSOR\_READY:}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (-\/-\/current\_sensor-\/>tokens\_remaining\ ==\ 0)\ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor-\/>tokens\_remaining\ =\ current\_sensor-\/>tokens;}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor-\/>state\ =\ SENSOR\_IDLE;}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor\_index\ =\ (current\_sensor\_index\ +\ 1)\ \%\ sensor\_count;}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor\ =\ \&sensors[current\_sensor\_index];}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_sensor-\/>state\ =\ SENSOR\_IDLE;}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(1));}
+\DoxyCodeLine{00226\ \ \ \ \ \}}
+\DoxyCodeLine{00227\ \}}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \textcolor{keywordtype}{bool}\ I2C\_addAndInitialiseSensors()}
+\DoxyCodeLine{00231\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ config\_rst\_pin\_i2c\_mux();\ \ \ \ \ \ \ \textcolor{comment}{//\ config\ rst\ pin\ for\ the\ mux}}
+\DoxyCodeLine{00233\ \ \ \ \ rst\_pin\_i2c\_mux\_off();\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ rst\ pin\ on}}
+\DoxyCodeLine{00234\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(2000));}
+\DoxyCodeLine{00235\ \ \ \ \ rst\_pin\_i2c\_mux\_on();\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ rst\ pin\ on}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{comment}{//Add\ sensors}}
+\DoxyCodeLine{00238\ \ \ \ \ I2C\_add\_device(I2C\_mux\_addr);\textcolor{comment}{//\ add\ the\ multiplexer\ to\ the\ I2C\ bus}}
+\DoxyCodeLine{00239\ \ \ \ \ I2C\_add\_device(I2C\_temp\_sens\_addr);}
+\DoxyCodeLine{00240\ \ \ \ \ I2C\_add\_device(I2C\_distance\_sens\_addr);}
+\DoxyCodeLine{00241\ \ \ \ \ I2C\_add\_device(I2C\_adxl345\_sens\_addr);}
+\DoxyCodeLine{00242\ \ \ \ \ I2C\_add\_device(I2C\_pixy2\_camera\_addr);}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{comment}{//Check\ Pixy2\ camera\ version}}
+\DoxyCodeLine{00245\ \ \ \ \ requestPixy2Version(I2C\_pixy2\_dev\_handle);}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{comment}{//Init\ sensors}}
+\DoxyCodeLine{00248\ \ \ \ \ I2C\_adxl345\_init(I2C\_adxl345\_sens\_dev\_handle);}
+\DoxyCodeLine{00249\ \ \ \ \ I2C\_adxl345\_setRate(I2C\_adxl345\_sens\_dev\_handle,\ ADXL1345\_READ\_RATE);}
+\DoxyCodeLine{00250\ \ \ \ \ I2C\_temperatureSensor\_trigger\_measurement();}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordtype}{bool}\ dist\_sens\_init\ =\ VL53L0X\_Init(I2C\_distance\_sens2\_dev\_handle);}
+\DoxyCodeLine{00252\ \ \ \ \ \textcolor{keywordflow}{while}(dist\_sens\_init\ ==\ \textcolor{keyword}{false})\ \{vTaskDelay(pdMS\_TO\_TICKS(50));\}}
+\DoxyCodeLine{00253\ \ \ \ \ dist\_sens\_init\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00254\ \ \ \ \ dist\_sens\_init\ =\ VL53L0X\_Init(I2C\_distance\_sens1\_dev\_handle);}
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordflow}{while}(dist\_sens\_init\ ==\ \textcolor{keyword}{false})\ \{vTaskDelay(pdMS\_TO\_TICKS(50));\}}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00258\ \}}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00260\ \textcolor{keywordtype}{void}\ start\_I2C\_devices\_task()}
+\DoxyCodeLine{00261\ \{}
+\DoxyCodeLine{00262\ \ \ \ \ xTaskCreatePinnedToCore(I2C\_devices\_task,\ \textcolor{stringliteral}{"{}I2C\_devices\_task"{}},\ 4096,\ NULL,\ 7,\ NULL,\ 0);}
+\DoxyCodeLine{00263\ \}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ }
+
+\end{DoxyCode}

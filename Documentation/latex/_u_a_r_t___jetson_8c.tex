@@ -1,0 +1,90 @@
+\doxysection{src/\+UART\+\_\+\+Jetson.c File Reference}
+\label{_u_a_r_t___jetson_8c}\index{src/UART\_Jetson.c@{src/UART\_Jetson.c}}
+{\ttfamily \#include "{}UART\+\_\+\+Jetson.\+h"{}}\newline
+{\ttfamily \#include "{}Motor\+And\+Servo\+Control.\+h"{}}\newline
+Include dependency graph for UART\+\_\+\+Jetson.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ Jetson\+Uart\+Config} ()
+\item 
+void \textbf{ uart\+\_\+\+Jetson\+\_\+\+Task} (void $\ast$params)
+\item 
+void \textbf{ start\+\_\+\+Uart\+Jetson\+\_\+task} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ Autonomous\+Mode}
+\item 
+Queue\+Handle\+\_\+t \textbf{ uart\+Jetson\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ autonomous\+Mode\+Control\+Uart\+Queue}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{UART\_Jetson.c@{UART\_Jetson.c}!JetsonUartConfig@{JetsonUartConfig}}
+\index{JetsonUartConfig@{JetsonUartConfig}!UART\_Jetson.c@{UART\_Jetson.c}}
+\doxysubsubsection{JetsonUartConfig()}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8c_ae4c5f3d1df2e79904d4e12cb88ade1b9} 
+void Jetson\+Uart\+Config (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+
+\index{UART\_Jetson.c@{UART\_Jetson.c}!start\_UartJetson\_task@{start\_UartJetson\_task}}
+\index{start\_UartJetson\_task@{start\_UartJetson\_task}!UART\_Jetson.c@{UART\_Jetson.c}}
+\doxysubsubsection{start\_UartJetson\_task()}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8c_a95f2115a47f33b4cf7c628a79d6b914a} 
+void start\+\_\+\+Uart\+Jetson\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+
+\index{UART\_Jetson.c@{UART\_Jetson.c}!uart\_Jetson\_Task@{uart\_Jetson\_Task}}
+\index{uart\_Jetson\_Task@{uart\_Jetson\_Task}!UART\_Jetson.c@{UART\_Jetson.c}}
+\doxysubsubsection{uart\_Jetson\_Task()}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8c_ad9e288d6023d9fc1385c3a974f95c03a} 
+void uart\+\_\+\+Jetson\+\_\+\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{params}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{UART\_Jetson.c@{UART\_Jetson.c}!AutonomousMode@{AutonomousMode}}
+\index{AutonomousMode@{AutonomousMode}!UART\_Jetson.c@{UART\_Jetson.c}}
+\doxysubsubsection{AutonomousMode}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8c_aaa8698890fe268d44ede1ad83c711ffb} 
+bool Autonomous\+Mode\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{UART\_Jetson.c@{UART\_Jetson.c}!autonomousModeControlUartQueue@{autonomousModeControlUartQueue}}
+\index{autonomousModeControlUartQueue@{autonomousModeControlUartQueue}!UART\_Jetson.c@{UART\_Jetson.c}}
+\doxysubsubsection{autonomousModeControlUartQueue}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8c_a692b48efecf30c3cea7e1271c249b331} 
+Queue\+Handle\+\_\+t autonomous\+Mode\+Control\+Uart\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 104} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{UART\_Jetson.c@{UART\_Jetson.c}!uartJetsonQueue@{uartJetsonQueue}}
+\index{uartJetsonQueue@{uartJetsonQueue}!UART\_Jetson.c@{UART\_Jetson.c}}
+\doxysubsubsection{uartJetsonQueue}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8c_af9a3a2b3a4cb5323c872e9ee13b15827} 
+Queue\+Handle\+\_\+t uart\+Jetson\+Queue}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+

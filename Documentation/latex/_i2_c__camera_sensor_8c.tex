@@ -1,0 +1,158 @@
+\doxysection{src/\+I2\+C/drivers/\+I2\+C\+\_\+camera\+Sensor.c File Reference}
+\label{_i2_c__camera_sensor_8c}\index{src/I2C/drivers/I2C\_cameraSensor.c@{src/I2C/drivers/I2C\_cameraSensor.c}}
+{\ttfamily \#include "{}I2\+C\+\_\+camera\+Sensor.\+h"{}}\newline
+{\ttfamily \#include "{}Motor\+And\+Servo\+Control.\+h"{}}\newline
+{\ttfamily \#include "{}PID.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+log.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+camera\+Sensor.\+c\+:
+% FIG 0
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ TAG}~"{}PIXY2"{}
+\item 
+\#define \textbf{ MAX\+\_\+\+VECTORS}~100
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ request\+Pixy2\+Version} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} pixy2\+\_\+handle)
+\item 
+void \textbf{ set\+Pixy2\+Camera\+Brightness} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} pixy2\+\_\+handle, uint8\+\_\+t brightness)
+\item 
+void \textbf{ set\+Pixy2\+LED} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} pixy2\+\_\+handle, uint8\+\_\+t r, uint8\+\_\+t g, uint8\+\_\+t b)
+\item 
+void \textbf{ set\+Pixy2\+Lamp} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} pixy2\+\_\+handle, uint8\+\_\+t upper, uint8\+\_\+t lower)
+\item 
+void \textbf{ get\+Pixy2\+Lines} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} pixy2\+\_\+handle, uint8\+\_\+t features, bool wait, \textbf{ Pixy2\+Lines} $\ast$\textbf{ lines})
+\item 
+bool \textbf{ get\+Best\+Vector\+Left} (\textbf{ Pixy2\+Lines} $\ast$\textbf{ lines}, \textbf{ Vector} $\ast$vec)
+\item 
+bool \textbf{ get\+Best\+Vector\+Right} (\textbf{ Pixy2\+Lines} $\ast$\textbf{ lines}, \textbf{ Vector} $\ast$vec)
+\item 
+void \textbf{ compute\+Speed\+And\+Steer} (\textbf{ Vector} vec\+Left, \textbf{ Vector} vec\+Right, bool exists\+Good\+Vec\+Left, bool exists\+Good\+Vec\+Right, \textbf{ pixy2\+Commands} $\ast$commands)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Handle\+\_\+t \textbf{ autonomous\+Mode\+Control\+Pixy\+Queue}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!MAX\_VECTORS@{MAX\_VECTORS}}
+\index{MAX\_VECTORS@{MAX\_VECTORS}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{MAX\_VECTORS}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_af4f906437da52520077add92dc3de52e} 
+\#define MAX\+\_\+\+VECTORS~100}
+
+
+
+Definition at line \textbf{ 98} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!TAG@{TAG}}
+\index{TAG@{TAG}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{TAG}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_afc3d101f633a076cc1ca84b85b6224b2} 
+\#define TAG~"{}PIXY2"{}}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!computeSpeedAndSteer@{computeSpeedAndSteer}}
+\index{computeSpeedAndSteer@{computeSpeedAndSteer}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{computeSpeedAndSteer()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_ae51dba7e896d5485d4aaf8a4247438bb} 
+void compute\+Speed\+And\+Steer (\begin{DoxyParamCaption}\item[{\textbf{ Vector}}]{vec\+Left}{, }\item[{\textbf{ Vector}}]{vec\+Right}{, }\item[{bool}]{exists\+Good\+Vec\+Left}{, }\item[{bool}]{exists\+Good\+Vec\+Right}{, }\item[{\textbf{ pixy2\+Commands} $\ast$}]{commands}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 215} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!getBestVectorLeft@{getBestVectorLeft}}
+\index{getBestVectorLeft@{getBestVectorLeft}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{getBestVectorLeft()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a159c619bbd072d296d8caf684332b02a} 
+bool get\+Best\+Vector\+Left (\begin{DoxyParamCaption}\item[{\textbf{ Pixy2\+Lines} $\ast$}]{lines}{, }\item[{\textbf{ Vector} $\ast$}]{vec}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 161} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!getBestVectorRight@{getBestVectorRight}}
+\index{getBestVectorRight@{getBestVectorRight}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{getBestVectorRight()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a7a16c5ef87bf82cd88751462ced8c749} 
+bool get\+Best\+Vector\+Right (\begin{DoxyParamCaption}\item[{\textbf{ Pixy2\+Lines} $\ast$}]{lines}{, }\item[{\textbf{ Vector} $\ast$}]{vec}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 188} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!getPixy2Lines@{getPixy2Lines}}
+\index{getPixy2Lines@{getPixy2Lines}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{getPixy2Lines()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a59aa0718e545daa3e789822a7083071a} 
+void get\+Pixy2\+Lines (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{pixy2\+\_\+handle}{, }\item[{uint8\+\_\+t}]{features}{, }\item[{bool}]{wait}{, }\item[{\textbf{ Pixy2\+Lines} $\ast$}]{lines}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 100} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!requestPixy2Version@{requestPixy2Version}}
+\index{requestPixy2Version@{requestPixy2Version}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{requestPixy2Version()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a017600a7956da0f432bbd877932f6ac2} 
+void request\+Pixy2\+Version (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{pixy2\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!setPixy2CameraBrightness@{setPixy2CameraBrightness}}
+\index{setPixy2CameraBrightness@{setPixy2CameraBrightness}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{setPixy2CameraBrightness()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a787fec0fc98224e131b01cdefb3cb8ed} 
+void set\+Pixy2\+Camera\+Brightness (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{pixy2\+\_\+handle}{, }\item[{uint8\+\_\+t}]{brightness}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 63} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!setPixy2Lamp@{setPixy2Lamp}}
+\index{setPixy2Lamp@{setPixy2Lamp}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{setPixy2Lamp()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a3a0289ef7a1f4c39e1136f055d5aa52c} 
+void set\+Pixy2\+Lamp (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{pixy2\+\_\+handle}{, }\item[{uint8\+\_\+t}]{upper}{, }\item[{uint8\+\_\+t}]{lower}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!setPixy2LED@{setPixy2LED}}
+\index{setPixy2LED@{setPixy2LED}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{setPixy2LED()}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_a7605d4b46b66c3378b326dbd298af8eb} 
+void set\+Pixy2\+LED (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{pixy2\+\_\+handle}{, }\item[{uint8\+\_\+t}]{r}{, }\item[{uint8\+\_\+t}]{g}{, }\item[{uint8\+\_\+t}]{b}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 75} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{I2C\_cameraSensor.c@{I2C\_cameraSensor.c}!autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}}
+\index{autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}!I2C\_cameraSensor.c@{I2C\_cameraSensor.c}}
+\doxysubsubsection{autonomousModeControlPixyQueue}
+{\footnotesize\ttfamily \label{_i2_c__camera_sensor_8c_ae0a77b0cf83af5755b406387533338e7} 
+Queue\+Handle\+\_\+t autonomous\+Mode\+Control\+Pixy\+Queue}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+

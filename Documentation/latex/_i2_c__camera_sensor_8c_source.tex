@@ -1,0 +1,316 @@
+\doxysection{I2\+C\+\_\+camera\+Sensor.\+c}
+\label{_i2_c__camera_sensor_8c_source}\index{src/I2C/drivers/I2C\_cameraSensor.c@{src/I2C/drivers/I2C\_cameraSensor.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_cameraSensor.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}I2C\_cameraSensor.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}MotorAndServoControl.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}PID.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}esp\_log.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ TAG\ "{}PIXY2"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ QueueHandle\_t\ autonomousModeControlPixyQueue;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ Function\ to\ send\ a\ request\ packet\ to\ Pixy2\ camera}}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ requestPixy2Version(I2C\_dev\_handles\ pixy2\_handle)\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ uint8\_t\ requestPacket[4]\ =\ \{0xae,\ 0xc1,\ 0x0e,\ 0x00\};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ Select\ the\ Pixy2\ camera\ channel\ on\ the\ multiplexer}}
+\DoxyCodeLine{00022\ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ request\ packet\ to\ Pixy2}}
+\DoxyCodeLine{00025\ \ \ \ \ I2C\_transmit(pixy2\_handle,\ requestPacket,\ \textcolor{keyword}{sizeof}(requestPacket));}
+\DoxyCodeLine{00026\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Sent\ request\ packet\ to\ Pixy2"{}});}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{//\ Prepare\ to\ receive\ the\ response}}
+\DoxyCodeLine{00029\ \ \ \ \ uint8\_t\ responsePacket[20];\ \textcolor{comment}{//\ Adjust\ size\ based\ on\ expected\ response\ length}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ Receive\ the\ response\ packet\ from\ Pixy2}}
+\DoxyCodeLine{00032\ \ \ \ \ I2C\_receive(pixy2\_handle,\ responsePacket,\ \textcolor{keyword}{sizeof}(responsePacket));}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Print\ the\ response\ for\ debugging}}
+\DoxyCodeLine{00035\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Received\ response\ packet\ from\ Pixy2:"{}});}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ \textcolor{keyword}{sizeof}(responsePacket);\ i++)\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}0x\%02x\ "{}},\ responsePacket[i]);}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{comment}{//\ Parse\ and\ print\ the\ version\ information\ from\ the\ response\ packet}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordflow}{if}\ (responsePacket[0]\ ==\ 0xaf\ \&\&\ responsePacket[1]\ ==\ 0xc1)\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Checksum\ sync\ bytes\ matched"{}});}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (responsePacket[2]\ ==\ 0x0f)\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}This\ is\ a\ different\ response\ type:\ 0x0f"{}});}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ specific\ handling\ for\ 0x0f\ response\ type\ if\ known}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (responsePacket[2]\ ==\ 0x0e)\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Version\ response\ type\ matched"{}});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Hardware\ Version:\ \%d.\%d"{}},\ responsePacket[6],\ responsePacket[7]);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Firmware\ Version:\ \%d.\%d"{}},\ responsePacket[8],\ responsePacket[9]);}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Firmware\ Build\ Number:\ \%d"{}},\ (responsePacket[10]\ |\ (responsePacket[11]\ <<\ 8)));}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Firmware\ Type:\ "{}});}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 12;\ i\ <\ 12\ +\ 10;\ i++)\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}\%c"{}},\ responsePacket[i]);}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Unexpected\ response\ type:\ 0x\%02x"{}},\ responsePacket[2]);}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Invalid\ response\ from\ Pixy2"{}});}
+\DoxyCodeLine{00060\ \ \ \ \ \}}
+\DoxyCodeLine{00061\ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ setPixy2CameraBrightness(I2C\_dev\_handles\ pixy2\_handle,\ uint8\_t\ brightness)\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ uint8\_t\ requestPacket[5]\ =\ \{0xae,\ 0xc1,\ PIXY2\_REQUEST\_SET\_CAMERA\_BRIGHTNESS,\ 0x01,\ brightness\};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//\ Select\ the\ Pixy2\ camera\ channel\ on\ the\ multiplexer}}
+\DoxyCodeLine{00067\ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ request\ packet\ to\ Pixy2}}
+\DoxyCodeLine{00070\ \ \ \ \ I2C\_transmit(pixy2\_handle,\ requestPacket,\ \textcolor{keyword}{sizeof}(requestPacket));}
+\DoxyCodeLine{00071\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Sent\ set\ camera\ brightness\ request\ to\ Pixy2"{}});}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ setPixy2LED(I2C\_dev\_handles\ pixy2\_handle,\ uint8\_t\ r,\ uint8\_t\ g,\ uint8\_t\ b)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ uint8\_t\ requestPacket[7]\ =\ \{0xae,\ 0xc1,\ PIXY2\_REQUEST\_SET\_LED,\ 0x03,\ r,\ g,\ b\};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{//\ Select\ the\ Pixy2\ camera\ channel\ on\ the\ multiplexer}}
+\DoxyCodeLine{00079\ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ request\ packet\ to\ Pixy2}}
+\DoxyCodeLine{00082\ \ \ \ \ I2C\_transmit(pixy2\_handle,\ requestPacket,\ \textcolor{keyword}{sizeof}(requestPacket));}
+\DoxyCodeLine{00083\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Sent\ set\ LED\ request\ to\ Pixy2"{}});}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ setPixy2Lamp(I2C\_dev\_handles\ pixy2\_handle,\ uint8\_t\ upper,\ uint8\_t\ lower)\ \{}
+\DoxyCodeLine{00087\ \ \ \ \ uint8\_t\ requestPacket[6]\ =\ \{0xae,\ 0xc1,\ PIXY2\_REQUEST\_SET\_LAMP,\ 0x02,\ upper,\ lower\};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{comment}{//\ Select\ the\ Pixy2\ camera\ channel\ on\ the\ multiplexer}}
+\DoxyCodeLine{00090\ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ request\ packet\ to\ Pixy2}}
+\DoxyCodeLine{00093\ \ \ \ \ I2C\_transmit(pixy2\_handle,\ requestPacket,\ \textcolor{keyword}{sizeof}(requestPacket));}
+\DoxyCodeLine{00094\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Sent\ set\ lamp\ request\ to\ Pixy2"{}});}
+\DoxyCodeLine{00095\ \}}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#define\ MAX\_VECTORS\ 100}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{void}\ getPixy2Lines(I2C\_dev\_handles\ pixy2\_handle,\ uint8\_t\ features,\ \textcolor{keywordtype}{bool}\ wait,\ Pixy2Lines\ *lines)\ \{}
+\DoxyCodeLine{00101\ \ \ \ \ uint8\_t\ requestPacket[6]\ =\ \{0xae,\ 0xc1,\ 48,\ 2,\ features,\ wait\};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//\ Select\ the\ Pixy2\ camera\ channel\ on\ the\ multiplexer}}
+\DoxyCodeLine{00104\ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ request\ packet\ to\ Pixy2}}
+\DoxyCodeLine{00107\ \ \ \ \ I2C\_transmit(pixy2\_handle,\ requestPacket,\ \textcolor{keyword}{sizeof}(requestPacket));}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{//ESP\_LOGI(TAG,\ "{}Sent\ get\ main\ features\ request\ to\ Pixy2"{});}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//\ Prepare\ to\ receive\ the\ response}}
+\DoxyCodeLine{00111\ \ \ \ \ uint8\_t\ responsePacket[100];\ \textcolor{comment}{//\ Adjust\ size\ based\ on\ expected\ response\ length}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{comment}{//\ Receive\ the\ response\ packet\ from\ Pixy2}}
+\DoxyCodeLine{00114\ \ \ \ \ I2C\_receive(pixy2\_handle,\ responsePacket,\ \textcolor{keyword}{sizeof}(responsePacket));}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{comment}{//\ Initialize\ the\ number\ of\ vectors\ to\ 0}}
+\DoxyCodeLine{00117\ \ \ \ \ lines-\/>numVectors\ =\ 0;}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ Validate\ sync\ and\ packet\ type}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordflow}{if}\ (responsePacket[0]\ ==\ 0xaf\ \&\&\ responsePacket[1]\ ==\ 0xc1\ \&\&\ responsePacket[2]\ ==\ 49)\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ uint8\_t\ payloadLength\ =\ responsePacket[3];\ \textcolor{comment}{//\ payload\ length\ is\ 1\ byte}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ total\ length\ to\ read}}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ totalLength\ =\ 4\ +\ payloadLength;\ \textcolor{comment}{//\ Includes\ the\ headers\ before\ payload}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ index\ =\ 6;\ \textcolor{comment}{//\ Start\ after\ the\ checksum\ (bytes\ 4-\/5)}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (index\ <\ totalLength)\ \{}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ featureType\ =\ responsePacket[index];}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ featureLength\ =\ responsePacket[index\ +\ 1];}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t*\ featureData\ =\ \&responsePacket[index\ +\ 2];}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Loop\ through\ each\ vector\ in\ this\ feature}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (featureType\ ==\ LINE\_VECTOR)\ \{}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ numberOfVectors\ =\ featureLength\ /\ 6;\ \textcolor{comment}{//\ Each\ vector\ is\ 6\ bytes}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ numberOfVectors;\ i++)\ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ offset\ =\ i\ *\ 6;}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ x0\ =\ featureData[offset];}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ y0\ =\ featureData[offset\ +\ 1];}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ x1\ =\ featureData[offset\ +\ 2];}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ y1\ =\ featureData[offset\ +\ 3];}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ vectorIndex\ =\ featureData[offset\ +\ 4];}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lines-\/>numVectors\ <\ MAX\_VECTORS)\ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lines-\/>vectors[lines-\/>numVectors].x0\ =\ x0;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lines-\/>vectors[lines-\/>numVectors].y0\ =\ HEIGHT\ -\/\ y0;\ \textcolor{comment}{//\ The\ vectors\ have\ the\ coordinate\ starting\ in\ the\ top-\/left\ corner.}}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lines-\/>vectors[lines-\/>numVectors].x1\ =\ x1;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lines-\/>vectors[lines-\/>numVectors].y1\ =\ HEIGHT\ -\/\ y1;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lines-\/>vectors[lines-\/>numVectors].index\ =\ vectorIndex;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ lines-\/>numVectors++;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ index\ +=\ 2\ +\ featureLength;\ \textcolor{comment}{//\ Move\ to\ the\ next\ feature}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI(TAG,\ "{}Invalid\ response\ from\ Pixy2"{});}}
+\DoxyCodeLine{00158\ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{bool}\ getBestVectorLeft(Pixy2Lines\ *lines,\ Vector\ *vec)\ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{bool}\ found\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordtype}{double}\ maxLength\ =\ 0;}
+\DoxyCodeLine{00164\ \ \ \ \ \textcolor{keywordtype}{double}\ minSlopeThreshold\ =\ 0.35;\ \ \textcolor{comment}{//\ Lowered\ threshold\ to\ include\ nearly\ horizontal\ lines}}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ lines-\/>numVectors;\ i++)\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ Vector\ v\ =\ lines-\/>vectors[i];}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ midpoint\ =\ (v.x0\ +\ v.x1)\ /\ 2.0;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (midpoint\ <=\ 39)\ \{}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ (double)(v.x1\ -\/\ v.x0);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ (double)(v.y1\ -\/\ v.y0);}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ slope\ =\ dx\ ==\ 0\ ?\ INFINITY\ :\ dy\ /\ dx;\ \ \textcolor{comment}{//\ Handle\ vertical\ lines\ safely}}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ length\ =\ sqrt(dx\ *\ dx\ +\ dy\ *\ dy);}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ absSlope\ =\ fabs(slope);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Consider\ vectors\ with\ very\ low\ slope\ if\ they\ are\ long\ enough}}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((absSlope\ >=\ minSlopeThreshold\ ||\ length\ >\ 50)\ \&\&\ length\ >\ maxLength)\ \{\ \ \textcolor{comment}{//\ Arbitrary\ length\ threshold}}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxLength\ =\ length;}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *vec\ =\ v;}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ found\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00183\ \ \ \ \ \}}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{keywordflow}{return}\ found;}
+\DoxyCodeLine{00185\ \}}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ }
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{bool}\ getBestVectorRight(Pixy2Lines\ *lines,\ Vector\ *vec)\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keywordtype}{bool}\ found\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordtype}{double}\ maxLength\ =\ 0;}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordtype}{double}\ minSlopeThreshold\ =\ 0.35;\ \ \textcolor{comment}{//\ Consistent\ threshold\ with\ left\ vector\ function}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ lines-\/>numVectors;\ i++)\ \{}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ Vector\ v\ =\ lines-\/>vectors[i];}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ midpoint\ =\ (v.x0\ +\ v.x1)\ /\ 2.0;}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (midpoint\ >\ 39)\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ (double)(v.x1\ -\/\ v.x0);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ (double)(v.y1\ -\/\ v.y0);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ slope\ =\ dx\ ==\ 0\ ?\ INFINITY\ :\ dy\ /\ dx;\ \ \textcolor{comment}{//\ Handle\ vertical\ lines\ safely}}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ length\ =\ sqrt(dx\ *\ dx\ +\ dy\ *\ dy);}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ absSlope\ =\ fabs(slope);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((absSlope\ >=\ minSlopeThreshold\ ||\ length\ >\ 50)\ \&\&\ length\ >\ maxLength)\ \{}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ maxLength\ =\ length;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *vec\ =\ v;}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ found\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00209\ \ \ \ \ \}}
+\DoxyCodeLine{00210\ \ \ \ \ \textcolor{keywordflow}{return}\ found;}
+\DoxyCodeLine{00211\ \}}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \textcolor{keywordtype}{void}\ computeSpeedAndSteer(Vector\ vecLeft,\ Vector\ vecRight,\ \textcolor{keywordtype}{bool}\ existsGoodVecLeft,\ \textcolor{keywordtype}{bool}\ existsGoodVecRight,\ pixy2Commands\ *commands)\ \{}
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ lastSteer\ =\ 50;\ \ \textcolor{comment}{//\ Neutral\ position}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ lastSpeed\ =\ 0;}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordtype}{float}\ frameWidth\ =\ 78.0;\ \ \textcolor{comment}{//\ Frame\ width\ assumption}}
+\DoxyCodeLine{00219\ \ \ \ \ \textcolor{keywordtype}{float}\ frameHeight\ =\ 52.0;}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keywordtype}{float}\ frame\_center\ =\ 39.0;\ \textcolor{comment}{//\ Central\ position\ of\ the\ frame\ to\ respect}}
+\DoxyCodeLine{00221\ \ \ \ \ \textcolor{comment}{//\ Determine\ number\ of\ good\ vectors\ detected}}
+\DoxyCodeLine{00222\ \ \ \ \ \textcolor{keywordtype}{int}\ numVectors\ =\ (existsGoodVecLeft\ ?\ 1\ :\ 0)\ +\ (existsGoodVecRight\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordflow}{switch}\ (numVectors)\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ No\ vectors\ detected}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ commands-\/>computedSteerSetpoint\ =\ lastSteer;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ commands-\/>computedSpeedSetpoint\ =\ (uint8\_t)(0.7\ *\ 30);\ \textcolor{comment}{//\ Reduce\ speed\ significantly}}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ Vector\ single\_vec;}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (existsGoodVecRight)\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ single\_vec\ =\ vecRight;}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ single\_vec\ =\ vecLeft;}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ slope\ of\ the\ detected\ vector}}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ single\_vec\_slope\ =\ (float)(single\_vec.y1\ -\/\ single\_vec.y0)\ /\ (float)(single\_vec.x1\ -\/\ single\_vec.x0);}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ single\_vec\_midpoint\_x\ =\ (float)(single\_vec.x1\ +\ single\_vec.x0)\ /\ 2;}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ estimated\_lane\_width\ =\ 78.0f;}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ estimated\_other\_boundary\_midpoint\_x;}
+\DoxyCodeLine{00246\ }
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (single\_vec\_slope\ >\ 0)\ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ estimated\_other\_boundary\_midpoint\_x\ =\ single\_vec\_midpoint\_x\ +\ estimated\_lane\_width;}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ estimated\_other\_boundary\_midpoint\_x\ =\ single\_vec\_midpoint\_x\ -\/\ estimated\_lane\_width;}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ lane\_center\_x\ =\ (single\_vec\_midpoint\_x\ +\ estimated\_other\_boundary\_midpoint\_x)\ /\ 2;}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ error\ =\ (lane\_center\_x\ -\/\ frame\_center)\ /\ frame\_center;}
+\DoxyCodeLine{00256\ }
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Implement\ proportional-\/derivative\ control\ for\ steering}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Kp\ =\ 0.8f;\ \textcolor{comment}{//\ Proportional\ gain\ (adjust\ as\ needed)}}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Kd\ =\ 0.2f;\ \textcolor{comment}{//\ Derivative\ gain\ (adjust\ as\ needed)}}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{float}\ last\_error\ =\ 0;}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ derivative\ =\ error\ -\/\ last\_error;}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ control\_steer\ =\ -\/(Kp\ *\ error\ +\ Kd\ *\ derivative);}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//float\ control\_steer\ =\ -\/\ Kp\ *\ error;}}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ last\_error}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ last\_error\ =\ error;}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Make\ sure\ the\ steering\ angle\ is\ within\ the\ range\ [0,\ 100]}}
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ steer\ =\ 50\ +\ control\_steer\ *\ 50;\ \textcolor{comment}{//\ Map\ control\_steer\ from\ [-\/1,\ 1]\ to\ [0,\ 100]}}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ commands-\/>computedSteerSetpoint\ =\ (uint8\_t)fmax(0,\ fmin(100,\ steer));}
+\DoxyCodeLine{00271\ }
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:\ \ \textcolor{comment}{//\ Both\ vectors\ detected,\ calculate\ direct\ center}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ MidpointX0\ =\ (vecRight.x0\ +\ vecLeft.x0)\ /\ 2.0;}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ MidpointX1\ =\ (vecRight.x1\ +\ vecLeft.x1)\ /\ 2.0;}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ MidpointY0\ =\ (vecRight.y0\ +\ vecLeft.y0)\ /\ 2.0;}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ MidpointY1\ =\ (vecRight.y1\ +\ vecLeft.y1)\ /\ 2.0;}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ new\_x\ =\ (MidpointX1\ -\/\ MidpointX0)\ /\ frameWidth;}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ new\_y\ =\ (MidpointY1\ -\/\ MidpointY0)\ /\ frameHeight;}
+\DoxyCodeLine{00284\ }
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fabs(new\_y)\ >\ 0.01f)\ \{\ \textcolor{comment}{//\ Avoid\ division\ by\ zero}}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ gradient\ =\ new\_x\ /\ new\_y;\ \textcolor{comment}{//\ Calculate\ gradient}}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Normalize\ the\ gradient\ to\ fit\ within\ the\ range\ of\ [-\/1,\ 1]}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gradient\ =\ fmax(fmin(gradient,\ 1),\ -\/1);\ \textcolor{comment}{//\ Clamping\ the\ value\ to\ [-\/1,\ 1]\ if\ out\ of\ bounds}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Map\ gradient\ to\ steering\ setpoint\ range\ [0,\ 100]}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ commands-\/>computedSteerSetpoint\ =\ (uint8\_t)(50\ -\/\ gradient\ *\ 50);}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Go\ straight}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ commands-\/>computedSteerSetpoint\ =\ 50;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00295\ }
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ \ \ \ \ \}}
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{comment}{//\ Adjust\ speed\ based\ on\ steer:\ more\ deviation\ from\ 50,\ lower\ the\ speed}}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{keywordtype}{float}\ steer\_deviation\ =\ fabs(50.0f\ -\/\ (\textcolor{keywordtype}{float})commands-\/>computedSteerSetpoint);}
+\DoxyCodeLine{00302\ \ \ \ \ commands-\/>computedSpeedSetpoint\ =\ (uint8\_t)(60\ -\/\ (steer\_deviation\ /\ 50.0f)\ *\ (60\ -\/\ 25));}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{comment}{//\ Ensure\ the\ speed\ is\ within\ the\ allowable\ range}}
+\DoxyCodeLine{00305\ \ \ \ \ \textcolor{keywordflow}{if}\ (commands-\/>computedSpeedSetpoint\ >\ 65)\ commands-\/>computedSpeedSetpoint\ =\ 65;}
+\DoxyCodeLine{00306\ \ \ \ \ \textcolor{comment}{//if\ (commands-\/>computedSpeedSetpoint\ <\ 0)\ commands-\/>computedSpeedSetpoint\ =\ 0;}}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \ \ \ \ lastSteer\ =\ commands-\/>computedSteerSetpoint;\ \ \textcolor{comment}{//\ Update\ last\ known\ steer}}
+\DoxyCodeLine{00309\ \ \ \ \ lastSpeed\ =\ commands-\/>computedSpeedSetpoint;}
+\DoxyCodeLine{00310\ \}}
+
+\end{DoxyCode}

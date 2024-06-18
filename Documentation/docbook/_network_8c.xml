@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__network_8c" xml:lang="en-US">
+<title>src/Network.c File Reference</title>
+<indexterm><primary>src/Network.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;Network.h&quot;<?linebreak?></programlisting>Include dependency graph for Network.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_network_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__network_8c_1a62dddf76eb27aacde1609464b8d9ebad">wifi_init_softap</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a9fded88b7fb26171ee59015da76c65bb">sendMessage</link> (int sock, const char *message)</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a6da0cb155a639c33efc40d0582b6bb92">udp_server_task</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>char * <link linkend="__network_8c_1abc2dbdf2bfc1c9415cdb2e5f984665ff">to_string</link> (void *value, <link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link> type)</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1abeb264090352ce377a3c339bd3abe1fc">HLD_SendMessage</link> (const char *message)</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a979168b4c86e45871c79ddc820763652">sendCommandApp</link> (<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115b">SendCommandType_app</link> commandType, void *commandValue, <link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link> type)</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a138c349a5f4bbbc10772842474798721">start_network_task</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a1c5ac6591ff23b206b947213055f1fd1">config_Connected_led</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a07ab52c7f55179654f5630a08b8c2abd">turnOnLED_connected</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a905705994ae17126574c031328a39852">complement_connected_led</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__network_8c_1a39e7a5088757fe328c0162fe25d907bf">blink_led_task</link> (void *pvParameters)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="__network_8c_1a7316aaeee91623cd9fcab65f302ce7be">allowed_to_send</link> = false</para>
+</listitem>
+            <listitem><para>char <link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link> [128]</para>
+</listitem>
+            <listitem><para>struct sockaddr_in6 <link linkend="__network_8c_1a53049234aa6eaa663203a7d6d2201e20">source_addr_global</link></para>
+</listitem>
+            <listitem><para>socklen_t <link linkend="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d">addr_len_global</link></para>
+</listitem>
+            <listitem><para>int <link linkend="__network_8c_1a66d70c4b1933243b27cf9451b07de225">sock_global</link></para>
+</listitem>
+            <listitem><para>char * <link linkend="__network_8c_1a2fa235ed0bc5b7bb6f442944f98abb31">stateSendToAppStrings</link> [<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad7ec8301f00391890098cf55556a921d">STATE_MAX</link>]</para>
+</listitem>
+            <listitem><para>TaskHandle_t <link linkend="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3">handlerBlinkLedTask</link> = NULL</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__network_8c_1a731dce19cc17cfa0419781203697bf14">diagnosticModeControlQueue</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__network_8c_1a39e7a5088757fe328c0162fe25d907bf"/><section>
+    <title>blink_led_task()</title>
+<indexterm><primary>blink_led_task</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>blink_led_task</secondary></indexterm>
+<para><computeroutput>void blink_led_task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00268">268</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a905705994ae17126574c031328a39852"/><section>
+    <title>complement_connected_led()</title>
+<indexterm><primary>complement_connected_led</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>complement_connected_led</secondary></indexterm>
+<para><computeroutput>void complement_connected_led ( )</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00262">262</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a1c5ac6591ff23b206b947213055f1fd1"/><section>
+    <title>config_Connected_led()</title>
+<indexterm><primary>config_Connected_led</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>config_Connected_led</secondary></indexterm>
+<para><computeroutput>void config_Connected_led ( )</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00253">253</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1abeb264090352ce377a3c339bd3abe1fc"/><section>
+    <title>HLD_SendMessage()</title>
+<indexterm><primary>HLD_SendMessage</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>HLD_SendMessage</secondary></indexterm>
+<para><computeroutput>void HLD_SendMessage (const char * message)</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00221">221</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a979168b4c86e45871c79ddc820763652"/><section>
+    <title>sendCommandApp()</title>
+<indexterm><primary>sendCommandApp</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>sendCommandApp</secondary></indexterm>
+<para><computeroutput>void sendCommandApp (<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115b">SendCommandType_app</link> commandType, void * commandValue, <link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link> type)</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00225">225</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a9fded88b7fb26171ee59015da76c65bb"/><section>
+    <title>sendMessage()</title>
+<indexterm><primary>sendMessage</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>sendMessage</secondary></indexterm>
+<para><computeroutput>void sendMessage (int sock, const char * message)</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00120">120</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a138c349a5f4bbbc10772842474798721"/><section>
+    <title>start_network_task()</title>
+<indexterm><primary>start_network_task</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>start_network_task</secondary></indexterm>
+<para><computeroutput>void start_network_task ( )</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00241">241</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1abc2dbdf2bfc1c9415cdb2e5f984665ff"/><section>
+    <title>to_string()</title>
+<indexterm><primary>to_string</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>to_string</secondary></indexterm>
+<para><computeroutput>char * to_string (void * value, <link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link> type)</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00199">199</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a07ab52c7f55179654f5630a08b8c2abd"/><section>
+    <title>turnOnLED_connected()</title>
+<indexterm><primary>turnOnLED_connected</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>turnOnLED_connected</secondary></indexterm>
+<para><computeroutput>void turnOnLED_connected ( )</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00258">258</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a6da0cb155a639c33efc40d0582b6bb92"/><section>
+    <title>udp_server_task()</title>
+<indexterm><primary>udp_server_task</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>udp_server_task</secondary></indexterm>
+<para><computeroutput>void udp_server_task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00131">131</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a62dddf76eb27aacde1609464b8d9ebad"/><section>
+    <title>wifi_init_softap()</title>
+<indexterm><primary>wifi_init_softap</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>wifi_init_softap</secondary></indexterm>
+<para><computeroutput>void wifi_init_softap ( )</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00034">34</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d"/><section>
+    <title>addr_len_global</title>
+<indexterm><primary>addr_len_global</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>addr_len_global</secondary></indexterm>
+<para><computeroutput>socklen_t addr_len_global</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00006">6</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a7316aaeee91623cd9fcab65f302ce7be"/><section>
+    <title>allowed_to_send</title>
+<indexterm><primary>allowed_to_send</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>allowed_to_send</secondary></indexterm>
+<para><computeroutput>bool allowed_to_send = false</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00002">2</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a731dce19cc17cfa0419781203697bf14"/><section>
+    <title>diagnosticModeControlQueue</title>
+<indexterm><primary>diagnosticModeControlQueue</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>diagnosticModeControlQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t diagnosticModeControlQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00103">103</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3"/><section>
+    <title>handlerBlinkLedTask</title>
+<indexterm><primary>handlerBlinkLedTask</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>handlerBlinkLedTask</secondary></indexterm>
+<para><computeroutput>TaskHandle_t handlerBlinkLedTask = NULL</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00031">31</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35"/><section>
+    <title>rx_buffer</title>
+<indexterm><primary>rx_buffer</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>rx_buffer</secondary></indexterm>
+<para><computeroutput>char rx_buffer[128]</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00003">3</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a66d70c4b1933243b27cf9451b07de225"/><section>
+    <title>sock_global</title>
+<indexterm><primary>sock_global</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>sock_global</secondary></indexterm>
+<para><computeroutput>int sock_global</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00007">7</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a53049234aa6eaa663203a7d6d2201e20"/><section>
+    <title>source_addr_global</title>
+<indexterm><primary>source_addr_global</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>source_addr_global</secondary></indexterm>
+<para><computeroutput>struct sockaddr_in6 source_addr_global</computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00005">5</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="__network_8c_1a2fa235ed0bc5b7bb6f442944f98abb31"/><section>
+    <title>stateSendToAppStrings</title>
+<indexterm><primary>stateSendToAppStrings</primary><secondary>Network.c</secondary></indexterm>
+<indexterm><primary>Network.c</primary><secondary>stateSendToAppStrings</secondary></indexterm>
+<para><computeroutput>char* stateSendToAppStrings[<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad7ec8301f00391890098cf55556a921d">STATE_MAX</link>]</computeroutput></para><emphasis role="strong">Initial value:</emphasis><programlisting linenumbering="unnumbered">=&#32;{
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MEASURED_VALUE&quot;</emphasis>,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;I_TERM_VALUE&quot;</emphasis>,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;OBSTACLE_DETECTED_VALUE&quot;</emphasis>,&#32;&#32;&#32;
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ERROR_PID_VALUE&quot;</emphasis>,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ACTUAL_TIME_OF_SEND&quot;</emphasis>,
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TEMP_VALUE&quot;</emphasis>,
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DistSensFw&quot;</emphasis>,
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DistSensBw&quot;</emphasis>,
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ADXL_ROLL&quot;</emphasis>,
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ADXL_PITCH&quot;</emphasis>,
+&#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NEWLINE_LOG_INFO&quot;</emphasis>
+}
+</programlisting><para>
+Definition at line <link linkend="__network_8c_source_1l00008">8</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+</section>
+</section>

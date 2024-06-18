@@ -1,0 +1,211 @@
+\doxysection{src/motors/\+Motor\+And\+Servo\+Control.c File Reference}
+\label{_motor_and_servo_control_8c}\index{src/motors/MotorAndServoControl.c@{src/motors/MotorAndServoControl.c}}
+{\ttfamily \#include "{}Motor\+And\+Servo\+Control.\+h"{}}\newline
+{\ttfamily \#include "{}I2\+C\+\_\+camera\+Sensor.\+h"{}}\newline
+{\ttfamily \#include "{}Network.\+h"{}}\newline
+Include dependency graph for Motor\+And\+Servo\+Control.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Car\+Command} \textbf{ parse\+Command} (const char $\ast$command\+Str)
+\item 
+void \textbf{ car\+Control\+\_\+\+Backward\+\_\+init} (int break\+\_\+value)
+\item 
+void \textbf{ car\+Control\+\_\+calibrate\+\_\+motor} ()
+\item 
+void \textbf{ car\+Control\+\_\+\+Task} (void $\ast$pv\+Parameters)
+\item 
+void \textbf{ steer\+\_\+task} (void $\ast$pv\+Parameters)
+\item 
+void \textbf{ car\+Control\+\_\+init} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Set\+Handle\+\_\+t \textbf{ Queue\+Set\+PIDNecessary\+Commands}
+\item 
+Queue\+Handle\+\_\+t \textbf{ autonomous\+Mode\+Control\+Pixy\+Queue}
+\item 
+bool \textbf{ calib\+\_\+motor\+\_\+done} = false
+\item 
+Queue\+Handle\+\_\+t \textbf{ diagnostic\+Mode\+Control\+Queue} = NULL
+\item 
+Queue\+Handle\+\_\+t \textbf{ autonomous\+Mode\+Control\+Uart\+Queue} = NULL
+\item 
+Queue\+Handle\+\_\+t \textbf{ speed\+\_\+command\+Queue} = NULL
+\item 
+Queue\+Handle\+\_\+t \textbf{ steer\+\_\+command\+Queue} = NULL
+\item 
+Queue\+Handle\+\_\+t \textbf{ PID\+\_\+command\+Queue} = NULL
+\item 
+Queue\+Set\+Handle\+\_\+t \textbf{ Queue\+Set\+Autonomous\+Or\+Diagnostic} = NULL
+\item 
+bool \textbf{ Autonomous\+Mode} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!carControl\_Backward\_init@{carControl\_Backward\_init}}
+\index{carControl\_Backward\_init@{carControl\_Backward\_init}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{carControl\_Backward\_init()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a64174a9e686c6f19ea9dc54d1d47085b} 
+void car\+Control\+\_\+\+Backward\+\_\+init (\begin{DoxyParamCaption}\item[{int}]{break\+\_\+value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 42} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!carControl\_calibrate\_motor@{carControl\_calibrate\_motor}}
+\index{carControl\_calibrate\_motor@{carControl\_calibrate\_motor}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{carControl\_calibrate\_motor()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_aacc86a8fac6d46c80e8c5c41ea7786b6} 
+void car\+Control\+\_\+calibrate\+\_\+motor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!carControl\_init@{carControl\_init}}
+\index{carControl\_init@{carControl\_init}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{carControl\_init()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a3b1a84c1a0e08894d761413c5c66c701} 
+void car\+Control\+\_\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 239} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!carControl\_Task@{carControl\_Task}}
+\index{carControl\_Task@{carControl\_Task}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{carControl\_Task()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a356958ec8c1d6b214ec4228ce5ae6f56} 
+void car\+Control\+\_\+\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 112} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!parseCommand@{parseCommand}}
+\index{parseCommand@{parseCommand}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{parseCommand()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a5bdc71d98132147d476bffaf9a319080} 
+\textbf{ Car\+Command} parse\+Command (\begin{DoxyParamCaption}\item[{const char $\ast$}]{command\+Str}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!steer\_task@{steer\_task}}
+\index{steer\_task@{steer\_task}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{steer\_task()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a111cf66cc0671765a5325a79a37773a2} 
+void steer\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 227} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!AutonomousMode@{AutonomousMode}}
+\index{AutonomousMode@{AutonomousMode}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{AutonomousMode}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_aaa8698890fe268d44ede1ad83c711ffb} 
+bool Autonomous\+Mode = false}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}}
+\index{autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{autonomousModeControlPixyQueue}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_ae0a77b0cf83af5755b406387533338e7} 
+Queue\+Handle\+\_\+t autonomous\+Mode\+Control\+Pixy\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!autonomousModeControlUartQueue@{autonomousModeControlUartQueue}}
+\index{autonomousModeControlUartQueue@{autonomousModeControlUartQueue}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{autonomousModeControlUartQueue}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a692b48efecf30c3cea7e1271c249b331} 
+Queue\+Handle\+\_\+t autonomous\+Mode\+Control\+Uart\+Queue = NULL}
+
+
+
+Definition at line \textbf{ 104} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!calib\_motor\_done@{calib\_motor\_done}}
+\index{calib\_motor\_done@{calib\_motor\_done}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{calib\_motor\_done}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_ade0f598b8a5a524e52c60c286fcee6db} 
+bool calib\+\_\+motor\+\_\+done = false}
+
+
+
+Definition at line \textbf{ 55} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!diagnosticModeControlQueue@{diagnosticModeControlQueue}}
+\index{diagnosticModeControlQueue@{diagnosticModeControlQueue}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{diagnosticModeControlQueue}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a731dce19cc17cfa0419781203697bf14} 
+Queue\+Handle\+\_\+t diagnostic\+Mode\+Control\+Queue = NULL}
+
+
+
+Definition at line \textbf{ 103} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!PID\_commandQueue@{PID\_commandQueue}}
+\index{PID\_commandQueue@{PID\_commandQueue}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{PID\_commandQueue}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a52c196f65d55f3b464764bf630e6f05e} 
+Queue\+Handle\+\_\+t PID\+\_\+command\+Queue = NULL}
+
+
+
+Definition at line \textbf{ 107} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!QueueSetAutonomousOrDiagnostic@{QueueSetAutonomousOrDiagnostic}}
+\index{QueueSetAutonomousOrDiagnostic@{QueueSetAutonomousOrDiagnostic}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{QueueSetAutonomousOrDiagnostic}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a35af4e2fb01eed708c67a42aad85cebf} 
+Queue\+Set\+Handle\+\_\+t Queue\+Set\+Autonomous\+Or\+Diagnostic = NULL}
+
+
+
+Definition at line \textbf{ 108} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!QueueSetPIDNecessaryCommands@{QueueSetPIDNecessaryCommands}}
+\index{QueueSetPIDNecessaryCommands@{QueueSetPIDNecessaryCommands}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{QueueSetPIDNecessaryCommands}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a5c87d10806c8bb41d42841fc2fb559d9} 
+Queue\+Set\+Handle\+\_\+t Queue\+Set\+PIDNecessary\+Commands}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!speed\_commandQueue@{speed\_commandQueue}}
+\index{speed\_commandQueue@{speed\_commandQueue}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{speed\_commandQueue}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_adb1f977be6734adfcc8e37d4f2659ec5} 
+Queue\+Handle\+\_\+t speed\+\_\+command\+Queue = NULL}
+
+
+
+Definition at line \textbf{ 105} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.c@{MotorAndServoControl.c}!steer\_commandQueue@{steer\_commandQueue}}
+\index{steer\_commandQueue@{steer\_commandQueue}!MotorAndServoControl.c@{MotorAndServoControl.c}}
+\doxysubsubsection{steer\_commandQueue}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8c_a4c4e2a762a11fd2e1ddee7045c9bae56} 
+Queue\+Handle\+\_\+t steer\+\_\+command\+Queue = NULL}
+
+
+
+Definition at line \textbf{ 106} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+

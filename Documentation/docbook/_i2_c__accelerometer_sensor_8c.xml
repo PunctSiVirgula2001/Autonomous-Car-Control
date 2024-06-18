@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__accelerometer_sensor_8c" xml:lang="en-US">
+<title>src/I2C/drivers/I2C_accelerometerSensor.c File Reference</title>
+<indexterm><primary>src/I2C/drivers/I2C_accelerometerSensor.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_accelerometerSensor.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_accelerometerSensor.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__accelerometer_sensor_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__accelerometer_sensor_8c_1af4369ee1e11eacb96049536d1b18a94e">I2C_adxl345_init</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__accelerometer_sensor_8c_1aeac395349fd0cb9b64e9dba9799e64e9">I2C_read_adxl345_data</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double *x, double *y, double *z)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__accelerometer_sensor_8c_1a5daa89461a8c123f61a7e7e89a799bb2">I2C_adxl345_setRate</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double rate)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__accelerometer_sensor_8c_1af4369ee1e11eacb96049536d1b18a94e"/><section>
+    <title>I2C_adxl345_init()</title>
+<indexterm><primary>I2C_adxl345_init</primary><secondary>I2C_accelerometerSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.c</primary><secondary>I2C_adxl345_init</secondary></indexterm>
+<para><computeroutput>void I2C_adxl345_init (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8c_source_1l00013">13</link> of file <link linkend="__i2_c__accelerometer_sensor_8c_source">I2C_accelerometerSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__accelerometer_sensor_8c_1a5daa89461a8c123f61a7e7e89a799bb2"/><section>
+    <title>I2C_adxl345_setRate()</title>
+<indexterm><primary>I2C_adxl345_setRate</primary><secondary>I2C_accelerometerSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.c</primary><secondary>I2C_adxl345_setRate</secondary></indexterm>
+<para><computeroutput>void I2C_adxl345_setRate (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double rate)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8c_source_1l00054">54</link> of file <link linkend="__i2_c__accelerometer_sensor_8c_source">I2C_accelerometerSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__accelerometer_sensor_8c_1aeac395349fd0cb9b64e9dba9799e64e9"/><section>
+    <title>I2C_read_adxl345_data()</title>
+<indexterm><primary>I2C_read_adxl345_data</primary><secondary>I2C_accelerometerSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.c</primary><secondary>I2C_read_adxl345_data</secondary></indexterm>
+<para><computeroutput>void I2C_read_adxl345_data (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double * x, double * y, double * z)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8c_source_1l00019">19</link> of file <link linkend="__i2_c__accelerometer_sensor_8c_source">I2C_accelerometerSensor.c</link>.</para>
+</section>
+</section>
+</section>

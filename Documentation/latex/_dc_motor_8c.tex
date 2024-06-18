@@ -1,0 +1,101 @@
+\doxysection{src/motors/drivers/\+Dc\+Motor.c File Reference}
+\label{_dc_motor_8c}\index{src/motors/drivers/DcMotor.c@{src/motors/drivers/DcMotor.c}}
+{\ttfamily \#include "{}Dc\+Motor.\+h"{}}\newline
+Include dependency graph for Dc\+Motor.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ init\+\_\+motor\+\_\+pwm} ()
+\item 
+void \textbf{ update\+\_\+motor\+\_\+pwm} (unsigned int pulse\+\_\+width\+\_\+us)
+\item 
+void \textbf{ change\+Motor\+Speed} (int value)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+mcpwm\+\_\+timer\+\_\+handle\+\_\+t \textbf{ timer\+\_\+dc\+\_\+motor}
+\item 
+mcpwm\+\_\+oper\+\_\+handle\+\_\+t \textbf{ operator\+\_\+dc\+\_\+motor}
+\item 
+mcpwm\+\_\+cmpr\+\_\+handle\+\_\+t \textbf{ comparator\+\_\+dc\+\_\+motor}
+\item 
+mcpwm\+\_\+gen\+\_\+handle\+\_\+t \textbf{ generator\+\_\+dc\+\_\+motor}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{DcMotor.c@{DcMotor.c}!changeMotorSpeed@{changeMotorSpeed}}
+\index{changeMotorSpeed@{changeMotorSpeed}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{changeMotorSpeed()}
+{\footnotesize\ttfamily \label{_dc_motor_8c_a435592e73c533f6e72459bff52e6b60e} 
+void change\+Motor\+Speed (\begin{DoxyParamCaption}\item[{int}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 112} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.c@{DcMotor.c}!init\_motor\_pwm@{init\_motor\_pwm}}
+\index{init\_motor\_pwm@{init\_motor\_pwm}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{init\_motor\_pwm()}
+{\footnotesize\ttfamily \label{_dc_motor_8c_a611fa4f4361e4e307befb3becc0a5f4f} 
+void init\+\_\+motor\+\_\+pwm (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.c@{DcMotor.c}!update\_motor\_pwm@{update\_motor\_pwm}}
+\index{update\_motor\_pwm@{update\_motor\_pwm}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{update\_motor\_pwm()}
+{\footnotesize\ttfamily \label{_dc_motor_8c_a701f471f5cefb57b8bd8d0fc2e8b9597} 
+void update\+\_\+motor\+\_\+pwm (\begin{DoxyParamCaption}\item[{unsigned int}]{pulse\+\_\+width\+\_\+us}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 99} of file \textbf{ Dc\+Motor.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{DcMotor.c@{DcMotor.c}!comparator\_dc\_motor@{comparator\_dc\_motor}}
+\index{comparator\_dc\_motor@{comparator\_dc\_motor}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{comparator\_dc\_motor}
+{\footnotesize\ttfamily \label{_dc_motor_8c_abc92dcfa86214599a8457177088adfcc} 
+mcpwm\+\_\+cmpr\+\_\+handle\+\_\+t comparator\+\_\+dc\+\_\+motor}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.c@{DcMotor.c}!generator\_dc\_motor@{generator\_dc\_motor}}
+\index{generator\_dc\_motor@{generator\_dc\_motor}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{generator\_dc\_motor}
+{\footnotesize\ttfamily \label{_dc_motor_8c_a2f85e95d59df181d73286d285e64cbd4} 
+mcpwm\+\_\+gen\+\_\+handle\+\_\+t generator\+\_\+dc\+\_\+motor}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.c@{DcMotor.c}!operator\_dc\_motor@{operator\_dc\_motor}}
+\index{operator\_dc\_motor@{operator\_dc\_motor}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{operator\_dc\_motor}
+{\footnotesize\ttfamily \label{_dc_motor_8c_adb3739308dc8be9542ed51acbf01e74f} 
+mcpwm\+\_\+oper\+\_\+handle\+\_\+t operator\+\_\+dc\+\_\+motor}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.c@{DcMotor.c}!timer\_dc\_motor@{timer\_dc\_motor}}
+\index{timer\_dc\_motor@{timer\_dc\_motor}!DcMotor.c@{DcMotor.c}}
+\doxysubsubsection{timer\_dc\_motor}
+{\footnotesize\ttfamily \label{_dc_motor_8c_ac891845f54c338dfea47ac92921443d2} 
+mcpwm\+\_\+timer\+\_\+handle\+\_\+t timer\+\_\+dc\+\_\+motor}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ Dc\+Motor.\+c}.
+

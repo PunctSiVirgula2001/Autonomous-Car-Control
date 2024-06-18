@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__u_a_r_t___jetson_8c" xml:lang="en-US">
+<title>src/UART_Jetson.c File Reference</title>
+<indexterm><primary>src/UART_Jetson.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;UART_Jetson.h&quot;<?linebreak?>#include &quot;MotorAndServoControl.h&quot;<?linebreak?></programlisting>Include dependency graph for UART_Jetson.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_u_a_r_t___jetson_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__u_a_r_t___jetson_8c_1ae4c5f3d1df2e79904d4e12cb88ade1b9">JetsonUartConfig</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__u_a_r_t___jetson_8c_1ad9e288d6023d9fc1385c3a974f95c03a">uart_Jetson_Task</link> (void *params)</para>
+</listitem>
+            <listitem><para>void <link linkend="__u_a_r_t___jetson_8c_1a95f2115a47f33b4cf7c628a79d6b914a">start_UartJetson_task</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="__u_a_r_t___jetson_8c_1aaa8698890fe268d44ede1ad83c711ffb">AutonomousMode</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__u_a_r_t___jetson_8c_1a692b48efecf30c3cea7e1271c249b331">autonomousModeControlUartQueue</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__u_a_r_t___jetson_8c_1ae4c5f3d1df2e79904d4e12cb88ade1b9"/><section>
+    <title>JetsonUartConfig()</title>
+<indexterm><primary>JetsonUartConfig</primary><secondary>UART_Jetson.c</secondary></indexterm>
+<indexterm><primary>UART_Jetson.c</primary><secondary>JetsonUartConfig</secondary></indexterm>
+<para><computeroutput>void JetsonUartConfig ( )</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8c_source_1l00008">8</link> of file <link linkend="__u_a_r_t___jetson_8c_source">UART_Jetson.c</link>.</para>
+</section>
+<anchor xml:id="__u_a_r_t___jetson_8c_1a95f2115a47f33b4cf7c628a79d6b914a"/><section>
+    <title>start_UartJetson_task()</title>
+<indexterm><primary>start_UartJetson_task</primary><secondary>UART_Jetson.c</secondary></indexterm>
+<indexterm><primary>UART_Jetson.c</primary><secondary>start_UartJetson_task</secondary></indexterm>
+<para><computeroutput>void start_UartJetson_task ( )</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8c_source_1l00086">86</link> of file <link linkend="__u_a_r_t___jetson_8c_source">UART_Jetson.c</link>.</para>
+</section>
+<anchor xml:id="__u_a_r_t___jetson_8c_1ad9e288d6023d9fc1385c3a974f95c03a"/><section>
+    <title>uart_Jetson_Task()</title>
+<indexterm><primary>uart_Jetson_Task</primary><secondary>UART_Jetson.c</secondary></indexterm>
+<indexterm><primary>UART_Jetson.c</primary><secondary>uart_Jetson_Task</secondary></indexterm>
+<para><computeroutput>void uart_Jetson_Task (void * params)</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8c_source_1l00027">27</link> of file <link linkend="__u_a_r_t___jetson_8c_source">UART_Jetson.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__u_a_r_t___jetson_8c_1aaa8698890fe268d44ede1ad83c711ffb"/><section>
+    <title>AutonomousMode</title>
+<indexterm><primary>AutonomousMode</primary><secondary>UART_Jetson.c</secondary></indexterm>
+<indexterm><primary>UART_Jetson.c</primary><secondary>AutonomousMode</secondary></indexterm>
+<para><computeroutput>bool AutonomousMode<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00111">111</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__u_a_r_t___jetson_8c_1a692b48efecf30c3cea7e1271c249b331"/><section>
+    <title>autonomousModeControlUartQueue</title>
+<indexterm><primary>autonomousModeControlUartQueue</primary><secondary>UART_Jetson.c</secondary></indexterm>
+<indexterm><primary>UART_Jetson.c</primary><secondary>autonomousModeControlUartQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t autonomousModeControlUartQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00104">104</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827"/><section>
+    <title>uartJetsonQueue</title>
+<indexterm><primary>uartJetsonQueue</primary><secondary>UART_Jetson.c</secondary></indexterm>
+<indexterm><primary>UART_Jetson.c</primary><secondary>uartJetsonQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t uartJetsonQueue</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8c_source_1l00005">5</link> of file <link linkend="__u_a_r_t___jetson_8c_source">UART_Jetson.c</link>.</para>
+</section>
+</section>
+</section>

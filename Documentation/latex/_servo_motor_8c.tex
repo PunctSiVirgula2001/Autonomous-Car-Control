@@ -1,0 +1,101 @@
+\doxysection{src/motors/drivers/\+Servo\+Motor.c File Reference}
+\label{_servo_motor_8c}\index{src/motors/drivers/ServoMotor.c@{src/motors/drivers/ServoMotor.c}}
+{\ttfamily \#include "{}Servo\+Motor.\+h"{}}\newline
+Include dependency graph for Servo\+Motor.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ init\+\_\+servo\+\_\+pwm} ()
+\item 
+void \textbf{ update\+\_\+servo\+\_\+pwm} (int pulse\+\_\+width\+\_\+us)
+\item 
+void \textbf{ change\+STEER} (int value)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+mcpwm\+\_\+timer\+\_\+handle\+\_\+t \textbf{ timer\+\_\+servo}
+\item 
+mcpwm\+\_\+oper\+\_\+handle\+\_\+t \textbf{ operator\+\_\+servo}
+\item 
+mcpwm\+\_\+cmpr\+\_\+handle\+\_\+t \textbf{ comparator\+\_\+servo}
+\item 
+mcpwm\+\_\+gen\+\_\+handle\+\_\+t \textbf{ generator\+\_\+servo}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{ServoMotor.c@{ServoMotor.c}!changeSTEER@{changeSTEER}}
+\index{changeSTEER@{changeSTEER}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{changeSTEER()}
+{\footnotesize\ttfamily \label{_servo_motor_8c_ad0d869b0abb9912862634615c3563d9c} 
+void change\+STEER (\begin{DoxyParamCaption}\item[{int}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 117} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.c@{ServoMotor.c}!init\_servo\_pwm@{init\_servo\_pwm}}
+\index{init\_servo\_pwm@{init\_servo\_pwm}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{init\_servo\_pwm()}
+{\footnotesize\ttfamily \label{_servo_motor_8c_a471346290cd96bae9ad577caa60fce18} 
+void init\+\_\+servo\+\_\+pwm (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.c@{ServoMotor.c}!update\_servo\_pwm@{update\_servo\_pwm}}
+\index{update\_servo\_pwm@{update\_servo\_pwm}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{update\_servo\_pwm()}
+{\footnotesize\ttfamily \label{_servo_motor_8c_af33292d0ddf5be1cc69616acceb92a3a} 
+void update\+\_\+servo\+\_\+pwm (\begin{DoxyParamCaption}\item[{int}]{pulse\+\_\+width\+\_\+us}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 106} of file \textbf{ Servo\+Motor.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{ServoMotor.c@{ServoMotor.c}!comparator\_servo@{comparator\_servo}}
+\index{comparator\_servo@{comparator\_servo}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{comparator\_servo}
+{\footnotesize\ttfamily \label{_servo_motor_8c_afedf2a5cd4e679796468a2ba14271578} 
+mcpwm\+\_\+cmpr\+\_\+handle\+\_\+t comparator\+\_\+servo}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.c@{ServoMotor.c}!generator\_servo@{generator\_servo}}
+\index{generator\_servo@{generator\_servo}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{generator\_servo}
+{\footnotesize\ttfamily \label{_servo_motor_8c_aecf411879bfce26772456a0c8bae8b03} 
+mcpwm\+\_\+gen\+\_\+handle\+\_\+t generator\+\_\+servo}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.c@{ServoMotor.c}!operator\_servo@{operator\_servo}}
+\index{operator\_servo@{operator\_servo}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{operator\_servo}
+{\footnotesize\ttfamily \label{_servo_motor_8c_a9ad03663eb7ccd1cd1f766118388db1f} 
+mcpwm\+\_\+oper\+\_\+handle\+\_\+t operator\+\_\+servo}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.c@{ServoMotor.c}!timer\_servo@{timer\_servo}}
+\index{timer\_servo@{timer\_servo}!ServoMotor.c@{ServoMotor.c}}
+\doxysubsubsection{timer\_servo}
+{\footnotesize\ttfamily \label{_servo_motor_8c_ac3f9f79f59aa30f4f4987ab730d793cd} 
+mcpwm\+\_\+timer\+\_\+handle\+\_\+t timer\+\_\+servo}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ Servo\+Motor.\+c}.
+

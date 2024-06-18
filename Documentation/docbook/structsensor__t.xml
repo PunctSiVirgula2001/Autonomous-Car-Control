@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structsensor__t" xml:lang="en-US">
+<title>sensor_t Struct Reference</title>
+<indexterm><primary>sensor_t</primary></indexterm>
+<para>
+<computeroutput>#include &lt;I2C_sensorControl.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> <link linkend="_structsensor__t_1a4e96223c314d688cc40a539d4e363258">device_handle</link></para>
+</listitem>
+            <listitem><para><link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link> <link linkend="_structsensor__t_1a4a8533c77f964d99f764ca0b3aa5231b">mux</link></para>
+</listitem>
+            <listitem><para><link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> <link linkend="_structsensor__t_1a8678d56e5a049e7ac88ea9d448cf6307">tokens</link></para>
+</listitem>
+            <listitem><para><link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> <link linkend="_structsensor__t_1a67563a7a98e4a32c293a8b35eece073b">tokens_remaining</link></para>
+</listitem>
+            <listitem><para><link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718">sensor_state_t</link> <link linkend="_structsensor__t_1a72d0c88c8a136c777fb251336bedcce9">state</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00040">40</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_structsensor__t_1a4e96223c314d688cc40a539d4e363258"/><section>
+    <title>device_handle</title>
+<indexterm><primary>device_handle</primary><secondary>sensor_t</secondary></indexterm>
+<indexterm><primary>sensor_t</primary><secondary>device_handle</secondary></indexterm>
+<para><computeroutput><link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00041">41</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<anchor xml:id="_structsensor__t_1a4a8533c77f964d99f764ca0b3aa5231b"/><section>
+    <title>mux</title>
+<indexterm><primary>mux</primary><secondary>sensor_t</secondary></indexterm>
+<indexterm><primary>sensor_t</primary><secondary>mux</secondary></indexterm>
+<para><computeroutput><link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link> mux</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00042">42</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<anchor xml:id="_structsensor__t_1a72d0c88c8a136c777fb251336bedcce9"/><section>
+    <title>state</title>
+<indexterm><primary>state</primary><secondary>sensor_t</secondary></indexterm>
+<indexterm><primary>sensor_t</primary><secondary>state</secondary></indexterm>
+<para><computeroutput><link linkend="__i2_c__sensor_control_8h_1a085fb31f39314038a5dc035bb740c718">sensor_state_t</link> state</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00045">45</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<anchor xml:id="_structsensor__t_1a8678d56e5a049e7ac88ea9d448cf6307"/><section>
+    <title>tokens</title>
+<indexterm><primary>tokens</primary><secondary>sensor_t</secondary></indexterm>
+<indexterm><primary>sensor_t</primary><secondary>tokens</secondary></indexterm>
+<para><computeroutput><link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> tokens</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00043">43</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<anchor xml:id="_structsensor__t_1a67563a7a98e4a32c293a8b35eece073b"/><section>
+    <title>tokens_remaining</title>
+<indexterm><primary>tokens_remaining</primary><secondary>sensor_t</secondary></indexterm>
+<indexterm><primary>sensor_t</primary><secondary>tokens_remaining</secondary></indexterm>
+<para><computeroutput><link linkend="__i2_c__sensor_control_8h_1ad4fa48dd63f483f21c3767c3665bbe9e">I2C_WRR_tokens</link> tokens_remaining</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8h_source_1l00044">44</link> of file <link linkend="__i2_c__sensor_control_8h_source">I2C_sensorControl.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/I2C/<link linkend="__i2_c__sensor_control_8h">I2C_sensorControl.h</link></section>
+</section>

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_6adb56cee76d6d026f8f38e703b50393" xml:lang="en-US">
+<title>src/motors Directory Reference</title>
+<indexterm><primary>src/motors Directory Reference</primary></indexterm>
+Directory dependency graph for motors:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_6adb56cee76d6d026f8f38e703b50393_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Directories    </title>
+        <itemizedlist>
+            <listitem><para>directory <link linkend="_dir_891daf6f03268ecb9722486c592eed09">drivers</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="__motor_and_servo_control_8c">MotorAndServoControl.c</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

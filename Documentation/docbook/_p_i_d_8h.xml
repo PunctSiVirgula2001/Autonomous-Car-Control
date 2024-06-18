@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__p_i_d_8h" xml:lang="en-US">
+<title>include/PID.h File Reference</title>
+<indexterm><primary>include/PID.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;esp_freertos_hooks.h&quot;<?linebreak?>#include &quot;MotorAndServoControl.h&quot;<?linebreak?>#include &quot;I2C_sensorControl.h&quot;<?linebreak?></programlisting>Include dependency graph for PID.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_p_i_d_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_p_i_d_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Data Structures    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_struct_p_i_d__t">PID_t</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__p_i_d_8h_1adc355b3d08d4e503e9067cf00bc8d30b">PID_MAX_WINDUP</link>&#160;&#160;&#160;5</para>
+</listitem>
+            <listitem><para>#define <link linkend="__p_i_d_8h_1a38bf51002d82306531629d65d518ac46">PID_D_TERM_FILTER_COEFFICIENT</link>&#160;&#160;&#160;0.5</para>
+</listitem>
+            <listitem><para>#define <link linkend="__p_i_d_8h_1a10cc9812fdaf0a487eefbf2711f08257">PID_OUT_LIMIT_RATE_CHANGE</link>&#160;&#160;&#160;5</para>
+</listitem>
+            <listitem><para>#define <link linkend="__p_i_d_8h_1a038513bad8c72a54a00551fc2448c546">low_pass_filter_derivative_chan</link>&#160;&#160;&#160;<link linkend="__i2_c__camera_sensor_8h_1ad76d1750a6cdeebd506bfcd6752554d2">ON</link></para>
+</listitem>
+            <listitem><para>#define <link linkend="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70">WINDOW_SIZE_SMA</link>&#160;&#160;&#160;15</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__p_i_d_8h_1a26c8b95db9397895630f51f4d291aab5">PID_Init</link> (<link linkend="_struct_p_i_d__t">PID_t</link> *pid, float Kp, float Ki, float Kd)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1a6120ff3d44feed1033e54547b47c7856">PID_Compute</link> (<link linkend="_struct_p_i_d__t">PID_t</link> *pid)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1ad55b9d5b8311b147f528a7e6d0fba01c">PID_UpdateParams</link> (<link linkend="_struct_p_i_d__t">PID_t</link> *pid, float new_Kp, float new_Ki, float new_Kd)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1a0b5432e9eb596af445a114d06ffccd81">PIDTask</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>double <link linkend="__p_i_d_8h_1aa67df0089f15bc7920286170fbdf904b">Sliding_Mean_Average</link> (int newValue)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1a616f6b0cb89c5861abaa85bbd1058645">clamp_float</link> (float *value, float min, float max)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe">clamp_int</link> (int *value, int min, int max)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1a9e7e9a86b0b7bb64ee265afc5cb27264">start_PID_task</link> ()</para>
+</listitem>
+            <listitem><para>float <link linkend="__p_i_d_8h_1aabae7507a2291726cf102c305e3f02c5">get_speed_distance_sens_scaling</link> (float speed, float speed_min, float speed_max)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1affd6ece3243c73ae7033a9e67d3f23c2">speedCheckTickHook</link> (void)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8h_1ab1cfced9ea996bf91c861133e0d91e49">init_speedCheckTickHook</link> (void)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__p_i_d_8h_1a038513bad8c72a54a00551fc2448c546"/><section>
+    <title>low_pass_filter_derivative_chan</title>
+<indexterm><primary>low_pass_filter_derivative_chan</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>low_pass_filter_derivative_chan</secondary></indexterm>
+<para><computeroutput>#define low_pass_filter_derivative_chan&#160;&#160;&#160;<link linkend="__i2_c__camera_sensor_8h_1ad76d1750a6cdeebd506bfcd6752554d2">ON</link></computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00010">10</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a38bf51002d82306531629d65d518ac46"/><section>
+    <title>PID_D_TERM_FILTER_COEFFICIENT</title>
+<indexterm><primary>PID_D_TERM_FILTER_COEFFICIENT</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PID_D_TERM_FILTER_COEFFICIENT</secondary></indexterm>
+<para><computeroutput>#define PID_D_TERM_FILTER_COEFFICIENT&#160;&#160;&#160;0.5</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00008">8</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1adc355b3d08d4e503e9067cf00bc8d30b"/><section>
+    <title>PID_MAX_WINDUP</title>
+<indexterm><primary>PID_MAX_WINDUP</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PID_MAX_WINDUP</secondary></indexterm>
+<para><computeroutput>#define PID_MAX_WINDUP&#160;&#160;&#160;5</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00007">7</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a10cc9812fdaf0a487eefbf2711f08257"/><section>
+    <title>PID_OUT_LIMIT_RATE_CHANGE</title>
+<indexterm><primary>PID_OUT_LIMIT_RATE_CHANGE</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PID_OUT_LIMIT_RATE_CHANGE</secondary></indexterm>
+<para><computeroutput>#define PID_OUT_LIMIT_RATE_CHANGE&#160;&#160;&#160;5</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00009">9</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70"/><section>
+    <title>WINDOW_SIZE_SMA</title>
+<indexterm><primary>WINDOW_SIZE_SMA</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>WINDOW_SIZE_SMA</secondary></indexterm>
+<para><computeroutput>#define WINDOW_SIZE_SMA&#160;&#160;&#160;15</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00045">45</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__p_i_d_8h_1a616f6b0cb89c5861abaa85bbd1058645"/><section>
+    <title>clamp_float()</title>
+<indexterm><primary>clamp_float</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>clamp_float</secondary></indexterm>
+<para><computeroutput>void clamp_float (float * value, float min, float max)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00332">332</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe"/><section>
+    <title>clamp_int()</title>
+<indexterm><primary>clamp_int</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>clamp_int</secondary></indexterm>
+<para><computeroutput>void clamp_int (int * value, int min, int max)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00340">340</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1aabae7507a2291726cf102c305e3f02c5"/><section>
+    <title>get_speed_distance_sens_scaling()</title>
+<indexterm><primary>get_speed_distance_sens_scaling</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>get_speed_distance_sens_scaling</secondary></indexterm>
+<para><computeroutput>float get_speed_distance_sens_scaling (float speed, float speed_min, float speed_max)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00155">155</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1ab1cfced9ea996bf91c861133e0d91e49"/><section>
+    <title>init_speedCheckTickHook()</title>
+<indexterm><primary>init_speedCheckTickHook</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>init_speedCheckTickHook</secondary></indexterm>
+<para><computeroutput>void init_speedCheckTickHook (void )</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00045">45</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a6120ff3d44feed1033e54547b47c7856"/><section>
+    <title>PID_Compute()</title>
+<indexterm><primary>PID_Compute</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PID_Compute</secondary></indexterm>
+<para><computeroutput>void PID_Compute (<link linkend="_struct_p_i_d__t">PID_t</link> * pid)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00082">82</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a26c8b95db9397895630f51f4d291aab5"/><section>
+    <title>PID_Init()</title>
+<indexterm><primary>PID_Init</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PID_Init</secondary></indexterm>
+<para><computeroutput>void PID_Init (<link linkend="_struct_p_i_d__t">PID_t</link> * pid, float Kp, float Ki, float Kd)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00057">57</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1ad55b9d5b8311b147f528a7e6d0fba01c"/><section>
+    <title>PID_UpdateParams()</title>
+<indexterm><primary>PID_UpdateParams</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PID_UpdateParams</secondary></indexterm>
+<para><computeroutput>void PID_UpdateParams (<link linkend="_struct_p_i_d__t">PID_t</link> * pid, float new_Kp, float new_Ki, float new_Kd)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00135">135</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a0b5432e9eb596af445a114d06ffccd81"/><section>
+    <title>PIDTask()</title>
+<indexterm><primary>PIDTask</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>PIDTask</secondary></indexterm>
+<para><computeroutput>void PIDTask (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00203">203</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1aa67df0089f15bc7920286170fbdf904b"/><section>
+    <title>Sliding_Mean_Average()</title>
+<indexterm><primary>Sliding_Mean_Average</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>Sliding_Mean_Average</secondary></indexterm>
+<para><computeroutput>double Sliding_Mean_Average (int newValue)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00174">174</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1affd6ece3243c73ae7033a9e67d3f23c2"/><section>
+    <title>speedCheckTickHook()</title>
+<indexterm><primary>speedCheckTickHook</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>speedCheckTickHook</secondary></indexterm>
+<para><computeroutput>void speedCheckTickHook (void )</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00021">21</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8h_1a9e7e9a86b0b7bb64ee265afc5cb27264"/><section>
+    <title>start_PID_task()</title>
+<indexterm><primary>start_PID_task</primary><secondary>PID.h</secondary></indexterm>
+<indexterm><primary>PID.h</primary><secondary>start_PID_task</secondary></indexterm>
+<para><computeroutput>void start_PID_task ( )</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00350">350</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+</section>
+</section>

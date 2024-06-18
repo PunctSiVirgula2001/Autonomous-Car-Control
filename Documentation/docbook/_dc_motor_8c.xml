@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__dc_motor_8c" xml:lang="en-US">
+<title>src/motors/drivers/DcMotor.c File Reference</title>
+<indexterm><primary>src/motors/drivers/DcMotor.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;DcMotor.h&quot;<?linebreak?></programlisting>Include dependency graph for DcMotor.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_dc_motor_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__dc_motor_8c_1a611fa4f4361e4e307befb3becc0a5f4f">init_motor_pwm</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__dc_motor_8c_1a701f471f5cefb57b8bd8d0fc2e8b9597">update_motor_pwm</link> (unsigned int pulse_width_us)</para>
+</listitem>
+            <listitem><para>void <link linkend="__dc_motor_8c_1a435592e73c533f6e72459bff52e6b60e">changeMotorSpeed</link> (int value)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>mcpwm_timer_handle_t <link linkend="__dc_motor_8c_1ac891845f54c338dfea47ac92921443d2">timer_dc_motor</link></para>
+</listitem>
+            <listitem><para>mcpwm_oper_handle_t <link linkend="__dc_motor_8c_1adb3739308dc8be9542ed51acbf01e74f">operator_dc_motor</link></para>
+</listitem>
+            <listitem><para>mcpwm_cmpr_handle_t <link linkend="__dc_motor_8c_1abc92dcfa86214599a8457177088adfcc">comparator_dc_motor</link></para>
+</listitem>
+            <listitem><para>mcpwm_gen_handle_t <link linkend="__dc_motor_8c_1a2f85e95d59df181d73286d285e64cbd4">generator_dc_motor</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__dc_motor_8c_1a435592e73c533f6e72459bff52e6b60e"/><section>
+    <title>changeMotorSpeed()</title>
+<indexterm><primary>changeMotorSpeed</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>changeMotorSpeed</secondary></indexterm>
+<para><computeroutput>void changeMotorSpeed (int value)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00112">112</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8c_1a611fa4f4361e4e307befb3becc0a5f4f"/><section>
+    <title>init_motor_pwm()</title>
+<indexterm><primary>init_motor_pwm</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>init_motor_pwm</secondary></indexterm>
+<para><computeroutput>void init_motor_pwm ( )</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00016">16</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8c_1a701f471f5cefb57b8bd8d0fc2e8b9597"/><section>
+    <title>update_motor_pwm()</title>
+<indexterm><primary>update_motor_pwm</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>update_motor_pwm</secondary></indexterm>
+<para><computeroutput>void update_motor_pwm (unsigned int pulse_width_us)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00099">99</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__dc_motor_8c_1abc92dcfa86214599a8457177088adfcc"/><section>
+    <title>comparator_dc_motor</title>
+<indexterm><primary>comparator_dc_motor</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>comparator_dc_motor</secondary></indexterm>
+<para><computeroutput>mcpwm_cmpr_handle_t comparator_dc_motor</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00011">11</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8c_1a2f85e95d59df181d73286d285e64cbd4"/><section>
+    <title>generator_dc_motor</title>
+<indexterm><primary>generator_dc_motor</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>generator_dc_motor</secondary></indexterm>
+<para><computeroutput>mcpwm_gen_handle_t generator_dc_motor</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00012">12</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8c_1adb3739308dc8be9542ed51acbf01e74f"/><section>
+    <title>operator_dc_motor</title>
+<indexterm><primary>operator_dc_motor</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>operator_dc_motor</secondary></indexterm>
+<para><computeroutput>mcpwm_oper_handle_t operator_dc_motor</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00010">10</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8c_1ac891845f54c338dfea47ac92921443d2"/><section>
+    <title>timer_dc_motor</title>
+<indexterm><primary>timer_dc_motor</primary><secondary>DcMotor.c</secondary></indexterm>
+<indexterm><primary>DcMotor.c</primary><secondary>timer_dc_motor</secondary></indexterm>
+<para><computeroutput>mcpwm_timer_handle_t timer_dc_motor</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00009">9</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+</section>
+</section>

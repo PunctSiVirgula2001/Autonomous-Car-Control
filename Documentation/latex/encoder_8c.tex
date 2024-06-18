@@ -1,0 +1,65 @@
+\doxysection{src/motors/drivers/encoder.c File Reference}
+\label{encoder_8c}\index{src/motors/drivers/encoder.c@{src/motors/drivers/encoder.c}}
+{\ttfamily \#include "{}encoder.\+h"{}}\newline
+Include dependency graph for encoder.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool IRAM\+\_\+\+ATTR \textbf{ example\+\_\+pcnt\+\_\+on\+\_\+reach} (pcnt\+\_\+unit\+\_\+handle\+\_\+t unit, const pcnt\+\_\+watch\+\_\+event\+\_\+data\+\_\+t $\ast$edata, void $\ast$user\+\_\+ctx)
+\item 
+void \textbf{ configure\+Encoder\+Interrupts} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Handle\+\_\+t \textbf{ pulse\+\_\+encoder\+Queue}
+\item 
+pcnt\+\_\+unit\+\_\+handle\+\_\+t \textbf{ pcnt\+\_\+unit} = NULL
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{encoder.c@{encoder.c}!configureEncoderInterrupts@{configureEncoderInterrupts}}
+\index{configureEncoderInterrupts@{configureEncoderInterrupts}!encoder.c@{encoder.c}}
+\doxysubsubsection{configureEncoderInterrupts()}
+{\footnotesize\ttfamily \label{encoder_8c_a3924b07647d86be798a086541d2c13d7} 
+void configure\+Encoder\+Interrupts (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ encoder.\+c}.
+
+\index{encoder.c@{encoder.c}!example\_pcnt\_on\_reach@{example\_pcnt\_on\_reach}}
+\index{example\_pcnt\_on\_reach@{example\_pcnt\_on\_reach}!encoder.c@{encoder.c}}
+\doxysubsubsection{example\_pcnt\_on\_reach()}
+{\footnotesize\ttfamily \label{encoder_8c_a7f03f72613de2893da4bc44eb8e1e011} 
+bool IRAM\+\_\+\+ATTR example\+\_\+pcnt\+\_\+on\+\_\+reach (\begin{DoxyParamCaption}\item[{pcnt\+\_\+unit\+\_\+handle\+\_\+t}]{unit}{, }\item[{const pcnt\+\_\+watch\+\_\+event\+\_\+data\+\_\+t $\ast$}]{edata}{, }\item[{void $\ast$}]{user\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ encoder.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{encoder.c@{encoder.c}!pcnt\_unit@{pcnt\_unit}}
+\index{pcnt\_unit@{pcnt\_unit}!encoder.c@{encoder.c}}
+\doxysubsubsection{pcnt\_unit}
+{\footnotesize\ttfamily \label{encoder_8c_a9d25e0a7060112519b1c36755051dc15} 
+pcnt\+\_\+unit\+\_\+handle\+\_\+t pcnt\+\_\+unit = NULL}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ encoder.\+c}.
+
+\index{encoder.c@{encoder.c}!pulse\_encoderQueue@{pulse\_encoderQueue}}
+\index{pulse\_encoderQueue@{pulse\_encoderQueue}!encoder.c@{encoder.c}}
+\doxysubsubsection{pulse\_encoderQueue}
+{\footnotesize\ttfamily \label{encoder_8c_a745d4a6c288386e09694294a5f19410a} 
+Queue\+Handle\+\_\+t pulse\+\_\+encoder\+Queue}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ encoder.\+c}.
+

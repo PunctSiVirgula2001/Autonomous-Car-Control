@@ -1,0 +1,86 @@
+\doxysection{I2\+C\+\_\+accelerometer\+Sensor.\+c}
+\label{_i2_c__accelerometer_sensor_8c_source}\index{src/I2C/drivers/I2C\_accelerometerSensor.c@{src/I2C/drivers/I2C\_accelerometerSensor.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_accelerometer.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}I2C\_accelerometerSensor.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{/*\ ADXL\ 345\ accelerometer\ sensor\ */}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{void}\ I2C\_adxl345\_init(I2C\_dev\_handles\ device\_handle)\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ ADXL345\_REG\_POWER\_CTL,\ 0x08);\ \ \textcolor{comment}{//\ Bit\ 3\ high\ to\ start\ measuring}}
+\DoxyCodeLine{00015\ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ ADXL345\_REG\_DATA\_FORMAT,\ 0x0B);\ \textcolor{comment}{//\ Plus/minus\ 16g,\ 13-\/bit\ mode}}
+\DoxyCodeLine{00016\ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ ADXL345\_REG\_BW\_RATE,\ 0x0B);\ \textcolor{comment}{//\ Set\ data\ rate\ to\ 100\ Hz\ (example)}}
+\DoxyCodeLine{00017\ \}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ I2C\_read\_adxl345\_data(I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{double}*\ x,\ \textcolor{keywordtype}{double}*\ y,\ \textcolor{keywordtype}{double}*\ z)\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ uint8\_t\ data[6];\ \ \textcolor{comment}{//\ Array\ to\ hold\ the\ raw\ sensor\ data}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ Update\ previous\ values}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ prev\_x\ =\ 0;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ prev\_y\ =\ 0;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{double}\ prev\_z\ =\ 0;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{double}\ resolution\ =\ 1<<8;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ Read\ 6\ bytes\ from\ the\ ADXL345\ starting\ from\ DATAX0}}
+\DoxyCodeLine{00027\ \ \ \ \ uint16\_t\ temp;}
+\DoxyCodeLine{00028\ \ \ \ \ temp\ =\ I2C\_readRegister16bit(device\_handle,\ ADXL345\_REG\_DATAX0);}
+\DoxyCodeLine{00029\ \ \ \ \ data[0]\ =(uint8\_t)(temp>>8);}
+\DoxyCodeLine{00030\ \ \ \ \ data[1]\ =(uint8\_t)temp;}
+\DoxyCodeLine{00031\ \ \ \ \ temp\ =\ I2C\_readRegister16bit(device\_handle,\ ADXL345\_REG\_DATAY0);}
+\DoxyCodeLine{00032\ \ \ \ \ data[2]\ =(uint8\_t)(temp>>8);}
+\DoxyCodeLine{00033\ \ \ \ \ data[3]\ =(uint8\_t)temp;}
+\DoxyCodeLine{00034\ \ \ \ \ temp\ =\ I2C\_readRegister16bit(device\_handle,\ ADXL345\_REG\_DATAZ0);}
+\DoxyCodeLine{00035\ \ \ \ \ data[4]\ =(uint8\_t)(temp>>8);}
+\DoxyCodeLine{00036\ \ \ \ \ data[5]\ =(uint8\_t)temp;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//\ Combine\ the\ bytes\ into\ integers}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{double}\ raw\_x\ \ =\ (double)((int16\_t)(data[1]\ <<\ 8\ |\ data[0]))/resolution;}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{double}\ raw\_y\ \ =\ (double)((int16\_t)(data[3]\ <<\ 8\ |\ data[2]))/resolution;}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{double}\ raw\_z\ \ =\ (double)((int16\_t)(data[5]\ <<\ 8\ |\ data[4]))/resolution;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{comment}{//\ Apply\ low-\/pass\ filter}}
+\DoxyCodeLine{00044\ \ \ \ *x\ =\ ALPHA\ *\ raw\_x\ +\ (1\ -\/\ ALPHA)\ *\ prev\_x;}
+\DoxyCodeLine{00045\ \ \ \ *y\ =\ ALPHA\ *\ raw\_y\ +\ (1\ -\/\ ALPHA)\ *\ prev\_y;}
+\DoxyCodeLine{00046\ \ \ \ *z\ =\ ALPHA\ *\ raw\_z\ +\ (1\ -\/\ ALPHA)\ *\ prev\_z;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \textcolor{comment}{//\ Update\ previous\ values}}
+\DoxyCodeLine{00049\ \ \ \ prev\_x\ =\ *x;}
+\DoxyCodeLine{00050\ \ \ \ prev\_y\ =\ *y;}
+\DoxyCodeLine{00051\ \ \ \ prev\_z\ =\ *z;}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{void}\ I2C\_adxl345\_setRate(I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{double}\ rate)\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ uint8\_t\ \_b,\ \_s;\ \textcolor{comment}{//\ Variables\ to\ hold\ register\ values}}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{int}\ v\ =\ (int)\ (rate\ /\ 6.25);\ \textcolor{comment}{//\ Convert\ the\ desired\ rate\ to\ a\ value\ used\ by\ the\ sensor}}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{int}\ r\ =\ 0;\ \textcolor{comment}{//\ Variable\ to\ determine\ the\ bit\ position\ for\ the\ rate\ setting}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ rate\ setting\ value\ based\ on\ the\ input\ rate}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{//\ This\ loop\ determines\ how\ many\ times\ the\ value\ can\ be\ shifted\ right}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ before\ it\ becomes\ zero,\ effectively\ calculating\ the\ position\ of\ the\ highest\ set\ bit.}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordflow}{while}\ (v\ >>=\ 1)\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ r++;}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//\ The\ valid\ range\ for\ r\ is\ 0\ to\ 9,\ corresponding\ to\ available\ data\ rate\ settings}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordflow}{if}\ (r\ <=\ 9)\ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Read\ the\ current\ value\ of\ the\ BW\_RATE\ register}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ BW\_RATE\ register\ controls\ the\ data\ rate\ and\ power\ mode\ of\ the\ sensor}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \_b\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ ADXL345\_REG\_BW\_RATE)>>8);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ new\ value\ for\ the\ BW\_RATE\ register}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ lower\ 4\ bits\ of\ the\ BW\_RATE\ register\ (D3-\/D0)\ determine\ the\ output\ data\ rate}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ We\ preserve\ the\ upper\ 4\ bits\ (D7-\/D4)\ by\ masking\ with\ 0xF0\ and\ OR\ with\ the\ new\ rate\ setting}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \_s\ =\ (uint8\_t)\ (r\ +\ 6)\ |\ (\_b\ \&\ 0xF0);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Write\ the\ new\ value\ to\ the\ BW\_RATE\ register}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ ADXL345\_REG\_BW\_RATE,\ \_s);}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \}}
+
+\end{DoxyCode}

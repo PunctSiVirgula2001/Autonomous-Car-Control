@@ -1,0 +1,167 @@
+\doxysection{include/motors/\+Motor\+And\+Servo\+Control.h File Reference}
+\label{_motor_and_servo_control_8h}\index{include/motors/MotorAndServoControl.h@{include/motors/MotorAndServoControl.h}}
+{\ttfamily \#include "{}drivers/\+Dc\+Motor.\+h"{}}\newline
+{\ttfamily \#include "{}drivers/\+Servo\+Motor.\+h"{}}\newline
+{\ttfamily \#include "{}drivers/encoder.\+h"{}}\newline
+Include dependency graph for Motor\+And\+Servo\+Control.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Car\+Command}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+CAR\+\_\+\+COMMANDS}~20
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+DATATYPE\+\_\+\+CAR\+\_\+\+COMMANDS}~(sizeof(char$\ast$))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Received\+State\+\_\+app} \{ \newline
+\textbf{ Stop\+Received} = 0
+, \textbf{ Forward\+Received} = 1
+, \textbf{ Backward\+Received} = 2
+, \textbf{ Speed\+Received} = 5
+, \newline
+\textbf{ Steer\+Received} = 6
+, \textbf{ Autonomous\+Received} = 7
+, \textbf{ PID\+\_\+\+Changed} = 8
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ car\+Control\+\_\+\+Task} (void $\ast$pv\+Parameters)
+\item 
+void \textbf{ steer\+\_\+task} (void $\ast$pv\+Parameters)
+\item 
+void \textbf{ car\+Control\+\_\+init} ()
+\item 
+void \textbf{ car\+Control\+\_\+\+Backward\+\_\+init} (int break\+\_\+value)
+\item 
+\textbf{ Car\+Command} \textbf{ parse\+Command} (const char $\ast$command\+Str)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!QUEUE\_SIZE\_CAR\_COMMANDS@{QUEUE\_SIZE\_CAR\_COMMANDS}}
+\index{QUEUE\_SIZE\_CAR\_COMMANDS@{QUEUE\_SIZE\_CAR\_COMMANDS}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{QUEUE\_SIZE\_CAR\_COMMANDS}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_ae4c4a214147677f463f9ba6a33c4022c} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+CAR\+\_\+\+COMMANDS~20}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ Motor\+And\+Servo\+Control.\+h}.
+
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS@{QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS}}
+\index{QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS@{QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_ad0a5a563f7a841de2fd8aa720c0f70f9} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+DATATYPE\+\_\+\+CAR\+\_\+\+COMMANDS~(sizeof(char$\ast$))}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ Motor\+And\+Servo\+Control.\+h}.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!ReceivedState\_app@{ReceivedState\_app}}
+\index{ReceivedState\_app@{ReceivedState\_app}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{ReceivedState\_app}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+enum \textbf{ Received\+State\+\_\+app}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{StopReceived@{StopReceived}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!StopReceived@{StopReceived}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+Stop\+Received&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ForwardReceived@{ForwardReceived}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!ForwardReceived@{ForwardReceived}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+Forward\+Received&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BackwardReceived@{BackwardReceived}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!BackwardReceived@{BackwardReceived}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+Backward\+Received&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SpeedReceived@{SpeedReceived}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!SpeedReceived@{SpeedReceived}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+Speed\+Received&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SteerReceived@{SteerReceived}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!SteerReceived@{SteerReceived}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+Steer\+Received&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{AutonomousReceived@{AutonomousReceived}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!AutonomousReceived@{AutonomousReceived}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+Autonomous\+Received&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PID\_Changed@{PID\_Changed}!MotorAndServoControl.h@{MotorAndServoControl.h}}\index{MotorAndServoControl.h@{MotorAndServoControl.h}!PID\_Changed@{PID\_Changed}}}\label{_motor_and_servo_control_8h_a7b15d67975290586b9379fb94d061cf6} 
+PID\+\_\+\+Changed&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 13} of file \textbf{ Motor\+And\+Servo\+Control.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!carControl\_Backward\_init@{carControl\_Backward\_init}}
+\index{carControl\_Backward\_init@{carControl\_Backward\_init}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{carControl\_Backward\_init()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_a64174a9e686c6f19ea9dc54d1d47085b} 
+void car\+Control\+\_\+\+Backward\+\_\+init (\begin{DoxyParamCaption}\item[{int}]{break\+\_\+value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 42} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!carControl\_init@{carControl\_init}}
+\index{carControl\_init@{carControl\_init}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{carControl\_init()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_a3b1a84c1a0e08894d761413c5c66c701} 
+void car\+Control\+\_\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 239} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!carControl\_Task@{carControl\_Task}}
+\index{carControl\_Task@{carControl\_Task}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{carControl\_Task()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_a356958ec8c1d6b214ec4228ce5ae6f56} 
+void car\+Control\+\_\+\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 112} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!parseCommand@{parseCommand}}
+\index{parseCommand@{parseCommand}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{parseCommand()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_a5bdc71d98132147d476bffaf9a319080} 
+\textbf{ Car\+Command} parse\+Command (\begin{DoxyParamCaption}\item[{const char $\ast$}]{command\+Str}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{MotorAndServoControl.h@{MotorAndServoControl.h}!steer\_task@{steer\_task}}
+\index{steer\_task@{steer\_task}!MotorAndServoControl.h@{MotorAndServoControl.h}}
+\doxysubsubsection{steer\_task()}
+{\footnotesize\ttfamily \label{_motor_and_servo_control_8h_a111cf66cc0671765a5325a79a37773a2} 
+void steer\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 227} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+

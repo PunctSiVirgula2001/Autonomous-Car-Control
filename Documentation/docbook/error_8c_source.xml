@@ -1,0 +1,895 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_error_8c_source" xml:lang="en-US">
+<title>error.c</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls/library/error.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="_error_8c_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_error_8c_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;&#32;Error&#32;message&#32;information</emphasis>
+<anchor xml:id="_error_8c_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_error_8c_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Copyright&#32;The&#32;Mbed&#32;TLS&#32;Contributors</emphasis>
+<anchor xml:id="_error_8c_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;SPDX-License-Identifier:&#32;Apache-2.0</emphasis>
+<anchor xml:id="_error_8c_source_1l00006"/>00006 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_error_8c_source_1l00007"/>00007 <emphasis role="comment">&#32;*&#32;&#32;Licensed&#32;under&#32;the&#32;Apache&#32;License,&#32;Version&#32;2.0&#32;(the&#32;&quot;License&quot;);&#32;you&#32;may</emphasis>
+<anchor xml:id="_error_8c_source_1l00008"/>00008 <emphasis role="comment">&#32;*&#32;&#32;not&#32;use&#32;this&#32;file&#32;except&#32;in&#32;compliance&#32;with&#32;the&#32;License.</emphasis>
+<anchor xml:id="_error_8c_source_1l00009"/>00009 <emphasis role="comment">&#32;*&#32;&#32;You&#32;may&#32;obtain&#32;a&#32;copy&#32;of&#32;the&#32;License&#32;at</emphasis>
+<anchor xml:id="_error_8c_source_1l00010"/>00010 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_error_8c_source_1l00011"/>00011 <emphasis role="comment">&#32;*&#32;&#32;http://www.apache.org/licenses/LICENSE-2.0</emphasis>
+<anchor xml:id="_error_8c_source_1l00012"/>00012 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_error_8c_source_1l00013"/>00013 <emphasis role="comment">&#32;*&#32;&#32;Unless&#32;required&#32;by&#32;applicable&#32;law&#32;or&#32;agreed&#32;to&#32;in&#32;writing,&#32;software</emphasis>
+<anchor xml:id="_error_8c_source_1l00014"/>00014 <emphasis role="comment">&#32;*&#32;&#32;distributed&#32;under&#32;the&#32;License&#32;is&#32;distributed&#32;on&#32;an&#32;&quot;AS&#32;IS&quot;&#32;BASIS,&#32;WITHOUT</emphasis>
+<anchor xml:id="_error_8c_source_1l00015"/>00015 <emphasis role="comment">&#32;*&#32;&#32;WARRANTIES&#32;OR&#32;CONDITIONS&#32;OF&#32;ANY&#32;KIND,&#32;either&#32;express&#32;or&#32;implied.</emphasis>
+<anchor xml:id="_error_8c_source_1l00016"/>00016 <emphasis role="comment">&#32;*&#32;&#32;See&#32;the&#32;License&#32;for&#32;the&#32;specific&#32;language&#32;governing&#32;permissions&#32;and</emphasis>
+<anchor xml:id="_error_8c_source_1l00017"/>00017 <emphasis role="comment">&#32;*&#32;&#32;limitations&#32;under&#32;the&#32;License.</emphasis>
+<anchor xml:id="_error_8c_source_1l00018"/>00018 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00019"/>00019 
+<anchor xml:id="_error_8c_source_1l00020"/>00020 <emphasis role="preprocessor">#include&#32;&quot;common.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00021"/>00021 
+<anchor xml:id="_error_8c_source_1l00022"/>00022 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/error.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00023"/>00023 
+<anchor xml:id="_error_8c_source_1l00024"/>00024 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ERROR_C)&#32;||&#32;defined(MBEDTLS_ERROR_STRERROR_DUMMY)</emphasis>
+<anchor xml:id="_error_8c_source_1l00025"/>00025 
+<anchor xml:id="_error_8c_source_1l00026"/>00026 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ERROR_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00027"/>00027 
+<anchor xml:id="_error_8c_source_1l00028"/>00028 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/platform.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00029"/>00029 
+<anchor xml:id="_error_8c_source_1l00030"/>00030 <emphasis role="preprocessor">#include&#32;&lt;stdio.h&gt;</emphasis>
+<anchor xml:id="_error_8c_source_1l00031"/>00031 <emphasis role="preprocessor">#include&#32;&lt;string.h&gt;</emphasis>
+<anchor xml:id="_error_8c_source_1l00032"/>00032 
+<anchor xml:id="_error_8c_source_1l00033"/>00033 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00034"/>00034 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/aes.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00035"/>00035 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00036"/>00036 
+<anchor xml:id="_error_8c_source_1l00037"/>00037 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ARIA_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00038"/>00038 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/aria.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00039"/>00039 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00040"/>00040 
+<anchor xml:id="_error_8c_source_1l00041"/>00041 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ASN1_PARSE_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00042"/>00042 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/asn1.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00043"/>00043 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00044"/>00044 
+<anchor xml:id="_error_8c_source_1l00045"/>00045 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_BASE64_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00046"/>00046 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/base64.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00047"/>00047 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00048"/>00048 
+<anchor xml:id="_error_8c_source_1l00049"/>00049 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_BIGNUM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00050"/>00050 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/bignum.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00051"/>00051 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00052"/>00052 
+<anchor xml:id="_error_8c_source_1l00053"/>00053 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CAMELLIA_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00054"/>00054 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/camellia.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00055"/>00055 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00056"/>00056 
+<anchor xml:id="_error_8c_source_1l00057"/>00057 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CCM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00058"/>00058 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/ccm.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00059"/>00059 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00060"/>00060 
+<anchor xml:id="_error_8c_source_1l00061"/>00061 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHA20_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00062"/>00062 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/chacha20.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00063"/>00063 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00064"/>00064 
+<anchor xml:id="_error_8c_source_1l00065"/>00065 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHAPOLY_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00066"/>00066 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/chachapoly.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00067"/>00067 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00068"/>00068 
+<anchor xml:id="_error_8c_source_1l00069"/>00069 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00070"/>00070 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/cipher.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00071"/>00071 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00072"/>00072 
+<anchor xml:id="_error_8c_source_1l00073"/>00073 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CTR_DRBG_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00074"/>00074 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/ctr_drbg.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00075"/>00075 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00076"/>00076 
+<anchor xml:id="_error_8c_source_1l00077"/>00077 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00078"/>00078 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/des.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00079"/>00079 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00080"/>00080 
+<anchor xml:id="_error_8c_source_1l00081"/>00081 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DHM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00082"/>00082 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/dhm.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00083"/>00083 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00084"/>00084 
+<anchor xml:id="_error_8c_source_1l00085"/>00085 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00086"/>00086 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/ecp.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00087"/>00087 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00088"/>00088 
+<anchor xml:id="_error_8c_source_1l00089"/>00089 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ENTROPY_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00090"/>00090 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/entropy.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00091"/>00091 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00092"/>00092 
+<anchor xml:id="_error_8c_source_1l00093"/>00093 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ERROR_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00094"/>00094 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/error.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00095"/>00095 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00096"/>00096 
+<anchor xml:id="_error_8c_source_1l00097"/>00097 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00098"/>00098 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/platform.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00099"/>00099 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00100"/>00100 
+<anchor xml:id="_error_8c_source_1l00101"/>00101 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_GCM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00102"/>00102 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/gcm.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00103"/>00103 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00104"/>00104 
+<anchor xml:id="_error_8c_source_1l00105"/>00105 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HKDF_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00106"/>00106 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/hkdf.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00107"/>00107 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00108"/>00108 
+<anchor xml:id="_error_8c_source_1l00109"/>00109 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HMAC_DRBG_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00110"/>00110 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/hmac_drbg.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00111"/>00111 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00112"/>00112 
+<anchor xml:id="_error_8c_source_1l00113"/>00113 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_LMS_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00114"/>00114 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/lms.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00115"/>00115 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00116"/>00116 
+<anchor xml:id="_error_8c_source_1l00117"/>00117 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MD_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00118"/>00118 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/md.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00119"/>00119 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00120"/>00120 
+<anchor xml:id="_error_8c_source_1l00121"/>00121 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NET_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00122"/>00122 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/net_sockets.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00123"/>00123 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00124"/>00124 
+<anchor xml:id="_error_8c_source_1l00125"/>00125 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_OID_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00126"/>00126 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/oid.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00127"/>00127 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00128"/>00128 
+<anchor xml:id="_error_8c_source_1l00129"/>00129 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PEM_PARSE_C)&#32;||&#32;defined(MBEDTLS_PEM_WRITE_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00130"/>00130 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/pem.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00131"/>00131 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00132"/>00132 
+<anchor xml:id="_error_8c_source_1l00133"/>00133 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00134"/>00134 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/pk.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00135"/>00135 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00136"/>00136 
+<anchor xml:id="_error_8c_source_1l00137"/>00137 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS12_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00138"/>00138 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/pkcs12.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00139"/>00139 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00140"/>00140 
+<anchor xml:id="_error_8c_source_1l00141"/>00141 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS5_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00142"/>00142 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/pkcs5.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00143"/>00143 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00144"/>00144 
+<anchor xml:id="_error_8c_source_1l00145"/>00145 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS7_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00146"/>00146 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/pkcs7.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00147"/>00147 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00148"/>00148 
+<anchor xml:id="_error_8c_source_1l00149"/>00149 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_POLY1305_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00150"/>00150 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/poly1305.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00151"/>00151 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00152"/>00152 
+<anchor xml:id="_error_8c_source_1l00153"/>00153 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RSA_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00154"/>00154 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/rsa.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00155"/>00155 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00156"/>00156 
+<anchor xml:id="_error_8c_source_1l00157"/>00157 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA1_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00158"/>00158 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/sha1.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00159"/>00159 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00160"/>00160 
+<anchor xml:id="_error_8c_source_1l00161"/>00161 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00162"/>00162 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/sha256.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00163"/>00163 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00164"/>00164 
+<anchor xml:id="_error_8c_source_1l00165"/>00165 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA3_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00166"/>00166 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/sha3.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00167"/>00167 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00168"/>00168 
+<anchor xml:id="_error_8c_source_1l00169"/>00169 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00170"/>00170 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/sha512.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00171"/>00171 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00172"/>00172 
+<anchor xml:id="_error_8c_source_1l00173"/>00173 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00174"/>00174 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/ssl.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00175"/>00175 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00176"/>00176 
+<anchor xml:id="_error_8c_source_1l00177"/>00177 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_THREADING_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00178"/>00178 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/threading.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00179"/>00179 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00180"/>00180 
+<anchor xml:id="_error_8c_source_1l00181"/>00181 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_USE_C)&#32;||&#32;defined(MBEDTLS_X509_CREATE_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00182"/>00182 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/x509.h&quot;</emphasis>
+<anchor xml:id="_error_8c_source_1l00183"/>00183 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00184"/>00184 
+<anchor xml:id="_error_8c_source_1l00185"/>00185 
+<anchor xml:id="_error_8c_source_1l00186"/>00186 <emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*mbedtls_high_level_strerr(<emphasis role="keywordtype">int</emphasis>&#32;error_code)
+<anchor xml:id="_error_8c_source_1l00187"/>00187 {
+<anchor xml:id="_error_8c_source_1l00188"/>00188 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;high_level_error_code;
+<anchor xml:id="_error_8c_source_1l00189"/>00189 
+<anchor xml:id="_error_8c_source_1l00190"/>00190 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(error_code&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00191"/>00191 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;error_code&#32;=&#32;-error_code;
+<anchor xml:id="_error_8c_source_1l00192"/>00192 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00193"/>00193 
+<anchor xml:id="_error_8c_source_1l00194"/>00194 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Extract&#32;the&#32;high-level&#32;part&#32;from&#32;the&#32;error&#32;code.&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00195"/>00195 &#32;&#32;&#32;&#32;high_level_error_code&#32;=&#32;error_code&#32;&amp;&#32;0xFF80;
+<anchor xml:id="_error_8c_source_1l00196"/>00196 
+<anchor xml:id="_error_8c_source_1l00197"/>00197 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>&#32;(high_level_error_code)&#32;{
+<anchor xml:id="_error_8c_source_1l00198"/>00198 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Begin&#32;Auto-Generated&#32;Code.&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00199"/>00199 <emphasis role="preprocessor">&#32;&#32;&#32;&#32;#if&#32;defined(MBEDTLS_CIPHER_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00200"/>00200 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00201"/>00201 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;The&#32;selected&#32;feature&#32;is&#32;not&#32;available&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00202"/>00202 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00203"/>00203 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;Bad&#32;input&#32;parameters&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00204"/>00204 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00205"/>00205 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;Failed&#32;to&#32;allocate&#32;memory&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00206"/>00206 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_INVALID_PADDING):
+<anchor xml:id="_error_8c_source_1l00207"/>00207 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;Input&#32;data&#32;contains&#32;invalid&#32;padding&#32;and&#32;is&#32;rejected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00208"/>00208 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_FULL_BLOCK_EXPECTED):
+<anchor xml:id="_error_8c_source_1l00209"/>00209 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;Decryption&#32;of&#32;block&#32;requires&#32;a&#32;full&#32;block&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00210"/>00210 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_AUTH_FAILED):
+<anchor xml:id="_error_8c_source_1l00211"/>00211 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;Authentication&#32;failed&#32;(for&#32;AEAD&#32;modes)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00212"/>00212 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CIPHER_INVALID_CONTEXT):
+<anchor xml:id="_error_8c_source_1l00213"/>00213 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CIPHER&#32;-&#32;The&#32;context&#32;is&#32;invalid.&#32;For&#32;example,&#32;because&#32;it&#32;was&#32;freed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00214"/>00214 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00215"/>00215 
+<anchor xml:id="_error_8c_source_1l00216"/>00216 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DHM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00217"/>00217 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00218"/>00218 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Bad&#32;input&#32;parameters&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00219"/>00219 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_READ_PARAMS_FAILED):
+<anchor xml:id="_error_8c_source_1l00220"/>00220 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Reading&#32;of&#32;the&#32;DHM&#32;parameters&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00221"/>00221 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_MAKE_PARAMS_FAILED):
+<anchor xml:id="_error_8c_source_1l00222"/>00222 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Making&#32;of&#32;the&#32;DHM&#32;parameters&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00223"/>00223 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_READ_PUBLIC_FAILED):
+<anchor xml:id="_error_8c_source_1l00224"/>00224 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Reading&#32;of&#32;the&#32;public&#32;values&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00225"/>00225 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_MAKE_PUBLIC_FAILED):
+<anchor xml:id="_error_8c_source_1l00226"/>00226 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Making&#32;of&#32;the&#32;public&#32;value&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00227"/>00227 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_CALC_SECRET_FAILED):
+<anchor xml:id="_error_8c_source_1l00228"/>00228 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Calculation&#32;of&#32;the&#32;DHM&#32;secret&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00229"/>00229 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_INVALID_FORMAT):
+<anchor xml:id="_error_8c_source_1l00230"/>00230 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;The&#32;ASN.1&#32;data&#32;is&#32;not&#32;formatted&#32;correctly&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00231"/>00231 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00232"/>00232 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Allocation&#32;of&#32;memory&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00233"/>00233 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00234"/>00234 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Read&#32;or&#32;write&#32;of&#32;file&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00235"/>00235 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DHM_SET_GROUP_FAILED):
+<anchor xml:id="_error_8c_source_1l00236"/>00236 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DHM&#32;-&#32;Setting&#32;the&#32;modulus&#32;and&#32;generator&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00237"/>00237 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DHM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00238"/>00238 
+<anchor xml:id="_error_8c_source_1l00239"/>00239 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00240"/>00240 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00241"/>00241 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00242"/>00242 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00243"/>00243 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;The&#32;buffer&#32;is&#32;too&#32;small&#32;to&#32;write&#32;to&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00244"/>00244 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00245"/>00245 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;The&#32;requested&#32;feature&#32;is&#32;not&#32;available,&#32;for&#32;example,&#32;the&#32;requested&#32;curve&#32;is&#32;not&#32;supported&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00246"/>00246 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_VERIFY_FAILED):
+<anchor xml:id="_error_8c_source_1l00247"/>00247 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;The&#32;signature&#32;is&#32;not&#32;valid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00248"/>00248 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00249"/>00249 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;Memory&#32;allocation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00250"/>00250 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_RANDOM_FAILED):
+<anchor xml:id="_error_8c_source_1l00251"/>00251 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;Generation&#32;of&#32;random&#32;value,&#32;such&#32;as&#32;ephemeral&#32;key,&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00252"/>00252 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_INVALID_KEY):
+<anchor xml:id="_error_8c_source_1l00253"/>00253 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;Invalid&#32;private&#32;or&#32;public&#32;key&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00254"/>00254 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_SIG_LEN_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00255"/>00255 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;The&#32;buffer&#32;contains&#32;a&#32;valid&#32;signature&#32;followed&#32;by&#32;more&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00256"/>00256 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ECP_IN_PROGRESS):
+<anchor xml:id="_error_8c_source_1l00257"/>00257 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ECP&#32;-&#32;Operation&#32;in&#32;progress,&#32;call&#32;again&#32;with&#32;the&#32;same&#32;parameters&#32;to&#32;continue&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00258"/>00258 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00259"/>00259 
+<anchor xml:id="_error_8c_source_1l00260"/>00260 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MD_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00261"/>00261 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MD_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00262"/>00262 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;MD&#32;-&#32;The&#32;selected&#32;feature&#32;is&#32;not&#32;available&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00263"/>00263 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MD_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00264"/>00264 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;MD&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00265"/>00265 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MD_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00266"/>00266 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;MD&#32;-&#32;Failed&#32;to&#32;allocate&#32;memory&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00267"/>00267 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MD_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00268"/>00268 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;MD&#32;-&#32;Opening&#32;or&#32;reading&#32;of&#32;file&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00269"/>00269 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MD_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00270"/>00270 
+<anchor xml:id="_error_8c_source_1l00271"/>00271 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PEM_PARSE_C)&#32;||&#32;defined(MBEDTLS_PEM_WRITE_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00272"/>00272 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_NO_HEADER_FOOTER_PRESENT):
+<anchor xml:id="_error_8c_source_1l00273"/>00273 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;No&#32;PEM&#32;header&#32;or&#32;footer&#32;found&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00274"/>00274 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_INVALID_DATA):
+<anchor xml:id="_error_8c_source_1l00275"/>00275 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;PEM&#32;string&#32;is&#32;not&#32;as&#32;expected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00276"/>00276 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00277"/>00277 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;Failed&#32;to&#32;allocate&#32;memory&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00278"/>00278 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_INVALID_ENC_IV):
+<anchor xml:id="_error_8c_source_1l00279"/>00279 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;RSA&#32;IV&#32;is&#32;not&#32;in&#32;hex-format&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00280"/>00280 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_UNKNOWN_ENC_ALG):
+<anchor xml:id="_error_8c_source_1l00281"/>00281 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;Unsupported&#32;key&#32;encryption&#32;algorithm&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00282"/>00282 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_PASSWORD_REQUIRED):
+<anchor xml:id="_error_8c_source_1l00283"/>00283 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;Private&#32;key&#32;password&#32;can&apos;t&#32;be&#32;empty&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00284"/>00284 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_PASSWORD_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00285"/>00285 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;Given&#32;private&#32;key&#32;password&#32;does&#32;not&#32;allow&#32;for&#32;correct&#32;decryption&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00286"/>00286 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00287"/>00287 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;Unavailable&#32;feature,&#32;e.g.&#32;hashing/encryption&#32;combination&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00288"/>00288 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PEM_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00289"/>00289 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PEM&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00290"/>00290 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PEM_PARSE_C&#32;||&#32;MBEDTLS_PEM_WRITE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00291"/>00291 
+<anchor xml:id="_error_8c_source_1l00292"/>00292 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00293"/>00293 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00294"/>00294 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Memory&#32;allocation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00295"/>00295 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_TYPE_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00296"/>00296 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Type&#32;mismatch,&#32;eg&#32;attempt&#32;to&#32;encrypt&#32;with&#32;an&#32;ECDSA&#32;key&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00297"/>00297 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00298"/>00298 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00299"/>00299 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00300"/>00300 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Read/write&#32;of&#32;file&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00301"/>00301 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_KEY_INVALID_VERSION):
+<anchor xml:id="_error_8c_source_1l00302"/>00302 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Unsupported&#32;key&#32;version&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00303"/>00303 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_KEY_INVALID_FORMAT):
+<anchor xml:id="_error_8c_source_1l00304"/>00304 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Invalid&#32;key&#32;tag&#32;or&#32;value&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00305"/>00305 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_UNKNOWN_PK_ALG):
+<anchor xml:id="_error_8c_source_1l00306"/>00306 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Key&#32;algorithm&#32;is&#32;unsupported&#32;(only&#32;RSA&#32;and&#32;EC&#32;are&#32;supported)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00307"/>00307 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_PASSWORD_REQUIRED):
+<anchor xml:id="_error_8c_source_1l00308"/>00308 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Private&#32;key&#32;password&#32;can&apos;t&#32;be&#32;empty&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00309"/>00309 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_PASSWORD_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00310"/>00310 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Given&#32;private&#32;key&#32;password&#32;does&#32;not&#32;allow&#32;for&#32;correct&#32;decryption&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00311"/>00311 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_INVALID_PUBKEY):
+<anchor xml:id="_error_8c_source_1l00312"/>00312 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;The&#32;pubkey&#32;tag&#32;or&#32;value&#32;is&#32;invalid&#32;(only&#32;RSA&#32;and&#32;EC&#32;are&#32;supported)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00313"/>00313 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_INVALID_ALG):
+<anchor xml:id="_error_8c_source_1l00314"/>00314 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;The&#32;algorithm&#32;tag&#32;or&#32;value&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00315"/>00315 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_UNKNOWN_NAMED_CURVE):
+<anchor xml:id="_error_8c_source_1l00316"/>00316 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Elliptic&#32;curve&#32;is&#32;unsupported&#32;(only&#32;NIST&#32;curves&#32;are&#32;supported)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00317"/>00317 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00318"/>00318 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;Unavailable&#32;feature,&#32;e.g.&#32;RSA&#32;disabled&#32;for&#32;RSA&#32;key&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00319"/>00319 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_SIG_LEN_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00320"/>00320 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;The&#32;buffer&#32;contains&#32;a&#32;valid&#32;signature&#32;followed&#32;by&#32;more&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00321"/>00321 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PK_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00322"/>00322 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PK&#32;-&#32;The&#32;output&#32;buffer&#32;is&#32;too&#32;small&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00323"/>00323 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00324"/>00324 
+<anchor xml:id="_error_8c_source_1l00325"/>00325 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS12_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00326"/>00326 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS12_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00327"/>00327 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS12&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00328"/>00328 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS12_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00329"/>00329 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS12&#32;-&#32;Feature&#32;not&#32;available,&#32;e.g.&#32;unsupported&#32;encryption&#32;scheme&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00330"/>00330 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS12_PBE_INVALID_FORMAT):
+<anchor xml:id="_error_8c_source_1l00331"/>00331 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS12&#32;-&#32;PBE&#32;ASN.1&#32;data&#32;not&#32;as&#32;expected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00332"/>00332 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS12_PASSWORD_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00333"/>00333 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS12&#32;-&#32;Given&#32;private&#32;key&#32;password&#32;does&#32;not&#32;allow&#32;for&#32;correct&#32;decryption&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00334"/>00334 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS12_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00335"/>00335 
+<anchor xml:id="_error_8c_source_1l00336"/>00336 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS5_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00337"/>00337 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS5_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00338"/>00338 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS5&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00339"/>00339 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS5_INVALID_FORMAT):
+<anchor xml:id="_error_8c_source_1l00340"/>00340 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS5&#32;-&#32;Unexpected&#32;ASN.1&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00341"/>00341 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS5_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00342"/>00342 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS5&#32;-&#32;Requested&#32;encryption&#32;or&#32;digest&#32;alg&#32;not&#32;available&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00343"/>00343 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS5_PASSWORD_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00344"/>00344 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS5&#32;-&#32;Given&#32;private&#32;key&#32;password&#32;does&#32;not&#32;allow&#32;for&#32;correct&#32;decryption&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00345"/>00345 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS5_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00346"/>00346 
+<anchor xml:id="_error_8c_source_1l00347"/>00347 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS7_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00348"/>00348 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_FORMAT):
+<anchor xml:id="_error_8c_source_1l00349"/>00349 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;The&#32;format&#32;is&#32;invalid,&#32;e.g.&#32;different&#32;type&#32;expected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00350"/>00350 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00351"/>00351 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;Unavailable&#32;feature,&#32;e.g.&#32;anything&#32;other&#32;than&#32;signed&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00352"/>00352 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_VERSION):
+<anchor xml:id="_error_8c_source_1l00353"/>00353 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;The&#32;PKCS&#32;#7&#32;version&#32;element&#32;is&#32;invalid&#32;or&#32;cannot&#32;be&#32;parsed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00354"/>00354 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_CONTENT_INFO):
+<anchor xml:id="_error_8c_source_1l00355"/>00355 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;The&#32;PKCS&#32;#7&#32;content&#32;info&#32;is&#32;invalid&#32;or&#32;cannot&#32;be&#32;parsed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00356"/>00356 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_ALG):
+<anchor xml:id="_error_8c_source_1l00357"/>00357 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;The&#32;algorithm&#32;tag&#32;or&#32;value&#32;is&#32;invalid&#32;or&#32;cannot&#32;be&#32;parsed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00358"/>00358 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_CERT):
+<anchor xml:id="_error_8c_source_1l00359"/>00359 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;The&#32;certificate&#32;tag&#32;or&#32;value&#32;is&#32;invalid&#32;or&#32;cannot&#32;be&#32;parsed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00360"/>00360 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_SIGNATURE):
+<anchor xml:id="_error_8c_source_1l00361"/>00361 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;Error&#32;parsing&#32;the&#32;signature&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00362"/>00362 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_INVALID_SIGNER_INFO):
+<anchor xml:id="_error_8c_source_1l00363"/>00363 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;Error&#32;parsing&#32;the&#32;signer&apos;s&#32;info&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00364"/>00364 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00365"/>00365 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;Input&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00366"/>00366 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00367"/>00367 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;Allocation&#32;of&#32;memory&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00368"/>00368 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_VERIFY_FAIL):
+<anchor xml:id="_error_8c_source_1l00369"/>00369 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;Verification&#32;Failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00370"/>00370 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PKCS7_CERT_DATE_INVALID):
+<anchor xml:id="_error_8c_source_1l00371"/>00371 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PKCS7&#32;-&#32;The&#32;PKCS&#32;#7&#32;date&#32;issued/expired&#32;dates&#32;are&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00372"/>00372 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS7_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00373"/>00373 
+<anchor xml:id="_error_8c_source_1l00374"/>00374 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RSA_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00375"/>00375 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00376"/>00376 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00377"/>00377 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_INVALID_PADDING):
+<anchor xml:id="_error_8c_source_1l00378"/>00378 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;Input&#32;data&#32;contains&#32;invalid&#32;padding&#32;and&#32;is&#32;rejected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00379"/>00379 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_KEY_GEN_FAILED):
+<anchor xml:id="_error_8c_source_1l00380"/>00380 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;Something&#32;failed&#32;during&#32;generation&#32;of&#32;a&#32;key&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00381"/>00381 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_KEY_CHECK_FAILED):
+<anchor xml:id="_error_8c_source_1l00382"/>00382 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;Key&#32;failed&#32;to&#32;pass&#32;the&#32;validity&#32;check&#32;of&#32;the&#32;library&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00383"/>00383 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_PUBLIC_FAILED):
+<anchor xml:id="_error_8c_source_1l00384"/>00384 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;The&#32;public&#32;key&#32;operation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00385"/>00385 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_PRIVATE_FAILED):
+<anchor xml:id="_error_8c_source_1l00386"/>00386 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;The&#32;private&#32;key&#32;operation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00387"/>00387 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_VERIFY_FAILED):
+<anchor xml:id="_error_8c_source_1l00388"/>00388 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;The&#32;PKCS#1&#32;verification&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00389"/>00389 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_OUTPUT_TOO_LARGE):
+<anchor xml:id="_error_8c_source_1l00390"/>00390 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;The&#32;output&#32;buffer&#32;for&#32;decryption&#32;is&#32;not&#32;large&#32;enough&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00391"/>00391 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_RSA_RNG_FAILED):
+<anchor xml:id="_error_8c_source_1l00392"/>00392 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;RSA&#32;-&#32;The&#32;random&#32;generator&#32;failed&#32;to&#32;generate&#32;non-zeros&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00393"/>00393 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RSA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00394"/>00394 
+<anchor xml:id="_error_8c_source_1l00395"/>00395 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00396"/>00396 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CRYPTO_IN_PROGRESS):
+<anchor xml:id="_error_8c_source_1l00397"/>00397 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;A&#32;cryptographic&#32;operation&#32;is&#32;in&#32;progress.&#32;Try&#32;again&#32;later&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00398"/>00398 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00399"/>00399 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;requested&#32;feature&#32;is&#32;not&#32;available&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00400"/>00400 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00401"/>00401 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00402"/>00402 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_INVALID_MAC):
+<anchor xml:id="_error_8c_source_1l00403"/>00403 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Verification&#32;of&#32;the&#32;message&#32;MAC&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00404"/>00404 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_INVALID_RECORD):
+<anchor xml:id="_error_8c_source_1l00405"/>00405 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;An&#32;invalid&#32;SSL&#32;record&#32;was&#32;received&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00406"/>00406 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CONN_EOF):
+<anchor xml:id="_error_8c_source_1l00407"/>00407 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;connection&#32;indicated&#32;an&#32;EOF&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00408"/>00408 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_DECODE_ERROR):
+<anchor xml:id="_error_8c_source_1l00409"/>00409 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;A&#32;message&#32;could&#32;not&#32;be&#32;parsed&#32;due&#32;to&#32;a&#32;syntactic&#32;error&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00410"/>00410 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_NO_RNG):
+<anchor xml:id="_error_8c_source_1l00411"/>00411 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;No&#32;RNG&#32;was&#32;provided&#32;to&#32;the&#32;SSL&#32;module&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00412"/>00412 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_NO_CLIENT_CERTIFICATE):
+<anchor xml:id="_error_8c_source_1l00413"/>00413 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;No&#32;client&#32;certification&#32;received&#32;from&#32;the&#32;client,&#32;but&#32;required&#32;by&#32;the&#32;authentication&#32;mode&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00414"/>00414 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_UNSUPPORTED_EXTENSION):
+<anchor xml:id="_error_8c_source_1l00415"/>00415 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Client&#32;received&#32;an&#32;extended&#32;server&#32;hello&#32;containing&#32;an&#32;unsupported&#32;extension&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00416"/>00416 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_NO_APPLICATION_PROTOCOL):
+<anchor xml:id="_error_8c_source_1l00417"/>00417 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;No&#32;ALPN&#32;protocols&#32;supported&#32;that&#32;the&#32;client&#32;advertises&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00418"/>00418 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_PRIVATE_KEY_REQUIRED):
+<anchor xml:id="_error_8c_source_1l00419"/>00419 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;own&#32;private&#32;key&#32;or&#32;pre-shared&#32;key&#32;is&#32;not&#32;set,&#32;but&#32;needed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00420"/>00420 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CA_CHAIN_REQUIRED):
+<anchor xml:id="_error_8c_source_1l00421"/>00421 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;No&#32;CA&#32;Chain&#32;is&#32;set,&#32;but&#32;required&#32;to&#32;operate&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00422"/>00422 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_UNEXPECTED_MESSAGE):
+<anchor xml:id="_error_8c_source_1l00423"/>00423 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;An&#32;unexpected&#32;message&#32;was&#32;received&#32;from&#32;our&#32;peer&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00424"/>00424 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_FATAL_ALERT_MESSAGE):
+<anchor xml:id="_error_8c_source_1l00425"/>00425 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;A&#32;fatal&#32;alert&#32;message&#32;was&#32;received&#32;from&#32;our&#32;peer&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00426"/>00426 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_UNRECOGNIZED_NAME):
+<anchor xml:id="_error_8c_source_1l00427"/>00427 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;No&#32;server&#32;could&#32;be&#32;identified&#32;matching&#32;the&#32;client&apos;s&#32;SNI&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00428"/>00428 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY):
+<anchor xml:id="_error_8c_source_1l00429"/>00429 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;peer&#32;notified&#32;us&#32;that&#32;the&#32;connection&#32;is&#32;going&#32;to&#32;be&#32;closed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00430"/>00430 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_BAD_CERTIFICATE):
+<anchor xml:id="_error_8c_source_1l00431"/>00431 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Processing&#32;of&#32;the&#32;Certificate&#32;handshake&#32;message&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00432"/>00432 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_RECEIVED_NEW_SESSION_TICKET):
+<anchor xml:id="_error_8c_source_1l00433"/>00433 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;*&#32;Received&#32;NewSessionTicket&#32;Post&#32;Handshake&#32;Message.&#32;This&#32;error&#32;code&#32;is&#32;experimental&#32;and&#32;may&#32;be&#32;changed&#32;or&#32;removed&#32;without&#32;notice&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00434"/>00434 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CANNOT_READ_EARLY_DATA):
+<anchor xml:id="_error_8c_source_1l00435"/>00435 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Not&#32;possible&#32;to&#32;read&#32;early&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00436"/>00436 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CANNOT_WRITE_EARLY_DATA):
+<anchor xml:id="_error_8c_source_1l00437"/>00437 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Not&#32;possible&#32;to&#32;write&#32;early&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00438"/>00438 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CACHE_ENTRY_NOT_FOUND):
+<anchor xml:id="_error_8c_source_1l00439"/>00439 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Cache&#32;entry&#32;not&#32;found&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00440"/>00440 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00441"/>00441 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Memory&#32;allocation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00442"/>00442 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_HW_ACCEL_FAILED):
+<anchor xml:id="_error_8c_source_1l00443"/>00443 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Hardware&#32;acceleration&#32;function&#32;returned&#32;with&#32;error&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00444"/>00444 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_HW_ACCEL_FALLTHROUGH):
+<anchor xml:id="_error_8c_source_1l00445"/>00445 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Hardware&#32;acceleration&#32;function&#32;skipped&#32;/&#32;left&#32;alone&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00446"/>00446 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_BAD_PROTOCOL_VERSION):
+<anchor xml:id="_error_8c_source_1l00447"/>00447 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Handshake&#32;protocol&#32;not&#32;within&#32;min/max&#32;boundaries&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00448"/>00448 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_HANDSHAKE_FAILURE):
+<anchor xml:id="_error_8c_source_1l00449"/>00449 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;handshake&#32;negotiation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00450"/>00450 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_SESSION_TICKET_EXPIRED):
+<anchor xml:id="_error_8c_source_1l00451"/>00451 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Session&#32;ticket&#32;has&#32;expired&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00452"/>00452 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_PK_TYPE_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00453"/>00453 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Public&#32;key&#32;type&#32;mismatch&#32;(eg,&#32;asked&#32;for&#32;RSA&#32;key&#32;exchange&#32;and&#32;presented&#32;EC&#32;key)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00454"/>00454 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_UNKNOWN_IDENTITY):
+<anchor xml:id="_error_8c_source_1l00455"/>00455 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Unknown&#32;identity&#32;received&#32;(eg,&#32;PSK&#32;identity)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00456"/>00456 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_INTERNAL_ERROR):
+<anchor xml:id="_error_8c_source_1l00457"/>00457 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Internal&#32;error&#32;(eg,&#32;unexpected&#32;failure&#32;in&#32;lower-level&#32;module)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00458"/>00458 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_COUNTER_WRAPPING):
+<anchor xml:id="_error_8c_source_1l00459"/>00459 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;A&#32;counter&#32;would&#32;wrap&#32;(eg,&#32;too&#32;many&#32;messages&#32;exchanged)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00460"/>00460 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_WAITING_SERVER_HELLO_RENEGO):
+<anchor xml:id="_error_8c_source_1l00461"/>00461 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Unexpected&#32;message&#32;at&#32;ServerHello&#32;in&#32;renegotiation&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00462"/>00462 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_HELLO_VERIFY_REQUIRED):
+<anchor xml:id="_error_8c_source_1l00463"/>00463 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;DTLS&#32;client&#32;must&#32;retry&#32;for&#32;hello&#32;verification&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00464"/>00464 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00465"/>00465 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;A&#32;buffer&#32;is&#32;too&#32;small&#32;to&#32;receive&#32;or&#32;write&#32;a&#32;message&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00466"/>00466 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_WANT_READ):
+<anchor xml:id="_error_8c_source_1l00467"/>00467 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;No&#32;data&#32;of&#32;requested&#32;type&#32;currently&#32;available&#32;on&#32;underlying&#32;transport&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00468"/>00468 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_WANT_WRITE):
+<anchor xml:id="_error_8c_source_1l00469"/>00469 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Connection&#32;requires&#32;a&#32;write&#32;call&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00470"/>00470 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_TIMEOUT):
+<anchor xml:id="_error_8c_source_1l00471"/>00471 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;operation&#32;timed&#32;out&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00472"/>00472 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CLIENT_RECONNECT):
+<anchor xml:id="_error_8c_source_1l00473"/>00473 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;client&#32;initiated&#32;a&#32;reconnect&#32;from&#32;the&#32;same&#32;port&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00474"/>00474 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_UNEXPECTED_RECORD):
+<anchor xml:id="_error_8c_source_1l00475"/>00475 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Record&#32;header&#32;looks&#32;valid&#32;but&#32;is&#32;not&#32;expected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00476"/>00476 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_NON_FATAL):
+<anchor xml:id="_error_8c_source_1l00477"/>00477 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;alert&#32;message&#32;received&#32;indicates&#32;a&#32;non-fatal&#32;error&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00478"/>00478 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_ILLEGAL_PARAMETER):
+<anchor xml:id="_error_8c_source_1l00479"/>00479 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;A&#32;field&#32;in&#32;a&#32;message&#32;was&#32;incorrect&#32;or&#32;inconsistent&#32;with&#32;other&#32;fields&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00480"/>00480 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_CONTINUE_PROCESSING):
+<anchor xml:id="_error_8c_source_1l00481"/>00481 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Internal-only&#32;message&#32;signaling&#32;that&#32;further&#32;message-processing&#32;should&#32;be&#32;done&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00482"/>00482 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_ASYNC_IN_PROGRESS):
+<anchor xml:id="_error_8c_source_1l00483"/>00483 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;The&#32;asynchronous&#32;operation&#32;is&#32;not&#32;completed&#32;yet&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00484"/>00484 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_EARLY_MESSAGE):
+<anchor xml:id="_error_8c_source_1l00485"/>00485 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Internal-only&#32;message&#32;signaling&#32;that&#32;a&#32;message&#32;arrived&#32;early&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00486"/>00486 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_UNEXPECTED_CID):
+<anchor xml:id="_error_8c_source_1l00487"/>00487 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;An&#32;encrypted&#32;DTLS-frame&#32;with&#32;an&#32;unexpected&#32;CID&#32;was&#32;received&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00488"/>00488 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_VERSION_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00489"/>00489 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;An&#32;operation&#32;failed&#32;due&#32;to&#32;an&#32;unexpected&#32;version&#32;or&#32;configuration&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00490"/>00490 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SSL_BAD_CONFIG):
+<anchor xml:id="_error_8c_source_1l00491"/>00491 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SSL&#32;-&#32;Invalid&#32;value&#32;in&#32;SSL&#32;config&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00492"/>00492 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00493"/>00493 
+<anchor xml:id="_error_8c_source_1l00494"/>00494 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_USE_C)&#32;||&#32;defined(MBEDTLS_X509_CREATE_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00495"/>00495 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_FEATURE_UNAVAILABLE):
+<anchor xml:id="_error_8c_source_1l00496"/>00496 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Unavailable&#32;feature,&#32;e.g.&#32;RSA&#32;hashing/encryption&#32;combination&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00497"/>00497 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_UNKNOWN_OID):
+<anchor xml:id="_error_8c_source_1l00498"/>00498 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Requested&#32;OID&#32;is&#32;unknown&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00499"/>00499 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_FORMAT):
+<anchor xml:id="_error_8c_source_1l00500"/>00500 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;CRT/CRL/CSR&#32;format&#32;is&#32;invalid,&#32;e.g.&#32;different&#32;type&#32;expected&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00501"/>00501 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_VERSION):
+<anchor xml:id="_error_8c_source_1l00502"/>00502 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;CRT/CRL/CSR&#32;version&#32;element&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00503"/>00503 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_SERIAL):
+<anchor xml:id="_error_8c_source_1l00504"/>00504 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;serial&#32;tag&#32;or&#32;value&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00505"/>00505 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_ALG):
+<anchor xml:id="_error_8c_source_1l00506"/>00506 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;algorithm&#32;tag&#32;or&#32;value&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00507"/>00507 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_NAME):
+<anchor xml:id="_error_8c_source_1l00508"/>00508 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;name&#32;tag&#32;or&#32;value&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00509"/>00509 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_DATE):
+<anchor xml:id="_error_8c_source_1l00510"/>00510 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;date&#32;tag&#32;or&#32;value&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00511"/>00511 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_SIGNATURE):
+<anchor xml:id="_error_8c_source_1l00512"/>00512 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;signature&#32;tag&#32;or&#32;value&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00513"/>00513 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_INVALID_EXTENSIONS):
+<anchor xml:id="_error_8c_source_1l00514"/>00514 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;The&#32;extension&#32;tag&#32;or&#32;value&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00515"/>00515 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_UNKNOWN_VERSION):
+<anchor xml:id="_error_8c_source_1l00516"/>00516 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;CRT/CRL/CSR&#32;has&#32;an&#32;unsupported&#32;version&#32;number&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00517"/>00517 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_UNKNOWN_SIG_ALG):
+<anchor xml:id="_error_8c_source_1l00518"/>00518 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Signature&#32;algorithm&#32;(oid)&#32;is&#32;unsupported&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00519"/>00519 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_SIG_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00520"/>00520 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Signature&#32;algorithms&#32;do&#32;not&#32;match.&#32;(see&#32;\\c&#32;::mbedtls_x509_crt&#32;sig_oid)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00521"/>00521 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_CERT_VERIFY_FAILED):
+<anchor xml:id="_error_8c_source_1l00522"/>00522 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Certificate&#32;verification&#32;failed,&#32;e.g.&#32;CRL,&#32;CA&#32;or&#32;signature&#32;check&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00523"/>00523 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_CERT_UNKNOWN_FORMAT):
+<anchor xml:id="_error_8c_source_1l00524"/>00524 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Format&#32;not&#32;recognized&#32;as&#32;DER&#32;or&#32;PEM&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00525"/>00525 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00526"/>00526 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Input&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00527"/>00527 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00528"/>00528 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Allocation&#32;of&#32;memory&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00529"/>00529 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00530"/>00530 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Read/write&#32;of&#32;file&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00531"/>00531 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00532"/>00532 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;Destination&#32;buffer&#32;is&#32;too&#32;small&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00533"/>00533 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_X509_FATAL_ERROR):
+<anchor xml:id="_error_8c_source_1l00534"/>00534 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;X509&#32;-&#32;A&#32;fatal&#32;error&#32;occurred,&#32;eg&#32;the&#32;chain&#32;is&#32;too&#32;long&#32;or&#32;the&#32;vrfy&#32;callback&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00535"/>00535 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_USE_C&#32;||&#32;MBEDTLS_X509_CREATE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00536"/>00536 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;End&#32;Auto-Generated&#32;Code.&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00537"/>00537 
+<anchor xml:id="_error_8c_source_1l00538"/>00538 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="_error_8c_source_1l00539"/>00539 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="_error_8c_source_1l00540"/>00540 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00541"/>00541 
+<anchor xml:id="_error_8c_source_1l00542"/>00542 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;NULL;
+<anchor xml:id="_error_8c_source_1l00543"/>00543 }
+<anchor xml:id="_error_8c_source_1l00544"/>00544 
+<anchor xml:id="_error_8c_source_1l00545"/>00545 <emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*mbedtls_low_level_strerr(<emphasis role="keywordtype">int</emphasis>&#32;error_code)
+<anchor xml:id="_error_8c_source_1l00546"/>00546 {
+<anchor xml:id="_error_8c_source_1l00547"/>00547 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;low_level_error_code;
+<anchor xml:id="_error_8c_source_1l00548"/>00548 
+<anchor xml:id="_error_8c_source_1l00549"/>00549 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(error_code&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00550"/>00550 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;error_code&#32;=&#32;-error_code;
+<anchor xml:id="_error_8c_source_1l00551"/>00551 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00552"/>00552 
+<anchor xml:id="_error_8c_source_1l00553"/>00553 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Extract&#32;the&#32;low-level&#32;part&#32;from&#32;the&#32;error&#32;code.&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00554"/>00554 &#32;&#32;&#32;&#32;low_level_error_code&#32;=&#32;error_code&#32;&amp;&#32;~0xFF80;
+<anchor xml:id="_error_8c_source_1l00555"/>00555 
+<anchor xml:id="_error_8c_source_1l00556"/>00556 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>&#32;(low_level_error_code)&#32;{
+<anchor xml:id="_error_8c_source_1l00557"/>00557 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Begin&#32;Auto-Generated&#32;Code.&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00558"/>00558 <emphasis role="preprocessor">&#32;&#32;&#32;&#32;#if&#32;defined(MBEDTLS_AES_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00559"/>00559 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_AES_INVALID_KEY_LENGTH):
+<anchor xml:id="_error_8c_source_1l00560"/>00560 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;AES&#32;-&#32;Invalid&#32;key&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00561"/>00561 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_AES_INVALID_INPUT_LENGTH):
+<anchor xml:id="_error_8c_source_1l00562"/>00562 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;AES&#32;-&#32;Invalid&#32;data&#32;input&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00563"/>00563 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_AES_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00564"/>00564 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;AES&#32;-&#32;Invalid&#32;input&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00565"/>00565 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00566"/>00566 
+<anchor xml:id="_error_8c_source_1l00567"/>00567 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ARIA_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00568"/>00568 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ARIA_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00569"/>00569 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ARIA&#32;-&#32;Bad&#32;input&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00570"/>00570 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ARIA_INVALID_INPUT_LENGTH):
+<anchor xml:id="_error_8c_source_1l00571"/>00571 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ARIA&#32;-&#32;Invalid&#32;data&#32;input&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00572"/>00572 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ARIA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00573"/>00573 
+<anchor xml:id="_error_8c_source_1l00574"/>00574 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ASN1_PARSE_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00575"/>00575 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_OUT_OF_DATA):
+<anchor xml:id="_error_8c_source_1l00576"/>00576 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;Out&#32;of&#32;data&#32;when&#32;parsing&#32;an&#32;ASN1&#32;data&#32;structure&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00577"/>00577 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_UNEXPECTED_TAG):
+<anchor xml:id="_error_8c_source_1l00578"/>00578 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;ASN1&#32;tag&#32;was&#32;of&#32;an&#32;unexpected&#32;value&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00579"/>00579 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_INVALID_LENGTH):
+<anchor xml:id="_error_8c_source_1l00580"/>00580 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;Error&#32;when&#32;trying&#32;to&#32;determine&#32;the&#32;length&#32;or&#32;invalid&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00581"/>00581 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_LENGTH_MISMATCH):
+<anchor xml:id="_error_8c_source_1l00582"/>00582 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;Actual&#32;length&#32;differs&#32;from&#32;expected&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00583"/>00583 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_INVALID_DATA):
+<anchor xml:id="_error_8c_source_1l00584"/>00584 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;Data&#32;is&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00585"/>00585 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00586"/>00586 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;Memory&#32;allocation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00587"/>00587 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ASN1_BUF_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00588"/>00588 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ASN1&#32;-&#32;Buffer&#32;too&#32;small&#32;when&#32;writing&#32;ASN.1&#32;data&#32;structure&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00589"/>00589 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ASN1_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00590"/>00590 
+<anchor xml:id="_error_8c_source_1l00591"/>00591 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_BASE64_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00592"/>00592 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00593"/>00593 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BASE64&#32;-&#32;Output&#32;buffer&#32;too&#32;small&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00594"/>00594 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_BASE64_INVALID_CHARACTER):
+<anchor xml:id="_error_8c_source_1l00595"/>00595 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BASE64&#32;-&#32;Invalid&#32;character&#32;in&#32;input&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00596"/>00596 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_BASE64_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00597"/>00597 
+<anchor xml:id="_error_8c_source_1l00598"/>00598 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_BIGNUM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00599"/>00599 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00600"/>00600 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;An&#32;error&#32;occurred&#32;while&#32;reading&#32;from&#32;or&#32;writing&#32;to&#32;a&#32;file&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00601"/>00601 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00602"/>00602 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00603"/>00603 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_INVALID_CHARACTER):
+<anchor xml:id="_error_8c_source_1l00604"/>00604 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;There&#32;is&#32;an&#32;invalid&#32;character&#32;in&#32;the&#32;digit&#32;string&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00605"/>00605 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00606"/>00606 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;The&#32;buffer&#32;is&#32;too&#32;small&#32;to&#32;write&#32;to&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00607"/>00607 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_NEGATIVE_VALUE):
+<anchor xml:id="_error_8c_source_1l00608"/>00608 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;The&#32;input&#32;arguments&#32;are&#32;negative&#32;or&#32;result&#32;in&#32;illegal&#32;output&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00609"/>00609 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_DIVISION_BY_ZERO):
+<anchor xml:id="_error_8c_source_1l00610"/>00610 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;The&#32;input&#32;argument&#32;for&#32;division&#32;is&#32;zero,&#32;which&#32;is&#32;not&#32;allowed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00611"/>00611 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_NOT_ACCEPTABLE):
+<anchor xml:id="_error_8c_source_1l00612"/>00612 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;The&#32;input&#32;arguments&#32;are&#32;not&#32;acceptable&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00613"/>00613 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_MPI_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00614"/>00614 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;BIGNUM&#32;-&#32;Memory&#32;allocation&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00615"/>00615 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_BIGNUM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00616"/>00616 
+<anchor xml:id="_error_8c_source_1l00617"/>00617 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CAMELLIA_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00618"/>00618 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CAMELLIA_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00619"/>00619 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CAMELLIA&#32;-&#32;Bad&#32;input&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00620"/>00620 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CAMELLIA_INVALID_INPUT_LENGTH):
+<anchor xml:id="_error_8c_source_1l00621"/>00621 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CAMELLIA&#32;-&#32;Invalid&#32;data&#32;input&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00622"/>00622 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CAMELLIA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00623"/>00623 
+<anchor xml:id="_error_8c_source_1l00624"/>00624 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CCM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00625"/>00625 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CCM_BAD_INPUT):
+<anchor xml:id="_error_8c_source_1l00626"/>00626 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CCM&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;the&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00627"/>00627 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CCM_AUTH_FAILED):
+<anchor xml:id="_error_8c_source_1l00628"/>00628 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CCM&#32;-&#32;Authenticated&#32;decryption&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00629"/>00629 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CCM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00630"/>00630 
+<anchor xml:id="_error_8c_source_1l00631"/>00631 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHA20_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00632"/>00632 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CHACHA20_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00633"/>00633 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CHACHA20&#32;-&#32;Invalid&#32;input&#32;parameter(s)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00634"/>00634 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHACHA20_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00635"/>00635 
+<anchor xml:id="_error_8c_source_1l00636"/>00636 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHAPOLY_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00637"/>00637 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CHACHAPOLY_BAD_STATE):
+<anchor xml:id="_error_8c_source_1l00638"/>00638 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CHACHAPOLY&#32;-&#32;The&#32;requested&#32;operation&#32;is&#32;not&#32;permitted&#32;in&#32;the&#32;current&#32;state&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00639"/>00639 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CHACHAPOLY_AUTH_FAILED):
+<anchor xml:id="_error_8c_source_1l00640"/>00640 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CHACHAPOLY&#32;-&#32;Authenticated&#32;decryption&#32;failed:&#32;data&#32;was&#32;not&#32;authentic&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00641"/>00641 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHACHAPOLY_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00642"/>00642 
+<anchor xml:id="_error_8c_source_1l00643"/>00643 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CTR_DRBG_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00644"/>00644 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED):
+<anchor xml:id="_error_8c_source_1l00645"/>00645 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CTR_DRBG&#32;-&#32;The&#32;entropy&#32;source&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00646"/>00646 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CTR_DRBG_REQUEST_TOO_BIG):
+<anchor xml:id="_error_8c_source_1l00647"/>00647 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CTR_DRBG&#32;-&#32;The&#32;requested&#32;random&#32;buffer&#32;length&#32;is&#32;too&#32;big&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00648"/>00648 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CTR_DRBG_INPUT_TOO_BIG):
+<anchor xml:id="_error_8c_source_1l00649"/>00649 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CTR_DRBG&#32;-&#32;The&#32;input&#32;(entropy&#32;+&#32;additional&#32;data)&#32;is&#32;too&#32;large&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00650"/>00650 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_CTR_DRBG_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00651"/>00651 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;CTR_DRBG&#32;-&#32;Read&#32;or&#32;write&#32;error&#32;in&#32;file&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00652"/>00652 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CTR_DRBG_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00653"/>00653 
+<anchor xml:id="_error_8c_source_1l00654"/>00654 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00655"/>00655 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_DES_INVALID_INPUT_LENGTH):
+<anchor xml:id="_error_8c_source_1l00656"/>00656 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;DES&#32;-&#32;The&#32;data&#32;input&#32;has&#32;an&#32;invalid&#32;length&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00657"/>00657 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DES_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00658"/>00658 
+<anchor xml:id="_error_8c_source_1l00659"/>00659 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ENTROPY_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00660"/>00660 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ENTROPY_SOURCE_FAILED):
+<anchor xml:id="_error_8c_source_1l00661"/>00661 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ENTROPY&#32;-&#32;Critical&#32;entropy&#32;source&#32;failure&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00662"/>00662 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ENTROPY_MAX_SOURCES):
+<anchor xml:id="_error_8c_source_1l00663"/>00663 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ENTROPY&#32;-&#32;No&#32;more&#32;sources&#32;can&#32;be&#32;added&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00664"/>00664 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ENTROPY_NO_SOURCES_DEFINED):
+<anchor xml:id="_error_8c_source_1l00665"/>00665 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ENTROPY&#32;-&#32;No&#32;sources&#32;have&#32;been&#32;added&#32;to&#32;poll&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00666"/>00666 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ENTROPY_NO_STRONG_SOURCE):
+<anchor xml:id="_error_8c_source_1l00667"/>00667 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ENTROPY&#32;-&#32;No&#32;strong&#32;sources&#32;have&#32;been&#32;added&#32;to&#32;poll&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00668"/>00668 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ENTROPY_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00669"/>00669 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ENTROPY&#32;-&#32;Read/write&#32;error&#32;in&#32;file&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00670"/>00670 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ENTROPY_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00671"/>00671 
+<anchor xml:id="_error_8c_source_1l00672"/>00672 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ERROR_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00673"/>00673 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ERROR_GENERIC_ERROR):
+<anchor xml:id="_error_8c_source_1l00674"/>00674 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ERROR&#32;-&#32;Generic&#32;error&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00675"/>00675 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED):
+<anchor xml:id="_error_8c_source_1l00676"/>00676 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;ERROR&#32;-&#32;This&#32;is&#32;a&#32;bug&#32;in&#32;the&#32;library&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00677"/>00677 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ERROR_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00678"/>00678 
+<anchor xml:id="_error_8c_source_1l00679"/>00679 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00680"/>00680 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PLATFORM_HW_ACCEL_FAILED):
+<anchor xml:id="_error_8c_source_1l00681"/>00681 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PLATFORM&#32;-&#32;Hardware&#32;accelerator&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00682"/>00682 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_PLATFORM_FEATURE_UNSUPPORTED):
+<anchor xml:id="_error_8c_source_1l00683"/>00683 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;PLATFORM&#32;-&#32;The&#32;requested&#32;feature&#32;is&#32;not&#32;supported&#32;by&#32;the&#32;platform&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00684"/>00684 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00685"/>00685 
+<anchor xml:id="_error_8c_source_1l00686"/>00686 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_GCM_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00687"/>00687 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_GCM_AUTH_FAILED):
+<anchor xml:id="_error_8c_source_1l00688"/>00688 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;GCM&#32;-&#32;Authenticated&#32;decryption&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00689"/>00689 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_GCM_BAD_INPUT):
+<anchor xml:id="_error_8c_source_1l00690"/>00690 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;GCM&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00691"/>00691 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_GCM_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00692"/>00692 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;GCM&#32;-&#32;An&#32;output&#32;buffer&#32;is&#32;too&#32;small&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00693"/>00693 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_GCM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00694"/>00694 
+<anchor xml:id="_error_8c_source_1l00695"/>00695 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HKDF_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00696"/>00696 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_HKDF_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00697"/>00697 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;HKDF&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00698"/>00698 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HKDF_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00699"/>00699 
+<anchor xml:id="_error_8c_source_1l00700"/>00700 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HMAC_DRBG_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00701"/>00701 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_HMAC_DRBG_REQUEST_TOO_BIG):
+<anchor xml:id="_error_8c_source_1l00702"/>00702 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;HMAC_DRBG&#32;-&#32;Too&#32;many&#32;random&#32;requested&#32;in&#32;single&#32;call&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00703"/>00703 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_HMAC_DRBG_INPUT_TOO_BIG):
+<anchor xml:id="_error_8c_source_1l00704"/>00704 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;HMAC_DRBG&#32;-&#32;Input&#32;too&#32;large&#32;(Entropy&#32;+&#32;additional)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00705"/>00705 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_HMAC_DRBG_FILE_IO_ERROR):
+<anchor xml:id="_error_8c_source_1l00706"/>00706 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;HMAC_DRBG&#32;-&#32;Read/write&#32;error&#32;in&#32;file&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00707"/>00707 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_HMAC_DRBG_ENTROPY_SOURCE_FAILED):
+<anchor xml:id="_error_8c_source_1l00708"/>00708 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;HMAC_DRBG&#32;-&#32;The&#32;entropy&#32;source&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00709"/>00709 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HMAC_DRBG_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00710"/>00710 
+<anchor xml:id="_error_8c_source_1l00711"/>00711 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_LMS_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00712"/>00712 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_LMS_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00713"/>00713 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;LMS&#32;-&#32;Bad&#32;data&#32;has&#32;been&#32;input&#32;to&#32;an&#32;LMS&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00714"/>00714 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_LMS_OUT_OF_PRIVATE_KEYS):
+<anchor xml:id="_error_8c_source_1l00715"/>00715 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;LMS&#32;-&#32;Specified&#32;LMS&#32;key&#32;has&#32;utilised&#32;all&#32;of&#32;its&#32;private&#32;keys&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00716"/>00716 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_LMS_VERIFY_FAILED):
+<anchor xml:id="_error_8c_source_1l00717"/>00717 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;LMS&#32;-&#32;LMS&#32;signature&#32;verification&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00718"/>00718 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_LMS_ALLOC_FAILED):
+<anchor xml:id="_error_8c_source_1l00719"/>00719 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;LMS&#32;-&#32;LMS&#32;failed&#32;to&#32;allocate&#32;space&#32;for&#32;a&#32;private&#32;key&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00720"/>00720 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_LMS_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00721"/>00721 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;LMS&#32;-&#32;Input/output&#32;buffer&#32;is&#32;too&#32;small&#32;to&#32;contain&#32;requited&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00722"/>00722 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_LMS_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00723"/>00723 
+<anchor xml:id="_error_8c_source_1l00724"/>00724 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NET_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00725"/>00725 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_SOCKET_FAILED):
+<anchor xml:id="_error_8c_source_1l00726"/>00726 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Failed&#32;to&#32;open&#32;a&#32;socket&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00727"/>00727 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_CONNECT_FAILED):
+<anchor xml:id="_error_8c_source_1l00728"/>00728 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;The&#32;connection&#32;to&#32;the&#32;given&#32;server&#32;/&#32;port&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00729"/>00729 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_BIND_FAILED):
+<anchor xml:id="_error_8c_source_1l00730"/>00730 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Binding&#32;of&#32;the&#32;socket&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00731"/>00731 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_LISTEN_FAILED):
+<anchor xml:id="_error_8c_source_1l00732"/>00732 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Could&#32;not&#32;listen&#32;on&#32;the&#32;socket&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00733"/>00733 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_ACCEPT_FAILED):
+<anchor xml:id="_error_8c_source_1l00734"/>00734 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Could&#32;not&#32;accept&#32;the&#32;incoming&#32;connection&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00735"/>00735 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_RECV_FAILED):
+<anchor xml:id="_error_8c_source_1l00736"/>00736 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Reading&#32;information&#32;from&#32;the&#32;socket&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00737"/>00737 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_SEND_FAILED):
+<anchor xml:id="_error_8c_source_1l00738"/>00738 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Sending&#32;information&#32;through&#32;the&#32;socket&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00739"/>00739 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_CONN_RESET):
+<anchor xml:id="_error_8c_source_1l00740"/>00740 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Connection&#32;was&#32;reset&#32;by&#32;peer&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00741"/>00741 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_UNKNOWN_HOST):
+<anchor xml:id="_error_8c_source_1l00742"/>00742 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Failed&#32;to&#32;get&#32;an&#32;IP&#32;address&#32;for&#32;the&#32;given&#32;hostname&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00743"/>00743 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_BUFFER_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00744"/>00744 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Buffer&#32;is&#32;too&#32;small&#32;to&#32;hold&#32;the&#32;data&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00745"/>00745 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_INVALID_CONTEXT):
+<anchor xml:id="_error_8c_source_1l00746"/>00746 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;The&#32;context&#32;is&#32;invalid,&#32;eg&#32;because&#32;it&#32;was&#32;free()ed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00747"/>00747 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_POLL_FAILED):
+<anchor xml:id="_error_8c_source_1l00748"/>00748 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Polling&#32;the&#32;net&#32;context&#32;failed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00749"/>00749 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_NET_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00750"/>00750 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;NET&#32;-&#32;Input&#32;invalid&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00751"/>00751 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NET_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00752"/>00752 
+<anchor xml:id="_error_8c_source_1l00753"/>00753 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_OID_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00754"/>00754 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_OID_NOT_FOUND):
+<anchor xml:id="_error_8c_source_1l00755"/>00755 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;OID&#32;-&#32;OID&#32;is&#32;not&#32;found&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00756"/>00756 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_OID_BUF_TOO_SMALL):
+<anchor xml:id="_error_8c_source_1l00757"/>00757 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;OID&#32;-&#32;output&#32;buffer&#32;is&#32;too&#32;small&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00758"/>00758 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_OID_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00759"/>00759 
+<anchor xml:id="_error_8c_source_1l00760"/>00760 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_POLY1305_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00761"/>00761 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_POLY1305_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00762"/>00762 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;POLY1305&#32;-&#32;Invalid&#32;input&#32;parameter(s)&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00763"/>00763 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_POLY1305_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00764"/>00764 
+<anchor xml:id="_error_8c_source_1l00765"/>00765 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA1_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00766"/>00766 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SHA1_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00767"/>00767 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SHA1&#32;-&#32;SHA-1&#32;input&#32;data&#32;was&#32;malformed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00768"/>00768 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA1_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00769"/>00769 
+<anchor xml:id="_error_8c_source_1l00770"/>00770 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00771"/>00771 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SHA256_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00772"/>00772 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SHA256&#32;-&#32;SHA-256&#32;input&#32;data&#32;was&#32;malformed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00773"/>00773 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00774"/>00774 
+<anchor xml:id="_error_8c_source_1l00775"/>00775 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA3_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00776"/>00776 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SHA3_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00777"/>00777 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SHA3&#32;-&#32;SHA-3&#32;input&#32;data&#32;was&#32;malformed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00778"/>00778 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA3_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00779"/>00779 
+<anchor xml:id="_error_8c_source_1l00780"/>00780 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00781"/>00781 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_SHA512_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00782"/>00782 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;SHA512&#32;-&#32;SHA-512&#32;input&#32;data&#32;was&#32;malformed&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00783"/>00783 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00784"/>00784 
+<anchor xml:id="_error_8c_source_1l00785"/>00785 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_THREADING_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00786"/>00786 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_THREADING_BAD_INPUT_DATA):
+<anchor xml:id="_error_8c_source_1l00787"/>00787 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;THREADING&#32;-&#32;Bad&#32;input&#32;parameters&#32;to&#32;function&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00788"/>00788 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;-(MBEDTLS_ERR_THREADING_MUTEX_ERROR):
+<anchor xml:id="_error_8c_source_1l00789"/>00789 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;return(&#32;<emphasis role="stringliteral">&quot;THREADING&#32;-&#32;Locking&#32;/&#32;unlocking&#32;/&#32;free&#32;failed&#32;with&#32;error&#32;code&quot;</emphasis>&#32;);
+<anchor xml:id="_error_8c_source_1l00790"/>00790 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_THREADING_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00791"/>00791 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;End&#32;Auto-Generated&#32;Code.&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00792"/>00792 
+<anchor xml:id="_error_8c_source_1l00793"/>00793 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="_error_8c_source_1l00794"/>00794 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="_error_8c_source_1l00795"/>00795 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00796"/>00796 
+<anchor xml:id="_error_8c_source_1l00797"/>00797 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;NULL;
+<anchor xml:id="_error_8c_source_1l00798"/>00798 }
+<anchor xml:id="_error_8c_source_1l00799"/>00799 
+<anchor xml:id="_error_8c_source_1l00800"/>00800 <emphasis role="keywordtype">void</emphasis>&#32;mbedtls_strerror(<emphasis role="keywordtype">int</emphasis>&#32;ret,&#32;<emphasis role="keywordtype">char</emphasis>&#32;*buf,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;buflen)
+<anchor xml:id="_error_8c_source_1l00801"/>00801 {
+<anchor xml:id="_error_8c_source_1l00802"/>00802 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;len;
+<anchor xml:id="_error_8c_source_1l00803"/>00803 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;use_ret;
+<anchor xml:id="_error_8c_source_1l00804"/>00804 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*high_level_error_description&#32;=&#32;NULL;
+<anchor xml:id="_error_8c_source_1l00805"/>00805 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*low_level_error_description&#32;=&#32;NULL;
+<anchor xml:id="_error_8c_source_1l00806"/>00806 
+<anchor xml:id="_error_8c_source_1l00807"/>00807 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(buflen&#32;==&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00808"/>00808 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;
+<anchor xml:id="_error_8c_source_1l00809"/>00809 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00810"/>00810 
+<anchor xml:id="_error_8c_source_1l00811"/>00811 &#32;&#32;&#32;&#32;memset(buf,&#32;0x00,&#32;buflen);
+<anchor xml:id="_error_8c_source_1l00812"/>00812 
+<anchor xml:id="_error_8c_source_1l00813"/>00813 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(ret&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00814"/>00814 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ret&#32;=&#32;-ret;
+<anchor xml:id="_error_8c_source_1l00815"/>00815 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00816"/>00816 
+<anchor xml:id="_error_8c_source_1l00817"/>00817 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(ret&#32;&amp;&#32;0xFF80)&#32;{
+<anchor xml:id="_error_8c_source_1l00818"/>00818 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;use_ret&#32;=&#32;ret&#32;&amp;&#32;0xFF80;
+<anchor xml:id="_error_8c_source_1l00819"/>00819 
+<anchor xml:id="_error_8c_source_1l00820"/>00820 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Translate&#32;high&#32;level&#32;error&#32;code.</emphasis>
+<anchor xml:id="_error_8c_source_1l00821"/>00821 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;high_level_error_description&#32;=&#32;mbedtls_high_level_strerr(ret);
+<anchor xml:id="_error_8c_source_1l00822"/>00822 
+<anchor xml:id="_error_8c_source_1l00823"/>00823 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(high_level_error_description&#32;==&#32;NULL)&#32;{
+<anchor xml:id="_error_8c_source_1l00824"/>00824 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;mbedtls_snprintf(buf,&#32;buflen,&#32;<emphasis role="stringliteral">&quot;UNKNOWN&#32;ERROR&#32;CODE&#32;(%04X)&quot;</emphasis>,&#32;(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>)&#32;use_ret);
+<anchor xml:id="_error_8c_source_1l00825"/>00825 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="_error_8c_source_1l00826"/>00826 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;mbedtls_snprintf(buf,&#32;buflen,&#32;<emphasis role="stringliteral">&quot;%s&quot;</emphasis>,&#32;high_level_error_description);
+<anchor xml:id="_error_8c_source_1l00827"/>00827 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00828"/>00828 
+<anchor xml:id="_error_8c_source_1l00829"/>00829 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS_C)</emphasis>
+<anchor xml:id="_error_8c_source_1l00830"/>00830 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Early&#32;return&#32;in&#32;case&#32;of&#32;a&#32;fatal&#32;error&#32;-&#32;do&#32;not&#32;try&#32;to&#32;translate&#32;low</emphasis>
+<anchor xml:id="_error_8c_source_1l00831"/>00831 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;level&#32;code.</emphasis>
+<anchor xml:id="_error_8c_source_1l00832"/>00832 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(use_ret&#32;==&#32;-(MBEDTLS_ERR_SSL_FATAL_ALERT_MESSAGE))&#32;{
+<anchor xml:id="_error_8c_source_1l00833"/>00833 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;
+<anchor xml:id="_error_8c_source_1l00834"/>00834 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00835"/>00835 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00836"/>00836 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00837"/>00837 
+<anchor xml:id="_error_8c_source_1l00838"/>00838 &#32;&#32;&#32;&#32;use_ret&#32;=&#32;ret&#32;&amp;&#32;~0xFF80;
+<anchor xml:id="_error_8c_source_1l00839"/>00839 
+<anchor xml:id="_error_8c_source_1l00840"/>00840 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(use_ret&#32;==&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00841"/>00841 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;
+<anchor xml:id="_error_8c_source_1l00842"/>00842 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00843"/>00843 
+<anchor xml:id="_error_8c_source_1l00844"/>00844 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;If&#32;high&#32;level&#32;code&#32;is&#32;present,&#32;make&#32;a&#32;concatenation&#32;between&#32;both</emphasis>
+<anchor xml:id="_error_8c_source_1l00845"/>00845 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;error&#32;strings.</emphasis>
+<anchor xml:id="_error_8c_source_1l00846"/>00846 &#32;&#32;&#32;&#32;<emphasis role="comment">//</emphasis>
+<anchor xml:id="_error_8c_source_1l00847"/>00847 &#32;&#32;&#32;&#32;len&#32;=&#32;strlen(buf);
+<anchor xml:id="_error_8c_source_1l00848"/>00848 
+<anchor xml:id="_error_8c_source_1l00849"/>00849 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(len&#32;&gt;&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00850"/>00850 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(buflen&#32;-&#32;len&#32;&lt;&#32;5)&#32;{
+<anchor xml:id="_error_8c_source_1l00851"/>00851 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;
+<anchor xml:id="_error_8c_source_1l00852"/>00852 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00853"/>00853 
+<anchor xml:id="_error_8c_source_1l00854"/>00854 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;mbedtls_snprintf(buf&#32;+&#32;len,&#32;buflen&#32;-&#32;len,&#32;<emphasis role="stringliteral">&quot;&#32;:&#32;&quot;</emphasis>);
+<anchor xml:id="_error_8c_source_1l00855"/>00855 
+<anchor xml:id="_error_8c_source_1l00856"/>00856 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;buf&#32;+=&#32;len&#32;+&#32;3;
+<anchor xml:id="_error_8c_source_1l00857"/>00857 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;buflen&#32;-=&#32;len&#32;+&#32;3;
+<anchor xml:id="_error_8c_source_1l00858"/>00858 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00859"/>00859 
+<anchor xml:id="_error_8c_source_1l00860"/>00860 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Translate&#32;low&#32;level&#32;error&#32;code.</emphasis>
+<anchor xml:id="_error_8c_source_1l00861"/>00861 &#32;&#32;&#32;&#32;low_level_error_description&#32;=&#32;mbedtls_low_level_strerr(ret);
+<anchor xml:id="_error_8c_source_1l00862"/>00862 
+<anchor xml:id="_error_8c_source_1l00863"/>00863 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(low_level_error_description&#32;==&#32;NULL)&#32;{
+<anchor xml:id="_error_8c_source_1l00864"/>00864 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;mbedtls_snprintf(buf,&#32;buflen,&#32;<emphasis role="stringliteral">&quot;UNKNOWN&#32;ERROR&#32;CODE&#32;(%04X)&quot;</emphasis>,&#32;(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>)&#32;use_ret);
+<anchor xml:id="_error_8c_source_1l00865"/>00865 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="_error_8c_source_1l00866"/>00866 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;mbedtls_snprintf(buf,&#32;buflen,&#32;<emphasis role="stringliteral">&quot;%s&quot;</emphasis>,&#32;low_level_error_description);
+<anchor xml:id="_error_8c_source_1l00867"/>00867 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00868"/>00868 }
+<anchor xml:id="_error_8c_source_1l00869"/>00869 
+<anchor xml:id="_error_8c_source_1l00870"/>00870 <emphasis role="preprocessor">#else&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ERROR_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00871"/>00871 
+<anchor xml:id="_error_8c_source_1l00872"/>00872 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_error_8c_source_1l00873"/>00873 <emphasis role="comment">&#32;*&#32;Provide&#32;a&#32;dummy&#32;implementation&#32;when&#32;MBEDTLS_ERROR_C&#32;is&#32;not&#32;defined</emphasis>
+<anchor xml:id="_error_8c_source_1l00874"/>00874 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_error_8c_source_1l00875"/>00875 <emphasis role="keywordtype">void</emphasis>&#32;mbedtls_strerror(<emphasis role="keywordtype">int</emphasis>&#32;ret,&#32;<emphasis role="keywordtype">char</emphasis>&#32;*buf,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;buflen)
+<anchor xml:id="_error_8c_source_1l00876"/>00876 {
+<anchor xml:id="_error_8c_source_1l00877"/>00877 &#32;&#32;&#32;&#32;((void)&#32;ret);
+<anchor xml:id="_error_8c_source_1l00878"/>00878 
+<anchor xml:id="_error_8c_source_1l00879"/>00879 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(buflen&#32;&gt;&#32;0)&#32;{
+<anchor xml:id="_error_8c_source_1l00880"/>00880 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;buf[0]&#32;=&#32;<emphasis role="charliteral">&apos;\0&apos;</emphasis>;
+<anchor xml:id="_error_8c_source_1l00881"/>00881 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_error_8c_source_1l00882"/>00882 }
+<anchor xml:id="_error_8c_source_1l00883"/>00883 
+<anchor xml:id="_error_8c_source_1l00884"/>00884 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ERROR_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_error_8c_source_1l00885"/>00885 
+<anchor xml:id="_error_8c_source_1l00886"/>00886 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_TEST_HOOKS)</emphasis>
+<anchor xml:id="_error_8c_source_1l00887"/>00887 void&#32;(*mbedtls_test_hook_error_add)(int,&#32;int,&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*,&#32;int);
+<anchor xml:id="_error_8c_source_1l00888"/>00888 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_error_8c_source_1l00889"/>00889 
+<anchor xml:id="_error_8c_source_1l00890"/>00890 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ERROR_C&#32;||&#32;MBEDTLS_ERROR_STRERROR_DUMMY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

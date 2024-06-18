@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__common_8c_source" xml:lang="en-US">
+<title>I2C_common.c</title>
+<indexterm><primary>src/I2C/drivers/I2C_common.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__i2_c__common_8c_source_1l00001"/>00001 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__network_8h">Network.h</link>&quot;</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00002"/>00002 <emphasis role="preprocessor">#include&#32;&quot;math.h&quot;</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00003"/>00003 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__i2_c__common_8h">I2C_common.h</link>&quot;</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00004"/>00004 
+<anchor xml:id="__i2_c__common_8c_source_1l00005"/>00005 
+<anchor xml:id="__i2_c__common_8c_source_1l00006"/>00006 <emphasis role="comment">//i2c&#32;config&#32;structure</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00007"/><link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">00007</link> i2c_master_bus_config_t&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00008"/>00008 <emphasis role="comment">//i2c&#32;bus&#32;handle&#32;for&#32;the&#32;configuration</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00009"/><link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">00009</link> i2c_master_bus_handle_t&#32;<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00010"/>00010 <emphasis role="comment">//i2c&#32;device&#32;handle&#32;for&#32;the&#32;configuration</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00011"/><link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">00011</link> i2c_master_dev_handle_t&#32;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a0465af2b7a27ff1861908447a077a156">I2C_MAX_Num_of_dev_handles</link>];
+<anchor xml:id="__i2_c__common_8c_source_1l00012"/>00012 
+<anchor xml:id="__i2_c__common_8c_source_1l00013"/>00013 
+<anchor xml:id="__i2_c__common_8c_source_1l00014"/>00014 
+<anchor xml:id="__i2_c__common_8c_source_1l00015"/>00015 
+<anchor xml:id="__i2_c__common_8c_source_1l00016"/>00016 <emphasis role="comment">//&#32;initialize&#32;I2C&#32;for&#32;esp32&#32;as&#32;master</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00017"/><link linkend="__i2_c__common_8h_1a195e5504c89aeda3a53f31710e405623">00017</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a195e5504c89aeda3a53f31710e405623">I2C_master_init</link>()
+<anchor xml:id="__i2_c__common_8c_source_1l00018"/>00018 {
+<anchor xml:id="__i2_c__common_8c_source_1l00019"/>00019 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.i2c_port&#32;=&#32;I2C_NUM_0;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;automatically&#32;select&#32;the&#32;next&#32;available&#32;i2c&#32;port</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00020"/>00020 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.sda_io_num&#32;=&#32;<link linkend="__i2_c__common_8h_1a18aefd12ad84d4c33dc97923cb821e47">I2C_SDA</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00021"/>00021 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.scl_io_num&#32;=&#32;<link linkend="__i2_c__common_8h_1a212ca328a6409c98f8c3dfbbe1ba561d">I2C_SCL</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00022"/>00022 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.clk_source&#32;=&#32;I2C_CLK_SRC_DEFAULT;
+<anchor xml:id="__i2_c__common_8c_source_1l00023"/>00023 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.flags.enable_internal_pullup&#32;=&#32;<link linkend="__i2_c__common_8h_1aa01619630da6d91ae0ac6877226ab056">INTERNAL_PULLUPS</link>;&#32;<emphasis role="comment">//&#32;might&#32;need&#32;external&#32;pullups&#32;as&#32;well</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00024"/>00024 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.trans_queue_depth&#32;=&#32;0;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;queue&#32;size&#32;when&#32;the&#32;communication&#32;is&#32;asynchronous</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00025"/>00025 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.glitch_ignore_cnt&#32;=&#32;<link linkend="__i2_c__common_8h_1a5abfaf2b47dd07ff9c43c9300c3a2cf1">GLITCH_IGNORE_CNT</link>;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;number&#32;of&#32;clock&#32;cycles&#32;to&#32;ignore&#32;for&#32;glitch&#32;filtering</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00026"/>00026 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>.intr_priority&#32;=&#32;0;
+<anchor xml:id="__i2_c__common_8c_source_1l00027"/>00027 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_new_master_bus(&amp;<link linkend="__i2_c__common_8c_1aeaa85f14122a67a965fc43735fa7784e">esp32_i2c_config</link>,&#32;&amp;<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>));
+<anchor xml:id="__i2_c__common_8c_source_1l00028"/>00028 }
+<anchor xml:id="__i2_c__common_8c_source_1l00029"/>00029 
+<anchor xml:id="__i2_c__common_8c_source_1l00030"/>00030 <emphasis role="comment">//&#32;switch&#32;the&#32;multiplexer&#32;channel</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00031"/>00031 <emphasis role="comment">//&#32;Function&#32;to&#32;switch&#32;the&#32;I2C&#32;multiplexer&#32;channel</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00032"/><link linkend="__i2_c__common_8h_1aef48213de5230add491038aa4c4eb05a">00032</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link>&#32;num_channel)
+<anchor xml:id="__i2_c__common_8c_source_1l00033"/>00033 {
+<anchor xml:id="__i2_c__common_8c_source_1l00034"/>00034 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Prepare&#32;the&#32;data&#32;to&#32;send:&#32;one&#32;byte&#32;where&#32;each&#32;bit&#32;represents&#32;a&#32;channel</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00035"/>00035 &#32;&#32;&#32;&#32;uint8_t&#32;data&#32;=&#32;1&#32;&lt;&lt;&#32;num_channel;&#32;<emphasis role="comment">//&#32;Shift&#32;1&#32;to&#32;the&#32;correct&#32;bit&#32;position&#32;for&#32;the&#32;channel</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00036"/>00036 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Perform&#32;the&#32;I2C&#32;write&#32;to&#32;change&#32;the&#32;channel</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00037"/>00037 &#32;&#32;&#32;&#32;esp_err_t&#32;ret&#32;=&#32;i2c_master_transmit(<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a5085c8956bca4258b1de065182c1c11b">I2C_multiplexer_dev_handle</link>],&#32;&amp;data,&#32;1,&#32;-1);
+<anchor xml:id="__i2_c__common_8c_source_1l00038"/>00038 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Check&#32;the&#32;result</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00039"/>00039 &#32;&#32;&#32;&#32;<emphasis role="comment">//if(ret==ESP_OK)</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00040"/>00040 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;I2C&quot;,&#32;&quot;Channel&#32;%d&#32;selected&quot;,&#32;num_channel);</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00041"/>00041 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Check&#32;the&#32;result</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00042"/>00042 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(ret&#32;!=&#32;ESP_OK)
+<anchor xml:id="__i2_c__common_8c_source_1l00043"/>00043 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00044"/>00044 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<emphasis role="stringliteral">&quot;I2C&#32;ERR&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;ERROR&#32;Channel&#32;%d&#32;not&#32;selected&quot;</emphasis>,&#32;num_channel);
+<anchor xml:id="__i2_c__common_8c_source_1l00045"/>00045 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;i2c_master_bus_wait_all_done(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;50);
+<anchor xml:id="__i2_c__common_8c_source_1l00046"/>00046 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//i2c_master_bus_reset(bus_handle_esp32_i2c_config);</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00047"/>00047 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00048"/>00048 }
+<anchor xml:id="__i2_c__common_8c_source_1l00049"/>00049 
+<anchor xml:id="__i2_c__common_8c_source_1l00050"/>00050 <emphasis role="comment">//&#32;add&#32;device&#32;to&#32;the&#32;I2C&#32;bus&#32;with&#32;different&#32;address&#32;and&#32;speed</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00051"/><link linkend="__i2_c__common_8h_1ab80632e89563cc7cffa2bd9b6f301fcd">00051</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1ab80632e89563cc7cffa2bd9b6f301fcd">I2C_add_device</link>(uint8_t&#32;device_address)
+<anchor xml:id="__i2_c__common_8c_source_1l00052"/>00052 {
+<anchor xml:id="__i2_c__common_8c_source_1l00053"/>00053 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;mux_added&#32;=&#32;0U;
+<anchor xml:id="__i2_c__common_8c_source_1l00054"/>00054 &#32;&#32;&#32;&#32;i2c_device_config_t&#32;device_config&#32;=&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00055"/>00055 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.dev_addr_length&#32;=&#32;I2C_ADDR_BIT_LEN_7,
+<anchor xml:id="__i2_c__common_8c_source_1l00056"/>00056 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.device_address&#32;=&#32;device_address,
+<anchor xml:id="__i2_c__common_8c_source_1l00057"/>00057 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.scl_speed_hz&#32;=&#32;<link linkend="__i2_c__common_8h_1a0658e1ac8d0cbe573414a682dc169abb">SCL_SPEED_FAST_MODE</link>
+<anchor xml:id="__i2_c__common_8c_source_1l00058"/>00058 &#32;&#32;&#32;&#32;};
+<anchor xml:id="__i2_c__common_8c_source_1l00059"/>00059 
+<anchor xml:id="__i2_c__common_8c_source_1l00060"/>00060 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>&#32;(device_address)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00061"/>00061 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a908ba691106cd1ed595bd7418581ed49">I2C_temp_sens_addr</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00062"/>00062 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(mux_added){
+<anchor xml:id="__i2_c__common_8c_source_1l00063"/>00063 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6ad7b0bc85a1daf7e9a20727d4740adb24">I2C_temp_sens_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00064"/>00064 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00065"/>00065 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c">I2C_temp_sens_dev_handle</link>]));
+<anchor xml:id="__i2_c__common_8c_source_1l00066"/>00066 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00067"/>00067 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00068"/>00068 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9adea9b3d7f55d5310d0799a2692ed572b">I2C_distance_sens_addr</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00069"/>00069 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(mux_added){
+<anchor xml:id="__i2_c__common_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a74556c047e53ea5ae5d205eb0ea15d88">I2C_distance_sens_1_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00071"/>00071 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00072"/>00072 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>]));&#32;<emphasis role="comment">//&#32;distance&#32;sensors&#32;have&#32;the&#32;same&#32;addr</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00073"/>00073 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00074"/>00074 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a366361b6c13f8f3072a1ffac0d249d90">I2C_distance_sens_2_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00075"/>00075 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00076"/>00076 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>]));&#32;<emphasis role="comment">//&#32;distance&#32;sensors&#32;have&#32;the&#32;same&#32;addr</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00077"/>00077 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00078"/>00078 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00079"/>00079 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a4601c56c5c7a2bf4090ab788d19a167b">I2C_pixy2_camera_addr</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00080"/>00080 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(mux_added){
+<anchor xml:id="__i2_c__common_8c_source_1l00081"/>00081 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a08bdbe34ce8659d94b4f5e182a43d125">I2C_pixy2_camera_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00082"/>00082 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00083"/>00083 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93">I2C_pixy2_dev_handle</link>]));
+<anchor xml:id="__i2_c__common_8c_source_1l00084"/>00084 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00085"/>00085 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00086"/>00086 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a1d13246f35bc4f64d79a6d786c6ce98d">I2C_oled_display_096_addr</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00087"/>00087 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(mux_added){
+<anchor xml:id="__i2_c__common_8c_source_1l00088"/>00088 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a3445811f5fe19076f86332b2ce6c780b">I2C_oled_display_096_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00089"/>00089 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00090"/>00090 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e">I2C_oled_display_096_dev_handle</link>]));
+<anchor xml:id="__i2_c__common_8c_source_1l00091"/>00091 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00092"/>00092 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00093"/>00093 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a151002e2e300f340ce5a5b83ee443594">I2C_mux_addr</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00094"/>00094 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;mux_added&#32;=&#32;1U;
+<anchor xml:id="__i2_c__common_8c_source_1l00095"/>00095 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a5085c8956bca4258b1de065182c1c11b">I2C_multiplexer_dev_handle</link>]));
+<anchor xml:id="__i2_c__common_8c_source_1l00096"/>00096 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00097"/>00097 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a34fad3dd3a58959b3665dc8725c6a3b8">I2C_adxl345_sens_addr</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00098"/>00098 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a7b6b89c137d67e25714751e50d721c6b">I2C_adxl345_sens_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00099"/>00099 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(i2c_master_bus_add_device(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;&amp;device_config,&#32;&amp;<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4">I2C_adxl345_sens_dev_handle</link>]));
+<anchor xml:id="__i2_c__common_8c_source_1l00100"/>00100 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00101"/>00101 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="__i2_c__common_8c_source_1l00102"/>00102 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00103"/>00103 }
+<anchor xml:id="__i2_c__common_8c_source_1l00104"/>00104 
+<anchor xml:id="__i2_c__common_8c_source_1l00105"/><link linkend="__i2_c__common_8h_1acd828c8912cd4c39d94408126b8ac7db">00105</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>*&#32;data,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;write_size)
+<anchor xml:id="__i2_c__common_8c_source_1l00106"/>00106 {
+<anchor xml:id="__i2_c__common_8c_source_1l00107"/>00107 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;old_handle=999;
+<anchor xml:id="__i2_c__common_8c_source_1l00108"/>00108 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;current_handle;
+<anchor xml:id="__i2_c__common_8c_source_1l00109"/>00109 
+<anchor xml:id="__i2_c__common_8c_source_1l00110"/>00110 &#32;&#32;&#32;&#32;current_handle=device_handle;
+<anchor xml:id="__i2_c__common_8c_source_1l00111"/>00111 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(old_handle!=current_handle){
+<anchor xml:id="__i2_c__common_8c_source_1l00112"/>00112 &#32;&#32;&#32;&#32;<emphasis role="comment">//Before&#32;transmitting&#32;choose&#32;the&#32;correct&#32;channel&#32;for&#32;the&#32;mux</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00113"/>00113 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>&#32;(device_handle)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00114"/>00114 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a5085c8956bca4258b1de065182c1c11b">I2C_multiplexer_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00115"/>00115 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;do&#32;nothing</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00116"/>00116 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00117"/>00117 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93">I2C_pixy2_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00118"/>00118 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a08bdbe34ce8659d94b4f5e182a43d125">I2C_pixy2_camera_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00119"/>00119 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93">I2C_pixy2_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00120"/>00120 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00121"/>00121 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00122"/>00122 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a74556c047e53ea5ae5d205eb0ea15d88">I2C_distance_sens_1_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00123"/>00123 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00124"/>00124 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00125"/>00125 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00126"/>00126 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a366361b6c13f8f3072a1ffac0d249d90">I2C_distance_sens_2_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00127"/>00127 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00128"/>00128 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00129"/>00129 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c">I2C_temp_sens_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00130"/>00130 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6ad7b0bc85a1daf7e9a20727d4740adb24">I2C_temp_sens_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00131"/>00131 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c">I2C_temp_sens_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00132"/>00132 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00133"/>00133 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e">I2C_oled_display_096_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00134"/>00134 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a3445811f5fe19076f86332b2ce6c780b">I2C_oled_display_096_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00135"/>00135 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e">I2C_oled_display_096_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00136"/>00136 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00137"/>00137 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4">I2C_adxl345_sens_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00138"/>00138 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a7b6b89c137d67e25714751e50d721c6b">I2C_adxl345_sens_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00139"/>00139 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4">I2C_adxl345_sens_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00140"/>00140 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00141"/>00141 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="__i2_c__common_8c_source_1l00142"/>00142 &#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00143"/>00143 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00144"/>00144 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00145"/>00145 &#32;&#32;&#32;&#32;esp_err_t&#32;ret&#32;=&#32;i2c_master_transmit(<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[device_handle],&#32;(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>*)data,&#32;write_size,&#32;-1);&#32;<emphasis role="comment">//&#32;3rd&#32;argument&#32;=&#32;length&#32;of&#32;the&#32;data&#32;in&#32;bytes&#32;==&gt;&#32;only&#32;commands,&#32;2&#32;bytes&#32;only</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00146"/>00146 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(ret&#32;!=&#32;ESP_OK)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00147"/>00147 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<emphasis role="stringliteral">&quot;I2C&#32;Receive&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;Failed&#32;to&#32;receive&#32;data:&#32;%s&quot;</emphasis>,&#32;esp_err_to_name(ret));
+<anchor xml:id="__i2_c__common_8c_source_1l00148"/>00148 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;i2c_master_bus_wait_all_done(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;50);
+<anchor xml:id="__i2_c__common_8c_source_1l00149"/>00149 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;i2c_master_bus_reset(bus_handle_esp32_i2c_config);</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00150"/>00150 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00151"/>00151 }
+<anchor xml:id="__i2_c__common_8c_source_1l00152"/>00152 
+<anchor xml:id="__i2_c__common_8c_source_1l00153"/><link linkend="__i2_c__common_8h_1aee26da50da18a761354c3d05c6ab0145">00153</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1aee26da50da18a761354c3d05c6ab0145">I2C_receive</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t*&#32;data,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;read_size)
+<anchor xml:id="__i2_c__common_8c_source_1l00154"/>00154 {
+<anchor xml:id="__i2_c__common_8c_source_1l00155"/>00155 
+<anchor xml:id="__i2_c__common_8c_source_1l00156"/>00156 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;old_handle=99;
+<anchor xml:id="__i2_c__common_8c_source_1l00157"/>00157 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;current_handle;
+<anchor xml:id="__i2_c__common_8c_source_1l00158"/>00158 
+<anchor xml:id="__i2_c__common_8c_source_1l00159"/>00159 &#32;&#32;&#32;&#32;current_handle=device_handle;
+<anchor xml:id="__i2_c__common_8c_source_1l00160"/>00160 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;If&#32;the&#32;channel&#32;is&#32;already&#32;selected,&#32;don&apos;t&#32;call&#32;the&#32;function&#32;for&#32;changing</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00161"/>00161 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;channel.</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00162"/>00162 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(old_handle!=current_handle)
+<anchor xml:id="__i2_c__common_8c_source_1l00163"/>00163 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>&#32;(device_handle)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00164"/>00164 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a5085c8956bca4258b1de065182c1c11b">I2C_multiplexer_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00165"/>00165 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;do&#32;nothing</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00166"/>00166 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00167"/>00167 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93">I2C_pixy2_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00168"/>00168 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a08bdbe34ce8659d94b4f5e182a43d125">I2C_pixy2_camera_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00169"/>00169 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93">I2C_pixy2_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00170"/>00170 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00171"/>00171 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00172"/>00172 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a74556c047e53ea5ae5d205eb0ea15d88">I2C_distance_sens_1_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00173"/>00173 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00174"/>00174 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00175"/>00175 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00176"/>00176 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a366361b6c13f8f3072a1ffac0d249d90">I2C_distance_sens_2_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00177"/>00177 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00178"/>00178 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00179"/>00179 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c">I2C_temp_sens_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00180"/>00180 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6ad7b0bc85a1daf7e9a20727d4740adb24">I2C_temp_sens_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00181"/>00181 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c">I2C_temp_sens_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00182"/>00182 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00183"/>00183 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e">I2C_oled_display_096_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00184"/>00184 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a3445811f5fe19076f86332b2ce6c780b">I2C_oled_display_096_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00185"/>00185 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e">I2C_oled_display_096_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00186"/>00186 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00187"/>00187 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4">I2C_adxl345_sens_dev_handle</link>:
+<anchor xml:id="__i2_c__common_8c_source_1l00188"/>00188 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link>(<link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a7b6b89c137d67e25714751e50d721c6b">I2C_adxl345_sens_mux</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00189"/>00189 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_handle=<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4">I2C_adxl345_sens_dev_handle</link>;
+<anchor xml:id="__i2_c__common_8c_source_1l00190"/>00190 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__i2_c__common_8c_source_1l00191"/>00191 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="__i2_c__common_8c_source_1l00192"/>00192 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00193"/>00193 
+<anchor xml:id="__i2_c__common_8c_source_1l00194"/>00194 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));&#32;<emphasis role="comment">//&#32;space&#32;for&#32;the&#32;switch&#32;of&#32;the&#32;channel&#32;to&#32;happen</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00195"/>00195 &#32;&#32;&#32;&#32;esp_err_t&#32;ret&#32;=&#32;i2c_master_receive(<link linkend="__i2_c__common_8c_1a9fc620c13c757764c70d47d6bfabdf90">device_handle_esp32_i2c_config</link>[device_handle],&#32;(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>*)data,&#32;read_size,&#32;-1);
+<anchor xml:id="__i2_c__common_8c_source_1l00196"/>00196 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(ret&#32;!=&#32;ESP_OK)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00197"/>00197 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<emphasis role="stringliteral">&quot;I2C&#32;Receive&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;Failed&#32;to&#32;receive&#32;data:&#32;%s&quot;</emphasis>,&#32;esp_err_to_name(ret));
+<anchor xml:id="__i2_c__common_8c_source_1l00198"/>00198 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;i2c_master_bus_wait_all_done(<link linkend="__i2_c__common_8c_1a7ddae96b23b9a5652bcac1bbcc2ebd29">bus_handle_esp32_i2c_config</link>,&#32;100);
+<anchor xml:id="__i2_c__common_8c_source_1l00199"/>00199 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//i2c_master_bus_reset(bus_handle_esp32_i2c_config);</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00200"/>00200 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00201"/>00201 }
+<anchor xml:id="__i2_c__common_8c_source_1l00202"/>00202 
+<anchor xml:id="__i2_c__common_8c_source_1l00203"/>00203 
+<anchor xml:id="__i2_c__common_8c_source_1l00204"/><link linkend="__i2_c__common_8h_1a12e39c7748d800e1fc75f5242b56db82">00204</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a12e39c7748d800e1fc75f5242b56db82">writeMultipleRegisters</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;<emphasis role="keyword">const</emphasis>&#32;uint8_t&#32;(*regs_vals)[2],&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;count)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00205"/>00205 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">for</emphasis>&#32;(<emphasis role="keywordtype">size_t</emphasis>&#32;i&#32;=&#32;0;&#32;i&#32;&lt;&#32;count;&#32;i++)&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00206"/>00206 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;regs_vals[i][0],&#32;regs_vals[i][1]);
+<anchor xml:id="__i2_c__common_8c_source_1l00207"/>00207 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__common_8c_source_1l00208"/>00208 }
+<anchor xml:id="__i2_c__common_8c_source_1l00209"/>00209 
+<anchor xml:id="__i2_c__common_8c_source_1l00210"/><link linkend="__i2_c__common_8h_1ae9d6e477c0e54827a4bb9bbf8aa301d3">00210</link> uint8_t&#32;<link linkend="__i2_c__common_8c_1ae9d6e477c0e54827a4bb9bbf8aa301d3">I2C_readRegister8bit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t&#32;reg)
+<anchor xml:id="__i2_c__common_8c_source_1l00211"/>00211 {
+<anchor xml:id="__i2_c__common_8c_source_1l00212"/>00212 &#32;&#32;&#32;&#32;uint8_t&#32;data;
+<anchor xml:id="__i2_c__common_8c_source_1l00213"/>00213 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;&amp;reg,&#32;1);
+<anchor xml:id="__i2_c__common_8c_source_1l00214"/>00214 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__common_8c_source_1l00215"/>00215 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aee26da50da18a761354c3d05c6ab0145">I2C_receive</link>(device_handle,&#32;&amp;data,&#32;1);
+<anchor xml:id="__i2_c__common_8c_source_1l00216"/>00216 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__common_8c_source_1l00217"/>00217 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;data;
+<anchor xml:id="__i2_c__common_8c_source_1l00218"/>00218 }
+<anchor xml:id="__i2_c__common_8c_source_1l00219"/>00219 
+<anchor xml:id="__i2_c__common_8c_source_1l00220"/><link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">00220</link> uint16_t&#32;<link linkend="__i2_c__common_8c_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t&#32;reg)
+<anchor xml:id="__i2_c__common_8c_source_1l00221"/>00221 {
+<anchor xml:id="__i2_c__common_8c_source_1l00222"/>00222 &#32;&#32;&#32;&#32;uint8_t&#32;data[2];
+<anchor xml:id="__i2_c__common_8c_source_1l00223"/>00223 &#32;&#32;&#32;&#32;uint16_t&#32;data_f;
+<anchor xml:id="__i2_c__common_8c_source_1l00224"/>00224 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;&amp;reg,&#32;1);
+<anchor xml:id="__i2_c__common_8c_source_1l00225"/>00225 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__common_8c_source_1l00226"/>00226 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Read&#32;two&#32;bytes&#32;at&#32;once</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00227"/>00227 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aee26da50da18a761354c3d05c6ab0145">I2C_receive</link>(device_handle,&#32;data,&#32;2);
+<anchor xml:id="__i2_c__common_8c_source_1l00228"/>00228 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__common_8c_source_1l00229"/>00229 
+<anchor xml:id="__i2_c__common_8c_source_1l00230"/>00230 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Combine&#32;the&#32;two&#32;bytes&#32;into&#32;one&#32;16-bit&#32;value</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00231"/>00231 &#32;&#32;&#32;&#32;data_f&#32;=&#32;(uint16_t)data[0]&#32;&lt;&lt;&#32;8&#32;|&#32;data[1];
+<anchor xml:id="__i2_c__common_8c_source_1l00232"/>00232 
+<anchor xml:id="__i2_c__common_8c_source_1l00233"/>00233 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;data_f;
+<anchor xml:id="__i2_c__common_8c_source_1l00234"/>00234 }
+<anchor xml:id="__i2_c__common_8c_source_1l00235"/>00235 
+<anchor xml:id="__i2_c__common_8c_source_1l00236"/><link linkend="__i2_c__common_8h_1a6aea245d443d9090e23b331c086433b6">00236</link> uint32_t&#32;<link linkend="__i2_c__common_8c_1a6aea245d443d9090e23b331c086433b6">I2C_readRegister32bit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t&#32;reg)
+<anchor xml:id="__i2_c__common_8c_source_1l00237"/>00237 {
+<anchor xml:id="__i2_c__common_8c_source_1l00238"/>00238 &#32;&#32;&#32;&#32;uint8_t&#32;data[4];&#32;&#32;&#32;<emphasis role="comment">//&#32;Array&#32;to&#32;hold&#32;the&#32;four&#32;bytes&#32;read&#32;from&#32;the&#32;device</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00239"/>00239 &#32;&#32;&#32;&#32;uint32_t&#32;data_f&#32;=&#32;0;&#32;<emphasis role="comment">//&#32;Initialize&#32;the&#32;final&#32;32-bit&#32;data&#32;value</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00240"/>00240 
+<anchor xml:id="__i2_c__common_8c_source_1l00241"/>00241 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Send&#32;the&#32;register&#32;address&#32;from&#32;which&#32;to&#32;start&#32;the&#32;read</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00242"/>00242 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;&amp;reg,&#32;1);
+<anchor xml:id="__i2_c__common_8c_source_1l00243"/>00243 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;Delay&#32;to&#32;allow&#32;for&#32;address&#32;setup</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00244"/>00244 
+<anchor xml:id="__i2_c__common_8c_source_1l00245"/>00245 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Receive&#32;4&#32;bytes&#32;of&#32;data</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00246"/>00246 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1aee26da50da18a761354c3d05c6ab0145">I2C_receive</link>(device_handle,&#32;data,&#32;4);
+<anchor xml:id="__i2_c__common_8c_source_1l00247"/>00247 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;Delay&#32;to&#32;allow&#32;the&#32;read&#32;transaction&#32;to&#32;complete</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00248"/>00248 
+<anchor xml:id="__i2_c__common_8c_source_1l00249"/>00249 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Convert&#32;the&#32;4&#32;bytes&#32;into&#32;a&#32;single&#32;32-bit&#32;integer&#32;(assume&#32;big-endian&#32;order)</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00250"/>00250 &#32;&#32;&#32;&#32;data_f&#32;=&#32;(uint32_t)data[0]&#32;&lt;&lt;&#32;24;&#32;<emphasis role="comment">//&#32;Highest&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00251"/>00251 &#32;&#32;&#32;&#32;data_f&#32;|=&#32;(uint32_t)data[1]&#32;&lt;&lt;&#32;16;&#32;<emphasis role="comment">//&#32;Higher&#32;middle&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00252"/>00252 &#32;&#32;&#32;&#32;data_f&#32;|=&#32;(uint32_t)data[2]&#32;&lt;&lt;&#32;8;&#32;&#32;<emphasis role="comment">//&#32;Lower&#32;middle&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00253"/>00253 &#32;&#32;&#32;&#32;data_f&#32;|=&#32;data[3];&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Lowest&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00254"/>00254 
+<anchor xml:id="__i2_c__common_8c_source_1l00255"/>00255 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;data_f;
+<anchor xml:id="__i2_c__common_8c_source_1l00256"/>00256 }
+<anchor xml:id="__i2_c__common_8c_source_1l00257"/>00257 
+<anchor xml:id="__i2_c__common_8c_source_1l00258"/>00258 
+<anchor xml:id="__i2_c__common_8c_source_1l00259"/><link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">00259</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t&#32;reg,&#32;uint8_t&#32;value)
+<anchor xml:id="__i2_c__common_8c_source_1l00260"/>00260 {
+<anchor xml:id="__i2_c__common_8c_source_1l00261"/>00261 &#32;&#32;&#32;&#32;uint8_t&#32;data[2];
+<anchor xml:id="__i2_c__common_8c_source_1l00262"/>00262 &#32;&#32;&#32;&#32;data[0]&#32;=&#32;reg;&#32;&#32;&#32;<emphasis role="comment">//&#32;First&#32;byte&#32;is&#32;the&#32;register&#32;address</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00263"/>00263 &#32;&#32;&#32;&#32;data[1]&#32;=&#32;value;&#32;<emphasis role="comment">//&#32;Second&#32;byte&#32;is&#32;the&#32;data&#32;to&#32;write</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00264"/>00264 
+<anchor xml:id="__i2_c__common_8c_source_1l00265"/>00265 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Transmit&#32;both&#32;bytes&#32;at&#32;once</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00266"/>00266 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;data,&#32;2);
+<anchor xml:id="__i2_c__common_8c_source_1l00267"/>00267 &#32;&#32;&#32;&#32;<emphasis role="comment">//i2c_manual_stop(pdMS_TO_TICKS(5));</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00268"/>00268 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(5));&#32;<emphasis role="comment">//&#32;Delay&#32;to&#32;allow&#32;the&#32;transaction&#32;to&#32;complete</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00269"/>00269 }
+<anchor xml:id="__i2_c__common_8c_source_1l00270"/>00270 
+<anchor xml:id="__i2_c__common_8c_source_1l00271"/><link linkend="__i2_c__common_8h_1a08e5e4ac56fb1d15beeb7997e2fa97de">00271</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a08e5e4ac56fb1d15beeb7997e2fa97de">I2C_writeRegister16bit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t&#32;reg,&#32;uint16_t&#32;value)
+<anchor xml:id="__i2_c__common_8c_source_1l00272"/>00272 {
+<anchor xml:id="__i2_c__common_8c_source_1l00273"/>00273 &#32;&#32;&#32;&#32;uint8_t&#32;data[3];&#32;<emphasis role="comment">//&#32;Array&#32;to&#32;hold&#32;the&#32;register&#32;and&#32;the&#32;two&#32;bytes&#32;of&#32;the&#32;value</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00274"/>00274 &#32;&#32;&#32;&#32;data[0]&#32;=&#32;reg;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Register&#32;address</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00275"/>00275 &#32;&#32;&#32;&#32;data[1]&#32;=&#32;(uint8_t)(value&#32;&gt;&gt;&#32;8);&#32;<emphasis role="comment">//&#32;High&#32;byte&#32;of&#32;the&#32;16-bit&#32;value</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00276"/>00276 &#32;&#32;&#32;&#32;data[2]&#32;=&#32;(uint8_t)value;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Low&#32;byte&#32;of&#32;the&#32;16-bit&#32;value</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00277"/>00277 
+<anchor xml:id="__i2_c__common_8c_source_1l00278"/>00278 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Transmit&#32;the&#32;register&#32;address&#32;and&#32;value&#32;in&#32;one&#32;go</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00279"/>00279 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;data,&#32;3);
+<anchor xml:id="__i2_c__common_8c_source_1l00280"/>00280 &#32;&#32;&#32;&#32;<emphasis role="comment">//vTaskDelay(pdMS_TO_TICKS(10));&#32;//&#32;Delay&#32;to&#32;allow&#32;the&#32;transaction&#32;to&#32;complete</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00281"/>00281 }
+<anchor xml:id="__i2_c__common_8c_source_1l00282"/>00282 
+<anchor xml:id="__i2_c__common_8c_source_1l00283"/><link linkend="__i2_c__common_8h_1a4ba94f60644888082c968d910dd4c20e">00283</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a4ba94f60644888082c968d910dd4c20e">I2C_writeRegister32bit</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint8_t&#32;reg,&#32;uint32_t&#32;value)
+<anchor xml:id="__i2_c__common_8c_source_1l00284"/>00284 {
+<anchor xml:id="__i2_c__common_8c_source_1l00285"/>00285 &#32;&#32;&#32;&#32;uint8_t&#32;data[5];&#32;<emphasis role="comment">//&#32;Array&#32;to&#32;hold&#32;the&#32;register&#32;and&#32;the&#32;four&#32;bytes&#32;of&#32;the&#32;value</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00286"/>00286 &#32;&#32;&#32;&#32;data[0]&#32;=&#32;reg;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Register&#32;address</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00287"/>00287 &#32;&#32;&#32;&#32;data[1]&#32;=&#32;(uint8_t)(value&#32;&gt;&gt;&#32;24);&#32;<emphasis role="comment">//&#32;Highest&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00288"/>00288 &#32;&#32;&#32;&#32;data[2]&#32;=&#32;(uint8_t)(value&#32;&gt;&gt;&#32;16);&#32;<emphasis role="comment">//&#32;Higher&#32;middle&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00289"/>00289 &#32;&#32;&#32;&#32;data[3]&#32;=&#32;(uint8_t)(value&#32;&gt;&gt;&#32;8);&#32;&#32;<emphasis role="comment">//&#32;Lower&#32;middle&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00290"/>00290 &#32;&#32;&#32;&#32;data[4]&#32;=&#32;(uint8_t)value;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Lowest&#32;byte</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00291"/>00291 
+<anchor xml:id="__i2_c__common_8c_source_1l00292"/>00292 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Transmit&#32;the&#32;register&#32;address&#32;and&#32;value&#32;in&#32;one&#32;go</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00293"/>00293 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8c_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;data,&#32;5);
+<anchor xml:id="__i2_c__common_8c_source_1l00294"/>00294 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));&#32;<emphasis role="comment">//&#32;Delay&#32;to&#32;allow&#32;the&#32;transaction&#32;to&#32;complete</emphasis>
+<anchor xml:id="__i2_c__common_8c_source_1l00295"/>00295 }
+<anchor xml:id="__i2_c__common_8c_source_1l00296"/>00296 
+<anchor xml:id="__i2_c__common_8c_source_1l00297"/><link linkend="__i2_c__common_8h_1a793ef527029215fa4b7539adcc14e5e0">00297</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a793ef527029215fa4b7539adcc14e5e0">config_rst_pin_i2c_mux</link>()&#32;{
+<anchor xml:id="__i2_c__common_8c_source_1l00298"/>00298 &#32;&#32;&#32;&#32;gpio_reset_pin(<link linkend="__i2_c__common_8h_1a06c45257753b6f916524ef7ac1d9d17f">RST_PIN_MUX_I2C</link>);
+<anchor xml:id="__i2_c__common_8c_source_1l00299"/>00299 &#32;&#32;&#32;&#32;gpio_set_direction(<link linkend="__i2_c__common_8h_1a06c45257753b6f916524ef7ac1d9d17f">RST_PIN_MUX_I2C</link>,&#32;GPIO_MODE_OUTPUT);
+<anchor xml:id="__i2_c__common_8c_source_1l00300"/>00300 }
+<anchor xml:id="__i2_c__common_8c_source_1l00301"/><link linkend="__i2_c__common_8h_1a0606cd7138b8af0f8a5b55f87d85849e">00301</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a0606cd7138b8af0f8a5b55f87d85849e">rst_pin_i2c_mux_on</link>()
+<anchor xml:id="__i2_c__common_8c_source_1l00302"/>00302 {
+<anchor xml:id="__i2_c__common_8c_source_1l00303"/>00303 &#32;&#32;&#32;&#32;gpio_set_level(<link linkend="__i2_c__common_8h_1a06c45257753b6f916524ef7ac1d9d17f">RST_PIN_MUX_I2C</link>,&#32;1);
+<anchor xml:id="__i2_c__common_8c_source_1l00304"/>00304 }
+<anchor xml:id="__i2_c__common_8c_source_1l00305"/>00305 
+<anchor xml:id="__i2_c__common_8c_source_1l00306"/><link linkend="__i2_c__common_8h_1a0ac33d5cead56645b2d38faf5ff80e05">00306</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__common_8c_1a0ac33d5cead56645b2d38faf5ff80e05">rst_pin_i2c_mux_off</link>()
+<anchor xml:id="__i2_c__common_8c_source_1l00307"/>00307 {
+<anchor xml:id="__i2_c__common_8c_source_1l00308"/>00308 &#32;&#32;&#32;&#32;gpio_set_level(<link linkend="__i2_c__common_8h_1a06c45257753b6f916524ef7ac1d9d17f">RST_PIN_MUX_I2C</link>,&#32;0);
+<anchor xml:id="__i2_c__common_8c_source_1l00309"/>00309 }
+<anchor xml:id="__i2_c__common_8c_source_1l00310"/>00310 
+<anchor xml:id="__i2_c__common_8c_source_1l00311"/>00311 
+<anchor xml:id="__i2_c__common_8c_source_1l00312"/>00312 
+<anchor xml:id="__i2_c__common_8c_source_1l00313"/>00313 
+</programlisting></section>

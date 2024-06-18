@@ -1,0 +1,136 @@
+\doxysection{Servo\+Motor.\+c}
+\label{_servo_motor_8c_source}\index{src/motors/drivers/ServoMotor.c@{src/motors/drivers/ServoMotor.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ ServoMotor.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 18\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}ServoMotor.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ mcpwm\_timer\_handle\_t\ timer\_servo;}
+\DoxyCodeLine{00011\ mcpwm\_oper\_handle\_t\ operator\_servo;}
+\DoxyCodeLine{00012\ mcpwm\_cmpr\_handle\_t\ comparator\_servo;}
+\DoxyCodeLine{00013\ mcpwm\_gen\_handle\_t\ generator\_servo;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{//\ Initialize\ PWM\ for\ SERVO}}
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{void}\ init\_servo\_pwm()\ \{}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#if\ (MOTOR\_CONTROL\ ==\ LEDC)}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//\ Prepare\ and\ set\ configuration\ of\ timers}}
+\DoxyCodeLine{00020\ \ \ \ \ ledc\_timer\_config\_t\ ledc\_timer\ =\ \{\ .speed\_mode\ =\ LEDC\_Motor\_And\_Servo\_MODE,}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ .duty\_resolution\ =\ LEDC\_SERVO\_DUTY\_RESOLUTION,\ .timer\_num\ =}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ LEDC\_SERVO\_TIMER,\ .freq\_hz\ =\ LEDC\_Motor\_And\_Servo\_FREQ,\ \};}
+\DoxyCodeLine{00023\ \ \ \ \ ledc\_timer\_config(\&ledc\_timer);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ Prepare\ individual\ configuration}}
+\DoxyCodeLine{00026\ \ \ \ \ ledc\_channel\_config\_t\ ledc\_channel\ =\ \{\ .channel\ =\ LEDC\_SERVO\_CH0\_CHANNEL,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ .duty\ =\ 0,\ .gpio\_num\ =\ LEDC\_SERVO\_GPIO,\ .speed\_mode\ =}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ LEDC\_Motor\_And\_Servo\_MODE,\ .timer\_sel\ =\ LEDC\_SERVO\_TIMER,\ \};}
+\DoxyCodeLine{00029\ \ \ \ \ ledc\_channel\_config(\&ledc\_channel);}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#elif\ (MOTOR\_CONTROL\ ==\ MCPWM)}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ timer}}
+\DoxyCodeLine{00033\ \ \ \ \ mcpwm\_timer\_config\_t\ config\ =}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ .group\_id\ =\ 0,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ .intr\_priority\ =\ 0,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ .clk\_src\ =\ MCPWM\_TIMER\_CLK\_SRC\_DEFAULT,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ period\_ticks=Desired Period\ *\ Resolution}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ period\_ticks=\ 20000\ microseconds\ *\ 1\ microsecond}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1MHZ\ =>\ 1\ tick\ =\ 1/1000000\ =\ 1\ microsecond\ each\ tick}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ .resolution\_hz\ =\ 1000000,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 20000\ *\ 1\ microsecond\ =\ 20000\ microseconds\ =>\ 0.02\ seconds\ =>\ 50\ hz}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ .period\_ticks\ =\ 20000,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ .count\_mode\ =\ MCPWM\_TIMER\_COUNT\_MODE\_UP,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ .flags.update\_period\_on\_empty\ =\ \textcolor{keyword}{true},\ \textcolor{comment}{//\ Update\ period\ when\ timer\ counts\ to\ zero}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ .flags.update\_period\_on\_sync\ =\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Do\ not\ update\ period\ on\ sync\ signal}}
+\DoxyCodeLine{00047\ \ \ \ \ \};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_timer(\&config,\ \&timer\_servo));}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ operator}}
+\DoxyCodeLine{00052\ \ \ \ \ mcpwm\_operator\_config\_t\ operator\_config\ =\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ .group\_id\ =\ 0,}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ .intr\_priority\ =\ 0,}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ .flags.update\_gen\_action\_on\_tez\ =\ 1,\ \textcolor{comment}{//\ Update\ generator\ action\ when\ timer\ counts\ to\ zero}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ .flags.update\_gen\_action\_on\_tep\ =\ 0,\ \textcolor{comment}{//\ Do\ not\ update\ generator\ action\ when\ timer\ counts\ to\ peak}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ .flags.update\_gen\_action\_on\_sync\ =\ 0\ \textcolor{comment}{//\ Do\ not\ update\ generator\ action\ on\ sync\ signal}}
+\DoxyCodeLine{00058\ \ \ \ \ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_operator(\&operator\_config,\ \&operator\_servo));}
+\DoxyCodeLine{00061\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_operator\_connect\_timer(operator\_servo,\ timer\_servo));}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ comparator}}
+\DoxyCodeLine{00064\ \ \ \ \ mcpwm\_comparator\_config\_t\ comparator\_config\ =}
+\DoxyCodeLine{00065\ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ .intr\_priority\ =\ 0,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//This\ ensures\ that\ the\ compare\ value\ (duty\ cycle)\ is\ updated\ when\ the\ timer\ count\ reaches\ zero.}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ .flags.update\_cmp\_on\_tez\ =\ 1,}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ .flags.update\_cmp\_on\_tep\ =\ 0,\ \textcolor{comment}{//\ Do\ not\ update\ compare\ value\ when\ timer\ count\ equals\ peak}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ .flags.update\_cmp\_on\_sync\ =\ 0\ \textcolor{comment}{//\ Do\ not\ update\ compare\ value\ on\ sync\ event}}
+\DoxyCodeLine{00071\ \ \ \ \ \};}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_comparator(operator\_servo,\ \&comparator\_config,\ \&comparator\_servo));}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{//\ Configure\ MCPWM\ generator}}
+\DoxyCodeLine{00076\ \ \ \ \ mcpwm\_generator\_config\_t\ generator\_config\ =\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ .gen\_gpio\_num\ =\ LEDC\_SERVO\_GPIO,\ \textcolor{comment}{//\ Set\ the\ GPIO\ number\ used\ by\ the\ generator}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ .flags.invert\_pwm\ =\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Do\ not\ invert\ the\ PWM\ signal}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ .flags.io\_loop\_back\ =\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Disable\ loop-\/back\ mode}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ .flags.io\_od\_mode\ =\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Do\ not\ configure\ as\ open-\/drain\ output}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ .flags.pull\_up\ =\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Disable\ internal\ pull-\/up\ resistor}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ .flags.pull\_down\ =\ \textcolor{keyword}{false},\ \textcolor{comment}{//\ Disable\ internal\ pull-\/down\ resistor}}
+\DoxyCodeLine{00083\ \ \ \ \ \};}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_new\_generator(operator\_servo,\ \&generator\_config,\ \&generator\_servo));}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{//\ Set\ the\ generator\ actions}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \textcolor{comment}{//\ go\ high\ on\ counter\ empty}}
+\DoxyCodeLine{00089\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_generator\_set\_action\_on\_timer\_event(generator\_servo,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MCPWM\_GEN\_TIMER\_EVENT\_ACTION(MCPWM\_TIMER\_DIRECTION\_UP,\ MCPWM\_TIMER\_EVENT\_EMPTY,\ MCPWM\_GEN\_ACTION\_HIGH)));}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{comment}{//\ go\ low\ on\ compare\ threshold}}
+\DoxyCodeLine{00092\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_generator\_set\_action\_on\_compare\_event(generator\_servo,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ MCPWM\_GEN\_COMPARE\_EVENT\_ACTION(MCPWM\_TIMER\_DIRECTION\_UP,\ comparator\_servo,\ MCPWM\_GEN\_ACTION\_LOW)));}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{//\ Set\ the\ duty\ cycle\ for\ the\ servo}}
+\DoxyCodeLine{00096\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_comparator\_set\_compare\_value(comparator\_servo,\ 1500));\ \textcolor{comment}{//\ 1.5ms\ pulse\ width\ for\ neutral\ position}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//\ Start\ the\ MCPWM\ timer}}
+\DoxyCodeLine{00099\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_timer\_enable(timer\_servo));}
+\DoxyCodeLine{00100\ \ \ \ \ ESP\_ERROR\_CHECK(mcpwm\_timer\_start\_stop(timer\_servo,\ MCPWM\_TIMER\_START\_NO\_STOP));}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ Update\ the\ PWM\ duty\ cycle\ for\ SERVO}}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ update\_servo\_pwm(\textcolor{keywordtype}{int}\ pulse\_width\_us)\ \{}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#if\ (MOTOR\_CONTROL\ ==\ LEDC)}}
+\DoxyCodeLine{00108\ \ \ \ \ uint32\_t\ duty\ =\ (pulse\_width\_us\ *\ ((1\ <<\ LEDC\_SERVO\_DUTY\_RESOLUTION)\ -\/\ 1))\ /\ 20000;}
+\DoxyCodeLine{00109\ \ \ \ \ ledc\_set\_duty(LEDC\_Motor\_And\_Servo\_MODE,\ LEDC\_SERVO\_CH0\_CHANNEL,\ duty);}
+\DoxyCodeLine{00110\ \ \ \ \ ledc\_update\_duty(LEDC\_Motor\_And\_Servo\_MODE,\ LEDC\_SERVO\_CH0\_CHANNEL);}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#elif\ (MOTOR\_CONTROL\ ==\ MCPWM)}}
+\DoxyCodeLine{00112\ \ \ \ \ esp\_err\_t\ err\ =\ mcpwm\_comparator\_set\_compare\_value(comparator\_servo,\ pulse\_width\_us);}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00115\ \}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ changeSTEER(\textcolor{keywordtype}{int}\ value)\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ value\ is\ within\ the\ expected\ range}}
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{keywordflow}{if}\ (value\ <\ 0)\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ value\ =\ 0;}
+\DoxyCodeLine{00121\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (value\ >\ 100)\ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ value\ =\ 100;}
+\DoxyCodeLine{00123\ \ \ \ \ \}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{comment}{//\ Scale\ the\ value\ to\ fit\ between\ 1000\ and\ 2000}}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{int}\ pulse\_width\_us\ =\ MIN\_SERVO\_DUTY\_US\ +\ (value\ *\ (MAX\_SERVO\_DUTY\_US\ -\/\ MIN\_SERVO\_DUTY\_US)\ /\ 100);}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{comment}{//\ ESP\_LOGI("{}"{},\ "{}pwm\_us\ \%d"{},\ pulse\_width\_us);}}
+\DoxyCodeLine{00128\ \ \ \ \ update\_servo\_pwm(pulse\_width\_us);}
+\DoxyCodeLine{00129\ \}}
+\DoxyCodeLine{00130\ }
+
+\end{DoxyCode}

@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__p_i_d_8c" xml:lang="en-US">
+<title>src/PID.c File Reference</title>
+<indexterm><primary>src/PID.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_common.h&quot;<?linebreak?>#include &quot;PID.h&quot;<?linebreak?>#include &quot;Network.h&quot;<?linebreak?>#include &lt;math.h&gt;<?linebreak?></programlisting>Include dependency graph for PID.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_p_i_d_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__p_i_d_8c_1affd6ece3243c73ae7033a9e67d3f23c2">speedCheckTickHook</link> (void)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1ab1cfced9ea996bf91c861133e0d91e49">init_speedCheckTickHook</link> (void)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1a26c8b95db9397895630f51f4d291aab5">PID_Init</link> (<link linkend="_struct_p_i_d__t">PID_t</link> *pid, float Kp, float Ki, float Kd)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1a6120ff3d44feed1033e54547b47c7856">PID_Compute</link> (<link linkend="_struct_p_i_d__t">PID_t</link> *pid)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1ad55b9d5b8311b147f528a7e6d0fba01c">PID_UpdateParams</link> (<link linkend="_struct_p_i_d__t">PID_t</link> *pid, float new_Kp, float new_Ki, float new_Kd)</para>
+</listitem>
+            <listitem><para>float <link linkend="__p_i_d_8c_1aabae7507a2291726cf102c305e3f02c5">get_speed_distance_sens_scaling</link> (float speed, float speed_min, float speed_max)</para>
+</listitem>
+            <listitem><para>double <link linkend="__p_i_d_8c_1aa67df0089f15bc7920286170fbdf904b">Sliding_Mean_Average</link> (int newValue)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1a0b5432e9eb596af445a114d06ffccd81">PIDTask</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1a616f6b0cb89c5861abaa85bbd1058645">clamp_float</link> (float *value, float min, float max)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe">clamp_int</link> (int *value, int min, int max)</para>
+</listitem>
+            <listitem><para>void <link linkend="__p_i_d_8c_1a9e7e9a86b0b7bb64ee265afc5cb27264">start_PID_task</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="_struct_p_i_d__t">PID_t</link> <link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link></para>
+</listitem>
+            <listitem><para><link linkend="_struct_p_i_d__t">PID_t</link> <link linkend="__p_i_d_8c_1aef9aaf46d3a817fcb1cf11d655d3bebe">steerPID</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba">sens_fw_has_obstacle</link> = false</para>
+</listitem>
+            <listitem><para>bool <link linkend="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62">sens_bw_has_obstacle</link> = false</para>
+</listitem>
+            <listitem><para>int <link linkend="__p_i_d_8c_1a798a61f7f4a9d94f40e4a0c59bece8a0">speed_distance_sens_scaling</link></para>
+</listitem>
+            <listitem><para>TickType_t <link linkend="__p_i_d_8c_1adf2bc2f5a2cb2f6d8e95dc0f9762180f">xLastWakePulse</link> = 0U</para>
+</listitem>
+            <listitem><para>TickType_t <link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">xNewWakeTime</link> = 0U</para>
+</listitem>
+            <listitem><para>TickType_t <link linkend="__p_i_d_8c_1a3b0c3fc0d365276e3572f2c6e0b117e7">pulse_time_ms</link> = 0U</para>
+</listitem>
+            <listitem><para>const float <link linkend="__p_i_d_8c_1a04e33c17501dc544f4f170a5fdd10d98">primarySmoothingFactor</link> = 0.1</para>
+</listitem>
+            <listitem><para>const float <link linkend="__p_i_d_8c_1ad064e89649dcb2aeffc176cd64738ca2">secondarySmoothingFactor</link> = 0.05</para>
+</listitem>
+            <listitem><para>const float <link linkend="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77">maxChangePerCycle</link> = 5.0</para>
+</listitem>
+            <listitem><para>double <link linkend="__p_i_d_8c_1a121db7071e2b0e646e8ef5ab354e8627">buffer</link> [<link linkend="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70">WINDOW_SIZE_SMA</link>] = { 0.0 }</para>
+</listitem>
+            <listitem><para>double <link linkend="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b">sum</link> = 0.0</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__p_i_d_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__p_i_d_8c_1adb1f977be6734adfcc8e37d4f2659ec5">speed_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__p_i_d_8c_1a52c196f65d55f3b464764bf630e6f05e">PID_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="__p_i_d_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f">I2C_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueSetHandle_t <link linkend="__p_i_d_8c_1a5c87d10806c8bb41d42841fc2fb559d9">QueueSetPIDNecessaryCommands</link></para>
+</listitem>
+            <listitem><para><link linkend="_struct_car_command">CarCommand</link> <link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">onlyPIDValues</link></para>
+</listitem>
+            <listitem><para><link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link> <link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link></para>
+</listitem>
+            <listitem><para>int <link linkend="__p_i_d_8c_1a8080e5c331191a287a253bd49be7fb4d">old_setpoint</link></para>
+</listitem>
+            <listitem><para>TickType_t <link linkend="__p_i_d_8c_1ad13f649750458a5efd053ba378823d4a">startInitialSendingTime</link> = 0U</para>
+</listitem>
+            <listitem><para>bool <link linkend="__p_i_d_8c_1a0812e85483a0266e964dfe718008bd95">car_stays_stopped</link> = false</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__p_i_d_8c_1a616f6b0cb89c5861abaa85bbd1058645"/><section>
+    <title>clamp_float()</title>
+<indexterm><primary>clamp_float</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>clamp_float</secondary></indexterm>
+<para><computeroutput>void clamp_float (float * value, float min, float max)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00332">332</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe"/><section>
+    <title>clamp_int()</title>
+<indexterm><primary>clamp_int</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>clamp_int</secondary></indexterm>
+<para><computeroutput>void clamp_int (int * value, int min, int max)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00340">340</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1aabae7507a2291726cf102c305e3f02c5"/><section>
+    <title>get_speed_distance_sens_scaling()</title>
+<indexterm><primary>get_speed_distance_sens_scaling</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>get_speed_distance_sens_scaling</secondary></indexterm>
+<para><computeroutput>float get_speed_distance_sens_scaling (float speed, float speed_min, float speed_max)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00155">155</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ab1cfced9ea996bf91c861133e0d91e49"/><section>
+    <title>init_speedCheckTickHook()</title>
+<indexterm><primary>init_speedCheckTickHook</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>init_speedCheckTickHook</secondary></indexterm>
+<para><computeroutput>void init_speedCheckTickHook (void )</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00045">45</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a6120ff3d44feed1033e54547b47c7856"/><section>
+    <title>PID_Compute()</title>
+<indexterm><primary>PID_Compute</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>PID_Compute</secondary></indexterm>
+<para><computeroutput>void PID_Compute (<link linkend="_struct_p_i_d__t">PID_t</link> * pid)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00082">82</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a26c8b95db9397895630f51f4d291aab5"/><section>
+    <title>PID_Init()</title>
+<indexterm><primary>PID_Init</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>PID_Init</secondary></indexterm>
+<para><computeroutput>void PID_Init (<link linkend="_struct_p_i_d__t">PID_t</link> * pid, float Kp, float Ki, float Kd)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00057">57</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ad55b9d5b8311b147f528a7e6d0fba01c"/><section>
+    <title>PID_UpdateParams()</title>
+<indexterm><primary>PID_UpdateParams</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>PID_UpdateParams</secondary></indexterm>
+<para><computeroutput>void PID_UpdateParams (<link linkend="_struct_p_i_d__t">PID_t</link> * pid, float new_Kp, float new_Ki, float new_Kd)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00135">135</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a0b5432e9eb596af445a114d06ffccd81"/><section>
+    <title>PIDTask()</title>
+<indexterm><primary>PIDTask</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>PIDTask</secondary></indexterm>
+<para><computeroutput>void PIDTask (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00203">203</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1aa67df0089f15bc7920286170fbdf904b"/><section>
+    <title>Sliding_Mean_Average()</title>
+<indexterm><primary>Sliding_Mean_Average</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>Sliding_Mean_Average</secondary></indexterm>
+<para><computeroutput>double Sliding_Mean_Average (int newValue)</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00174">174</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1affd6ece3243c73ae7033a9e67d3f23c2"/><section>
+    <title>speedCheckTickHook()</title>
+<indexterm><primary>speedCheckTickHook</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>speedCheckTickHook</secondary></indexterm>
+<para><computeroutput>void speedCheckTickHook (void )</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00021">21</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a9e7e9a86b0b7bb64ee265afc5cb27264"/><section>
+    <title>start_PID_task()</title>
+<indexterm><primary>start_PID_task</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>start_PID_task</secondary></indexterm>
+<para><computeroutput>void start_PID_task ( )</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00350">350</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="__p_i_d_8c_1a121db7071e2b0e646e8ef5ab354e8627"/><section>
+    <title>buffer</title>
+<indexterm><primary>buffer</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>buffer</secondary></indexterm>
+<para><computeroutput>double buffer[<link linkend="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70">WINDOW_SIZE_SMA</link>] = { 0.0 }</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00170">170</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a0812e85483a0266e964dfe718008bd95"/><section>
+    <title>car_stays_stopped</title>
+<indexterm><primary>car_stays_stopped</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>car_stays_stopped</secondary></indexterm>
+<para><computeroutput>bool car_stays_stopped = false</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00202">202</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff"/><section>
+    <title>I2C_command</title>
+<indexterm><primary>I2C_command</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>I2C_command</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link> I2C_command</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00199">199</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f"/><section>
+    <title>I2C_commandQueue</title>
+<indexterm><primary>I2C_commandQueue</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>I2C_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t I2C_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00010">10</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77"/><section>
+    <title>maxChangePerCycle</title>
+<indexterm><primary>maxChangePerCycle</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>maxChangePerCycle</secondary></indexterm>
+<para><computeroutput>const float maxChangePerCycle = 5.0</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00077">77</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9"/><section>
+    <title>motorPID</title>
+<indexterm><primary>motorPID</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>motorPID</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_p_i_d__t">PID_t</link> motorPID</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00007">7</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a8080e5c331191a287a253bd49be7fb4d"/><section>
+    <title>old_setpoint</title>
+<indexterm><primary>old_setpoint</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>old_setpoint</secondary></indexterm>
+<para><computeroutput>int old_setpoint</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00200">200</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6"/><section>
+    <title>onlyPIDValues</title>
+<indexterm><primary>onlyPIDValues</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>onlyPIDValues</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_car_command">CarCommand</link> onlyPIDValues</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00198">198</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a52c196f65d55f3b464764bf630e6f05e"/><section>
+    <title>PID_commandQueue</title>
+<indexterm><primary>PID_commandQueue</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>PID_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t PID_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00107">107</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a04e33c17501dc544f4f170a5fdd10d98"/><section>
+    <title>primarySmoothingFactor</title>
+<indexterm><primary>primarySmoothingFactor</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>primarySmoothingFactor</secondary></indexterm>
+<para><computeroutput>const float primarySmoothingFactor = 0.1</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00075">75</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a745d4a6c288386e09694294a5f19410a"/><section>
+    <title>pulse_encoderQueue</title>
+<indexterm><primary>pulse_encoderQueue</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>pulse_encoderQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t pulse_encoderQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00011">11</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a3b0c3fc0d365276e3572f2c6e0b117e7"/><section>
+    <title>pulse_time_ms</title>
+<indexterm><primary>pulse_time_ms</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>pulse_time_ms</secondary></indexterm>
+<para><computeroutput>TickType_t pulse_time_ms = 0U</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00018">18</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a5c87d10806c8bb41d42841fc2fb559d9"/><section>
+    <title>QueueSetPIDNecessaryCommands</title>
+<indexterm><primary>QueueSetPIDNecessaryCommands</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>QueueSetPIDNecessaryCommands</secondary></indexterm>
+<para><computeroutput>QueueSetHandle_t QueueSetPIDNecessaryCommands<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00006">6</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ad064e89649dcb2aeffc176cd64738ca2"/><section>
+    <title>secondarySmoothingFactor</title>
+<indexterm><primary>secondarySmoothingFactor</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>secondarySmoothingFactor</secondary></indexterm>
+<para><computeroutput>const float secondarySmoothingFactor = 0.05</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00076">76</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62"/><section>
+    <title>sens_bw_has_obstacle</title>
+<indexterm><primary>sens_bw_has_obstacle</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>sens_bw_has_obstacle</secondary></indexterm>
+<para><computeroutput>bool sens_bw_has_obstacle = false</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00012">12</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba"/><section>
+    <title>sens_fw_has_obstacle</title>
+<indexterm><primary>sens_fw_has_obstacle</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>sens_fw_has_obstacle</secondary></indexterm>
+<para><computeroutput>bool sens_fw_has_obstacle = false</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00011">11</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1adb1f977be6734adfcc8e37d4f2659ec5"/><section>
+    <title>speed_commandQueue</title>
+<indexterm><primary>speed_commandQueue</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>speed_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t speed_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00105">105</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a798a61f7f4a9d94f40e4a0c59bece8a0"/><section>
+    <title>speed_distance_sens_scaling</title>
+<indexterm><primary>speed_distance_sens_scaling</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>speed_distance_sens_scaling</secondary></indexterm>
+<para><computeroutput>int speed_distance_sens_scaling<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00014">14</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ad13f649750458a5efd053ba378823d4a"/><section>
+    <title>startInitialSendingTime</title>
+<indexterm><primary>startInitialSendingTime</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>startInitialSendingTime</secondary></indexterm>
+<para><computeroutput>TickType_t startInitialSendingTime = 0U</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00201">201</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1aef9aaf46d3a817fcb1cf11d655d3bebe"/><section>
+    <title>steerPID</title>
+<indexterm><primary>steerPID</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>steerPID</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_p_i_d__t">PID_t</link> steerPID</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00009">9</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b"/><section>
+    <title>sum</title>
+<indexterm><primary>sum</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>sum</secondary></indexterm>
+<para><computeroutput>double sum = 0.0</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00171">171</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1adf2bc2f5a2cb2f6d8e95dc0f9762180f"/><section>
+    <title>xLastWakePulse</title>
+<indexterm><primary>xLastWakePulse</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>xLastWakePulse</secondary></indexterm>
+<para><computeroutput>TickType_t xLastWakePulse = 0U</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00016">16</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+<anchor xml:id="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc"/><section>
+    <title>xNewWakeTime</title>
+<indexterm><primary>xNewWakeTime</primary><secondary>PID.c</secondary></indexterm>
+<indexterm><primary>PID.c</primary><secondary>xNewWakeTime</secondary></indexterm>
+<para><computeroutput>TickType_t xNewWakeTime = 0U</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8c_source_1l00017">17</link> of file <link linkend="__p_i_d_8c_source">PID.c</link>.</para>
+</section>
+</section>
+</section>

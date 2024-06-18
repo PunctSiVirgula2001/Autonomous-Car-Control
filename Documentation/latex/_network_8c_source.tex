@@ -1,0 +1,279 @@
+\doxysection{Network.\+c}
+\label{_network_8c_source}\index{src/Network.c@{src/Network.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}Network.h"{}}}
+\DoxyCodeLine{00002\ \textcolor{keywordtype}{bool}\ allowed\_to\_send\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00003\ \textcolor{keywordtype}{char}\ rx\_buffer[128];}
+\DoxyCodeLine{00004\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *TAG\ =\ \textcolor{stringliteral}{"{}wifi\_softAP"{}};}
+\DoxyCodeLine{00005\ \textcolor{keyword}{struct\ }sockaddr\_in6\ source\_addr\_global;\ \textcolor{comment}{//\ For\ IPv4\ or\ IPv6}}
+\DoxyCodeLine{00006\ socklen\_t\ addr\_len\_global;}
+\DoxyCodeLine{00007\ \textcolor{keywordtype}{int}\ sock\_global;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Socket\ descriptor}}
+\DoxyCodeLine{00008\ \textcolor{keywordtype}{char}*\ stateSendToAppStrings[STATE\_MAX]\ =\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{stringliteral}{"{}MEASURED\_VALUE"{}},\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Corresponds\ to\ MEASURED\_VALUE}}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{stringliteral}{"{}I\_TERM\_VALUE"{}},\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Corresponds\ to\ I\_TERM\_VALUE}}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{stringliteral}{"{}OBSTACLE\_DETECTED\_VALUE"{}},\ \ \ \textcolor{comment}{//\ Corresponds\ to\ OBSTACLE\_DETECTED\_VALUE}}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{stringliteral}{"{}ERROR\_PID\_VALUE"{}},\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Corresponds\ to\ ERROR\_PID\_VALUE}}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{stringliteral}{"{}ACTUAL\_TIME\_OF\_SEND"{}},}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{stringliteral}{"{}TEMP\_VALUE"{}},}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{stringliteral}{"{}DistSensFw"{}},}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{stringliteral}{"{}DistSensBw"{}},}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{stringliteral}{"{}ADXL\_ROLL"{}},}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{stringliteral}{"{}ADXL\_PITCH"{}},}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{stringliteral}{"{}NEWLINE\_LOG\_INFO"{}}}
+\DoxyCodeLine{00020\ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ *\ 00\ -\/\ measured\ speed}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ *\ 01\ -\/\ setpoint}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ *\ 02\ -\/\ temperature}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ *\ 03\ -\/\ obstacoll\ detected}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ *\ 04\ -\/\ I\_term}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ *\ 05\ -\/\ error\_pid}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//Initialize\ a\ handler\ for\ blinking\ led}}
+\DoxyCodeLine{00031\ TaskHandle\_t\ handlerBlinkLedTask\ =\ NULL;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ wifi\_init\_softap()\ \{}
+\DoxyCodeLine{00035\ \ \ \ \ ESP\_ERROR\_CHECK(nvs\_flash\_init());}
+\DoxyCodeLine{00036\ \ \ \ \ ESP\_ERROR\_CHECK(esp\_netif\_init());}
+\DoxyCodeLine{00037\ \ \ \ \ ESP\_ERROR\_CHECK(esp\_event\_loop\_create\_default());}
+\DoxyCodeLine{00038\ \ \ \ \ esp\_netif\_create\_default\_wifi\_ap();}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ wifi\_init\_config\_t\ cfg\ =\ WIFI\_INIT\_CONFIG\_DEFAULT();}
+\DoxyCodeLine{00041\ \ \ \ \ ESP\_ERROR\_CHECK(esp\_wifi\_init(\&cfg));}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ wifi\_config\_t\ wifi\_config\ =\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ .ap\ =\ \{\ .ssid\ =\ WIFI\_SSID,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ .ssid\_len\ =\ strlen(WIFI\_SSID),}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ .password\ =\ WIFI\_PASS,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ .max\_connection\ =\ MAX\_STA\_CONN,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ .authmode\ =\ WIFI\_AUTH\_WPA\_WPA2\_PSK\ \},}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(WIFI\_PASS)\ ==\ 0)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ wifi\_config.ap.authmode\ =\ WIFI\_AUTH\_OPEN;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ ESP\_ERROR\_CHECK(esp\_wifi\_set\_mode(WIFI\_MODE\_AP));}
+\DoxyCodeLine{00055\ \ \ \ \ ESP\_ERROR\_CHECK(esp\_wifi\_set\_config(ESP\_IF\_WIFI\_AP,\ \&wifi\_config));}
+\DoxyCodeLine{00056\ \ \ \ \ ESP\_ERROR\_CHECK(esp\_wifi\_start());}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{comment}{//ESP\_LOGI(TAG,\ "{}wifi\_init\_softap\ finished.\ SSID:\%s\ password:\%s"{},\ WIFI\_SSID,}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//WIFI\_PASS);}}
+\DoxyCodeLine{00060\ \}}
+\DoxyCodeLine{00061\ \textcolor{keyword}{extern}\ QueueHandle\_t\ diagnosticModeControlQueue;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ wait\_for\_ack(\textcolor{keywordtype}{int}\ sock)\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Primirea\ datelor}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }sockaddr\_in6\ source\_addr;\ \textcolor{comment}{//\ Suficient\ de\ mare\ pentru\ IPv4\ sau\ IPv6}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ socklen\_t\ addr\_len\ =\ \textcolor{keyword}{sizeof}(source\_addr);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len\ =\ recvfrom(sock,\ rx\_buffer,\ \textcolor{keyword}{sizeof}(rx\_buffer)\ -\/\ 1,\ 0,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{struct}\ sockaddr*)\&source\_addr,\ \&addr\_len);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Verificarea\ erorilor\ sau\ datelor\ primite}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ 0)\ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(TAG,\ \textcolor{stringliteral}{"{}recvfrom\ failed:\ errno\ \%d"{}},\ errno);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};\ \textcolor{comment}{//\ Continuă\ bucla\ în\ cazul\ unei\ erori}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ rx\_buffer[len]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};\ \textcolor{comment}{//\ Terminarea\ șirului\ de\ caractere\ primit}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message\ =\ rx\_buffer;}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Verificarea\ mesajului\ "{}ACK\ 9999"{}}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strcmp(message,\ \textcolor{stringliteral}{"{}ACK\ 9999"{}})\ ==\ 0)\ \{}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *response\ =\ \textcolor{stringliteral}{"{}YES"{}};\ \textcolor{comment}{//\ Răspuns\ specific\ pentru\ "{}ACK\ 9999"{}}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Actualizarea\ variabilelor\ globale\ cu\ adresa\ sursă\ și\ lungimea\ adresei}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ source\_addr\_global\ =\ source\_addr;}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ addr\_len\_global\ =\ addr\_len;}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sock\_global\ =\ sock;}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Trimiterea\ răspunsului}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sendMessage(sock,\ response);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allowed\_to\_send\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Distrugerea\ task-\/ului\ pentru\ LED-\/ul\ intermitent}}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (handlerBlinkLedTask)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vTaskDelete(handlerBlinkLedTask);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ turnOnLED\_connected();}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};\ \textcolor{comment}{//\ Ieșire\ din\ buclă\ după\ primirea\ mesajului}}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ handle\_received\_message(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message,\ \textcolor{keywordtype}{int}\ sock,\ \textcolor{keyword}{struct}\ sockaddr\_in6\ source\_addr,\ socklen\_t\ addr\_len)\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ Actualizarea\ variabilelor\ globale}}
+\DoxyCodeLine{00107\ \ \ \ \ source\_addr\_global\ =\ source\_addr;}
+\DoxyCodeLine{00108\ \ \ \ \ addr\_len\_global\ =\ addr\_len;}
+\DoxyCodeLine{00109\ \ \ \ \ sock\_global\ =\ sock;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//\ Gestionarea\ mesajului\ primit}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordflow}{if}\ (allowed\_to\_send\ ==\ \textcolor{keyword}{true})\ \{}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xQueueSend(diagnosticModeControlQueue,\ \&message,\ portMAX\_DELAY)\ !=\ pdPASS)\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(TAG,\ \textcolor{stringliteral}{"{}Failed\ to\ buffer\ the\ incoming\ data\ from\ app."{}});}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00116\ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{comment}{//\ Funcție\ pentru\ trimiterea\ unui\ mesaj\ printr-\/un\ socket}}
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ sendMessage(\textcolor{keywordtype}{int}\ sock,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message)\ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordflow}{if}\ (sendto(sock,\ message,\ strlen(message),\ 0,\ (\textcolor{keyword}{struct}\ sockaddr*)\&source\_addr\_global,\ addr\_len\_global)\ <\ 0)\ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ ESP\_LOGE(TAG,\ \textcolor{stringliteral}{"{}Failed\ to\ send\ message:\ \%s,\ errno\ \%d"{}},\ message,\ errno);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00124\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \textcolor{comment}{//\ ESP\_LOGI(TAG,\ "{}Message\ sent:\ \%s"{},\ message);}}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ udp\_server\_task(\textcolor{keywordtype}{void}\ *pvParameters)\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{//\ Configurarea\ LED-\/ului\ de\ conectare}}
+\DoxyCodeLine{00133\ \ \ \ \ config\_Connected\_led();}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{comment}{//\ Crearea\ task-\/ului\ pentru\ LED-\/ul\ intermitent}}
+\DoxyCodeLine{00136\ \ \ \ \ xTaskCreatePinnedToCore(blink\_led\_task,\ \textcolor{stringliteral}{"{}blink\_led\_task"{}},\ 2048,\ NULL,\ 5,}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&handlerBlinkLedTask,\ 0U);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{//\ Configurarea\ adresei\ și\ a\ protocolului}}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordtype}{char}\ addr\_str[128];}
+\DoxyCodeLine{00141\ \ \ \ \ \textcolor{keywordtype}{int}\ addr\_family\ =\ AF\_INET;}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{keywordtype}{int}\ ip\_protocol\ =\ IPPROTO\_UDP;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{keyword}{struct\ }sockaddr\_in\ dest\_addr;}
+\DoxyCodeLine{00145\ \ \ \ \ dest\_addr.sin\_addr.s\_addr\ =\ htonl(INADDR\_ANY);\ \textcolor{comment}{//\ Legare\ la\ orice\ adresă}}
+\DoxyCodeLine{00146\ \ \ \ \ dest\_addr.sin\_family\ =\ AF\_INET;}
+\DoxyCodeLine{00147\ \ \ \ \ dest\_addr.sin\_port\ =\ htons(PORT);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ inet\_ntoa\_r(dest\_addr.sin\_addr,\ addr\_str,\ \textcolor{keyword}{sizeof}(addr\_str)\ -\/\ 1);}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{comment}{//\ Crearea\ socket-\/ului}}
+\DoxyCodeLine{00152\ \ \ \ \ \textcolor{keywordtype}{int}\ sock\ =\ socket(addr\_family,\ SOCK\_DGRAM,\ ip\_protocol);}
+\DoxyCodeLine{00153\ \ \ \ \ \textcolor{keywordflow}{if}\ (sock\ <\ 0)\ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ ESP\_LOGE(TAG,\ \textcolor{stringliteral}{"{}Unable\ to\ create\ socket:\ errno\ \%d"{}},\ errno);}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ vTaskDelete(NULL);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00157\ \ \ \ \ \}}
+\DoxyCodeLine{00158\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Socket\ created"{}});}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{comment}{//\ Legarea\ socket-\/ului\ la\ adresa\ specificată}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{keywordtype}{int}\ err\ =\ bind(sock,\ (\textcolor{keyword}{struct}\ sockaddr*)\&dest\_addr,\ \textcolor{keyword}{sizeof}(dest\_addr));}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{if}\ (err\ <\ 0)\ \{}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ ESP\_LOGE(TAG,\ \textcolor{stringliteral}{"{}Socket\ unable\ to\ bind:\ errno\ \%d"{}},\ errno);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ vTaskDelete(NULL);}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00166\ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Socket\ bound,\ port\ \%d"{}},\ PORT);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{comment}{//\ Așteptarea\ pentru\ mesajul\ "{}ACK\ 9999"{}}}
+\DoxyCodeLine{00170\ \ \ \ \ wait\_for\_ack(sock);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Primirea\ datelor}}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }sockaddr\_in6\ source\_addr;\ \textcolor{comment}{//\ Suficient\ de\ mare\ pentru\ IPv4\ sau\ IPv6}}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ socklen\_t\ addr\_len\ =\ \textcolor{keyword}{sizeof}(source\_addr);}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ len\ =\ recvfrom(sock,\ rx\_buffer,\ \textcolor{keyword}{sizeof}(rx\_buffer)\ -\/\ 1,\ 0,}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keyword}{struct}\ sockaddr*)\&source\_addr,\ \&addr\_len);}
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Verificarea\ erorilor\ sau\ datelor\ primite}}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ 0)\ \{}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(TAG,\ \textcolor{stringliteral}{"{}recvfrom\ failed:\ errno\ \%d"{}},\ errno);}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ rx\_buffer[len]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};\ \textcolor{comment}{//\ Terminarea\ șirului\ de\ caractere\ primit}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ handle\_received\_message(rx\_buffer,\ sock,\ source\_addr,\ addr\_len);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00187\ \ \ \ \ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{comment}{//\ Închiderea\ socket-\/ului}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keywordflow}{if}\ (sock\ !=\ -\/1)\ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}Shutting\ down\ socket"{}});}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ shutdown(sock,\ 0);}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ close(sock);}
+\DoxyCodeLine{00194\ \ \ \ \ \}}
+\DoxyCodeLine{00195\ \}}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \textcolor{keywordtype}{char}*\ to\_string(\textcolor{keywordtype}{void}*\ value,\ data\_type\_to\_send\ type)\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keywordtype}{char}*\ strValue\ =\ malloc(20\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00201\ \ \ \ \ \textcolor{keywordflow}{if}\ (strValue\ ==\ NULL)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ memory\ allocation\ failure\ if\ needed}}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NULL;}
+\DoxyCodeLine{00204\ \ \ \ \ \}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{comment}{//\ Convert\ the\ value\ to\ a\ string\ based\ on\ its\ type}}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordflow}{switch}\ (type)\ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ INT:}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ sprintf(strValue,\ \textcolor{stringliteral}{"{}\%d"{}},\ *(\textcolor{keywordtype}{int}*)value);}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ DOUBLE:}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ sprintf(strValue,\ \textcolor{stringliteral}{"{}\%.2lf"{}},\ *(\textcolor{keywordtype}{double}*)value);}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ FLOAT:}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ sprintf(strValue,\ \textcolor{stringliteral}{"{}\%.2f"{}},\ *(\textcolor{keywordtype}{float}*)value);}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00217\ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordflow}{return}\ strValue;}
+\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \textcolor{keywordtype}{void}\ HLD\_SendMessage(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message)\ \{}
+\DoxyCodeLine{00222\ \ \ \ \ sendMessage(sock\_global,\ message);}
+\DoxyCodeLine{00223\ \}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \textcolor{keywordtype}{void}\ sendCommandApp(SendCommandType\_app\ commandType,\ \textcolor{keywordtype}{void}*\ commandValue,\ data\_type\_to\_send\ type)}
+\DoxyCodeLine{00226\ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \textcolor{keywordflow}{if}(allowed\_to\_send\ ==\ \textcolor{keyword}{true})}
+\DoxyCodeLine{00228\ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*\ commandTypeStr\ =\ stateSendToAppStrings[commandType];}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*\ commandValueStr\ =\ (\textcolor{keywordtype}{char}*)to\_string(commandValue,\ type);}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ lengthNeeded\ =\ strlen(commandTypeStr)\ +\ strlen(commandValueStr)\ +\ 2;\ \textcolor{comment}{//\ 2\ =\ 1\ space\ +\ 1\ null\ termination}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*\ commandToSend\ =\ malloc(lengthNeeded);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ sprintf(commandToSend,\ \textcolor{stringliteral}{"{}\%s\ \%s"{}},\ commandTypeStr,\ commandValueStr);}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ HLD\_SendMessage(commandToSend);}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ free(commandValueStr);}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ free(commandToSend);}
+\DoxyCodeLine{00238\ \ \ \ \ \}}
+\DoxyCodeLine{00239\ \}}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \textcolor{keywordtype}{void}\ start\_network\_task()\ \{}
+\DoxyCodeLine{00242\ \ \ \ \ esp\_err\_t\ ret\ =\ nvs\_flash\_init();}
+\DoxyCodeLine{00243\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ ==\ ESP\_ERR\_NVS\_NO\_FREE\_PAGES\ ||\ ret\ ==\ ESP\_ERR\_NVS\_NEW\_VERSION\_FOUND)\ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(nvs\_flash\_erase());}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ ret\ =\ nvs\_flash\_init();}
+\DoxyCodeLine{00246\ \ \ \ \ \}}
+\DoxyCodeLine{00247\ \ \ \ \ ESP\_ERROR\_CHECK(ret);}
+\DoxyCodeLine{00248\ \ \ \ \ ESP\_LOGI(TAG,\ \textcolor{stringliteral}{"{}ESP\_WIFI\_MODE\_AP"{}});}
+\DoxyCodeLine{00249\ \ \ \ \ wifi\_init\_softap();}
+\DoxyCodeLine{00250\ \ \ \ \ xTaskCreatePinnedToCore(udp\_server\_task,\ \textcolor{stringliteral}{"{}udp\_server"{}},\ 4096,\ NULL,\ 5,\ NULL,}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ 0U);}
+\DoxyCodeLine{00252\ \}}
+\DoxyCodeLine{00253\ \textcolor{keywordtype}{void}\ config\_Connected\_led()\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ gpio\_reset\_pin(INBUILT\_LED\_CONNECTED);}
+\DoxyCodeLine{00255\ \ \ \ \ gpio\_set\_direction(INBUILT\_LED\_CONNECTED,\ GPIO\_MODE\_OUTPUT);}
+\DoxyCodeLine{00256\ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \textcolor{keywordtype}{void}\ turnOnLED\_connected()\ \{}
+\DoxyCodeLine{00259\ \ \ \ \ gpio\_set\_level(INBUILT\_LED\_CONNECTED,\ 1);}
+\DoxyCodeLine{00260\ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \textcolor{keywordtype}{void}\ complement\_connected\_led()\ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ state\ =\ 0;}
+\DoxyCodeLine{00264\ \ \ \ \ gpio\_set\_level(INBUILT\_LED\_CONNECTED,\ state);}
+\DoxyCodeLine{00265\ \ \ \ \ state\ \string^=\ 1;}
+\DoxyCodeLine{00266\ \}}
+\DoxyCodeLine{00267\ }
+\DoxyCodeLine{00268\ \textcolor{keywordtype}{void}\ blink\_led\_task(\textcolor{keywordtype}{void}\ *pvParameters)\ \{}
+\DoxyCodeLine{00269\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ complement\_connected\_led();}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(500));}
+\DoxyCodeLine{00272\ \ \ \ \ \}}
+\DoxyCodeLine{00273\ \}}
+
+\end{DoxyCode}

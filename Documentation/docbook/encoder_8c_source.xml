@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_encoder_8c_source" xml:lang="en-US">
+<title>encoder.c</title>
+<indexterm><primary>src/motors/drivers/encoder.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="_encoder_8c_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;encoder.c</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Created&#32;on:&#32;18&#32;iun.&#32;2024</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;&#32;&#32;&#32;&#32;Author:&#32;racov</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00006"/>00006 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00007"/>00007 
+<anchor xml:id="_encoder_8c_source_1l00008"/>00008 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="_encoder_8h">encoder.h</link>&quot;</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00009"/>00009 
+<anchor xml:id="_encoder_8c_source_1l00010"/>00010 <emphasis role="comment">/*&#32;Encoder&#32;*/</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00011"/><link linkend="_main_8c_1a745d4a6c288386e09694294a5f19410a">00011</link> QueueHandle_t&#32;<link linkend="_encoder_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link>;
+<anchor xml:id="_encoder_8c_source_1l00012"/><link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">00012</link> pcnt_unit_handle_t&#32;<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>&#32;=&#32;NULL;
+<anchor xml:id="_encoder_8c_source_1l00013"/>00013 
+<anchor xml:id="_encoder_8c_source_1l00014"/><link linkend="_encoder_8h_1a87512eb7bfce47cf96e5fbd5bd0c2f3c">00014</link> <emphasis role="keywordtype">bool</emphasis>&#32;IRAM_ATTR&#32;<link linkend="_encoder_8c_1a7f03f72613de2893da4bc44eb8e1e011">example_pcnt_on_reach</link>(pcnt_unit_handle_t&#32;unit,
+<anchor xml:id="_encoder_8c_source_1l00015"/>00015 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;pcnt_watch_event_data_t&#32;*edata,&#32;<emphasis role="keywordtype">void</emphasis>&#32;*user_ctx)&#32;{
+<anchor xml:id="_encoder_8c_source_1l00016"/>00016 &#32;&#32;&#32;&#32;BaseType_t&#32;high_task_wakeup;
+<anchor xml:id="_encoder_8c_source_1l00017"/>00017 &#32;&#32;&#32;&#32;QueueHandle_t&#32;queue&#32;=&#32;(QueueHandle_t)&#32;user_ctx;
+<anchor xml:id="_encoder_8c_source_1l00018"/>00018 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;send&#32;event&#32;data&#32;to&#32;queue,&#32;from&#32;this&#32;interrupt&#32;callback</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00019"/>00019 &#32;&#32;&#32;&#32;xQueueSendFromISR(queue,&#32;&amp;(edata-&gt;watch_point_value),&#32;&amp;high_task_wakeup);
+<anchor xml:id="_encoder_8c_source_1l00020"/>00020 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_clear_count(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>));
+<anchor xml:id="_encoder_8c_source_1l00021"/>00021 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(high_task_wakeup&#32;==&#32;pdTRUE);
+<anchor xml:id="_encoder_8c_source_1l00022"/>00022 }
+<anchor xml:id="_encoder_8c_source_1l00023"/>00023 
+<anchor xml:id="_encoder_8c_source_1l00024"/>00024 
+<anchor xml:id="_encoder_8c_source_1l00025"/><link linkend="_encoder_8h_1a3924b07647d86be798a086541d2c13d7">00025</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="_encoder_8c_1a3924b07647d86be798a086541d2c13d7">configureEncoderInterrupts</link>()&#32;{
+<anchor xml:id="_encoder_8c_source_1l00026"/>00026 
+<anchor xml:id="_encoder_8c_source_1l00027"/>00027 &#32;&#32;&#32;&#32;pcnt_unit_config_t&#32;unit_config&#32;=&#32;{&#32;.high_limit&#32;=&#32;<link linkend="_encoder_8h_1aee5fc9c5b11218b66cdde67f9dc40926">PCNT_HIGH_LIMIT_WATCHPOINT</link>,
+<anchor xml:id="_encoder_8c_source_1l00028"/>00028 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.low_limit&#32;=&#32;<link linkend="_encoder_8h_1a144826d61042c284d1e9390af5039857">PCNT_LOW_LIMIT_WATCHPOINT</link>,&#32;};
+<anchor xml:id="_encoder_8c_source_1l00029"/>00029 
+<anchor xml:id="_encoder_8c_source_1l00030"/>00030 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_new_unit(&amp;unit_config,&#32;&amp;<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>));
+<anchor xml:id="_encoder_8c_source_1l00031"/>00031 
+<anchor xml:id="_encoder_8c_source_1l00032"/>00032 &#32;&#32;&#32;&#32;pcnt_glitch_filter_config_t&#32;filter_config&#32;=&#32;{&#32;<emphasis role="comment">//&#32;debouncer,&#32;lower&#32;value&#32;==&gt;&#32;higher&#32;the&#32;chance&#32;to&#32;act&#32;as&#32;low&#32;pass&#32;filter.</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00033"/>00033 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.max_glitch_ns&#32;=&#32;1000,&#32;};
+<anchor xml:id="_encoder_8c_source_1l00034"/>00034 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>,&#32;&amp;filter_config));
+<anchor xml:id="_encoder_8c_source_1l00035"/>00035 
+<anchor xml:id="_encoder_8c_source_1l00036"/>00036 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_add_watch_point(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>,&#32;<link linkend="_encoder_8h_1aee5fc9c5b11218b66cdde67f9dc40926">PCNT_HIGH_LIMIT_WATCHPOINT</link>));&#32;<emphasis role="comment">//&#32;watch&#32;point&#32;which&#32;will&#32;trigger&#32;the&#32;callback&#32;function&#32;when</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00037"/>00037 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_add_watch_point(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>,&#32;<link linkend="_encoder_8h_1a144826d61042c284d1e9390af5039857">PCNT_LOW_LIMIT_WATCHPOINT</link>));&#32;<emphasis role="comment">//&#32;a&#32;pulse&#32;is&#32;generated</emphasis>
+<anchor xml:id="_encoder_8c_source_1l00038"/>00038 
+<anchor xml:id="_encoder_8c_source_1l00039"/>00039 &#32;&#32;&#32;&#32;pcnt_chan_config_t&#32;chan_a_config&#32;=&#32;{
+<anchor xml:id="_encoder_8c_source_1l00040"/>00040 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.edge_gpio_num&#32;=&#32;<link linkend="_encoder_8h_1a37e7e189eff6f1915eb646f2bc237be2">encoderGPIO_B</link>,
+<anchor xml:id="_encoder_8c_source_1l00041"/>00041 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.level_gpio_num&#32;=&#32;<link linkend="_encoder_8h_1a2963f69d0020917a6ab12f36c4849e3a">encoderGPIO_A</link>,
+<anchor xml:id="_encoder_8c_source_1l00042"/>00042 &#32;&#32;&#32;&#32;};
+<anchor xml:id="_encoder_8c_source_1l00043"/>00043 &#32;&#32;&#32;&#32;pcnt_channel_handle_t&#32;pcnt_chan_a&#32;=&#32;NULL;
+<anchor xml:id="_encoder_8c_source_1l00044"/>00044 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_new_channel(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>,&#32;&amp;chan_a_config,&#32;&amp;pcnt_chan_a));
+<anchor xml:id="_encoder_8c_source_1l00045"/>00045 
+<anchor xml:id="_encoder_8c_source_1l00046"/>00046 &#32;&#32;&#32;&#32;pcnt_chan_config_t&#32;chan_b_config&#32;=&#32;{
+<anchor xml:id="_encoder_8c_source_1l00047"/>00047 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.edge_gpio_num&#32;=&#32;<link linkend="_encoder_8h_1a2963f69d0020917a6ab12f36c4849e3a">encoderGPIO_A</link>,
+<anchor xml:id="_encoder_8c_source_1l00048"/>00048 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.level_gpio_num&#32;=&#32;<link linkend="_encoder_8h_1a37e7e189eff6f1915eb646f2bc237be2">encoderGPIO_B</link>,
+<anchor xml:id="_encoder_8c_source_1l00049"/>00049 &#32;&#32;&#32;&#32;};
+<anchor xml:id="_encoder_8c_source_1l00050"/>00050 &#32;&#32;&#32;&#32;pcnt_channel_handle_t&#32;pcnt_chan_b&#32;=&#32;NULL;
+<anchor xml:id="_encoder_8c_source_1l00051"/>00051 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_new_channel(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>,&#32;&amp;chan_b_config,&#32;&amp;pcnt_chan_b));
+<anchor xml:id="_encoder_8c_source_1l00052"/>00052 
+<anchor xml:id="_encoder_8c_source_1l00053"/>00053 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(
+<anchor xml:id="_encoder_8c_source_1l00054"/>00054 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pcnt_channel_set_edge_action(pcnt_chan_a,
+<anchor xml:id="_encoder_8c_source_1l00055"/>00055 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_EDGE_ACTION_DECREASE,
+<anchor xml:id="_encoder_8c_source_1l00056"/>00056 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_EDGE_ACTION_INCREASE));
+<anchor xml:id="_encoder_8c_source_1l00057"/>00057 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(
+<anchor xml:id="_encoder_8c_source_1l00058"/>00058 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pcnt_channel_set_level_action(pcnt_chan_a,
+<anchor xml:id="_encoder_8c_source_1l00059"/>00059 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_LEVEL_ACTION_KEEP,
+<anchor xml:id="_encoder_8c_source_1l00060"/>00060 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
+<anchor xml:id="_encoder_8c_source_1l00061"/>00061 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(
+<anchor xml:id="_encoder_8c_source_1l00062"/>00062 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pcnt_channel_set_edge_action(pcnt_chan_b,
+<anchor xml:id="_encoder_8c_source_1l00063"/>00063 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_EDGE_ACTION_INCREASE,
+<anchor xml:id="_encoder_8c_source_1l00064"/>00064 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_EDGE_ACTION_DECREASE));
+<anchor xml:id="_encoder_8c_source_1l00065"/>00065 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(
+<anchor xml:id="_encoder_8c_source_1l00066"/>00066 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pcnt_channel_set_level_action(pcnt_chan_b,
+<anchor xml:id="_encoder_8c_source_1l00067"/>00067 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_LEVEL_ACTION_KEEP,
+<anchor xml:id="_encoder_8c_source_1l00068"/>00068 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
+<anchor xml:id="_encoder_8c_source_1l00069"/>00069 
+<anchor xml:id="_encoder_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;pcnt_event_callbacks_t&#32;cbs&#32;=&#32;{&#32;.on_reach&#32;=&#32;<link linkend="_encoder_8c_1a7f03f72613de2893da4bc44eb8e1e011">example_pcnt_on_reach</link>,&#32;};
+<anchor xml:id="_encoder_8c_source_1l00071"/>00071 
+<anchor xml:id="_encoder_8c_source_1l00072"/>00072 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_register_event_callbacks(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>,&#32;&amp;cbs,&#32;<link linkend="_encoder_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link>));
+<anchor xml:id="_encoder_8c_source_1l00073"/>00073 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_enable(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>));
+<anchor xml:id="_encoder_8c_source_1l00074"/>00074 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_clear_count(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>));
+<anchor xml:id="_encoder_8c_source_1l00075"/>00075 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(pcnt_unit_start(<link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link>));
+<anchor xml:id="_encoder_8c_source_1l00076"/>00076 }
+<anchor xml:id="_encoder_8c_source_1l00077"/>00077 
+</programlisting></section>

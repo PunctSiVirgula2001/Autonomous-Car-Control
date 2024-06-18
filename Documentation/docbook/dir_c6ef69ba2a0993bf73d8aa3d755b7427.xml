@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_c6ef69ba2a0993bf73d8aa3d755b7427" xml:lang="en-US">
+<title>build/bootloader/CMakeFiles Directory Reference</title>
+<indexterm><primary>build/bootloader/CMakeFiles Directory Reference</primary></indexterm>
+Directory dependency graph for CMakeFiles:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_c6ef69ba2a0993bf73d8aa3d755b7427_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Directories    </title>
+        <itemizedlist>
+            <listitem><para>directory <link linkend="_dir_ddf20132b7870d7d3b8b329d8f770655">3.24.0</link></para>
+</listitem>
+            <listitem><para>directory <link linkend="_dir_9c690d15579abbd45f3ee286c2a9e682">CheckTypeSize</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

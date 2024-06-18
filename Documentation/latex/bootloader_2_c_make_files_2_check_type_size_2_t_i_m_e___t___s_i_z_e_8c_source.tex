@@ -1,0 +1,56 @@
+\doxysection{TIME\+\_\+\+T\+\_\+\+SIZE.\+c}
+\label{bootloader_2_c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c_source}\index{build/bootloader/CMakeFiles/CheckTypeSize/TIME\_T\_SIZE.c@{build/bootloader/CMakeFiles/CheckTypeSize/TIME\_T\_SIZE.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ <sys/types.h>}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <stddef.h>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#undef\ KEY}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#if\ defined(\_\_i386)}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','i','3','8','6'}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#elif\ defined(\_\_x86\_64)}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','x','8','6','\_','6','4'}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#elif\ defined(\_\_PPC64\_\_)}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','P','P','C','6','4','\_','\_'}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#elif\ defined(\_\_ppc64\_\_)}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','p','p','c','6','4','\_','\_'}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#elif\ defined(\_\_PPC\_\_)}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','P','P','C','\_','\_'}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#elif\ defined(\_\_ppc\_\_)}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','p','p','c','\_','\_'}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#elif\ defined(\_\_aarch64\_\_)}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','a','a','r','c','h','6','4','\_','\_'}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#elif\ defined(\_\_ARM\_ARCH\_7A\_\_)}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','A','R','M','\_','A','R','C','H','\_','7','A','\_','\_'}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#elif\ defined(\_\_ARM\_ARCH\_7S\_\_)}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#\ define\ KEY\ '\_','\_','A','R','M','\_','A','R','C','H','\_','7','S','\_','\_'}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ SIZE\ (sizeof(time\_t))}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ info\_size[]\ =\ \ \{\textcolor{charliteral}{'I'},\ \textcolor{charliteral}{'N'},\ \textcolor{charliteral}{'F'},\ \textcolor{charliteral}{'O'},\ \textcolor{charliteral}{':'},\ \textcolor{charliteral}{'s'},\textcolor{charliteral}{'i'},\textcolor{charliteral}{'z'},\textcolor{charliteral}{'e'},\textcolor{charliteral}{'['},}
+\DoxyCodeLine{00029\ \ \ (\textcolor{charliteral}{'0'}\ +\ ((SIZE\ /\ 10000)\%10)),}
+\DoxyCodeLine{00030\ \ \ (\textcolor{charliteral}{'0'}\ +\ ((SIZE\ /\ 1000)\%10)),}
+\DoxyCodeLine{00031\ \ \ (\textcolor{charliteral}{'0'}\ +\ ((SIZE\ /\ 100)\%10)),}
+\DoxyCodeLine{00032\ \ \ (\textcolor{charliteral}{'0'}\ +\ ((SIZE\ /\ 10)\%10)),}
+\DoxyCodeLine{00033\ \ \ (\textcolor{charliteral}{'0'}\ +\ \ (SIZE\ \ \ \ \%\ 10)),}
+\DoxyCodeLine{00034\ \ \ \textcolor{charliteral}{']'},}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#ifdef\ KEY}}
+\DoxyCodeLine{00036\ \ \ \textcolor{charliteral}{'\ '},\textcolor{charliteral}{'k'},\textcolor{charliteral}{'e'},\textcolor{charliteral}{'y'},\textcolor{charliteral}{'['},\ KEY,\ \textcolor{charliteral}{']'},}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00038\ \ \ \textcolor{charliteral}{'\(\backslash\)0'}\};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#ifdef\ \_\_CLASSIC\_C\_\_}}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{int}\ main(argc,\ argv)\ \textcolor{keywordtype}{int}\ argc;\ \textcolor{keywordtype}{char}\ *argv[];}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *argv[])}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00045\ \{}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{int}\ require\ =\ 0;}
+\DoxyCodeLine{00047\ \ \ require\ +=\ info\_size[argc];}
+\DoxyCodeLine{00048\ \ \ (void)argv;}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordflow}{return}\ require;}
+\DoxyCodeLine{00050\ \}}
+
+\end{DoxyCode}

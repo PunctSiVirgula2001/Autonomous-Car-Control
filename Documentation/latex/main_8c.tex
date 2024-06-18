@@ -1,0 +1,183 @@
+\doxysection{main/main.c File Reference}
+\label{main_8c}\index{main/main.c@{main/main.c}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include "{}freertos/\+Free\+RTOS.\+h"{}}\newline
+{\ttfamily \#include "{}freertos/task.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+log.\+h"{}}\newline
+{\ttfamily \#include "{}Motor\+And\+Servo\+Control.\+h"{}}\newline
+{\ttfamily \#include "{}PID.\+h"{}}\newline
+{\ttfamily \#include "{}Network.\+h"{}}\newline
+{\ttfamily \#include "{}../include/\+I2\+C/\+I2\+C\+\_\+sensor\+Control.\+h"{}}\newline
+{\ttfamily \#include "{}UART\+\_\+\+Jetson.\+h"{}}\newline
+Include dependency graph for main.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ app\+\_\+main} (void)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ allowed\+\_\+to\+\_\+send}
+\item 
+char \textbf{ rx\+\_\+buffer} [128]
+\item 
+Queue\+Handle\+\_\+t \textbf{ diagnostic\+Mode\+Control\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ autonomous\+Mode\+Control\+Pixy\+Queue}
+\item 
+Queue\+Set\+Handle\+\_\+t \textbf{ Queue\+Set\+Autonomous\+Or\+Diagnostic}
+\item 
+Queue\+Handle\+\_\+t \textbf{ pulse\+\_\+encoder\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ speed\+\_\+command\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ steer\+\_\+command\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ PID\+\_\+command\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ I2\+C\+\_\+command\+Queue}
+\item 
+Queue\+Set\+Handle\+\_\+t \textbf{ Queue\+Set\+PIDNecessary\+Commands}
+\item 
+bool \textbf{ I2\+C\+\_\+sensors\+\_\+initiated}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{main.c@{main.c}!app\_main@{app\_main}}
+\index{app\_main@{app\_main}!main.c@{main.c}}
+\doxysubsubsection{app\_main()}
+{\footnotesize\ttfamily \label{main_8c_a630544a7f0a2cc40d8a7fefab7e2fe70} 
+void app\+\_\+main (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 58} of file \textbf{ main.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{main.c@{main.c}!allowed\_to\_send@{allowed\_to\_send}}
+\index{allowed\_to\_send@{allowed\_to\_send}!main.c@{main.c}}
+\doxysubsubsection{allowed\_to\_send}
+{\footnotesize\ttfamily \label{main_8c_a7316aaeee91623cd9fcab65f302ce7be} 
+bool allowed\+\_\+to\+\_\+send\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ Network.\+c}.
+
+\index{main.c@{main.c}!autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}}
+\index{autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}!main.c@{main.c}}
+\doxysubsubsection{autonomousModeControlPixyQueue}
+{\footnotesize\ttfamily \label{main_8c_ae0a77b0cf83af5755b406387533338e7} 
+Queue\+Handle\+\_\+t autonomous\+Mode\+Control\+Pixy\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{main.c@{main.c}!diagnosticModeControlQueue@{diagnosticModeControlQueue}}
+\index{diagnosticModeControlQueue@{diagnosticModeControlQueue}!main.c@{main.c}}
+\doxysubsubsection{diagnosticModeControlQueue}
+{\footnotesize\ttfamily \label{main_8c_a731dce19cc17cfa0419781203697bf14} 
+Queue\+Handle\+\_\+t diagnostic\+Mode\+Control\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 103} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{main.c@{main.c}!I2C\_commandQueue@{I2C\_commandQueue}}
+\index{I2C\_commandQueue@{I2C\_commandQueue}!main.c@{main.c}}
+\doxysubsubsection{I2C\_commandQueue}
+{\footnotesize\ttfamily \label{main_8c_ad6d46a9e7610ddf0423e1a5e2e9bfc4f} 
+Queue\+Handle\+\_\+t I2\+C\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{main.c@{main.c}!I2C\_sensors\_initiated@{I2C\_sensors\_initiated}}
+\index{I2C\_sensors\_initiated@{I2C\_sensors\_initiated}!main.c@{main.c}}
+\doxysubsubsection{I2C\_sensors\_initiated}
+{\footnotesize\ttfamily \label{main_8c_a6a07f60157030f413311bca2bcd05350} 
+bool I2\+C\+\_\+sensors\+\_\+initiated\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{main.c@{main.c}!PID\_commandQueue@{PID\_commandQueue}}
+\index{PID\_commandQueue@{PID\_commandQueue}!main.c@{main.c}}
+\doxysubsubsection{PID\_commandQueue}
+{\footnotesize\ttfamily \label{main_8c_a52c196f65d55f3b464764bf630e6f05e} 
+Queue\+Handle\+\_\+t PID\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 107} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{main.c@{main.c}!pulse\_encoderQueue@{pulse\_encoderQueue}}
+\index{pulse\_encoderQueue@{pulse\_encoderQueue}!main.c@{main.c}}
+\doxysubsubsection{pulse\_encoderQueue}
+{\footnotesize\ttfamily \label{main_8c_a745d4a6c288386e09694294a5f19410a} 
+Queue\+Handle\+\_\+t pulse\+\_\+encoder\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ encoder.\+c}.
+
+\index{main.c@{main.c}!QueueSetAutonomousOrDiagnostic@{QueueSetAutonomousOrDiagnostic}}
+\index{QueueSetAutonomousOrDiagnostic@{QueueSetAutonomousOrDiagnostic}!main.c@{main.c}}
+\doxysubsubsection{QueueSetAutonomousOrDiagnostic}
+{\footnotesize\ttfamily \label{main_8c_a35af4e2fb01eed708c67a42aad85cebf} 
+Queue\+Set\+Handle\+\_\+t Queue\+Set\+Autonomous\+Or\+Diagnostic\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 108} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{main.c@{main.c}!QueueSetPIDNecessaryCommands@{QueueSetPIDNecessaryCommands}}
+\index{QueueSetPIDNecessaryCommands@{QueueSetPIDNecessaryCommands}!main.c@{main.c}}
+\doxysubsubsection{QueueSetPIDNecessaryCommands}
+{\footnotesize\ttfamily \label{main_8c_a5c87d10806c8bb41d42841fc2fb559d9} 
+Queue\+Set\+Handle\+\_\+t Queue\+Set\+PIDNecessary\+Commands\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{main.c@{main.c}!rx\_buffer@{rx\_buffer}}
+\index{rx\_buffer@{rx\_buffer}!main.c@{main.c}}
+\doxysubsubsection{rx\_buffer}
+{\footnotesize\ttfamily \label{main_8c_ac71568e7238007e8666f6ba60d8bfe35} 
+char rx\+\_\+buffer[128]\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ Network.\+c}.
+
+\index{main.c@{main.c}!speed\_commandQueue@{speed\_commandQueue}}
+\index{speed\_commandQueue@{speed\_commandQueue}!main.c@{main.c}}
+\doxysubsubsection{speed\_commandQueue}
+{\footnotesize\ttfamily \label{main_8c_adb1f977be6734adfcc8e37d4f2659ec5} 
+Queue\+Handle\+\_\+t speed\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 105} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{main.c@{main.c}!steer\_commandQueue@{steer\_commandQueue}}
+\index{steer\_commandQueue@{steer\_commandQueue}!main.c@{main.c}}
+\doxysubsubsection{steer\_commandQueue}
+{\footnotesize\ttfamily \label{main_8c_a4c4e2a762a11fd2e1ddee7045c9bae56} 
+Queue\+Handle\+\_\+t steer\+\_\+command\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 106} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+

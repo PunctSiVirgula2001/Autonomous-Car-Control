@@ -1,0 +1,360 @@
+\doxysection{PID.\+c}
+\label{_p_i_d_8c_source}\index{src/PID.c@{src/PID.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}I2C\_common.h"{}}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}PID.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Network.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <math.h>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{comment}{/*Init\ motor's\ PID\ structure*/}}
+\DoxyCodeLine{00007\ PID\_t\ motorPID;}
+\DoxyCodeLine{00008\ \textcolor{comment}{/*\ TODO:\ Add\ steerPID\ for\ a\ greater\ efficiency\ in\ car's\ control\ when\ it\ enters\ autonomous\ mode.\ */}}
+\DoxyCodeLine{00009\ PID\_t\ steerPID;}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{bool}\ sens\_fw\_has\_obstacle\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{bool}\ sens\_bw\_has\_obstacle\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00013\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ speed\_distance\_sens\_scaling;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ TickType\_t\ xLastWakePulse\ =\ 0U;}
+\DoxyCodeLine{00017\ TickType\_t\ xNewWakeTime\ =\ 0U;}
+\DoxyCodeLine{00018\ TickType\_t\ pulse\_time\_ms\ =\ 0U;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ speedCheckTickHook(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{static}\ TickType\_t\ old\_time\ =\ 0U;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{static}\ TickType\_t\ new\_time\ =\ 0U;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{static}\ uint32\_t\ unchanged\_ticks\ =\ 0;\ \textcolor{comment}{//\ Counter\ for\ unchanged\ ticks}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ new\_time\ =\ xNewWakeTime;}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordflow}{if}\ (new\_time\ ==\ old\_time)\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ unchanged\_ticks++;}
+\DoxyCodeLine{00030\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ unchanged\_ticks\ =\ 0;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ old\_time\ =\ new\_time;}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (unchanged\_ticks\ >=\ 200)\ \{\ \textcolor{comment}{//\ If\ speed\ hasn't\ changed\ for\ 200\ ticks\ (1\ second\ if\ tick\ rate\ is\ 1\ ms)}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ motorPID.measured\ =\ 0;\ \ \ \ \ \textcolor{comment}{//\ Reset\ measured\ speed\ to\ 0}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(motorPID.setpoint\ ==\ 0)}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ motorPID.I\_term\ =\ 0;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ unchanged\_ticks\ =\ 0;\ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ the\ unchanged\ ticks\ counter}}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ init\_speedCheckTickHook(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ esp\_err\_t\ err;}
+\DoxyCodeLine{00047\ \ \ \ \ UBaseType\_t\ cpuid\ =\ 1U;\ \textcolor{comment}{//\ Get\ the\ ID\ of\ the\ current\ core}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ err\ =\ esp\_register\_freertos\_tick\_hook\_for\_cpu(speedCheckTickHook,\ cpuid);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordflow}{if}\ (err\ !=\ ESP\_OK)\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ error}}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ PID\ Initialization}}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ PID\_Init(PID\_t\ *pid,\ \textcolor{keywordtype}{float}\ Kp,\ \textcolor{keywordtype}{float}\ Ki,\ \textcolor{keywordtype}{float}\ Kd)\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ pid-\/>setpoint\ =\ 0;}
+\DoxyCodeLine{00059\ \ \ \ \ pid-\/>measured\ =\ 0;}
+\DoxyCodeLine{00060\ \ \ \ \ pid-\/>previous\_error\ =\ 0;}
+\DoxyCodeLine{00061\ \ \ \ \ pid-\/>integral\ =\ 0;}
+\DoxyCodeLine{00062\ \ \ \ \ pid-\/>Kp\ =\ Kp;}
+\DoxyCodeLine{00063\ \ \ \ \ pid-\/>Ki\ =\ Ki;}
+\DoxyCodeLine{00064\ \ \ \ \ pid-\/>Kd\ =\ Kd;}
+\DoxyCodeLine{00065\ \ \ \ \ pid-\/>P\_term\ =\ 0;}
+\DoxyCodeLine{00066\ \ \ \ \ pid-\/>I\_term\ =\ 0;}
+\DoxyCodeLine{00067\ \ \ \ \ pid-\/>D\_term\ =\ 0;}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#if\ low\_pass\_filter\_derivative\_chan\ ==\ ON}}
+\DoxyCodeLine{00069\ \ \ \ \ pid-\/>previous\_D\_term\ =\ 0;\ \textcolor{comment}{//\ Add\ this\ to\ store\ the\ previous\ derivative\ term}}
+\DoxyCodeLine{00070\ \ \ \ \ pid-\/>alpha\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Smoothing\ factor\ for\ the\ low-\/pass\ filter}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \textcolor{comment}{//\ Define\ constants\ at\ a\ global\ scope}}
+\DoxyCodeLine{00075\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ primarySmoothingFactor\ =\ 0.1;\ \ \textcolor{comment}{//\ Primary\ EMA\ smoothing\ factor}}
+\DoxyCodeLine{00076\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ secondarySmoothingFactor\ =\ 0.05;\ \ \textcolor{comment}{//\ Secondary\ EMA\ smoothing\ factor}}
+\DoxyCodeLine{00077\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ maxChangePerCycle\ =\ 5.0;\ \ \textcolor{comment}{//\ Maximum\ rate\ of\ output\ change\ per\ cycle}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{float}\ secondaryEMA\ =\ 0;\ \ \textcolor{comment}{//\ Initialize\ secondary\ EMA\ output}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \textcolor{comment}{//\ Compute\ PID\ with\ enhanced\ smoothing\ mechanisms}}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ PID\_Compute(PID\_t\ *pid)\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{float}\ error\ =\ pid-\/>setpoint\ -\/\ pid-\/>measured;}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//\ Proportional\ term}}
+\DoxyCodeLine{00086\ \ \ \ \ pid-\/>P\_term\ =\ pid-\/>Kp\ *\ error;}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{comment}{//\ Integral\ term}}
+\DoxyCodeLine{00089\ \ \ \ \ pid-\/>I\_term\ +=\ (pid-\/>Ki\ *\ error);}
+\DoxyCodeLine{00090\ \ \ \ \ clamp\_float(\&(pid-\/>I\_term),\ -\/40,\ 40);\ \ \textcolor{comment}{//\ Ensure\ I\_term\ is\ within\ bounds}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#if\ low\_pass\_filter\_derivative\_chan\ ==\ ON}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{comment}{//\ Derivative\ term\ with\ low-\/pass\ filter}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{float}\ raw\_D\_term\ =\ error\ -\/\ pid-\/>previous\_error;}
+\DoxyCodeLine{00095\ \ \ \ \ pid-\/>D\_term\ =\ pid-\/>alpha\ *\ pid-\/>previous\_D\_term\ +\ (1\ -\/\ pid-\/>alpha)\ *\ raw\_D\_term;}
+\DoxyCodeLine{00096\ \ \ \ \ pid-\/>D\_term\ *=\ pid-\/>Kd;}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//\ Derivative\ term\ without\ low-\/pass\ filter}}
+\DoxyCodeLine{00099\ \ \ \ \ pid-\/>D\_term\ =\ pid-\/>Kd\ *\ (error\ -\/\ pid-\/>previous\_error);}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ proposed\ new\ output}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{float}\ newOutput\ =\ pid-\/>P\_term\ +\ pid-\/>I\_term\ +\ pid-\/>D\_term;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{//\ Apply\ primary\ Exponential\ Moving\ Average\ (EMA)}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keywordtype}{float}\ primaryEMAOutput\ =\ primarySmoothingFactor\ *\ newOutput\ +\ (1\ -\/\ primarySmoothingFactor)\ *\ pid-\/>previousOutput;}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{//\ Apply\ secondary\ EMA\ for\ further\ smoothing}}
+\DoxyCodeLine{00109\ \ \ \ \ secondaryEMA\ =\ secondarySmoothingFactor\ *\ primaryEMAOutput\ +\ (1\ -\/\ secondarySmoothingFactor)\ *\ secondaryEMA;}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//\ Apply\ rate\ limiting\ to\ smooth\ large\ jumps}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{keywordtype}{float}\ outputDifference\ =\ secondaryEMA\ -\/\ pid-\/>previousOutput;}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{if}\ (fabs(outputDifference)\ >\ maxChangePerCycle)\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (outputDifference\ >\ 0)\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ pid-\/>Output\ =\ pid-\/>previousOutput\ +\ maxChangePerCycle;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ pid-\/>Output\ =\ pid-\/>previousOutput\ -\/\ maxChangePerCycle;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ pid-\/>Output\ =\ secondaryEMA;}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{//\ Ensure\ the\ output\ is\ within\ the\ allowed\ range}}
+\DoxyCodeLine{00124\ \ \ \ \ clamp\_int(\&(pid-\/>Output),\ -\/100,\ 100);\ \ \textcolor{comment}{//\ Ensure\ Output\ is\ within\ bounds}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{comment}{//\ Update\ previous\ values\ for\ next\ iteration}}
+\DoxyCodeLine{00127\ \ \ \ \ pid-\/>previousOutput\ =\ pid-\/>Output;}
+\DoxyCodeLine{00128\ \ \ \ \ pid-\/>previous\_error\ =\ error;}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#if\ low\_pass\_filter\_derivative\_chan\ ==\ ON}}
+\DoxyCodeLine{00130\ \ \ \ \ pid-\/>previous\_D\_term\ =\ raw\_D\_term;}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00132\ \}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{keywordtype}{void}\ PID\_UpdateParams(PID\_t\ *pid,\ \textcolor{keywordtype}{float}\ new\_Kp,\ \textcolor{keywordtype}{float}\ new\_Ki,\ \textcolor{keywordtype}{float}\ new\_Kd)\ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{//\ Optionally\ lock\ the\ task\ if\ needed\ to\ prevent\ concurrent\ access}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{comment}{//\ taskENTER\_CRITICAL();}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{comment}{//\ Update\ the\ PID\ coefficients}}
+\DoxyCodeLine{00140\ \ \ \ \ pid-\/>Kp\ =\ new\_Kp;}
+\DoxyCodeLine{00141\ \ \ \ \ pid-\/>Ki\ =\ new\_Ki;}
+\DoxyCodeLine{00142\ \ \ \ \ pid-\/>Kd\ =\ new\_Kd;}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \textcolor{comment}{//\ Reinitialize\ any\ error\ sums\ or\ stateful\ terms\ if\ necessary}}
+\DoxyCodeLine{00145\ \ \ \ \ pid-\/>I\_term\ =\ 0;\ \textcolor{comment}{//\ Reset\ integral\ term\ if\ needed}}
+\DoxyCodeLine{00146\ \ \ \ \ pid-\/>previous\_error\ =\ 0;\ \textcolor{comment}{//\ Reset\ the\ previous\ error\ if\ the\ derivative\ term\ should\ be\ reinitialized}}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{comment}{//\ Optionally\ include\ anti-\/windup\ logic\ or\ re-\/initialize\ other\ elements\ here}}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{comment}{//\ Optionally\ unlock\ the\ task\ if\ it\ was\ previously\ locked}}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{comment}{//\ taskEXIT\_CRITICAL();}}
+\DoxyCodeLine{00152\ \}}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \textcolor{comment}{/*\ Speed\ scaler\ for\ determining\ the\ correct\ threshold\ for\ distance\ of\ stop.\ */}}
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{float}\ get\_speed\_distance\_sens\_scaling(\textcolor{keywordtype}{float}\ speed,\ \textcolor{keywordtype}{float}\ speed\_min,\ \textcolor{keywordtype}{float}\ speed\_max)\ \{}
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keywordflow}{if}\ (speed\ <=\ speed\_min)\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1.0;}
+\DoxyCodeLine{00158\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (speed\ >=\ speed\_max)\ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 5.0;}
+\DoxyCodeLine{00160\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Linear\ scaling\ between\ 1.0\ and\ 5.0\ for\ speeds\ between\ speed\_min\ and\ speed\_max}}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\ =\ (speed\ -\/\ speed\_min)\ /\ (speed\_max\ -\/\ speed\_min);\ \textcolor{comment}{//\ Normalized\ speed\ in\ range\ [0,\ 1]}}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1.0\ +\ t\ *\ (5.0\ -\/\ 1.0);\ \textcolor{comment}{//\ Linear\ interpolation}}
+\DoxyCodeLine{00164\ \ \ \ \ \}}
+\DoxyCodeLine{00165\ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{comment}{/*SLIDING\ MEAN\ AVERAGE\ function*/}}
+\DoxyCodeLine{00170\ \textcolor{keywordtype}{double}\ buffer[WINDOW\_SIZE\_SMA]\ =\ \{\ 0.0\ \};}
+\DoxyCodeLine{00171\ \textcolor{keywordtype}{double}\ sum\ =\ 0.0;}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{comment}{//\ Function\ to\ add\ value\ to\ the\ buffer\ and\ update\ the\ sliding\ mean}}
+\DoxyCodeLine{00174\ \textcolor{keywordtype}{double}\ Sliding\_Mean\_Average(\textcolor{keywordtype}{int}\ newValue)\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{comment}{//\ To\ keep\ track\ of\ the\ oldest\ value's\ index\ in\ the\ circular\ buffer}}
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ index\ =\ 0;}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{comment}{//\ Subtract\ the\ oldest\ value\ from\ the\ sum}}
+\DoxyCodeLine{00178\ \ \ \ \ sum\ -\/=\ buffer[index];}
+\DoxyCodeLine{00179\ \ \ \ \ \textcolor{comment}{//\ Add\ the\ new\ value\ to\ the\ buffer\ and\ to\ the\ sum}}
+\DoxyCodeLine{00180\ \ \ \ \ buffer[index]\ =\ (double)\ newValue;}
+\DoxyCodeLine{00181\ \ \ \ \ sum\ +=\ newValue;}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ new\ mean}}
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{double}\ mean\ =\ sum\ /\ (double)\ WINDOW\_SIZE\_SMA;}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{comment}{//\ Move\ the\ index\ to\ the\ next\ position\ (circularly)}}
+\DoxyCodeLine{00185\ \ \ \ \ index\ =\ (index\ +\ 1)\ \%\ WINDOW\_SIZE\_SMA;}
+\DoxyCodeLine{00186\ \ \ \ \ \textcolor{keywordflow}{return}\ mean;}
+\DoxyCodeLine{00187\ \}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{comment}{/*CONFIG\_FREERTOS\_HZ\ is\ set\ to\ 1000,\ this\ means\ the\ operating\ system\ tick\ rate\ is\ 1000\ ticks\ per\ second.\ Each\ tick\ would}}
+\DoxyCodeLine{00190\ \textcolor{comment}{\ therefore\ represent\ 1\ millisecond\ (since\ 1000\ milliseconds\ /\ 1000\ ticks\ =\ 1\ millisecond\ per\ tick).}}
+\DoxyCodeLine{00191\ \textcolor{comment}{\ To\ convert\ a\ tick\ count\ to\ milliseconds,\ you\ can\ multiply\ the\ number\ of\ ticks\ by\ 1*/}}
+\DoxyCodeLine{00192\ }
+\DoxyCodeLine{00193\ \textcolor{keyword}{extern}\ QueueHandle\_t\ pulse\_encoderQueue;}
+\DoxyCodeLine{00194\ \textcolor{keyword}{extern}\ QueueHandle\_t\ speed\_commandQueue;}
+\DoxyCodeLine{00195\ \textcolor{keyword}{extern}\ QueueHandle\_t\ PID\_commandQueue;}
+\DoxyCodeLine{00196\ \textcolor{keyword}{extern}\ QueueHandle\_t\ I2C\_commandQueue;}
+\DoxyCodeLine{00197\ \textcolor{keyword}{extern}\ QueueSetHandle\_t\ QueueSetPIDNecessaryCommands;}
+\DoxyCodeLine{00198\ CarCommand\ onlyPIDValues;}
+\DoxyCodeLine{00199\ I2C\_COMMAND\ I2C\_command;}
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{int}\ old\_setpoint;}
+\DoxyCodeLine{00201\ TickType\_t\ startInitialSendingTime\ =\ 0U;}
+\DoxyCodeLine{00202\ \textcolor{keywordtype}{bool}\ car\_stays\_stopped\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00203\ \textcolor{keywordtype}{void}\ PIDTask(\textcolor{keywordtype}{void}\ *pvParameters)\ \{}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \ \ PID\_Init(\&motorPID,\ 0,\ 0,\ 0);}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{int}\ pulse\_direction\ =\ 0;}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{int}\ setpoint\_speed\ =\ 0;}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{double}\ SMA\_frequency\ =\ 0;}
+\DoxyCodeLine{00210\ \ \ \ \ TickType\_t\ newTime\_backward\ =\ 0U;}
+\DoxyCodeLine{00211\ \ \ \ \ TickType\_t\ newTime\_stop\ =\ 0U;}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \textcolor{comment}{/*\ xActivatedMember\ receives\ messages\ from\ different\ queues,\ for\ example:}}
+\DoxyCodeLine{00214\ \textcolor{comment}{\ \ \ \ \ *\ -\/>\ Encoder\ pulses:\ -\/\ each\ time\ a\ series\ of\ PCNT\_HIGH\_LIMIT\_WATCHPOINT\ /\ PCNT\_LOW\_LIMIT\_WATCHPOINT}}
+\DoxyCodeLine{00215\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pulses\ happen,\ pulse\_encoderQueue\ will\ be\ filled\ with\ either\ -\/1\ or\ +1\ depening}}
+\DoxyCodeLine{00216\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ on\ the\ direction\ of\ the\ wheel\ spin,\ which\ will\ be\ further\ used\ to\ time\ stamp\ the}}
+\DoxyCodeLine{00217\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ moment\ when\ the\ car\ has\ performed\ the\ desired\ number\ of\ pulses.}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ *\ -\/>\ User's\ setpoint\ for\ speed:\ -\/\ each\ time\ the\ user\ sets\ the\ desired\ speed\ on\ the\ app,\ then\ the\ speed\_commandQueue}}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ queue\ will\ be\ filled\ with\ a\ value\ between\ -\/100\ and\ 100,\ sign\ depending}}
+\DoxyCodeLine{00220\ \textcolor{comment}{\ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ on\ the\ state\ :\ Backward\ or\ Forward\ selected\ by\ the\ user.}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ *\ -\/>\ User's\ desired\ configuration\ for\ PID's\ constants:\ -\/\ fills\ PID\_commandQueue\ everytime\ a\ change\ in\ KP,\ KD,\ KI\ in\ app.\ */}}
+\DoxyCodeLine{00222\ \ \ \ \ QueueSetMemberHandle\_t\ xActivatedMember;}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ xActivatedMember\ =\ xQueueSelectFromSet(QueueSetPIDNecessaryCommands,\ pdMS\_TO\_TICKS(100));}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xActivatedMember\ ==\ pulse\_encoderQueue)}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedMember,\ \&pulse\_direction,\ 0);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pulse\_direction\ >\ 0)}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pulse\_direction\ =\ 1;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (pulse\_direction\ <\ 0)}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pulse\_direction\ =\ -\/1;}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Calculate\ time\ between\ each\ series\ of\ pulses\ and\ then\ convert\ it\ to\ HZ.\ */}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ xNewWakeTime\ =\ xTaskGetTickCount();}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ pulse\_time\_ms\ =\ pdTICKS\_TO\_MS((xNewWakeTime\ -\/\ xLastWakePulse));}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ SMA\_frequency\ =\ 1.0\ /\ (Sliding\_Mean\_Average(pulse\_time\_ms)\ /\ 1000.0);}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ xLastWakePulse\ =\ xNewWakeTime;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Update\ the\ measured\ value.\ */}}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ motorPID.measured\ =\ pulse\_direction\ *\ SMA\_frequency;\ \textcolor{comment}{//\ MEASURED}}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ speed\_distance\_sens\_scaling\ \ =\ get\_speed\_distance\_sens\_scaling(fabs((\textcolor{keywordtype}{double})motorPID.measured),5,40);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}PID"{},\ "{}Frequency:\ \%f"{},\ pulse\_direction\ *\ SMA\_frequency);}}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xActivatedMember\ ==\ speed\_commandQueue)}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedMember,\ \&setpoint\_speed,\ 0);}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ motorPID.setpoint\ =\ setpoint\_speed;}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ If\ the\ setpoint\ is\ set\ to\ 0\ then\ update\ the\ Measured\ Value}}
+\DoxyCodeLine{00252\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ *\ to\ 0\ so\ it\ will\ not\ interfere\ with\ PID\ updates.\ */}}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (setpoint\_speed\ ==\ 0)}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ motorPID.measured\ =\ 0;}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ newTime\_stop\ =\ xTaskGetTickCount();}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}PID"{},\ "{}Speed\ Setpoint:\ \%d"{},\ setpoint\_speed);}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xActivatedMember\ ==\ PID\_commandQueue)\ \{}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedMember,\ \&onlyPIDValues,\ 0);}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ PID\_UpdateParams(\&motorPID,\ onlyPIDValues.KP,\ onlyPIDValues.KI,}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ onlyPIDValues.KD);}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(xActivatedMember\ ==\ I2C\_commandQueue)}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedMember,\ \&I2C\_command,\ 0);}
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (I2C\_command.sendingSensor\ ==\ I2C\_distance\_sens1\_dev\_handle\ \&\&\ I2C\_command.command\ ==\ I2C\_STOP\_MOTOR\ )}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sens\_fw\_has\_obstacle\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \ \textcolor{keywordflow}{if}(I2C\_command.sendingSensor\ ==\ I2C\_distance\_sens1\_dev\_handle\ \&\&\ I2C\_command.command\ ==\ I2C\_START\_MOTOR)}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sens\_fw\_has\_obstacle\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (I2C\_command.sendingSensor\ ==\ I2C\_distance\_sens2\_dev\_handle\ \&\&\ I2C\_command.command\ ==\ I2C\_STOP\_MOTOR\ )}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sens\_bw\_has\_obstacle\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \ \textcolor{keywordflow}{if}(I2C\_command.sendingSensor\ ==\ I2C\_distance\_sens2\_dev\_handle\ \&\&\ I2C\_command.command\ ==\ I2C\_START\_MOTOR)}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sens\_bw\_has\_obstacle\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}((sens\_fw\_has\_obstacle\ ==\ \textcolor{keyword}{true}\ \&\&\ motorPID.setpoint\ >\ 0)\ ||\ (sens\_bw\_has\_obstacle\ ==\ \textcolor{keyword}{true}\ \&\&\ motorPID.setpoint\ <\ 0))}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ old\_setpoint\ =\ motorPID.setpoint;}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ motorPID.setpoint\ =\ 0;}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ IN\ CASE\ OF\ CONFUSION:\ \ -\/>\ Setpoint\ is\ given\ by\ the\ user,\ so\ only\ the\ Setpoint\ can}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ decide\ if\ the\ car\ should\ go\ backwards\ or\ not.}}
+\DoxyCodeLine{00292\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/>\ Output\ value\ if\ it\ goes\ below\ 0,\ it\ shall\ not\ bring\ the\ car}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ in\ a\ backward\ mode\ because\ it\ wasn't\ decided\ by\ the\ user.\ \ */}}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Each\ time\ a\ pulse\ has\ happened,\ the\ task\ will\ be\ notified}}
+\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ and\ PID\ will\ compute\ next\ OUTPUT\ value.\ */}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ If\ the\ Setpoint\ is\ crossing\ the\ backward\ moving\ zone,\ brake.\ */}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ }
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*If\ the\ time\ between\ pulses\ is\ too\ long\ set\ the\ measured\ value\ to\ 0.*/}}
+\DoxyCodeLine{00301\ }
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ PID\_Compute(\&motorPID);}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ backward\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(motorPID.Output\ <\ 0\ \&\&\ backward\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \ \ \ \ carControl\_Backward\_init(4*motorPID.Output);}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \ \ \ \ backward\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}(motorPID.Output\ >=\ 0)}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ backward\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ changeMotorSpeed(motorPID.Output);}
+\DoxyCodeLine{00313\ }
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Send\ diagnostic\ data\ to\ phone\ app\ in\ order\ to\ monitor\ the\ speed\ and\ behaviour\ of\ Integral\ value.\ */}}
+\DoxyCodeLine{00315\ }
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ abs\_measured\ =\ abs(motorPID.measured);}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ abs\_I\_term\ =\ fabs((\textcolor{keywordtype}{double})motorPID.I\_term);}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ old\_abs\_measured;}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{float}\ old\_abs\_I\_term;}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Send\ only\ the\ data\ the\ is\ different\ from\ the\ one\ sent\ before.\ */}}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{comment}{//if(abs\_measured\ !=\ old\_abs\_measured\ ||\ abs\_I\_term\ !=\ old\_abs\_I\_term)}}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{comment}{//\ \ \{}}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ sendCommandApp(MEASURED\_VALUE,\ (\textcolor{keywordtype}{int}*)\&abs\_measured,\ INT);}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ sendCommandApp(I\_TERM\_VALUE,\ (\textcolor{keywordtype}{float}*)\&abs\_I\_term,\ FLOAT);}
+\DoxyCodeLine{00325\ \textcolor{comment}{//\ \ \ \ \ \ old\_abs\_measured\ =\ abs\_measured;}}
+\DoxyCodeLine{00326\ \textcolor{comment}{//\ \ \ \ \ \ old\_abs\_I\_term\ =\ abs\_I\_term;}}
+\DoxyCodeLine{00327\ \textcolor{comment}{//\ \ \ \ \ \ \}}}
+\DoxyCodeLine{00328\ \ \ \ \ \}}
+\DoxyCodeLine{00329\ \}}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \textcolor{comment}{/*Clamp\ function\ for\ PID*/}}
+\DoxyCodeLine{00332\ \textcolor{keywordtype}{void}\ clamp\_float(\textcolor{keywordtype}{float}\ *value,\ \textcolor{keywordtype}{float}\ min,\ \textcolor{keywordtype}{float}\ max)\ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordflow}{if}\ (*value\ >\ max)\ \{}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ *value\ =\ max;}
+\DoxyCodeLine{00335\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (*value\ <\ min)\ \{}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ *value\ =\ min;}
+\DoxyCodeLine{00337\ \ \ \ \ \}}
+\DoxyCodeLine{00338\ \}}
+\DoxyCodeLine{00339\ }
+\DoxyCodeLine{00340\ \textcolor{keywordtype}{void}\ clamp\_int(\textcolor{keywordtype}{int}\ *value,\ \textcolor{keywordtype}{int}\ min,\ \textcolor{keywordtype}{int}\ max)\ \{}
+\DoxyCodeLine{00341\ \ \ \ \ \textcolor{keywordflow}{if}\ (*value\ >\ max)\ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ *value\ =\ max;}
+\DoxyCodeLine{00343\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (*value\ <\ min)\ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ *value\ =\ min;}
+\DoxyCodeLine{00345\ \ \ \ \ \}}
+\DoxyCodeLine{00346\ \}}
+\DoxyCodeLine{00347\ }
+\DoxyCodeLine{00348\ \textcolor{comment}{/*START\ PID\ TASK\ function*/}}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \textcolor{keywordtype}{void}\ start\_PID\_task()}
+\DoxyCodeLine{00351\ \{}
+\DoxyCodeLine{00352\ \ \ \ \ init\_speedCheckTickHook();}
+\DoxyCodeLine{00353\ \ \ \ \ xTaskCreatePinnedToCore(PIDTask,\ \textcolor{stringliteral}{"{}PIDTask"{}},\ 4096,\ NULL,\ 7,\ NULL,\ 1U);}
+\DoxyCodeLine{00354\ \}}
+
+\end{DoxyCode}

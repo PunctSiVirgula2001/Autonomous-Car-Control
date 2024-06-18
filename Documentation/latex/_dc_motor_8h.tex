@@ -1,0 +1,187 @@
+\doxysection{include/motors/drivers/\+Dc\+Motor.h File Reference}
+\label{_dc_motor_8h}\index{include/motors/drivers/DcMotor.h@{include/motors/drivers/DcMotor.h}}
+{\ttfamily \#include "{}motors\+\_\+common.\+h"{}}\newline
+Include dependency graph for Dc\+Motor.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ LEDC\+\_\+\+MOTOR\+\_\+\+TIMER}~LEDC\+\_\+\+TIMER\+\_\+1
+\item 
+\#define \textbf{ LEDC\+\_\+\+MOTOR\+\_\+\+CH1\+\_\+\+CHANNEL}~LEDC\+\_\+\+CHANNEL\+\_\+1
+\item 
+\#define \textbf{ LEDC\+\_\+\+MOTOR\+\_\+\+GPIO}~(4)
+\item 
+\#define \textbf{ LEDC\+\_\+\+MOTOR\+\_\+\+DUTY\+\_\+\+RESOLUTION}~LEDC\+\_\+\+TIMER\+\_\+16\+\_\+\+BIT
+\item 
+\#define \textbf{ MAX\+\_\+\+MOTOR\+\_\+\+FW\+\_\+\+DUTY\+\_\+\+US}~(1650)
+\item 
+\#define \textbf{ MIN\+\_\+\+MOTOR\+\_\+\+FW\+\_\+\+DUTY\+\_\+\+US}~(1535)
+\item 
+\#define \textbf{ MAX\+\_\+\+MOTOR\+\_\+\+BW\+\_\+\+DUTY\+\_\+\+US}~(1435)
+\item 
+\#define \textbf{ MIN\+\_\+\+MOTOR\+\_\+\+BW\+\_\+\+DUTY\+\_\+\+US}~(1200)
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+SPEED}~20
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+DATATYPE\+\_\+\+SPEED}~(sizeof(int))
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ init\+\_\+motor\+\_\+pwm} ()
+\item 
+void \textbf{ car\+Control\+\_\+calibrate\+\_\+motor} ()
+\item 
+void \textbf{ update\+\_\+motor\+\_\+pwm} (unsigned int pulse\+\_\+width\+\_\+us)
+\item 
+void \textbf{ change\+Motor\+Speed} (int value)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{DcMotor.h@{DcMotor.h}!LEDC\_MOTOR\_CH1\_CHANNEL@{LEDC\_MOTOR\_CH1\_CHANNEL}}
+\index{LEDC\_MOTOR\_CH1\_CHANNEL@{LEDC\_MOTOR\_CH1\_CHANNEL}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{LEDC\_MOTOR\_CH1\_CHANNEL}
+{\footnotesize\ttfamily \label{_dc_motor_8h_adc0811ca91c90f7ab5d1dc76456f00f7} 
+\#define LEDC\+\_\+\+MOTOR\+\_\+\+CH1\+\_\+\+CHANNEL~LEDC\+\_\+\+CHANNEL\+\_\+1}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!LEDC\_MOTOR\_DUTY\_RESOLUTION@{LEDC\_MOTOR\_DUTY\_RESOLUTION}}
+\index{LEDC\_MOTOR\_DUTY\_RESOLUTION@{LEDC\_MOTOR\_DUTY\_RESOLUTION}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{LEDC\_MOTOR\_DUTY\_RESOLUTION}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a90ca3d995f78628254e22f975157224c} 
+\#define LEDC\+\_\+\+MOTOR\+\_\+\+DUTY\+\_\+\+RESOLUTION~LEDC\+\_\+\+TIMER\+\_\+16\+\_\+\+BIT}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!LEDC\_MOTOR\_GPIO@{LEDC\_MOTOR\_GPIO}}
+\index{LEDC\_MOTOR\_GPIO@{LEDC\_MOTOR\_GPIO}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{LEDC\_MOTOR\_GPIO}
+{\footnotesize\ttfamily \label{_dc_motor_8h_ae983a296248e7538f8639b0376327c79} 
+\#define LEDC\+\_\+\+MOTOR\+\_\+\+GPIO~(4)}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!LEDC\_MOTOR\_TIMER@{LEDC\_MOTOR\_TIMER}}
+\index{LEDC\_MOTOR\_TIMER@{LEDC\_MOTOR\_TIMER}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{LEDC\_MOTOR\_TIMER}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a9bcd6003acb282bdb8b96b35019f7c99} 
+\#define LEDC\+\_\+\+MOTOR\+\_\+\+TIMER~LEDC\+\_\+\+TIMER\+\_\+1}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!MAX\_MOTOR\_BW\_DUTY\_US@{MAX\_MOTOR\_BW\_DUTY\_US}}
+\index{MAX\_MOTOR\_BW\_DUTY\_US@{MAX\_MOTOR\_BW\_DUTY\_US}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{MAX\_MOTOR\_BW\_DUTY\_US}
+{\footnotesize\ttfamily \label{_dc_motor_8h_acd72577f66c01d6483d1e3fcc2f6f547} 
+\#define MAX\+\_\+\+MOTOR\+\_\+\+BW\+\_\+\+DUTY\+\_\+\+US~(1435)}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!MAX\_MOTOR\_FW\_DUTY\_US@{MAX\_MOTOR\_FW\_DUTY\_US}}
+\index{MAX\_MOTOR\_FW\_DUTY\_US@{MAX\_MOTOR\_FW\_DUTY\_US}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{MAX\_MOTOR\_FW\_DUTY\_US}
+{\footnotesize\ttfamily \label{_dc_motor_8h_aa40e12b5209229906b274e17f06354be} 
+\#define MAX\+\_\+\+MOTOR\+\_\+\+FW\+\_\+\+DUTY\+\_\+\+US~(1650)}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!MIN\_MOTOR\_BW\_DUTY\_US@{MIN\_MOTOR\_BW\_DUTY\_US}}
+\index{MIN\_MOTOR\_BW\_DUTY\_US@{MIN\_MOTOR\_BW\_DUTY\_US}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{MIN\_MOTOR\_BW\_DUTY\_US}
+{\footnotesize\ttfamily \label{_dc_motor_8h_ad549708befda03c421ddd809015220b3} 
+\#define MIN\+\_\+\+MOTOR\+\_\+\+BW\+\_\+\+DUTY\+\_\+\+US~(1200)}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!MIN\_MOTOR\_FW\_DUTY\_US@{MIN\_MOTOR\_FW\_DUTY\_US}}
+\index{MIN\_MOTOR\_FW\_DUTY\_US@{MIN\_MOTOR\_FW\_DUTY\_US}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{MIN\_MOTOR\_FW\_DUTY\_US}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a7e9c37fe10a92ad6f695589b13a3c4b8} 
+\#define MIN\+\_\+\+MOTOR\+\_\+\+FW\+\_\+\+DUTY\+\_\+\+US~(1535)}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!QUEUE\_SIZE\_DATATYPE\_SPEED@{QUEUE\_SIZE\_DATATYPE\_SPEED}}
+\index{QUEUE\_SIZE\_DATATYPE\_SPEED@{QUEUE\_SIZE\_DATATYPE\_SPEED}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{QUEUE\_SIZE\_DATATYPE\_SPEED}
+{\footnotesize\ttfamily \label{_dc_motor_8h_aadaec1b31a325f19d1a0bd21d6863bcf} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+DATATYPE\+\_\+\+SPEED~(sizeof(int))}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ Dc\+Motor.\+h}.
+
+\index{DcMotor.h@{DcMotor.h}!QUEUE\_SIZE\_SPEED@{QUEUE\_SIZE\_SPEED}}
+\index{QUEUE\_SIZE\_SPEED@{QUEUE\_SIZE\_SPEED}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{QUEUE\_SIZE\_SPEED}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a42c5dd9183c235e13cea65c7b41d6f88} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+SPEED~20}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ Dc\+Motor.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{DcMotor.h@{DcMotor.h}!carControl\_calibrate\_motor@{carControl\_calibrate\_motor}}
+\index{carControl\_calibrate\_motor@{carControl\_calibrate\_motor}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{carControl\_calibrate\_motor()}
+{\footnotesize\ttfamily \label{_dc_motor_8h_aacc86a8fac6d46c80e8c5c41ea7786b6} 
+void car\+Control\+\_\+calibrate\+\_\+motor (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 56} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{DcMotor.h@{DcMotor.h}!changeMotorSpeed@{changeMotorSpeed}}
+\index{changeMotorSpeed@{changeMotorSpeed}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{changeMotorSpeed()}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a435592e73c533f6e72459bff52e6b60e} 
+void change\+Motor\+Speed (\begin{DoxyParamCaption}\item[{int}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 112} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.h@{DcMotor.h}!init\_motor\_pwm@{init\_motor\_pwm}}
+\index{init\_motor\_pwm@{init\_motor\_pwm}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{init\_motor\_pwm()}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a611fa4f4361e4e307befb3becc0a5f4f} 
+void init\+\_\+motor\+\_\+pwm (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ Dc\+Motor.\+c}.
+
+\index{DcMotor.h@{DcMotor.h}!update\_motor\_pwm@{update\_motor\_pwm}}
+\index{update\_motor\_pwm@{update\_motor\_pwm}!DcMotor.h@{DcMotor.h}}
+\doxysubsubsection{update\_motor\_pwm()}
+{\footnotesize\ttfamily \label{_dc_motor_8h_a701f471f5cefb57b8bd8d0fc2e8b9597} 
+void update\+\_\+motor\+\_\+pwm (\begin{DoxyParamCaption}\item[{unsigned int}]{pulse\+\_\+width\+\_\+us}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 99} of file \textbf{ Dc\+Motor.\+c}.
+

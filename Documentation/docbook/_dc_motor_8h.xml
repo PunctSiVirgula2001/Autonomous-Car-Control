@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__dc_motor_8h" xml:lang="en-US">
+<title>include/motors/drivers/DcMotor.h File Reference</title>
+<indexterm><primary>include/motors/drivers/DcMotor.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;motors_common.h&quot;<?linebreak?></programlisting>Include dependency graph for DcMotor.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_dc_motor_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_dc_motor_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1a9bcd6003acb282bdb8b96b35019f7c99">LEDC_MOTOR_TIMER</link>&#160;&#160;&#160;LEDC_TIMER_1</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1adc0811ca91c90f7ab5d1dc76456f00f7">LEDC_MOTOR_CH1_CHANNEL</link>&#160;&#160;&#160;LEDC_CHANNEL_1</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1ae983a296248e7538f8639b0376327c79">LEDC_MOTOR_GPIO</link>&#160;&#160;&#160;(4)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1a90ca3d995f78628254e22f975157224c">LEDC_MOTOR_DUTY_RESOLUTION</link>&#160;&#160;&#160;LEDC_TIMER_16_BIT</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1aa40e12b5209229906b274e17f06354be">MAX_MOTOR_FW_DUTY_US</link>&#160;&#160;&#160;(1650)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1a7e9c37fe10a92ad6f695589b13a3c4b8">MIN_MOTOR_FW_DUTY_US</link>&#160;&#160;&#160;(1535)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1acd72577f66c01d6483d1e3fcc2f6f547">MAX_MOTOR_BW_DUTY_US</link>&#160;&#160;&#160;(1435)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1ad549708befda03c421ddd809015220b3">MIN_MOTOR_BW_DUTY_US</link>&#160;&#160;&#160;(1200)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1a42c5dd9183c235e13cea65c7b41d6f88">QUEUE_SIZE_SPEED</link>&#160;&#160;&#160;20</para>
+</listitem>
+            <listitem><para>#define <link linkend="__dc_motor_8h_1aadaec1b31a325f19d1a0bd21d6863bcf">QUEUE_SIZE_DATATYPE_SPEED</link>&#160;&#160;&#160;(sizeof(int))</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__dc_motor_8h_1a611fa4f4361e4e307befb3becc0a5f4f">init_motor_pwm</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__dc_motor_8h_1aacc86a8fac6d46c80e8c5c41ea7786b6">carControl_calibrate_motor</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__dc_motor_8h_1a701f471f5cefb57b8bd8d0fc2e8b9597">update_motor_pwm</link> (unsigned int pulse_width_us)</para>
+</listitem>
+            <listitem><para>void <link linkend="__dc_motor_8h_1a435592e73c533f6e72459bff52e6b60e">changeMotorSpeed</link> (int value)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__dc_motor_8h_1adc0811ca91c90f7ab5d1dc76456f00f7"/><section>
+    <title>LEDC_MOTOR_CH1_CHANNEL</title>
+<indexterm><primary>LEDC_MOTOR_CH1_CHANNEL</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>LEDC_MOTOR_CH1_CHANNEL</secondary></indexterm>
+<para><computeroutput>#define LEDC_MOTOR_CH1_CHANNEL&#160;&#160;&#160;LEDC_CHANNEL_1</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00016">16</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a90ca3d995f78628254e22f975157224c"/><section>
+    <title>LEDC_MOTOR_DUTY_RESOLUTION</title>
+<indexterm><primary>LEDC_MOTOR_DUTY_RESOLUTION</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>LEDC_MOTOR_DUTY_RESOLUTION</secondary></indexterm>
+<para><computeroutput>#define LEDC_MOTOR_DUTY_RESOLUTION&#160;&#160;&#160;LEDC_TIMER_16_BIT</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00018">18</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1ae983a296248e7538f8639b0376327c79"/><section>
+    <title>LEDC_MOTOR_GPIO</title>
+<indexterm><primary>LEDC_MOTOR_GPIO</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>LEDC_MOTOR_GPIO</secondary></indexterm>
+<para><computeroutput>#define LEDC_MOTOR_GPIO&#160;&#160;&#160;(4)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00017">17</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a9bcd6003acb282bdb8b96b35019f7c99"/><section>
+    <title>LEDC_MOTOR_TIMER</title>
+<indexterm><primary>LEDC_MOTOR_TIMER</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>LEDC_MOTOR_TIMER</secondary></indexterm>
+<para><computeroutput>#define LEDC_MOTOR_TIMER&#160;&#160;&#160;LEDC_TIMER_1</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00015">15</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1acd72577f66c01d6483d1e3fcc2f6f547"/><section>
+    <title>MAX_MOTOR_BW_DUTY_US</title>
+<indexterm><primary>MAX_MOTOR_BW_DUTY_US</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>MAX_MOTOR_BW_DUTY_US</secondary></indexterm>
+<para><computeroutput>#define MAX_MOTOR_BW_DUTY_US&#160;&#160;&#160;(1435)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00022">22</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1aa40e12b5209229906b274e17f06354be"/><section>
+    <title>MAX_MOTOR_FW_DUTY_US</title>
+<indexterm><primary>MAX_MOTOR_FW_DUTY_US</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>MAX_MOTOR_FW_DUTY_US</secondary></indexterm>
+<para><computeroutput>#define MAX_MOTOR_FW_DUTY_US&#160;&#160;&#160;(1650)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00020">20</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1ad549708befda03c421ddd809015220b3"/><section>
+    <title>MIN_MOTOR_BW_DUTY_US</title>
+<indexterm><primary>MIN_MOTOR_BW_DUTY_US</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>MIN_MOTOR_BW_DUTY_US</secondary></indexterm>
+<para><computeroutput>#define MIN_MOTOR_BW_DUTY_US&#160;&#160;&#160;(1200)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00023">23</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a7e9c37fe10a92ad6f695589b13a3c4b8"/><section>
+    <title>MIN_MOTOR_FW_DUTY_US</title>
+<indexterm><primary>MIN_MOTOR_FW_DUTY_US</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>MIN_MOTOR_FW_DUTY_US</secondary></indexterm>
+<para><computeroutput>#define MIN_MOTOR_FW_DUTY_US&#160;&#160;&#160;(1535)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00021">21</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1aadaec1b31a325f19d1a0bd21d6863bcf"/><section>
+    <title>QUEUE_SIZE_DATATYPE_SPEED</title>
+<indexterm><primary>QUEUE_SIZE_DATATYPE_SPEED</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>QUEUE_SIZE_DATATYPE_SPEED</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_DATATYPE_SPEED&#160;&#160;&#160;(sizeof(int))</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00027">27</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a42c5dd9183c235e13cea65c7b41d6f88"/><section>
+    <title>QUEUE_SIZE_SPEED</title>
+<indexterm><primary>QUEUE_SIZE_SPEED</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>QUEUE_SIZE_SPEED</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_SPEED&#160;&#160;&#160;20</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8h_source_1l00026">26</link> of file <link linkend="__dc_motor_8h_source">DcMotor.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__dc_motor_8h_1aacc86a8fac6d46c80e8c5c41ea7786b6"/><section>
+    <title>carControl_calibrate_motor()</title>
+<indexterm><primary>carControl_calibrate_motor</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>carControl_calibrate_motor</secondary></indexterm>
+<para><computeroutput>void carControl_calibrate_motor ( )</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00056">56</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a435592e73c533f6e72459bff52e6b60e"/><section>
+    <title>changeMotorSpeed()</title>
+<indexterm><primary>changeMotorSpeed</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>changeMotorSpeed</secondary></indexterm>
+<para><computeroutput>void changeMotorSpeed (int value)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00112">112</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a611fa4f4361e4e307befb3becc0a5f4f"/><section>
+    <title>init_motor_pwm()</title>
+<indexterm><primary>init_motor_pwm</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>init_motor_pwm</secondary></indexterm>
+<para><computeroutput>void init_motor_pwm ( )</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00016">16</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+<anchor xml:id="__dc_motor_8h_1a701f471f5cefb57b8bd8d0fc2e8b9597"/><section>
+    <title>update_motor_pwm()</title>
+<indexterm><primary>update_motor_pwm</primary><secondary>DcMotor.h</secondary></indexterm>
+<indexterm><primary>DcMotor.h</primary><secondary>update_motor_pwm</secondary></indexterm>
+<para><computeroutput>void update_motor_pwm (unsigned int pulse_width_us)</computeroutput></para><para>
+Definition at line <link linkend="__dc_motor_8c_source_1l00099">99</link> of file <link linkend="__dc_motor_8c_source">DcMotor.c</link>.</para>
+</section>
+</section>
+</section>

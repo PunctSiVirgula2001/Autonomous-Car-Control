@@ -1,0 +1,260 @@
+\doxysection{Motor\+And\+Servo\+Control.\+c}
+\label{_motor_and_servo_control_8c_source}\index{src/motors/MotorAndServoControl.c@{src/motors/MotorAndServoControl.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}MotorAndServoControl.h"{}}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}I2C\_cameraSensor.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}Network.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//Queue\ set\ which\ adds\ all\ data\ from\ all\ queues.}}
+\DoxyCodeLine{00006\ QueueSetHandle\_t\ QueueSetPIDNecessaryCommands;}
+\DoxyCodeLine{00007\ \textcolor{keyword}{extern}\ QueueHandle\_t\ autonomousModeControlPixyQueue;}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ CarCommand\ parseCommand(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *commandStr)}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ CarCommand\ cmd;}
+\DoxyCodeLine{00012\ \ \ \ \ memset(\&cmd,\ 0,\ \textcolor{keyword}{sizeof}(cmd));\ \textcolor{comment}{//\ Initialize\ the\ structure\ with\ zeros}}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordflow}{if}\ (strncmp(commandStr,\ \textcolor{stringliteral}{"{}08"{}},\ 2)\ ==\ 0)}
+\DoxyCodeLine{00014\ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ command\ "{}08"{}\ specifically\ to\ parse\ KP,\ KI,\ KD\ values}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ sscanf(commandStr,\ \textcolor{stringliteral}{"{}08\%f\ \%f\ \%f"{}},\ \&cmd.KP,\ \&cmd.KI,\ \&cmd.KD);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ cmd.command\ =\ PID\_Changed;\ \textcolor{comment}{//\ Set\ the\ command\ to\ the\ appropriate\ enum\ value}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ cmd.has\_value\ =\ \textcolor{keyword}{false};\ \ \ \ \textcolor{comment}{//\ Since\ KP,\ KI,\ KD\ are\ used,\ command\_value\ is\ not\ relevant}}
+\DoxyCodeLine{00019\ \ \ \ \ \}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strlen(commandStr)\ >=\ 2)}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ commandPart[3]\ =\ \{commandStr[0],\ commandStr[1],\ \textcolor{charliteral}{'\(\backslash\)0'}\};}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ cmd.command\ =\ atoi(commandPart);}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ there's\ more\ to\ the\ command\ than\ just\ the\ command\ part}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (strlen(commandStr)\ >\ 2)}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ cmd.has\_value\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ the\ command\ value,\ which\ is\ optional}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ valuePart[5];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assuming\ the\ value\ part\ will\ not\ exceed\ 4\ digits}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ strncpy(valuePart,\ commandStr\ +\ 2,\ 4);\ \textcolor{comment}{//\ Copy\ the\ rest\ of\ the\ string\ as\ command\ value}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ valuePart[4]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Null-\/terminate\ the\ string}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ cmd.command\_value\ =\ atoi(valuePart);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ cmd.has\_value\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00038\ \ \ \ \ \}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordflow}{return}\ cmd;}
+\DoxyCodeLine{00040\ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ carControl\_Backward\_init(\textcolor{keywordtype}{int}\ break\_value)}
+\DoxyCodeLine{00043\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ changeMotorSpeed(0);}
+\DoxyCodeLine{00045\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00046\ \ \ \ \ changeMotorSpeed(break\_value);}
+\DoxyCodeLine{00047\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00048\ \ \ \ \ changeMotorSpeed(0);}
+\DoxyCodeLine{00049\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00050\ \ \ \ \ changeMotorSpeed(break\_value);}
+\DoxyCodeLine{00051\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00052\ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{bool}\ calib\_motor\_done\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{void}\ carControl\_calibrate\_motor()}
+\DoxyCodeLine{00057\ \{}
+\DoxyCodeLine{00058\ \ \ \ \ update\_motor\_pwm(2000);}
+\DoxyCodeLine{00059\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(3000));}
+\DoxyCodeLine{00060\ \ \ \ \ update\_motor\_pwm(1000);}
+\DoxyCodeLine{00061\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(3000));}
+\DoxyCodeLine{00062\ \ \ \ \ update\_motor\_pwm(1500);}
+\DoxyCodeLine{00063\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(3000));}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}\ "{},\ "{}ESC\ Calibration\ over."{});}}
+\DoxyCodeLine{00065\ \ \ \ \ calib\_motor\_done\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00066\ \}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ mock\_forward\_and\_backward\_test\_5\_seconds()}
+\DoxyCodeLine{00069\ \{}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{comment}{/*\ MOVING\ FORWARD\ */}}
+\DoxyCodeLine{00072\ \ \ \ \ update\_motor\_pwm(1600);}
+\DoxyCodeLine{00073\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(5000));}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{/*BACKWARD\ MODE\ INIT*/}}
+\DoxyCodeLine{00076\ \ \ \ \ update\_motor\_pwm(1500);}
+\DoxyCodeLine{00077\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(1000));}
+\DoxyCodeLine{00078\ \ \ \ \ update\_motor\_pwm(1400);}
+\DoxyCodeLine{00079\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(1000));}
+\DoxyCodeLine{00080\ \ \ \ \ update\_motor\_pwm(1500);}
+\DoxyCodeLine{00081\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(1000));}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{/*\ MOVING\ BACKWARD\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ update\_motor\_pwm(1400);}
+\DoxyCodeLine{00085\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(5000));}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{/*STOP*/}}
+\DoxyCodeLine{00088\ \ \ \ \ update\_motor\_pwm(1500);}
+\DoxyCodeLine{00089\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(5000));}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ pwm\_from\_1550\_to\_1650\_step\_10()}
+\DoxyCodeLine{00093\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ i\ =\ 0;}
+\DoxyCodeLine{00095\ \ \ \ \ i++;}
+\DoxyCodeLine{00096\ \ \ \ \ update\_motor\_pwm(1540+i);}
+\DoxyCodeLine{00097\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10000));}
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordflow}{if}(i==60)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ i=0;}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ QueueHandle\_t\ diagnosticModeControlQueue\ =\ NULL;}
+\DoxyCodeLine{00104\ QueueHandle\_t\ autonomousModeControlUartQueue\ =\ NULL;}
+\DoxyCodeLine{00105\ QueueHandle\_t\ speed\_commandQueue\ =\ NULL;}
+\DoxyCodeLine{00106\ QueueHandle\_t\ steer\_commandQueue\ =\ NULL;}
+\DoxyCodeLine{00107\ QueueHandle\_t\ PID\_commandQueue\ =\ NULL;}
+\DoxyCodeLine{00108\ QueueSetHandle\_t\ QueueSetAutonomousOrDiagnostic\ =\ NULL;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \textcolor{comment}{/*\ This\ variable\ allows\ the\ uart\_task\ to\ fill\ Autonomous\ Queue\ for\ controlling\ the\ car.\ */}}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{bool}\ AutonomousMode\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ carControl\_Task(\textcolor{keywordtype}{void}\ *pvParameters)\ \{}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#if\ (MOTOR\_MOCK\_TEST\ ==\ ON)}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{keywordflow}{while}(1)}
+\DoxyCodeLine{00116\ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}AICI"{},"{}fasf"{});}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{comment}{//mock\_forward\_and\_backward\_test\_5\_seconds();}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ pwm\_from\_1550\_to\_1650\_step\_10();}
+\DoxyCodeLine{00120\ \ \ \ \ \}}
+\DoxyCodeLine{00121\ \textcolor{preprocessor}{\#elif\ (MOTOR\_MOCK\_TEST\ ==\ OFF)}}
+\DoxyCodeLine{00122\ \ \ \ \ CarCommand\ cmd\ =\ \{\ StopReceived,\ 0,\ \textcolor{keyword}{false},\ 0.0f,\ 0.0f,\ 0.0f\ \};}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keywordtype}{int}\ last\_motor\_speed\ =\ 0;}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{keywordtype}{int}\ speed\_multiplier\ =\ 0;}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{int}\ speed\ =\ 0;}
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keywordtype}{char}\ *command;}
+\DoxyCodeLine{00127\ \ \ \ \ QueueSetMemberHandle\_t\ xActivatedModeAorM\_Member;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOG("{}CarControl\_TASK"{},"{}\%u\ ms"{},pdTICKS\_TO\_MS(xTaskGetTickCount()));}}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (diagnosticModeControlQueue\ !=\ NULL\ \&\&\ (autonomousModeControlUartQueue\ !=\ NULL\ ||\ autonomousModeControlPixyQueue\ !=\ NULL))\ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \ \ \ \ xActivatedModeAorM\_Member\ =\ xQueueSelectFromSet(QueueSetAutonomousOrDiagnostic,\ portMAX\_DELAY);}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(xActivatedModeAorM\_Member\ ==\ diagnosticModeControlQueue)}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AutonomousMode\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedModeAorM\_Member,\ \&command,\ 0);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd\ =\ parseCommand(command);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#if\ (PIXY\_DETECTION\ ==\ OFF)}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}(xActivatedModeAorM\_Member\ ==\ autonomousModeControlUartQueue)}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedModeAorM\_Member,\ \&command,\ 0);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(strncmp(command,\textcolor{stringliteral}{"{}sp="{}},3)==0)}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sscanf(command,\ \textcolor{stringliteral}{"{}sp=\%d"{}},\ \&cmd.command\_value);}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd.command\ =\ SpeedReceived;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}(strncmp(command,\textcolor{stringliteral}{"{}st="{}},3)==0)}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sscanf(command,\ \textcolor{stringliteral}{"{}st=\%d"{}},\ \&cmd.command\_value);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd.command\ =\ SteerReceived;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#elif\ (PIXY\_DETECTION\ ==\ ON)}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}(xActivatedModeAorM\_Member\ ==\ autonomousModeControlPixyQueue)}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ uint8\_t\ nrCmd\ =\ 0U;}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nrCmd++;}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReceive(xActivatedModeAorM\_Member,\ \&cmd.command\_value,\ 0);}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(nrCmd\ ==\ 1U)}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd.command\ =\ SpeedReceived;}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}PIXY"{}},\textcolor{stringliteral}{"{}Speed:\ \%d"{}},\ cmd.command\_value);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}(nrCmd\ ==\ 2U)}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd.command\ =\ SteerReceived;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}PIXY"{}},\textcolor{stringliteral}{"{}Steer:\ \%d"{}},\ cmd.command\_value);}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ nrCmd\ =\ 0U;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (cmd.command)\ \{}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ StopReceived:}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\ =\ 0;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(speed\_commandQueue,\&speed,portMAX\_DELAY);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\_multiplier\ =\ 0;}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ ForwardReceived:}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\_multiplier\ =\ 1;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\ =\ speed\_multiplier\ *\ last\_motor\_speed;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(speed\_commandQueue,\&speed,portMAX\_DELAY);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HLD\_SendMessage(\textcolor{stringliteral}{"{}OKFWD!"{}});}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ BackwardReceived:}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\_multiplier\ =\ -\/1;}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\ =\ speed\_multiplier\ *\ last\_motor\_speed;}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(speed\_commandQueue,\&speed,portMAX\_DELAY);}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HLD\_SendMessage(\textcolor{stringliteral}{"{}OKBWD!"{}});}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ SpeedReceived:}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(AutonomousMode\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\ =\ speed\_multiplier\ *\ cmd.command\_value;}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ speed\ =\ cmd.command\_value;}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(speed\_commandQueue,\&speed,portMAX\_DELAY);}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ last\_motor\_speed\ =\ cmd.command\_value;}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HLD\_SendMessage(\textcolor{stringliteral}{"{}OKSPEED!"{}});}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ SteerReceived:}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(steer\_commandQueue,\&cmd.command\_value,portMAX\_DELAY);}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HLD\_SendMessage(\textcolor{stringliteral}{"{}OKSTEER!"{}});}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ AutonomousReceived:}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AutonomousMode\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}Auton"{}},\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ PID\_Changed:}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueSend(PID\_commandQueue,\&cmd,portMAX\_DELAY);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ HLD\_SendMessage(\textcolor{stringliteral}{"{}OKPID!"{}});}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(250));}
+\DoxyCodeLine{00223\ \ \ \ \ \}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00225\ \}}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \textcolor{keywordtype}{void}\ steer\_task(\textcolor{keywordtype}{void}\ *pvParameters)\ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{keywordtype}{int}\ steer\ =\ 0;}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (steer\_commandQueue\ !=\ NULL)\ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xQueueReceive(steer\_commandQueue,\ \&steer,\ portMAX\_DELAY)\ ==\ pdPASS)\ \{}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ changeSTEER(steer);}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(250));}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ \}}
+\DoxyCodeLine{00238\ }
+\DoxyCodeLine{00239\ \textcolor{keywordtype}{void}\ carControl\_init()\ \{}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ init\_servo\_pwm();}
+\DoxyCodeLine{00242\ \ \ \ \ init\_motor\_pwm();}
+\DoxyCodeLine{00243\ \ \ \ \ update\_servo\_pwm(1500);\ \textcolor{comment}{//\ ESC\ init}}
+\DoxyCodeLine{00244\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(2000));}
+\DoxyCodeLine{00245\ \ \ \ \ update\_motor\_pwm(1500);}
+\DoxyCodeLine{00246\ \ \ \ \ \textcolor{comment}{//carControl\_calibrate\_motor();}}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{comment}{//while(calib\_motor\_done!=true)\ vTaskDelay(pdMS\_TO\_TICKS(50));}}
+\DoxyCodeLine{00248\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(500));\ \textcolor{comment}{//\ wait\ for\ init\ to\ complete}}
+\DoxyCodeLine{00249\ \ \ \ \ xTaskCreatePinnedToCore(carControl\_Task,\ \textcolor{stringliteral}{"{}carControl\_task"{}},\ 4096,\ NULL,\ 6,}
+\DoxyCodeLine{00250\ \ \ \ \ NULL,\ 0U);}
+\DoxyCodeLine{00251\ \ \ \ \ xTaskCreatePinnedToCore(steer\_task,\ \textcolor{stringliteral}{"{}steer\_task"{}},\ 4096,\ NULL,\ 5,NULL,\ 1U);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \}}
+\DoxyCodeLine{00254\ }
+
+\end{DoxyCode}

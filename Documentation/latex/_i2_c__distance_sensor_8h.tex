@@ -1,0 +1,721 @@
+\doxysection{include/\+I2\+C/drivers/\+I2\+C\+\_\+distance\+Sensor.h File Reference}
+\label{_i2_c__distance_sensor_8h}\index{include/I2C/drivers/I2C\_distanceSensor.h@{include/I2C/drivers/I2C\_distanceSensor.h}}
+{\ttfamily \#include "{}I2\+C\+\_\+common.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+distance\+Sensor.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ Sequence\+Step\+Enables}
+\item 
+struct \textbf{ Sequence\+Step\+Timeouts}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ ALPHA\+\_\+\+VL53\+L0X}~0.\+8
+\item 
+\#define \textbf{ ALPHA\+\_\+\+ADXL}~0.\+8
+\item 
+\#define \textbf{ Threshold\+\_\+dist}~350.\+0
+\item 
+\#define \textbf{ io\+\_\+timeout}~100
+\item 
+\#define \textbf{ millis}()~(pd\+TICKS\+\_\+\+TO\+\_\+\+MS(x\+Task\+Get\+Tick\+Count()))
+\item 
+\#define \textbf{ check\+Timeout\+Expired}()~(\textbf{ io\+\_\+timeout} $>$ 0 \&\& ((uint16\+\_\+t)(\textbf{ millis}() -\/ timeout\+\_\+start\+\_\+ms)) $>$ \textbf{ io\+\_\+timeout})
+\item 
+\#define \textbf{ start\+Timeout}()~(timeout\+\_\+start\+\_\+ms = \textbf{ millis}())
+\item 
+\#define \textbf{ calc\+Macro\+Period}(vcsel\+\_\+period\+\_\+pclks)~((((uint32\+\_\+t)2304 $\ast$ (vcsel\+\_\+period\+\_\+pclks) $\ast$ 1655) + 500) / 1000)
+\item 
+\#define \textbf{ decode\+Vcsel\+Period}(reg\+\_\+val)~(((reg\+\_\+val) + 1) $<$$<$ 1)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ dist\+\_\+sens\+\_\+registers} \textbf{ dist\+\_\+sens\+\_\+registers}
+\item 
+typedef struct Sequence\+Step\+Enables \textbf{ Sequence\+Step\+Enables}
+\item 
+typedef struct Sequence\+Step\+Timeouts \textbf{ Sequence\+Step\+Timeouts}
+\item 
+typedef enum \textbf{ vcsel\+Period\+Type} \textbf{ vcsel\+Period\+Type}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ dist\+\_\+sens\+\_\+registers} \{ \newline
+\textbf{ SYSRANGE\+\_\+\+START} = 0x00
+, \textbf{ SYSTEM\+\_\+\+THRESH\+\_\+\+HIGH} = 0x0C
+, \textbf{ SYSTEM\+\_\+\+THRESH\+\_\+\+LOW} = 0x0E
+, \textbf{ SYSTEM\+\_\+\+SEQUENCE\+\_\+\+CONFIG} = 0x01
+, \newline
+\textbf{ SYSTEM\+\_\+\+RANGE\+\_\+\+CONFIG} = 0x09
+, \textbf{ SYSTEM\+\_\+\+INTERMEASUREMENT\+\_\+\+PERIOD} = 0x04
+, \textbf{ SYSTEM\+\_\+\+INTERRUPT\+\_\+\+CONFIG\+\_\+\+GPIO} = 0x0A
+, \textbf{ GPIO\+\_\+\+HV\+\_\+\+MUX\+\_\+\+ACTIVE\+\_\+\+HIGH} = 0x84
+, \newline
+\textbf{ SYSTEM\+\_\+\+INTERRUPT\+\_\+\+CLEAR} = 0x0B
+, \textbf{ RESULT\+\_\+\+INTERRUPT\+\_\+\+STATUS} = 0x13
+, \textbf{ RESULT\+\_\+\+RANGE\+\_\+\+STATUS} = 0x14
+, \textbf{ RESULT\+\_\+\+CORE\+\_\+\+AMBIENT\+\_\+\+WINDOW\+\_\+\+EVENTS\+\_\+\+RTN} = 0x\+BC
+, \newline
+\textbf{ RESULT\+\_\+\+CORE\+\_\+\+RANGING\+\_\+\+TOTAL\+\_\+\+EVENTS\+\_\+\+RTN} = 0x\+C0
+, \textbf{ RESULT\+\_\+\+CORE\+\_\+\+AMBIENT\+\_\+\+WINDOW\+\_\+\+EVENTS\+\_\+\+REF} = 0x\+D0
+, \textbf{ RESULT\+\_\+\+CORE\+\_\+\+RANGING\+\_\+\+TOTAL\+\_\+\+EVENTS\+\_\+\+REF} = 0x\+D4
+, \textbf{ RESULT\+\_\+\+PEAK\+\_\+\+SIGNAL\+\_\+\+RATE\+\_\+\+REF} = 0x\+B6
+, \newline
+\textbf{ ALGO\+\_\+\+PART\+\_\+\+TO\+\_\+\+PART\+\_\+\+RANGE\+\_\+\+OFFSET\+\_\+\+MM} = 0x28
+, \textbf{ I2\+C\+\_\+\+SLAVE\+\_\+\+DEVICE\+\_\+\+ADDRESS} = 0x8A
+, \textbf{ MSRC\+\_\+\+CONFIG\+\_\+\+CONTROL} = 0x60
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+MIN\+\_\+\+SNR} = 0x27
+, \newline
+\textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+LOW} = 0x56
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+HIGH} = 0x57
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+MIN\+\_\+\+COUNT\+\_\+\+RATE\+\_\+\+RTN\+\_\+\+LIMIT} = 0x64
+, \textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+MIN\+\_\+\+SNR} = 0x67
+, \newline
+\textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+LOW} = 0x47
+, \textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+HIGH} = 0x48
+, \textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+MIN\+\_\+\+COUNT\+\_\+\+RATE\+\_\+\+RTN\+\_\+\+LIMIT} = 0x44
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+SIGMA\+\_\+\+THRESH\+\_\+\+HI} = 0x61
+, \newline
+\textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+SIGMA\+\_\+\+THRESH\+\_\+\+LO} = 0x62
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VCSEL\+\_\+\+PERIOD} = 0x50
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+HI} = 0x51
+, \textbf{ PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+LO} = 0x52
+, \newline
+\textbf{ SYSTEM\+\_\+\+HISTOGRAM\+\_\+\+BIN} = 0x81
+, \textbf{ HISTOGRAM\+\_\+\+CONFIG\+\_\+\+INITIAL\+\_\+\+PHASE\+\_\+\+SELECT} = 0x33
+, \textbf{ HISTOGRAM\+\_\+\+CONFIG\+\_\+\+READOUT\+\_\+\+CTRL} = 0x55
+, \textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VCSEL\+\_\+\+PERIOD} = 0x70
+, \newline
+\textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+HI} = 0x71
+, \textbf{ FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+LO} = 0x72
+, \textbf{ CROSSTALK\+\_\+\+COMPENSATION\+\_\+\+PEAK\+\_\+\+RATE\+\_\+\+MCPS} = 0x20
+, \textbf{ MSRC\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP} = 0x46
+, \newline
+\textbf{ SOFT\+\_\+\+RESET\+\_\+\+GO2\+\_\+\+SOFT\+\_\+\+RESET\+\_\+N} = 0x\+BF
+, \textbf{ IDENTIFICATION\+\_\+\+MODEL\+\_\+\+ID} = 0x\+C0
+, \textbf{ IDENTIFICATION\+\_\+\+REVISION\+\_\+\+ID} = 0x\+C2
+, \textbf{ OSC\+\_\+\+CALIBRATE\+\_\+\+VAL} = 0x\+F8
+, \newline
+\textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+VCSEL\+\_\+\+WIDTH} = 0x32
+, \textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+0} = 0x\+B0
+, \textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+1} = 0x\+B1
+, \textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+2} = 0x\+B2
+, \newline
+\textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+3} = 0x\+B3
+, \textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+4} = 0x\+B4
+, \textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+5} = 0x\+B5
+, \textbf{ GLOBAL\+\_\+\+CONFIG\+\_\+\+REF\+\_\+\+EN\+\_\+\+START\+\_\+\+SELECT} = 0x\+B6
+, \newline
+\textbf{ DYNAMIC\+\_\+\+SPAD\+\_\+\+NUM\+\_\+\+REQUESTED\+\_\+\+REF\+\_\+\+SPAD} = 0x4E
+, \textbf{ DYNAMIC\+\_\+\+SPAD\+\_\+\+REF\+\_\+\+EN\+\_\+\+START\+\_\+\+OFFSET} = 0x4F
+, \textbf{ POWER\+\_\+\+MANAGEMENT\+\_\+\+GO1\+\_\+\+POWER\+\_\+\+FORCE} = 0x80
+, \textbf{ VHV\+\_\+\+CONFIG\+\_\+\+PAD\+\_\+\+SCL\+\_\+\+SDA\+\_\+\+\_\+\+EXTSUP\+\_\+\+HV} = 0x89
+, \newline
+\textbf{ ALGO\+\_\+\+PHASECAL\+\_\+\+LIM} = 0x30
+, \textbf{ ALGO\+\_\+\+PHASECAL\+\_\+\+CONFIG\+\_\+\+TIMEOUT} = 0x30
+ \}
+\item 
+enum \textbf{ vcsel\+Period\+Type} \{ \textbf{ Vcsel\+Period\+Pre\+Range}
+, \textbf{ Vcsel\+Period\+Final\+Range}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+read\+Distance} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+\+Init} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+get\+Spad\+Info} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t $\ast$count, bool $\ast$type\+\_\+is\+\_\+aperture)
+\item 
+uint32\+\_\+t \textbf{ VL53\+L0\+X\+\_\+timeout\+Mclks\+To\+Microseconds} (uint16\+\_\+t timeout\+\_\+period\+\_\+mclks, uint8\+\_\+t vcsel\+\_\+period\+\_\+pclks)
+\item 
+uint8\+\_\+t \textbf{ VL53\+L0\+X\+\_\+get\+Vcsel\+Pulse\+Period} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, \textbf{ vcsel\+Period\+Type} type)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+decode\+Timeout} (uint16\+\_\+t reg\+\_\+val)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Timeouts} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, \textbf{ Sequence\+Step\+Enables} const $\ast$enables, \textbf{ Sequence\+Step\+Timeouts} $\ast$timeouts)
+\item 
+uint32\+\_\+t \textbf{ VL53\+L0\+X\+\_\+get\+Measurement\+Timing\+Budget} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Enables} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, \textbf{ Sequence\+Step\+Enables} $\ast$enables)
+\item 
+uint32\+\_\+t \textbf{ VL53\+L0\+X\+\_\+timeout\+Microseconds\+To\+Mclks} (uint32\+\_\+t timeout\+\_\+period\+\_\+us, uint8\+\_\+t vcsel\+\_\+period\+\_\+pclks)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+encode\+Timeout} (uint32\+\_\+t timeout\+\_\+mclks)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+set\+Measurement\+Timing\+Budget} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint32\+\_\+t budget\+\_\+us)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+perform\+Single\+Ref\+Calibration} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t vhv\+\_\+init\+\_\+byte)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+read\+Range\+Continuous\+Millimeters} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+read\+Range\+Single\+Millimeters} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+\+Set\+Interrupt\+Thresholds} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint32\+\_\+t Threshold\+Low, uint32\+\_\+t Threshold\+High)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+setup\+I2\+CRegisters} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!ALPHA\_ADXL@{ALPHA\_ADXL}}
+\index{ALPHA\_ADXL@{ALPHA\_ADXL}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{ALPHA\_ADXL}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a255a3fdcc682edd0185bedde151204d8} 
+\#define ALPHA\+\_\+\+ADXL~0.\+8}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!ALPHA\_VL53L0X@{ALPHA\_VL53L0X}}
+\index{ALPHA\_VL53L0X@{ALPHA\_VL53L0X}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{ALPHA\_VL53L0X}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_ad29233a92f3b23a47f59350098c5e545} 
+\#define ALPHA\+\_\+\+VL53\+L0X~0.\+8}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!calcMacroPeriod@{calcMacroPeriod}}
+\index{calcMacroPeriod@{calcMacroPeriod}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{calcMacroPeriod}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a5f0c17e6d23211686e92570b058587f3} 
+\#define calc\+Macro\+Period(\begin{DoxyParamCaption}\item[{}]{vcsel\+\_\+period\+\_\+pclks}{}\end{DoxyParamCaption})~((((uint32\+\_\+t)2304 $\ast$ (vcsel\+\_\+period\+\_\+pclks) $\ast$ 1655) + 500) / 1000)}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!checkTimeoutExpired@{checkTimeoutExpired}}
+\index{checkTimeoutExpired@{checkTimeoutExpired}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{checkTimeoutExpired}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_abab7c5b1cbb48c1f149d63407116b4a7} 
+\#define check\+Timeout\+Expired(\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})~(\textbf{ io\+\_\+timeout} $>$ 0 \&\& ((uint16\+\_\+t)(\textbf{ millis}() -\/ timeout\+\_\+start\+\_\+ms)) $>$ \textbf{ io\+\_\+timeout})}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!decodeVcselPeriod@{decodeVcselPeriod}}
+\index{decodeVcselPeriod@{decodeVcselPeriod}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{decodeVcselPeriod}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a7dcb8458d7b06d003fc1c4786c492efa} 
+\#define decode\+Vcsel\+Period(\begin{DoxyParamCaption}\item[{}]{reg\+\_\+val}{}\end{DoxyParamCaption})~(((reg\+\_\+val) + 1) $<$$<$ 1)}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!io\_timeout@{io\_timeout}}
+\index{io\_timeout@{io\_timeout}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{io\_timeout}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a5952b8a2574b99e6f7d7e0569a62ece5} 
+\#define io\+\_\+timeout~100}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!millis@{millis}}
+\index{millis@{millis}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{millis}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_ad5b3ec1ce839fa1c4337a7d0312e9749} 
+\#define millis(\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})~(pd\+TICKS\+\_\+\+TO\+\_\+\+MS(x\+Task\+Get\+Tick\+Count()))}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!startTimeout@{startTimeout}}
+\index{startTimeout@{startTimeout}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{startTimeout}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a46385c6ddb246732ce8eab387abfbb1b} 
+\#define start\+Timeout(\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})~(timeout\+\_\+start\+\_\+ms = \textbf{ millis}())}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!Threshold\_dist@{Threshold\_dist}}
+\index{Threshold\_dist@{Threshold\_dist}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{Threshold\_dist}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_ac8b4488eb685a8acd9d9d2fe562de857} 
+\#define Threshold\+\_\+dist~350.\+0}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!dist\_sens\_registers@{dist\_sens\_registers}}
+\index{dist\_sens\_registers@{dist\_sens\_registers}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{dist\_sens\_registers}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a7e893cb0e6a08860276de756a8016d48} 
+typedef enum \textbf{ dist\+\_\+sens\+\_\+registers} \textbf{ dist\+\_\+sens\+\_\+registers}}
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SequenceStepEnables@{SequenceStepEnables}}
+\index{SequenceStepEnables@{SequenceStepEnables}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{SequenceStepEnables}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a763449420c975c8aada4aa19509d4276} 
+typedef struct Sequence\+Step\+Enables Sequence\+Step\+Enables}
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SequenceStepTimeouts@{SequenceStepTimeouts}}
+\index{SequenceStepTimeouts@{SequenceStepTimeouts}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{SequenceStepTimeouts}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a6d6d97fc1b2949f09ce47ffebe3ba3b1} 
+typedef struct Sequence\+Step\+Timeouts Sequence\+Step\+Timeouts}
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!vcselPeriodType@{vcselPeriodType}}
+\index{vcselPeriodType@{vcselPeriodType}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{vcselPeriodType}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a00103152b9fb0627f9a319818d82f1f1} 
+typedef enum \textbf{ vcsel\+Period\+Type} \textbf{ vcsel\+Period\+Type}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!dist\_sens\_registers@{dist\_sens\_registers}}
+\index{dist\_sens\_registers@{dist\_sens\_registers}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{dist\_sens\_registers}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+enum \textbf{ dist\+\_\+sens\+\_\+registers}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSRANGE\_START@{SYSRANGE\_START}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSRANGE\_START@{SYSRANGE\_START}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSRANGE\+\_\+\+START&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_THRESH\_HIGH@{SYSTEM\_THRESH\_HIGH}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_THRESH\_HIGH@{SYSTEM\_THRESH\_HIGH}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+THRESH\+\_\+\+HIGH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_THRESH\_LOW@{SYSTEM\_THRESH\_LOW}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_THRESH\_LOW@{SYSTEM\_THRESH\_LOW}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+THRESH\+\_\+\+LOW&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_SEQUENCE\_CONFIG@{SYSTEM\_SEQUENCE\_CONFIG}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_SEQUENCE\_CONFIG@{SYSTEM\_SEQUENCE\_CONFIG}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+SEQUENCE\+\_\+\+CONFIG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_RANGE\_CONFIG@{SYSTEM\_RANGE\_CONFIG}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_RANGE\_CONFIG@{SYSTEM\_RANGE\_CONFIG}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+RANGE\+\_\+\+CONFIG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_INTERMEASUREMENT\_PERIOD@{SYSTEM\_INTERMEASUREMENT\_PERIOD}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_INTERMEASUREMENT\_PERIOD@{SYSTEM\_INTERMEASUREMENT\_PERIOD}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+INTERMEASUREMENT\+\_\+\+PERIOD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_INTERRUPT\_CONFIG\_GPIO@{SYSTEM\_INTERRUPT\_CONFIG\_GPIO}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_INTERRUPT\_CONFIG\_GPIO@{SYSTEM\_INTERRUPT\_CONFIG\_GPIO}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+INTERRUPT\+\_\+\+CONFIG\+\_\+\+GPIO&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GPIO\_HV\_MUX\_ACTIVE\_HIGH@{GPIO\_HV\_MUX\_ACTIVE\_HIGH}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GPIO\_HV\_MUX\_ACTIVE\_HIGH@{GPIO\_HV\_MUX\_ACTIVE\_HIGH}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GPIO\+\_\+\+HV\+\_\+\+MUX\+\_\+\+ACTIVE\+\_\+\+HIGH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_INTERRUPT\_CLEAR@{SYSTEM\_INTERRUPT\_CLEAR}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_INTERRUPT\_CLEAR@{SYSTEM\_INTERRUPT\_CLEAR}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+INTERRUPT\+\_\+\+CLEAR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_INTERRUPT\_STATUS@{RESULT\_INTERRUPT\_STATUS}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_INTERRUPT\_STATUS@{RESULT\_INTERRUPT\_STATUS}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+INTERRUPT\+\_\+\+STATUS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_RANGE\_STATUS@{RESULT\_RANGE\_STATUS}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_RANGE\_STATUS@{RESULT\_RANGE\_STATUS}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+RANGE\+\_\+\+STATUS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_RTN@{RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_RTN}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_RTN@{RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_RTN}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+CORE\+\_\+\+AMBIENT\+\_\+\+WINDOW\+\_\+\+EVENTS\+\_\+\+RTN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_RTN@{RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_RTN}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_RTN@{RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_RTN}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+CORE\+\_\+\+RANGING\+\_\+\+TOTAL\+\_\+\+EVENTS\+\_\+\+RTN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_REF@{RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_REF}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_REF@{RESULT\_CORE\_AMBIENT\_WINDOW\_EVENTS\_REF}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+CORE\+\_\+\+AMBIENT\+\_\+\+WINDOW\+\_\+\+EVENTS\+\_\+\+REF&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_REF@{RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_REF}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_REF@{RESULT\_CORE\_RANGING\_TOTAL\_EVENTS\_REF}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+CORE\+\_\+\+RANGING\+\_\+\+TOTAL\+\_\+\+EVENTS\+\_\+\+REF&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RESULT\_PEAK\_SIGNAL\_RATE\_REF@{RESULT\_PEAK\_SIGNAL\_RATE\_REF}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!RESULT\_PEAK\_SIGNAL\_RATE\_REF@{RESULT\_PEAK\_SIGNAL\_RATE\_REF}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+RESULT\+\_\+\+PEAK\+\_\+\+SIGNAL\+\_\+\+RATE\+\_\+\+REF&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ALGO\_PART\_TO\_PART\_RANGE\_OFFSET\_MM@{ALGO\_PART\_TO\_PART\_RANGE\_OFFSET\_MM}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!ALGO\_PART\_TO\_PART\_RANGE\_OFFSET\_MM@{ALGO\_PART\_TO\_PART\_RANGE\_OFFSET\_MM}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+ALGO\+\_\+\+PART\+\_\+\+TO\+\_\+\+PART\+\_\+\+RANGE\+\_\+\+OFFSET\+\_\+\+MM&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_SLAVE\_DEVICE\_ADDRESS@{I2C\_SLAVE\_DEVICE\_ADDRESS}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!I2C\_SLAVE\_DEVICE\_ADDRESS@{I2C\_SLAVE\_DEVICE\_ADDRESS}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+I2\+C\+\_\+\+SLAVE\+\_\+\+DEVICE\+\_\+\+ADDRESS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSRC\_CONFIG\_CONTROL@{MSRC\_CONFIG\_CONTROL}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!MSRC\_CONFIG\_CONTROL@{MSRC\_CONFIG\_CONTROL}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+MSRC\+\_\+\+CONFIG\+\_\+\+CONTROL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_MIN\_SNR@{PRE\_RANGE\_CONFIG\_MIN\_SNR}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_MIN\_SNR@{PRE\_RANGE\_CONFIG\_MIN\_SNR}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+MIN\+\_\+\+SNR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_VALID\_PHASE\_LOW@{PRE\_RANGE\_CONFIG\_VALID\_PHASE\_LOW}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_VALID\_PHASE\_LOW@{PRE\_RANGE\_CONFIG\_VALID\_PHASE\_LOW}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+LOW&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH@{PRE\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH@{PRE\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+HIGH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_MIN\_COUNT\_RATE\_RTN\_LIMIT@{PRE\_RANGE\_MIN\_COUNT\_RATE\_RTN\_LIMIT}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_MIN\_COUNT\_RATE\_RTN\_LIMIT@{PRE\_RANGE\_MIN\_COUNT\_RATE\_RTN\_LIMIT}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+MIN\+\_\+\+COUNT\+\_\+\+RATE\+\_\+\+RTN\+\_\+\+LIMIT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_MIN\_SNR@{FINAL\_RANGE\_CONFIG\_MIN\_SNR}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_MIN\_SNR@{FINAL\_RANGE\_CONFIG\_MIN\_SNR}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+MIN\+\_\+\+SNR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_LOW@{FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_LOW}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_LOW@{FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_LOW}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+LOW&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH@{FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH@{FINAL\_RANGE\_CONFIG\_VALID\_PHASE\_HIGH}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VALID\+\_\+\+PHASE\+\_\+\+HIGH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_MIN\_COUNT\_RATE\_RTN\_LIMIT@{FINAL\_RANGE\_CONFIG\_MIN\_COUNT\_RATE\_RTN\_LIMIT}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_MIN\_COUNT\_RATE\_RTN\_LIMIT@{FINAL\_RANGE\_CONFIG\_MIN\_COUNT\_RATE\_RTN\_LIMIT}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+MIN\+\_\+\+COUNT\+\_\+\+RATE\+\_\+\+RTN\+\_\+\+LIMIT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_HI@{PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_HI}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_HI@{PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_HI}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+SIGMA\+\_\+\+THRESH\+\_\+\+HI&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_LO@{PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_LO}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_LO@{PRE\_RANGE\_CONFIG\_SIGMA\_THRESH\_LO}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+SIGMA\+\_\+\+THRESH\+\_\+\+LO&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_VCSEL\_PERIOD@{PRE\_RANGE\_CONFIG\_VCSEL\_PERIOD}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_VCSEL\_PERIOD@{PRE\_RANGE\_CONFIG\_VCSEL\_PERIOD}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VCSEL\+\_\+\+PERIOD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI@{PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI@{PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+HI&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO@{PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO@{PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+PRE\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+LO&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SYSTEM\_HISTOGRAM\_BIN@{SYSTEM\_HISTOGRAM\_BIN}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SYSTEM\_HISTOGRAM\_BIN@{SYSTEM\_HISTOGRAM\_BIN}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SYSTEM\+\_\+\+HISTOGRAM\+\_\+\+BIN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HISTOGRAM\_CONFIG\_INITIAL\_PHASE\_SELECT@{HISTOGRAM\_CONFIG\_INITIAL\_PHASE\_SELECT}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!HISTOGRAM\_CONFIG\_INITIAL\_PHASE\_SELECT@{HISTOGRAM\_CONFIG\_INITIAL\_PHASE\_SELECT}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+HISTOGRAM\+\_\+\+CONFIG\+\_\+\+INITIAL\+\_\+\+PHASE\+\_\+\+SELECT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HISTOGRAM\_CONFIG\_READOUT\_CTRL@{HISTOGRAM\_CONFIG\_READOUT\_CTRL}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!HISTOGRAM\_CONFIG\_READOUT\_CTRL@{HISTOGRAM\_CONFIG\_READOUT\_CTRL}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+HISTOGRAM\+\_\+\+CONFIG\+\_\+\+READOUT\+\_\+\+CTRL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_VCSEL\_PERIOD@{FINAL\_RANGE\_CONFIG\_VCSEL\_PERIOD}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_VCSEL\_PERIOD@{FINAL\_RANGE\_CONFIG\_VCSEL\_PERIOD}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+VCSEL\+\_\+\+PERIOD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI@{FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI@{FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+HI&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO@{FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO@{FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_LO}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+FINAL\+\_\+\+RANGE\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP\+\_\+\+LO&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CROSSTALK\_COMPENSATION\_PEAK\_RATE\_MCPS@{CROSSTALK\_COMPENSATION\_PEAK\_RATE\_MCPS}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!CROSSTALK\_COMPENSATION\_PEAK\_RATE\_MCPS@{CROSSTALK\_COMPENSATION\_PEAK\_RATE\_MCPS}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+CROSSTALK\+\_\+\+COMPENSATION\+\_\+\+PEAK\+\_\+\+RATE\+\_\+\+MCPS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MSRC\_CONFIG\_TIMEOUT\_MACROP@{MSRC\_CONFIG\_TIMEOUT\_MACROP}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!MSRC\_CONFIG\_TIMEOUT\_MACROP@{MSRC\_CONFIG\_TIMEOUT\_MACROP}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+MSRC\+\_\+\+CONFIG\+\_\+\+TIMEOUT\+\_\+\+MACROP&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SOFT\_RESET\_GO2\_SOFT\_RESET\_N@{SOFT\_RESET\_GO2\_SOFT\_RESET\_N}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!SOFT\_RESET\_GO2\_SOFT\_RESET\_N@{SOFT\_RESET\_GO2\_SOFT\_RESET\_N}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+SOFT\+\_\+\+RESET\+\_\+\+GO2\+\_\+\+SOFT\+\_\+\+RESET\+\_\+N&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IDENTIFICATION\_MODEL\_ID@{IDENTIFICATION\_MODEL\_ID}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!IDENTIFICATION\_MODEL\_ID@{IDENTIFICATION\_MODEL\_ID}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+IDENTIFICATION\+\_\+\+MODEL\+\_\+\+ID&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{IDENTIFICATION\_REVISION\_ID@{IDENTIFICATION\_REVISION\_ID}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!IDENTIFICATION\_REVISION\_ID@{IDENTIFICATION\_REVISION\_ID}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+IDENTIFICATION\+\_\+\+REVISION\+\_\+\+ID&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OSC\_CALIBRATE\_VAL@{OSC\_CALIBRATE\_VAL}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!OSC\_CALIBRATE\_VAL@{OSC\_CALIBRATE\_VAL}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+OSC\+\_\+\+CALIBRATE\+\_\+\+VAL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_VCSEL\_WIDTH@{GLOBAL\_CONFIG\_VCSEL\_WIDTH}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_VCSEL\_WIDTH@{GLOBAL\_CONFIG\_VCSEL\_WIDTH}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+VCSEL\+\_\+\+WIDTH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_0@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_0}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_0@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_0}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+0&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_1@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_1}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_1@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_1}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_2@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_2}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_2@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_2}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_3@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_3}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_3@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_3}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+3&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_4@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_4}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_4@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_4}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+4&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_5@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_5}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_5@{GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_5}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+SPAD\+\_\+\+ENABLES\+\_\+\+REF\+\_\+5&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GLOBAL\_CONFIG\_REF\_EN\_START\_SELECT@{GLOBAL\_CONFIG\_REF\_EN\_START\_SELECT}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!GLOBAL\_CONFIG\_REF\_EN\_START\_SELECT@{GLOBAL\_CONFIG\_REF\_EN\_START\_SELECT}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+GLOBAL\+\_\+\+CONFIG\+\_\+\+REF\+\_\+\+EN\+\_\+\+START\+\_\+\+SELECT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DYNAMIC\_SPAD\_NUM\_REQUESTED\_REF\_SPAD@{DYNAMIC\_SPAD\_NUM\_REQUESTED\_REF\_SPAD}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!DYNAMIC\_SPAD\_NUM\_REQUESTED\_REF\_SPAD@{DYNAMIC\_SPAD\_NUM\_REQUESTED\_REF\_SPAD}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+DYNAMIC\+\_\+\+SPAD\+\_\+\+NUM\+\_\+\+REQUESTED\+\_\+\+REF\+\_\+\+SPAD&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DYNAMIC\_SPAD\_REF\_EN\_START\_OFFSET@{DYNAMIC\_SPAD\_REF\_EN\_START\_OFFSET}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!DYNAMIC\_SPAD\_REF\_EN\_START\_OFFSET@{DYNAMIC\_SPAD\_REF\_EN\_START\_OFFSET}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+DYNAMIC\+\_\+\+SPAD\+\_\+\+REF\+\_\+\+EN\+\_\+\+START\+\_\+\+OFFSET&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{POWER\_MANAGEMENT\_GO1\_POWER\_FORCE@{POWER\_MANAGEMENT\_GO1\_POWER\_FORCE}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!POWER\_MANAGEMENT\_GO1\_POWER\_FORCE@{POWER\_MANAGEMENT\_GO1\_POWER\_FORCE}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+POWER\+\_\+\+MANAGEMENT\+\_\+\+GO1\+\_\+\+POWER\+\_\+\+FORCE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VHV\_CONFIG\_PAD\_SCL\_SDA\_\_EXTSUP\_HV@{VHV\_CONFIG\_PAD\_SCL\_SDA\_\_EXTSUP\_HV}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VHV\_CONFIG\_PAD\_SCL\_SDA\_\_EXTSUP\_HV@{VHV\_CONFIG\_PAD\_SCL\_SDA\_\_EXTSUP\_HV}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+VHV\+\_\+\+CONFIG\+\_\+\+PAD\+\_\+\+SCL\+\_\+\+SDA\+\_\+\+\_\+\+EXTSUP\+\_\+\+HV&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ALGO\_PHASECAL\_LIM@{ALGO\_PHASECAL\_LIM}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!ALGO\_PHASECAL\_LIM@{ALGO\_PHASECAL\_LIM}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+ALGO\+\_\+\+PHASECAL\+\_\+\+LIM&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ALGO\_PHASECAL\_CONFIG\_TIMEOUT@{ALGO\_PHASECAL\_CONFIG\_TIMEOUT}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!ALGO\_PHASECAL\_CONFIG\_TIMEOUT@{ALGO\_PHASECAL\_CONFIG\_TIMEOUT}}}\label{_i2_c__distance_sensor_8h_ab68be3b9b657a41381e5c06de09f80bb} 
+ALGO\+\_\+\+PHASECAL\+\_\+\+CONFIG\+\_\+\+TIMEOUT&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 31} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!vcselPeriodType@{vcselPeriodType}}
+\index{vcselPeriodType@{vcselPeriodType}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{vcselPeriodType}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a55c77cf8138cbaa748bf4559ca97896c} 
+enum \textbf{ vcsel\+Period\+Type}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VcselPeriodPreRange@{VcselPeriodPreRange}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VcselPeriodPreRange@{VcselPeriodPreRange}}}\label{_i2_c__distance_sensor_8h_a55c77cf8138cbaa748bf4559ca97896c} 
+Vcsel\+Period\+Pre\+Range&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VcselPeriodFinalRange@{VcselPeriodFinalRange}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VcselPeriodFinalRange@{VcselPeriodFinalRange}}}\label{_i2_c__distance_sensor_8h_a55c77cf8138cbaa748bf4559ca97896c} 
+Vcsel\+Period\+Final\+Range&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 110} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_decodeTimeout@{VL53L0X\_decodeTimeout}}
+\index{VL53L0X\_decodeTimeout@{VL53L0X\_decodeTimeout}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_decodeTimeout()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a742eb3eac2ef903017b22ff1ff230435} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+decode\+Timeout (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{reg\+\_\+val}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 349} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_encodeTimeout@{VL53L0X\_encodeTimeout}}
+\index{VL53L0X\_encodeTimeout@{VL53L0X\_encodeTimeout}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_encodeTimeout()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a1af131196086cfcf0778d02947cba96d} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+encode\+Timeout (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+mclks}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 362} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_getMeasurementTimingBudget@{VL53L0X\_getMeasurementTimingBudget}}
+\index{VL53L0X\_getMeasurementTimingBudget@{VL53L0X\_getMeasurementTimingBudget}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_getMeasurementTimingBudget()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a9c8f3cbd359979ecde38fec6987ed195} 
+uint32\+\_\+t VL53\+L0\+X\+\_\+get\+Measurement\+Timing\+Budget (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 167} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_getSequenceStepEnables@{VL53L0X\_getSequenceStepEnables}}
+\index{VL53L0X\_getSequenceStepEnables@{VL53L0X\_getSequenceStepEnables}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_getSequenceStepEnables()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a8ee705f0be16b20143f497e07752abdc} 
+void VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Enables (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{\textbf{ Sequence\+Step\+Enables} $\ast$}]{enables}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 294} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_getSequenceStepTimeouts@{VL53L0X\_getSequenceStepTimeouts}}
+\index{VL53L0X\_getSequenceStepTimeouts@{VL53L0X\_getSequenceStepTimeouts}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_getSequenceStepTimeouts()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_ab989058cad88daf6ba4bc5ce002dc627} 
+void VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Timeouts (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{\textbf{ Sequence\+Step\+Enables} const $\ast$}]{enables}{, }\item[{\textbf{ Sequence\+Step\+Timeouts} $\ast$}]{timeouts}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 305} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_getSpadInfo@{VL53L0X\_getSpadInfo}}
+\index{VL53L0X\_getSpadInfo@{VL53L0X\_getSpadInfo}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_getSpadInfo()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a26fa9307118b65bff1bd9e4d1ede7564} 
+bool VL53\+L0\+X\+\_\+get\+Spad\+Info (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t $\ast$}]{count}{, }\item[{bool $\ast$}]{type\+\_\+is\+\_\+aperture}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_getVcselPulsePeriod@{VL53L0X\_getVcselPulsePeriod}}
+\index{VL53L0X\_getVcselPulsePeriod@{VL53L0X\_getVcselPulsePeriod}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_getVcselPulsePeriod()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a6a4808d414aea04141e02db7207aa06b} 
+uint8\+\_\+t VL53\+L0\+X\+\_\+get\+Vcsel\+Pulse\+Period (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{\textbf{ vcsel\+Period\+Type}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 329} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_Init@{VL53L0X\_Init}}
+\index{VL53L0X\_Init@{VL53L0X\_Init}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_Init()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_acca8dcfdeb3dc0146dbc884e9daae43b} 
+bool VL53\+L0\+X\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 67} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_performSingleRefCalibration@{VL53L0X\_performSingleRefCalibration}}
+\index{VL53L0X\_performSingleRefCalibration@{VL53L0X\_performSingleRefCalibration}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_performSingleRefCalibration()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a5d0bba70599f6a7974f1b373151b97b2} 
+bool VL53\+L0\+X\+\_\+perform\+Single\+Ref\+Calibration (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{vhv\+\_\+init\+\_\+byte}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 384} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_readDistance@{VL53L0X\_readDistance}}
+\index{VL53L0X\_readDistance@{VL53L0X\_readDistance}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_readDistance()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a872de34ae2b2aefa1fd40378b7fadf43} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+read\+Distance (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_readRangeContinuousMillimeters@{VL53L0X\_readRangeContinuousMillimeters}}
+\index{VL53L0X\_readRangeContinuousMillimeters@{VL53L0X\_readRangeContinuousMillimeters}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_readRangeContinuousMillimeters()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a852c08c9a46bddf494f7ea798ff66b49} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+read\+Range\+Continuous\+Millimeters (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 430} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_readRangeSingleMillimeters@{VL53L0X\_readRangeSingleMillimeters}}
+\index{VL53L0X\_readRangeSingleMillimeters@{VL53L0X\_readRangeSingleMillimeters}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_readRangeSingleMillimeters()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a22e63225273a04aa44bf1035a3cfd42f} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+read\+Range\+Single\+Millimeters (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 404} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_SetInterruptThresholds@{VL53L0X\_SetInterruptThresholds}}
+\index{VL53L0X\_SetInterruptThresholds@{VL53L0X\_SetInterruptThresholds}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_SetInterruptThresholds()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a67d1697b468e1fabc1d23dad50737fa3} 
+void VL53\+L0\+X\+\_\+\+Set\+Interrupt\+Thresholds (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint32\+\_\+t}]{Threshold\+Low}{, }\item[{uint32\+\_\+t}]{Threshold\+High}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 470} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_setMeasurementTimingBudget@{VL53L0X\_setMeasurementTimingBudget}}
+\index{VL53L0X\_setMeasurementTimingBudget@{VL53L0X\_setMeasurementTimingBudget}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_setMeasurementTimingBudget()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_aee9fa60f3c5658bf0d738e89c43d21ab} 
+bool VL53\+L0\+X\+\_\+set\+Measurement\+Timing\+Budget (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint32\+\_\+t}]{budget\+\_\+us}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 214} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_setupI2CRegisters@{VL53L0X\_setupI2CRegisters}}
+\index{VL53L0X\_setupI2CRegisters@{VL53L0X\_setupI2CRegisters}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_setupI2CRegisters()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a4c311642f1da537825a5d16843cbdbd8} 
+void VL53\+L0\+X\+\_\+setup\+I2\+CRegisters (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 489} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_timeoutMclksToMicroseconds@{VL53L0X\_timeoutMclksToMicroseconds}}
+\index{VL53L0X\_timeoutMclksToMicroseconds@{VL53L0X\_timeoutMclksToMicroseconds}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_timeoutMclksToMicroseconds()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a56c3bec1b14ca5942e26cf92bcba025d} 
+uint32\+\_\+t VL53\+L0\+X\+\_\+timeout\+Mclks\+To\+Microseconds (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{timeout\+\_\+period\+\_\+mclks}{, }\item[{uint8\+\_\+t}]{vcsel\+\_\+period\+\_\+pclks}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 342} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.h@{I2C\_distanceSensor.h}!VL53L0X\_timeoutMicrosecondsToMclks@{VL53L0X\_timeoutMicrosecondsToMclks}}
+\index{VL53L0X\_timeoutMicrosecondsToMclks@{VL53L0X\_timeoutMicrosecondsToMclks}!I2C\_distanceSensor.h@{I2C\_distanceSensor.h}}
+\doxysubsubsection{VL53L0X\_timeoutMicrosecondsToMclks()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8h_a6c11730133b4d029b5c6b9fcf5e43841} 
+uint32\+\_\+t VL53\+L0\+X\+\_\+timeout\+Microseconds\+To\+Mclks (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+period\+\_\+us}{, }\item[{uint8\+\_\+t}]{vcsel\+\_\+period\+\_\+pclks}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 356} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+

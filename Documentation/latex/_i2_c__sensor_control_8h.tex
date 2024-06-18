@@ -1,0 +1,198 @@
+\doxysection{include/\+I2\+C/\+I2\+C\+\_\+sensor\+Control.h File Reference}
+\label{_i2_c__sensor_control_8h}\index{include/I2C/I2C\_sensorControl.h@{include/I2C/I2C\_sensorControl.h}}
+{\ttfamily \#include "{}drivers/\+I2\+C\+\_\+accelerometer\+Sensor.\+h"{}}\newline
+{\ttfamily \#include "{}drivers/\+I2\+C\+\_\+camera\+Sensor.\+h"{}}\newline
+{\ttfamily \#include "{}drivers/\+I2\+C\+\_\+distance\+Sensor.\+h"{}}\newline
+{\ttfamily \#include "{}drivers/\+I2\+C\+\_\+temperature\+Sensor.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+sensor\+Control.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ sensor\+\_\+t}
+\item 
+struct \textbf{ I2\+C\+\_\+\+COMMAND}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ I2\+C\+\_\+\+WRR\+\_\+tokens} \textbf{ I2\+C\+\_\+\+WRR\+\_\+tokens}
+\item 
+typedef struct I2\+C\+\_\+\+COMMAND \textbf{ I2\+C\+\_\+\+COMMAND}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ I2\+C\+\_\+\+WRR\+\_\+tokens} \{ \newline
+\textbf{ pixy2} = 0
+, \textbf{ distance\+\_\+sens1} = 0
+, \textbf{ distance\+\_\+sens2} = 0
+, \textbf{ adxl\+\_\+acc} = 0
+, \newline
+\textbf{ temp\+\_\+sens} = 1
+ \}
+\item 
+enum \textbf{ sensor\+\_\+state\+\_\+t} \{ \textbf{ SENSOR\+\_\+\+IDLE}
+, \textbf{ SENSOR\+\_\+\+READING}
+, \textbf{ SENSOR\+\_\+\+READY}
+ \}
+\item 
+enum \textbf{ I2\+C\+\_\+\+COMMAND\+\_\+\+TYPE} \{ \newline
+\textbf{ I2\+C\+\_\+\+NO\+\_\+\+STATE}
+, \textbf{ I2\+C\+\_\+\+STOP\+\_\+\+MOTOR}
+, \textbf{ I2\+C\+\_\+\+START\+\_\+\+MOTOR}
+, \textbf{ I2\+C\+\_\+\+NEW\+\_\+\+STEER}
+, \newline
+\textbf{ I2\+C\+\_\+\+MOTOR\+\_\+\+OFFSET\+\_\+\+ACCELEROMETER}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ start\+\_\+\+I2\+C\+\_\+devices\+\_\+task} ()
+\item 
+bool \textbf{ I2\+C\+\_\+add\+And\+Initialise\+Sensors} ()
+\item 
+void \textbf{ I2\+C\+\_\+devices\+\_\+task} (void $\ast$pv\+Parameters)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_COMMAND@{I2C\_COMMAND}}
+\index{I2C\_COMMAND@{I2C\_COMMAND}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{I2C\_COMMAND}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_aef8e3d32225106983adfde4222628a28} 
+typedef struct I2\+C\+\_\+\+COMMAND I2\+C\+\_\+\+COMMAND}
+
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_WRR\_tokens@{I2C\_WRR\_tokens}}
+\index{I2C\_WRR\_tokens@{I2C\_WRR\_tokens}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{I2C\_WRR\_tokens}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_ad2c3480f550dc0d7ed486015a4cc4307} 
+typedef enum \textbf{ I2\+C\+\_\+\+WRR\+\_\+tokens} \textbf{ I2\+C\+\_\+\+WRR\+\_\+tokens}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_COMMAND\_TYPE@{I2C\_COMMAND\_TYPE}}
+\index{I2C\_COMMAND\_TYPE@{I2C\_COMMAND\_TYPE}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{I2C\_COMMAND\_TYPE}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_aab3c5ccae58c975d0afd2e876992ba53} 
+enum \textbf{ I2\+C\+\_\+\+COMMAND\+\_\+\+TYPE}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_NO\_STATE@{I2C\_NO\_STATE}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_NO\_STATE@{I2C\_NO\_STATE}}}\label{_i2_c__sensor_control_8h_aab3c5ccae58c975d0afd2e876992ba53} 
+I2\+C\+\_\+\+NO\+\_\+\+STATE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_STOP\_MOTOR@{I2C\_STOP\_MOTOR}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_STOP\_MOTOR@{I2C\_STOP\_MOTOR}}}\label{_i2_c__sensor_control_8h_aab3c5ccae58c975d0afd2e876992ba53} 
+I2\+C\+\_\+\+STOP\+\_\+\+MOTOR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_START\_MOTOR@{I2C\_START\_MOTOR}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_START\_MOTOR@{I2C\_START\_MOTOR}}}\label{_i2_c__sensor_control_8h_aab3c5ccae58c975d0afd2e876992ba53} 
+I2\+C\+\_\+\+START\+\_\+\+MOTOR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_NEW\_STEER@{I2C\_NEW\_STEER}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_NEW\_STEER@{I2C\_NEW\_STEER}}}\label{_i2_c__sensor_control_8h_aab3c5ccae58c975d0afd2e876992ba53} 
+I2\+C\+\_\+\+NEW\+\_\+\+STEER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MOTOR\_OFFSET\_ACCELEROMETER@{I2C\_MOTOR\_OFFSET\_ACCELEROMETER}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_MOTOR\_OFFSET\_ACCELEROMETER@{I2C\_MOTOR\_OFFSET\_ACCELEROMETER}}}\label{_i2_c__sensor_control_8h_aab3c5ccae58c975d0afd2e876992ba53} 
+I2\+C\+\_\+\+MOTOR\+\_\+\+OFFSET\+\_\+\+ACCELEROMETER&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 31} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+h}.
+
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_WRR\_tokens@{I2C\_WRR\_tokens}}
+\index{I2C\_WRR\_tokens@{I2C\_WRR\_tokens}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{I2C\_WRR\_tokens}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_ad4fa48dd63f483f21c3767c3665bbe9e} 
+enum \textbf{ I2\+C\+\_\+\+WRR\+\_\+tokens}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{pixy2@{pixy2}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!pixy2@{pixy2}}}\label{_i2_c__sensor_control_8h_ad4fa48dd63f483f21c3767c3665bbe9e} 
+pixy2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{distance\_sens1@{distance\_sens1}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!distance\_sens1@{distance\_sens1}}}\label{_i2_c__sensor_control_8h_ad4fa48dd63f483f21c3767c3665bbe9e} 
+distance\+\_\+sens1&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{distance\_sens2@{distance\_sens2}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!distance\_sens2@{distance\_sens2}}}\label{_i2_c__sensor_control_8h_ad4fa48dd63f483f21c3767c3665bbe9e} 
+distance\+\_\+sens2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{adxl\_acc@{adxl\_acc}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!adxl\_acc@{adxl\_acc}}}\label{_i2_c__sensor_control_8h_ad4fa48dd63f483f21c3767c3665bbe9e} 
+adxl\+\_\+acc&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{temp\_sens@{temp\_sens}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!temp\_sens@{temp\_sens}}}\label{_i2_c__sensor_control_8h_ad4fa48dd63f483f21c3767c3665bbe9e} 
+temp\+\_\+sens&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 16} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+h}.
+
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!sensor\_state\_t@{sensor\_state\_t}}
+\index{sensor\_state\_t@{sensor\_state\_t}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{sensor\_state\_t}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_a085fb31f39314038a5dc035bb740c718} 
+enum \textbf{ sensor\+\_\+state\+\_\+t}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SENSOR\_IDLE@{SENSOR\_IDLE}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!SENSOR\_IDLE@{SENSOR\_IDLE}}}\label{_i2_c__sensor_control_8h_a085fb31f39314038a5dc035bb740c718} 
+SENSOR\+\_\+\+IDLE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SENSOR\_READING@{SENSOR\_READING}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!SENSOR\_READING@{SENSOR\_READING}}}\label{_i2_c__sensor_control_8h_a085fb31f39314038a5dc035bb740c718} 
+SENSOR\+\_\+\+READING&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SENSOR\_READY@{SENSOR\_READY}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!SENSOR\_READY@{SENSOR\_READY}}}\label{_i2_c__sensor_control_8h_a085fb31f39314038a5dc035bb740c718} 
+SENSOR\+\_\+\+READY&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 25} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_addAndInitialiseSensors@{I2C\_addAndInitialiseSensors}}
+\index{I2C\_addAndInitialiseSensors@{I2C\_addAndInitialiseSensors}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{I2C\_addAndInitialiseSensors()}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_a634afb850adbac31a4c7bd552156d2e0} 
+bool I2\+C\+\_\+add\+And\+Initialise\+Sensors (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 230} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!I2C\_devices\_task@{I2C\_devices\_task}}
+\index{I2C\_devices\_task@{I2C\_devices\_task}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{I2C\_devices\_task()}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_a223d018b44dccfa36c89dcbcc975bef1} 
+void I2\+C\+\_\+devices\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.h@{I2C\_sensorControl.h}!start\_I2C\_devices\_task@{start\_I2C\_devices\_task}}
+\index{start\_I2C\_devices\_task@{start\_I2C\_devices\_task}!I2C\_sensorControl.h@{I2C\_sensorControl.h}}
+\doxysubsubsection{start\_I2C\_devices\_task()}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8h_af25a3b4136659e2a41e7012d181ca9ad} 
+void start\+\_\+\+I2\+C\+\_\+devices\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 260} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+

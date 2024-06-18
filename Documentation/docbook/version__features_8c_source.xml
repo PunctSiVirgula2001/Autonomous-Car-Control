@@ -1,0 +1,843 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_version__features_8c_source" xml:lang="en-US">
+<title>version_features.c</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls/library/version_features.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="_version__features_8c_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;&#32;Version&#32;feature&#32;information</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Copyright&#32;The&#32;Mbed&#32;TLS&#32;Contributors</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;SPDX-License-Identifier:&#32;Apache-2.0</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00006"/>00006 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00007"/>00007 <emphasis role="comment">&#32;*&#32;&#32;Licensed&#32;under&#32;the&#32;Apache&#32;License,&#32;Version&#32;2.0&#32;(the&#32;&quot;License&quot;);&#32;you&#32;may</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00008"/>00008 <emphasis role="comment">&#32;*&#32;&#32;not&#32;use&#32;this&#32;file&#32;except&#32;in&#32;compliance&#32;with&#32;the&#32;License.</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00009"/>00009 <emphasis role="comment">&#32;*&#32;&#32;You&#32;may&#32;obtain&#32;a&#32;copy&#32;of&#32;the&#32;License&#32;at</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00010"/>00010 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00011"/>00011 <emphasis role="comment">&#32;*&#32;&#32;http://www.apache.org/licenses/LICENSE-2.0</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00012"/>00012 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00013"/>00013 <emphasis role="comment">&#32;*&#32;&#32;Unless&#32;required&#32;by&#32;applicable&#32;law&#32;or&#32;agreed&#32;to&#32;in&#32;writing,&#32;software</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00014"/>00014 <emphasis role="comment">&#32;*&#32;&#32;distributed&#32;under&#32;the&#32;License&#32;is&#32;distributed&#32;on&#32;an&#32;&quot;AS&#32;IS&quot;&#32;BASIS,&#32;WITHOUT</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00015"/>00015 <emphasis role="comment">&#32;*&#32;&#32;WARRANTIES&#32;OR&#32;CONDITIONS&#32;OF&#32;ANY&#32;KIND,&#32;either&#32;express&#32;or&#32;implied.</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00016"/>00016 <emphasis role="comment">&#32;*&#32;&#32;See&#32;the&#32;License&#32;for&#32;the&#32;specific&#32;language&#32;governing&#32;permissions&#32;and</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00017"/>00017 <emphasis role="comment">&#32;*&#32;&#32;limitations&#32;under&#32;the&#32;License.</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00018"/>00018 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00019"/>00019 
+<anchor xml:id="_version__features_8c_source_1l00020"/>00020 <emphasis role="preprocessor">#include&#32;&quot;common.h&quot;</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00021"/>00021 
+<anchor xml:id="_version__features_8c_source_1l00022"/>00022 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_VERSION_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00023"/>00023 
+<anchor xml:id="_version__features_8c_source_1l00024"/>00024 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/version.h&quot;</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00025"/>00025 
+<anchor xml:id="_version__features_8c_source_1l00026"/>00026 <emphasis role="preprocessor">#include&#32;&lt;string.h&gt;</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00027"/>00027 
+<anchor xml:id="_version__features_8c_source_1l00028"/>00028 <emphasis role="keyword">static</emphasis>&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*&#32;<emphasis role="keyword">const</emphasis>&#32;features[]&#32;=&#32;{
+<anchor xml:id="_version__features_8c_source_1l00029"/>00029 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_VERSION_FEATURES)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00030"/>00030 <emphasis role="preprocessor">&#32;&#32;&#32;&#32;#if&#32;defined(MBEDTLS_HAVE_ASM)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00031"/>00031 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;HAVE_ASM&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00032"/>00032 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HAVE_ASM&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00033"/>00033 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NO_UDBL_DIVISION)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00034"/>00034 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NO_UDBL_DIVISION&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00035"/>00035 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NO_UDBL_DIVISION&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00036"/>00036 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NO_64BIT_MULTIPLICATION)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00037"/>00037 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NO_64BIT_MULTIPLICATION&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00038"/>00038 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NO_64BIT_MULTIPLICATION&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00039"/>00039 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HAVE_SSE2)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00040"/>00040 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;HAVE_SSE2&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00041"/>00041 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HAVE_SSE2&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00042"/>00042 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HAVE_TIME)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00043"/>00043 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;HAVE_TIME&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00044"/>00044 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HAVE_TIME&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00045"/>00045 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HAVE_TIME_DATE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00046"/>00046 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;HAVE_TIME_DATE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00047"/>00047 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HAVE_TIME_DATE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00048"/>00048 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_MEMORY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00049"/>00049 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_MEMORY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00050"/>00050 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_MEMORY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00051"/>00051 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_NO_STD_FUNCTIONS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00052"/>00052 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_NO_STD_FUNCTIONS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00053"/>00053 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_NO_STD_FUNCTIONS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00054"/>00054 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_SETBUF_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00055"/>00055 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_SETBUF_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00056"/>00056 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_SETBUF_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00057"/>00057 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_EXIT_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00058"/>00058 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_EXIT_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00059"/>00059 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_EXIT_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00060"/>00060 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_TIME_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00061"/>00061 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_TIME_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00062"/>00062 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_TIME_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00063"/>00063 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_FPRINTF_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00064"/>00064 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_FPRINTF_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00065"/>00065 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_FPRINTF_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00066"/>00066 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_PRINTF_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00067"/>00067 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_PRINTF_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00068"/>00068 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_PRINTF_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00069"/>00069 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_SNPRINTF_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_SNPRINTF_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00071"/>00071 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_SNPRINTF_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00072"/>00072 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_VSNPRINTF_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00073"/>00073 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_VSNPRINTF_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00074"/>00074 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_VSNPRINTF_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00075"/>00075 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_NV_SEED_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00076"/>00076 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_NV_SEED_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00077"/>00077 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_NV_SEED_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00078"/>00078 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00079"/>00079 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_SETUP_TEARDOWN_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00080"/>00080 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_SETUP_TEARDOWN_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00081"/>00081 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_MS_TIME_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00082"/>00082 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_MS_TIME_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00083"/>00083 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_MS_TIME_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00084"/>00084 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_GMTIME_R_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00085"/>00085 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_GMTIME_R_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00086"/>00086 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_GMTIME_R_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00087"/>00087 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_ZEROIZE_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00088"/>00088 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_ZEROIZE_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00089"/>00089 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_ZEROIZE_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00090"/>00090 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DEPRECATED_WARNING)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00091"/>00091 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DEPRECATED_WARNING&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00092"/>00092 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DEPRECATED_WARNING&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00093"/>00093 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DEPRECATED_REMOVED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00094"/>00094 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DEPRECATED_REMOVED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00095"/>00095 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DEPRECATED_REMOVED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00096"/>00096 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_TIMING_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00097"/>00097 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TIMING_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00098"/>00098 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_TIMING_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00099"/>00099 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00100"/>00100 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00101"/>00101 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00102"/>00102 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ARIA_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00103"/>00103 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ARIA_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00104"/>00104 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ARIA_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00105"/>00105 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CAMELLIA_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00106"/>00106 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CAMELLIA_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00107"/>00107 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CAMELLIA_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00108"/>00108 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CCM_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00109"/>00109 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CCM_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00110"/>00110 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CCM_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00111"/>00111 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHA20_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00112"/>00112 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CHACHA20_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00113"/>00113 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHACHA20_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00114"/>00114 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHAPOLY_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00115"/>00115 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CHACHAPOLY_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00116"/>00116 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHACHAPOLY_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00117"/>00117 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CMAC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00118"/>00118 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CMAC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00119"/>00119 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CMAC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00120"/>00120 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00121"/>00121 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DES_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00122"/>00122 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DES_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00123"/>00123 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DHM_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00124"/>00124 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DHM_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00125"/>00125 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DHM_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00126"/>00126 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECJPAKE_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00127"/>00127 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECJPAKE_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00128"/>00128 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECJPAKE_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00129"/>00129 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_GCM_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00130"/>00130 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;GCM_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00131"/>00131 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_GCM_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00132"/>00132 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NIST_KW_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00133"/>00133 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NIST_KW_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00134"/>00134 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NIST_KW_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00135"/>00135 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MD5_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00136"/>00136 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MD5_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00137"/>00137 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MD5_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00138"/>00138 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_POLY1305_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00139"/>00139 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;POLY1305_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00140"/>00140 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_POLY1305_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00141"/>00141 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RIPEMD160_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00142"/>00142 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;RIPEMD160_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00143"/>00143 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RIPEMD160_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00144"/>00144 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RSA_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00145"/>00145 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;RSA_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00146"/>00146 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RSA_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00147"/>00147 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA1_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00148"/>00148 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA1_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00149"/>00149 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA1_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00150"/>00150 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00151"/>00151 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA256_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00152"/>00152 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00153"/>00153 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00154"/>00154 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA512_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00155"/>00155 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00156"/>00156 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00157"/>00157 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00158"/>00158 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00159"/>00159 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MD5_PROCESS_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00160"/>00160 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MD5_PROCESS_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00161"/>00161 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MD5_PROCESS_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00162"/>00162 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RIPEMD160_PROCESS_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00163"/>00163 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;RIPEMD160_PROCESS_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00164"/>00164 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RIPEMD160_PROCESS_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00165"/>00165 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA1_PROCESS_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00166"/>00166 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA1_PROCESS_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00167"/>00167 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA1_PROCESS_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00168"/>00168 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_PROCESS_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00169"/>00169 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA256_PROCESS_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00170"/>00170 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_PROCESS_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00171"/>00171 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_PROCESS_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00172"/>00172 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA512_PROCESS_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00173"/>00173 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_PROCESS_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00174"/>00174 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES_SETKEY_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00175"/>00175 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DES_SETKEY_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00176"/>00176 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DES_SETKEY_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00177"/>00177 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES_CRYPT_ECB_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00178"/>00178 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DES_CRYPT_ECB_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00179"/>00179 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DES_CRYPT_ECB_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00180"/>00180 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES3_CRYPT_ECB_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00181"/>00181 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DES3_CRYPT_ECB_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00182"/>00182 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DES3_CRYPT_ECB_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00183"/>00183 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_SETKEY_ENC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00184"/>00184 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_SETKEY_ENC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00185"/>00185 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_SETKEY_ENC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00186"/>00186 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_SETKEY_DEC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00187"/>00187 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_SETKEY_DEC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00188"/>00188 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_SETKEY_DEC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00189"/>00189 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_ENCRYPT_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00190"/>00190 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_ENCRYPT_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00191"/>00191 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_ENCRYPT_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00192"/>00192 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_DECRYPT_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00193"/>00193 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_DECRYPT_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00194"/>00194 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_DECRYPT_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00195"/>00195 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDH_GEN_PUBLIC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00196"/>00196 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDH_GEN_PUBLIC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00197"/>00197 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDH_GEN_PUBLIC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00198"/>00198 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDH_COMPUTE_SHARED_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00199"/>00199 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDH_COMPUTE_SHARED_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00200"/>00200 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDH_COMPUTE_SHARED_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00201"/>00201 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDSA_VERIFY_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00202"/>00202 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDSA_VERIFY_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00203"/>00203 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDSA_VERIFY_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00204"/>00204 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDSA_SIGN_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00205"/>00205 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDSA_SIGN_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00206"/>00206 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDSA_SIGN_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00207"/>00207 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDSA_GENKEY_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00208"/>00208 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDSA_GENKEY_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00209"/>00209 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDSA_GENKEY_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00210"/>00210 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_INTERNAL_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00211"/>00211 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_INTERNAL_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00212"/>00212 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_INTERNAL_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00213"/>00213 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_NO_FALLBACK)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00214"/>00214 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_NO_FALLBACK&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00215"/>00215 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_NO_FALLBACK&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00216"/>00216 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_RANDOMIZE_JAC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00217"/>00217 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_RANDOMIZE_JAC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00218"/>00218 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_RANDOMIZE_JAC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00219"/>00219 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_ADD_MIXED_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00220"/>00220 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_ADD_MIXED_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00221"/>00221 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_ADD_MIXED_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00222"/>00222 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DOUBLE_JAC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00223"/>00223 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DOUBLE_JAC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00224"/>00224 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DOUBLE_JAC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00225"/>00225 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_NORMALIZE_JAC_MANY_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00226"/>00226 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_NORMALIZE_JAC_MANY_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00227"/>00227 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_NORMALIZE_JAC_MANY_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00228"/>00228 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_NORMALIZE_JAC_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00229"/>00229 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_NORMALIZE_JAC_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00230"/>00230 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_NORMALIZE_JAC_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00231"/>00231 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DOUBLE_ADD_MXZ_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00232"/>00232 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DOUBLE_ADD_MXZ_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00233"/>00233 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DOUBLE_ADD_MXZ_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00234"/>00234 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_RANDOMIZE_MXZ_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00235"/>00235 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_RANDOMIZE_MXZ_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00236"/>00236 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_RANDOMIZE_MXZ_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00237"/>00237 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_NORMALIZE_MXZ_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00238"/>00238 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_NORMALIZE_MXZ_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00239"/>00239 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_NORMALIZE_MXZ_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00240"/>00240 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ENTROPY_HARDWARE_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00241"/>00241 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ENTROPY_HARDWARE_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00242"/>00242 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ENTROPY_HARDWARE_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00243"/>00243 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_ROM_TABLES)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00244"/>00244 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_ROM_TABLES&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00245"/>00245 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_ROM_TABLES&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00246"/>00246 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_FEWER_TABLES)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00247"/>00247 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_FEWER_TABLES&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00248"/>00248 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_FEWER_TABLES&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00249"/>00249 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00250"/>00250 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_ONLY_128_BIT_KEY_LENGTH&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00251"/>00251 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00252"/>00252 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_USE_HARDWARE_ONLY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00253"/>00253 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_USE_HARDWARE_ONLY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00254"/>00254 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_USE_HARDWARE_ONLY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00255"/>00255 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CAMELLIA_SMALL_MEMORY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00256"/>00256 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CAMELLIA_SMALL_MEMORY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00257"/>00257 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CAMELLIA_SMALL_MEMORY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00258"/>00258 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHECK_RETURN_WARNING)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00259"/>00259 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CHECK_RETURN_WARNING&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00260"/>00260 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHECK_RETURN_WARNING&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00261"/>00261 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_MODE_CBC)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00262"/>00262 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_MODE_CBC&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00263"/>00263 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_MODE_CBC&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00264"/>00264 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_MODE_CFB)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00265"/>00265 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_MODE_CFB&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00266"/>00266 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_MODE_CFB&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00267"/>00267 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_MODE_CTR)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00268"/>00268 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_MODE_CTR&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00269"/>00269 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_MODE_CTR&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00270"/>00270 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_MODE_OFB)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00271"/>00271 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_MODE_OFB&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00272"/>00272 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_MODE_OFB&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00273"/>00273 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_MODE_XTS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00274"/>00274 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_MODE_XTS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00275"/>00275 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_MODE_XTS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00276"/>00276 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_NULL_CIPHER)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00277"/>00277 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_NULL_CIPHER&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00278"/>00278 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_NULL_CIPHER&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00279"/>00279 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_PADDING_PKCS7)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00280"/>00280 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_PADDING_PKCS7&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00281"/>00281 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_PADDING_PKCS7&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00282"/>00282 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00283"/>00283 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_PADDING_ONE_AND_ZEROS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00284"/>00284 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00285"/>00285 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00286"/>00286 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_PADDING_ZEROS_AND_LEN&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00287"/>00287 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00288"/>00288 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_PADDING_ZEROS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00289"/>00289 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_PADDING_ZEROS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00290"/>00290 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_PADDING_ZEROS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00291"/>00291 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CTR_DRBG_USE_128_BIT_KEY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00292"/>00292 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CTR_DRBG_USE_128_BIT_KEY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00293"/>00293 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CTR_DRBG_USE_128_BIT_KEY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00294"/>00294 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDH_VARIANT_EVEREST_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00295"/>00295 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDH_VARIANT_EVEREST_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00296"/>00296 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDH_VARIANT_EVEREST_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00297"/>00297 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP192R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00298"/>00298 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP192R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00299"/>00299 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP192R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00300"/>00300 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP224R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00301"/>00301 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP224R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00302"/>00302 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP224R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00303"/>00303 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP256R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00304"/>00304 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP256R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00305"/>00305 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP256R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00306"/>00306 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP384R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00307"/>00307 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP384R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00308"/>00308 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP384R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00309"/>00309 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP521R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00310"/>00310 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP521R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00311"/>00311 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP521R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00312"/>00312 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP192K1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00313"/>00313 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP192K1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00314"/>00314 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP192K1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00315"/>00315 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP224K1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00316"/>00316 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP224K1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00317"/>00317 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP224K1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00318"/>00318 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_SECP256K1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00319"/>00319 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_SECP256K1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00320"/>00320 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_SECP256K1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00321"/>00321 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_BP256R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00322"/>00322 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_BP256R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00323"/>00323 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_BP256R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00324"/>00324 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_BP384R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00325"/>00325 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_BP384R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00326"/>00326 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_BP384R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00327"/>00327 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_BP512R1_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00328"/>00328 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_BP512R1_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00329"/>00329 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_BP512R1_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00330"/>00330 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_CURVE25519_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00331"/>00331 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_CURVE25519_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00332"/>00332 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_CURVE25519_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00333"/>00333 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_DP_CURVE448_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00334"/>00334 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_DP_CURVE448_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00335"/>00335 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_DP_CURVE448_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00336"/>00336 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_NIST_OPTIM)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00337"/>00337 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_NIST_OPTIM&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00338"/>00338 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_NIST_OPTIM&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00339"/>00339 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_RESTARTABLE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00340"/>00340 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_RESTARTABLE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00341"/>00341 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_RESTARTABLE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00342"/>00342 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_WITH_MPI_UINT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00343"/>00343 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_WITH_MPI_UINT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00344"/>00344 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_WITH_MPI_UINT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00345"/>00345 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDSA_DETERMINISTIC)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00346"/>00346 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDSA_DETERMINISTIC&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00347"/>00347 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDSA_DETERMINISTIC&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00348"/>00348 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_PSK_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00349"/>00349 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_PSK_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00350"/>00350 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_PSK_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00351"/>00351 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00352"/>00352 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_DHE_PSK_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00353"/>00353 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_DHE_PSK_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00354"/>00354 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00355"/>00355 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_ECDHE_PSK_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00356"/>00356 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_ECDHE_PSK_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00357"/>00357 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00358"/>00358 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_RSA_PSK_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00359"/>00359 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_RSA_PSK_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00360"/>00360 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_RSA_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00361"/>00361 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_RSA_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00362"/>00362 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_RSA_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00363"/>00363 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00364"/>00364 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_DHE_RSA_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00365"/>00365 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_DHE_RSA_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00366"/>00366 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00367"/>00367 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_ECDHE_RSA_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00368"/>00368 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_ECDHE_RSA_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00369"/>00369 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00370"/>00370 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_ECDHE_ECDSA_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00371"/>00371 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00372"/>00372 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00373"/>00373 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_ECDH_ECDSA_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00374"/>00374 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_ECDH_ECDSA_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00375"/>00375 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00376"/>00376 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_ECDH_RSA_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00377"/>00377 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_ECDH_RSA_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00378"/>00378 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00379"/>00379 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;KEY_EXCHANGE_ECJPAKE_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00380"/>00380 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_KEY_EXCHANGE_ECJPAKE_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00381"/>00381 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_PARSE_EC_EXTENDED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00382"/>00382 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PK_PARSE_EC_EXTENDED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00383"/>00383 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_PARSE_EC_EXTENDED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00384"/>00384 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_PARSE_EC_COMPRESSED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00385"/>00385 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PK_PARSE_EC_COMPRESSED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00386"/>00386 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_PARSE_EC_COMPRESSED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00387"/>00387 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ERROR_STRERROR_DUMMY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00388"/>00388 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ERROR_STRERROR_DUMMY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00389"/>00389 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ERROR_STRERROR_DUMMY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00390"/>00390 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_GENPRIME)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00391"/>00391 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;GENPRIME&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00392"/>00392 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_GENPRIME&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00393"/>00393 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_FS_IO)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00394"/>00394 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;FS_IO&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00395"/>00395 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_FS_IO&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00396"/>00396 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00397"/>00397 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NO_DEFAULT_ENTROPY_SOURCES&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00398"/>00398 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00399"/>00399 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NO_PLATFORM_ENTROPY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00400"/>00400 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NO_PLATFORM_ENTROPY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00401"/>00401 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NO_PLATFORM_ENTROPY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00402"/>00402 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ENTROPY_FORCE_SHA256)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00403"/>00403 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ENTROPY_FORCE_SHA256&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00404"/>00404 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ENTROPY_FORCE_SHA256&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00405"/>00405 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ENTROPY_NV_SEED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00406"/>00406 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ENTROPY_NV_SEED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00407"/>00407 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ENTROPY_NV_SEED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00408"/>00408 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00409"/>00409 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_KEY_ID_ENCODES_OWNER&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00410"/>00410 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00411"/>00411 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MEMORY_DEBUG)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00412"/>00412 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MEMORY_DEBUG&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00413"/>00413 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MEMORY_DEBUG&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00414"/>00414 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MEMORY_BACKTRACE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00415"/>00415 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MEMORY_BACKTRACE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00416"/>00416 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MEMORY_BACKTRACE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00417"/>00417 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_RSA_ALT_SUPPORT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00418"/>00418 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PK_RSA_ALT_SUPPORT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00419"/>00419 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_RSA_ALT_SUPPORT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00420"/>00420 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS1_V15)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00421"/>00421 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PKCS1_V15&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00422"/>00422 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS1_V15&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00423"/>00423 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS1_V21)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00424"/>00424 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PKCS1_V21&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00425"/>00425 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS1_V21&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00426"/>00426 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00427"/>00427 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_BUILTIN_KEYS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00428"/>00428 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00429"/>00429 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_CLIENT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00430"/>00430 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_CLIENT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00431"/>00431 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_CLIENT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00432"/>00432 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00433"/>00433 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_EXTERNAL_RNG&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00434"/>00434 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00435"/>00435 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_SPM)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00436"/>00436 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_SPM&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00437"/>00437 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_SPM&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00438"/>00438 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_P256M_DRIVER_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00439"/>00439 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_P256M_DRIVER_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00440"/>00440 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_P256M_DRIVER_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00441"/>00441 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_INJECT_ENTROPY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00442"/>00442 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_INJECT_ENTROPY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00443"/>00443 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_INJECT_ENTROPY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00444"/>00444 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RSA_NO_CRT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00445"/>00445 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;RSA_NO_CRT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00446"/>00446 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RSA_NO_CRT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00447"/>00447 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SELF_TEST)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00448"/>00448 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SELF_TEST&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00449"/>00449 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SELF_TEST&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00450"/>00450 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_SMALLER)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00451"/>00451 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA256_SMALLER&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00452"/>00452 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_SMALLER&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00453"/>00453 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_SMALLER)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00454"/>00454 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA512_SMALLER&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00455"/>00455 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_SMALLER&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00456"/>00456 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_ALL_ALERT_MESSAGES)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00457"/>00457 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_ALL_ALERT_MESSAGES&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00458"/>00458 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_ALL_ALERT_MESSAGES&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00459"/>00459 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DTLS_CONNECTION_ID)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00460"/>00460 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DTLS_CONNECTION_ID&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00461"/>00461 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DTLS_CONNECTION_ID&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00462"/>00462 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DTLS_CONNECTION_ID_COMPAT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00463"/>00463 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DTLS_CONNECTION_ID_COMPAT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00464"/>00464 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DTLS_CONNECTION_ID_COMPAT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00465"/>00465 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_ASYNC_PRIVATE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00466"/>00466 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_ASYNC_PRIVATE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00467"/>00467 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_ASYNC_PRIVATE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00468"/>00468 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_CONTEXT_SERIALIZATION)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00469"/>00469 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_CONTEXT_SERIALIZATION&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00470"/>00470 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_CONTEXT_SERIALIZATION&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00471"/>00471 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DEBUG_ALL)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00472"/>00472 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DEBUG_ALL&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00473"/>00473 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DEBUG_ALL&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00474"/>00474 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_ENCRYPT_THEN_MAC)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00475"/>00475 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_ENCRYPT_THEN_MAC&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00476"/>00476 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_ENCRYPT_THEN_MAC&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00477"/>00477 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_EXTENDED_MASTER_SECRET)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00478"/>00478 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_EXTENDED_MASTER_SECRET&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00479"/>00479 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_EXTENDED_MASTER_SECRET&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00480"/>00480 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_KEEP_PEER_CERTIFICATE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00481"/>00481 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_KEEP_PEER_CERTIFICATE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00482"/>00482 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_KEEP_PEER_CERTIFICATE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00483"/>00483 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_RENEGOTIATION)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00484"/>00484 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_RENEGOTIATION&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00485"/>00485 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_RENEGOTIATION&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00486"/>00486 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_MAX_FRAGMENT_LENGTH)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00487"/>00487 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_MAX_FRAGMENT_LENGTH&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00488"/>00488 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_MAX_FRAGMENT_LENGTH&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00489"/>00489 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_RECORD_SIZE_LIMIT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00490"/>00490 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_RECORD_SIZE_LIMIT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00491"/>00491 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_RECORD_SIZE_LIMIT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00492"/>00492 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_PROTO_TLS1_2)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00493"/>00493 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_PROTO_TLS1_2&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00494"/>00494 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_PROTO_TLS1_2&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00495"/>00495 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_PROTO_TLS1_3)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00496"/>00496 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_PROTO_TLS1_3&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00497"/>00497 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_PROTO_TLS1_3&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00498"/>00498 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00499"/>00499 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_TLS1_3_COMPATIBILITY_MODE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00500"/>00500 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS1_3_COMPATIBILITY_MODE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00501"/>00501 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00502"/>00502 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00503"/>00503 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00504"/>00504 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00505"/>00505 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00506"/>00506 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_EPHEMERAL_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00507"/>00507 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00508"/>00508 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00509"/>00509 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL_ENABLED&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00510"/>00510 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_EARLY_DATA)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00511"/>00511 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_EARLY_DATA&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00512"/>00512 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_EARLY_DATA&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00513"/>00513 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_PROTO_DTLS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00514"/>00514 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_PROTO_DTLS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00515"/>00515 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_PROTO_DTLS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00516"/>00516 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_ALPN)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00517"/>00517 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_ALPN&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00518"/>00518 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_ALPN&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00519"/>00519 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DTLS_ANTI_REPLAY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00520"/>00520 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DTLS_ANTI_REPLAY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00521"/>00521 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DTLS_ANTI_REPLAY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00522"/>00522 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DTLS_HELLO_VERIFY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00523"/>00523 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DTLS_HELLO_VERIFY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00524"/>00524 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DTLS_HELLO_VERIFY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00525"/>00525 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DTLS_SRTP)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00526"/>00526 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DTLS_SRTP&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00527"/>00527 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DTLS_SRTP&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00528"/>00528 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00529"/>00529 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_DTLS_CLIENT_PORT_REUSE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00530"/>00530 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00531"/>00531 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_SESSION_TICKETS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00532"/>00532 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_SESSION_TICKETS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00533"/>00533 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_SESSION_TICKETS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00534"/>00534 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_SERVER_NAME_INDICATION)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00535"/>00535 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_SERVER_NAME_INDICATION&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00536"/>00536 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_SERVER_NAME_INDICATION&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00537"/>00537 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00538"/>00538 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_VARIABLE_BUFFER_LENGTH&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00539"/>00539 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00540"/>00540 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_TEST_CONSTANT_FLOW_MEMSAN)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00541"/>00541 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TEST_CONSTANT_FLOW_MEMSAN&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00542"/>00542 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_TEST_CONSTANT_FLOW_MEMSAN&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00543"/>00543 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_TEST_CONSTANT_FLOW_VALGRIND)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00544"/>00544 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TEST_CONSTANT_FLOW_VALGRIND&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00545"/>00545 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_TEST_CONSTANT_FLOW_VALGRIND&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00546"/>00546 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_TEST_HOOKS)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00547"/>00547 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TEST_HOOKS&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00548"/>00548 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_TEST_HOOKS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00549"/>00549 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_THREADING_ALT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00550"/>00550 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;THREADING_ALT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00551"/>00551 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_THREADING_ALT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00552"/>00552 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_THREADING_PTHREAD)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00553"/>00553 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;THREADING_PTHREAD&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00554"/>00554 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_THREADING_PTHREAD&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00555"/>00555 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_USE_PSA_CRYPTO)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00556"/>00556 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;USE_PSA_CRYPTO&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00557"/>00557 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_USE_PSA_CRYPTO&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00558"/>00558 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_CONFIG)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00559"/>00559 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_CONFIG&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00560"/>00560 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_CONFIG&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00561"/>00561 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_VERSION_FEATURES)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00562"/>00562 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;VERSION_FEATURES&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00563"/>00563 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_VERSION_FEATURES&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00564"/>00564 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00565"/>00565 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_TRUSTED_CERTIFICATE_CALLBACK&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00566"/>00566 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_TRUSTED_CERTIFICATE_CALLBACK&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00567"/>00567 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_REMOVE_INFO)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00568"/>00568 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_REMOVE_INFO&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00569"/>00569 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_REMOVE_INFO&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00570"/>00570 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_RSASSA_PSS_SUPPORT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00571"/>00571 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_RSASSA_PSS_SUPPORT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00572"/>00572 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_RSASSA_PSS_SUPPORT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00573"/>00573 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AESNI_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00574"/>00574 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AESNI_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00575"/>00575 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AESNI_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00576"/>00576 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AESCE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00577"/>00577 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AESCE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00578"/>00578 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AESCE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00579"/>00579 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_AES_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00580"/>00580 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;AES_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00581"/>00581 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_AES_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00582"/>00582 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ASN1_PARSE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00583"/>00583 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ASN1_PARSE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00584"/>00584 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ASN1_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00585"/>00585 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ASN1_WRITE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00586"/>00586 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ASN1_WRITE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00587"/>00587 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ASN1_WRITE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00588"/>00588 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_BASE64_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00589"/>00589 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;BASE64_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00590"/>00590 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_BASE64_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00591"/>00591 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_BIGNUM_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00592"/>00592 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;BIGNUM_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00593"/>00593 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_BIGNUM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00594"/>00594 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CAMELLIA_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00595"/>00595 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CAMELLIA_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00596"/>00596 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CAMELLIA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00597"/>00597 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ARIA_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00598"/>00598 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ARIA_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00599"/>00599 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ARIA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00600"/>00600 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CCM_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00601"/>00601 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CCM_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00602"/>00602 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CCM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00603"/>00603 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHA20_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00604"/>00604 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CHACHA20_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00605"/>00605 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHACHA20_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00606"/>00606 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CHACHAPOLY_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00607"/>00607 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CHACHAPOLY_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00608"/>00608 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CHACHAPOLY_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00609"/>00609 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CIPHER_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00610"/>00610 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CIPHER_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00611"/>00611 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CIPHER_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00612"/>00612 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CMAC_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00613"/>00613 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CMAC_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00614"/>00614 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CMAC_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00615"/>00615 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_CTR_DRBG_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00616"/>00616 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;CTR_DRBG_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00617"/>00617 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_CTR_DRBG_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00618"/>00618 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DEBUG_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00619"/>00619 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DEBUG_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00620"/>00620 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DEBUG_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00621"/>00621 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DES_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00622"/>00622 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DES_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00623"/>00623 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DES_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00624"/>00624 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_DHM_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00625"/>00625 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DHM_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00626"/>00626 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_DHM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00627"/>00627 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDH_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00628"/>00628 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDH_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00629"/>00629 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDH_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00630"/>00630 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECDSA_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00631"/>00631 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECDSA_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00632"/>00632 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECDSA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00633"/>00633 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECJPAKE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00634"/>00634 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECJPAKE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00635"/>00635 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECJPAKE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00636"/>00636 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ECP_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00637"/>00637 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ECP_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00638"/>00638 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ECP_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00639"/>00639 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ENTROPY_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00640"/>00640 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ENTROPY_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00641"/>00641 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ENTROPY_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00642"/>00642 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_ERROR_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00643"/>00643 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ERROR_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00644"/>00644 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_ERROR_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00645"/>00645 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_GCM_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00646"/>00646 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;GCM_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00647"/>00647 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_GCM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00648"/>00648 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HKDF_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00649"/>00649 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;HKDF_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00650"/>00650 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HKDF_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00651"/>00651 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_HMAC_DRBG_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00652"/>00652 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;HMAC_DRBG_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00653"/>00653 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_HMAC_DRBG_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00654"/>00654 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_LMS_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00655"/>00655 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;LMS_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00656"/>00656 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_LMS_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00657"/>00657 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_LMS_PRIVATE)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00658"/>00658 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;LMS_PRIVATE&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00659"/>00659 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_LMS_PRIVATE&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00660"/>00660 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NIST_KW_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00661"/>00661 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NIST_KW_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00662"/>00662 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NIST_KW_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00663"/>00663 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MD_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00664"/>00664 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MD_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00665"/>00665 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MD_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00666"/>00666 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MD5_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00667"/>00667 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MD5_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00668"/>00668 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MD5_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00669"/>00669 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_MEMORY_BUFFER_ALLOC_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00670"/>00670 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MEMORY_BUFFER_ALLOC_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00671"/>00671 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_MEMORY_BUFFER_ALLOC_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00672"/>00672 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_NET_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00673"/>00673 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NET_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00674"/>00674 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_NET_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00675"/>00675 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_OID_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00676"/>00676 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;OID_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00677"/>00677 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_OID_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00678"/>00678 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PADLOCK_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00679"/>00679 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PADLOCK_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00680"/>00680 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PADLOCK_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00681"/>00681 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PEM_PARSE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00682"/>00682 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PEM_PARSE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00683"/>00683 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PEM_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00684"/>00684 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PEM_WRITE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00685"/>00685 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PEM_WRITE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00686"/>00686 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PEM_WRITE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00687"/>00687 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00688"/>00688 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PK_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00689"/>00689 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00690"/>00690 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_PARSE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00691"/>00691 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PK_PARSE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00692"/>00692 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00693"/>00693 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PK_WRITE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00694"/>00694 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PK_WRITE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00695"/>00695 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PK_WRITE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00696"/>00696 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS5_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00697"/>00697 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PKCS5_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00698"/>00698 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS5_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00699"/>00699 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS7_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00700"/>00700 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PKCS7_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00701"/>00701 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS7_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00702"/>00702 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PKCS12_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00703"/>00703 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PKCS12_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00704"/>00704 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PKCS12_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00705"/>00705 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PLATFORM_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00706"/>00706 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PLATFORM_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00707"/>00707 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PLATFORM_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00708"/>00708 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_POLY1305_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00709"/>00709 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;POLY1305_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00710"/>00710 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_POLY1305_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00711"/>00711 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00712"/>00712 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00713"/>00713 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00714"/>00714 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_SE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00715"/>00715 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_SE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00716"/>00716 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_SE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00717"/>00717 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_STORAGE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00718"/>00718 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_CRYPTO_STORAGE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00719"/>00719 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_STORAGE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00720"/>00720 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_ITS_FILE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00721"/>00721 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;PSA_ITS_FILE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00722"/>00722 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_ITS_FILE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00723"/>00723 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RIPEMD160_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00724"/>00724 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;RIPEMD160_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00725"/>00725 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RIPEMD160_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00726"/>00726 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_RSA_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00727"/>00727 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;RSA_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00728"/>00728 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_RSA_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00729"/>00729 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA1_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00730"/>00730 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA1_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00731"/>00731 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA1_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00732"/>00732 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA224_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00733"/>00733 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA224_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00734"/>00734 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA224_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00735"/>00735 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00736"/>00736 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA256_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00737"/>00737 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00738"/>00738 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00739"/>00739 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA256_USE_A64_CRYPTO_IF_PRESENT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00740"/>00740 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_USE_A64_CRYPTO_IF_PRESENT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00741"/>00741 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA256_USE_A64_CRYPTO_ONLY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00742"/>00742 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA256_USE_A64_CRYPTO_ONLY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00743"/>00743 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA256_USE_A64_CRYPTO_ONLY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00744"/>00744 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA384_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00745"/>00745 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA384_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00746"/>00746 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA384_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00747"/>00747 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00748"/>00748 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA512_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00749"/>00749 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00750"/>00750 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA3_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00751"/>00751 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA3_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00752"/>00752 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA3_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00753"/>00753 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00754"/>00754 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA512_USE_A64_CRYPTO_IF_PRESENT&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00755"/>00755 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_USE_A64_CRYPTO_IF_PRESENT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00756"/>00756 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SHA512_USE_A64_CRYPTO_ONLY)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00757"/>00757 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SHA512_USE_A64_CRYPTO_ONLY&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00758"/>00758 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SHA512_USE_A64_CRYPTO_ONLY&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00759"/>00759 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_CACHE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00760"/>00760 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_CACHE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00761"/>00761 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_CACHE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00762"/>00762 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_COOKIE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00763"/>00763 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_COOKIE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00764"/>00764 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_COOKIE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00765"/>00765 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TICKET_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00766"/>00766 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_TICKET_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00767"/>00767 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TICKET_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00768"/>00768 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_CLI_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00769"/>00769 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_CLI_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00770"/>00770 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_CLI_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00771"/>00771 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_SRV_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00772"/>00772 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_SRV_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00773"/>00773 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_SRV_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00774"/>00774 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_SSL_TLS_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00775"/>00775 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;SSL_TLS_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00776"/>00776 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_SSL_TLS_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00777"/>00777 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_THREADING_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00778"/>00778 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;THREADING_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00779"/>00779 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_THREADING_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00780"/>00780 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_TIMING_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00781"/>00781 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TIMING_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00782"/>00782 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_TIMING_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00783"/>00783 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_VERSION_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00784"/>00784 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;VERSION_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00785"/>00785 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_VERSION_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00786"/>00786 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_USE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00787"/>00787 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_USE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00788"/>00788 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_USE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00789"/>00789 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_CRT_PARSE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00790"/>00790 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_CRT_PARSE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00791"/>00791 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_CRT_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00792"/>00792 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_CRL_PARSE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00793"/>00793 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_CRL_PARSE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00794"/>00794 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_CRL_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00795"/>00795 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_CSR_PARSE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00796"/>00796 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_CSR_PARSE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00797"/>00797 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_CSR_PARSE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00798"/>00798 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_CREATE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00799"/>00799 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_CREATE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00800"/>00800 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_CREATE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00801"/>00801 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_CRT_WRITE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00802"/>00802 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_CRT_WRITE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00803"/>00803 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_CRT_WRITE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00804"/>00804 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_X509_CSR_WRITE_C)</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00805"/>00805 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;X509_CSR_WRITE_C&quot;</emphasis>,&#32;<emphasis role="comment">//no-check-names</emphasis>
+<anchor xml:id="_version__features_8c_source_1l00806"/>00806 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_X509_CSR_WRITE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00807"/>00807 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_VERSION_FEATURES&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_version__features_8c_source_1l00808"/>00808 &#32;&#32;&#32;&#32;NULL
+<anchor xml:id="_version__features_8c_source_1l00809"/>00809 };
+<anchor xml:id="_version__features_8c_source_1l00810"/>00810 
+<anchor xml:id="_version__features_8c_source_1l00811"/>00811 <emphasis role="keywordtype">int</emphasis>&#32;mbedtls_version_check_feature(<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*feature)
+<anchor xml:id="_version__features_8c_source_1l00812"/>00812 {
+<anchor xml:id="_version__features_8c_source_1l00813"/>00813 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*&#32;<emphasis role="keyword">const</emphasis>&#32;*idx&#32;=&#32;features;
+<anchor xml:id="_version__features_8c_source_1l00814"/>00814 
+<anchor xml:id="_version__features_8c_source_1l00815"/>00815 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(*idx&#32;==&#32;NULL)&#32;{
+<anchor xml:id="_version__features_8c_source_1l00816"/>00816 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;-2;
+<anchor xml:id="_version__features_8c_source_1l00817"/>00817 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_version__features_8c_source_1l00818"/>00818 
+<anchor xml:id="_version__features_8c_source_1l00819"/>00819 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(feature&#32;==&#32;NULL)&#32;{
+<anchor xml:id="_version__features_8c_source_1l00820"/>00820 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;-1;
+<anchor xml:id="_version__features_8c_source_1l00821"/>00821 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_version__features_8c_source_1l00822"/>00822 
+<anchor xml:id="_version__features_8c_source_1l00823"/>00823 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(strncmp(feature,&#32;<emphasis role="stringliteral">&quot;MBEDTLS_&quot;</emphasis>,&#32;8))&#32;{
+<anchor xml:id="_version__features_8c_source_1l00824"/>00824 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;-1;
+<anchor xml:id="_version__features_8c_source_1l00825"/>00825 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_version__features_8c_source_1l00826"/>00826 
+<anchor xml:id="_version__features_8c_source_1l00827"/>00827 &#32;&#32;&#32;&#32;feature&#32;+=&#32;8;
+<anchor xml:id="_version__features_8c_source_1l00828"/>00828 
+<anchor xml:id="_version__features_8c_source_1l00829"/>00829 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(*idx&#32;!=&#32;NULL)&#32;{
+<anchor xml:id="_version__features_8c_source_1l00830"/>00830 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(!strcmp(*idx,&#32;feature))&#32;{
+<anchor xml:id="_version__features_8c_source_1l00831"/>00831 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;0;
+<anchor xml:id="_version__features_8c_source_1l00832"/>00832 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="_version__features_8c_source_1l00833"/>00833 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;idx++;
+<anchor xml:id="_version__features_8c_source_1l00834"/>00834 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_version__features_8c_source_1l00835"/>00835 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;-1;
+<anchor xml:id="_version__features_8c_source_1l00836"/>00836 }
+<anchor xml:id="_version__features_8c_source_1l00837"/>00837 
+<anchor xml:id="_version__features_8c_source_1l00838"/>00838 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_VERSION_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

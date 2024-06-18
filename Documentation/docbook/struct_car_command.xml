@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_struct_car_command" xml:lang="en-US">
+<title>CarCommand Struct Reference</title>
+<indexterm><primary>CarCommand</primary></indexterm>
+<para>
+<computeroutput>#include &lt;MotorAndServoControl.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para><link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6">ReceivedState_app</link> <link linkend="_struct_car_command_1a7cd16e2fee904b8a434a08c7eda5d046">command</link></para>
+</listitem>
+            <listitem><para>int <link linkend="_struct_car_command_1ab80a641a1922d03fd19935a5efd1f44b">command_value</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="_struct_car_command_1a9dfa744f0c79dc3f439d054cc3878eaa">has_value</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_car_command_1abf14c0656fbb57a86c322a87af806030">KP</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_car_command_1aa7d5dd64817c03d067d0e922cd35d75c">KI</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_car_command_1a16424cc4cde718119fedda0db72c792f">KD</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00023">23</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_struct_car_command_1a7cd16e2fee904b8a434a08c7eda5d046"/><section>
+    <title>command</title>
+<indexterm><primary>command</primary><secondary>CarCommand</secondary></indexterm>
+<indexterm><primary>CarCommand</primary><secondary>command</secondary></indexterm>
+<para><computeroutput><link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6">ReceivedState_app</link> command</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00024">24</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<anchor xml:id="_struct_car_command_1ab80a641a1922d03fd19935a5efd1f44b"/><section>
+    <title>command_value</title>
+<indexterm><primary>command_value</primary><secondary>CarCommand</secondary></indexterm>
+<indexterm><primary>CarCommand</primary><secondary>command_value</secondary></indexterm>
+<para><computeroutput>int command_value</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00025">25</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<anchor xml:id="_struct_car_command_1a9dfa744f0c79dc3f439d054cc3878eaa"/><section>
+    <title>has_value</title>
+<indexterm><primary>has_value</primary><secondary>CarCommand</secondary></indexterm>
+<indexterm><primary>CarCommand</primary><secondary>has_value</secondary></indexterm>
+<para><computeroutput>bool has_value</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00026">26</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<anchor xml:id="_struct_car_command_1a16424cc4cde718119fedda0db72c792f"/><section>
+    <title>KD</title>
+<indexterm><primary>KD</primary><secondary>CarCommand</secondary></indexterm>
+<indexterm><primary>CarCommand</primary><secondary>KD</secondary></indexterm>
+<para><computeroutput>float KD</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00029">29</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<anchor xml:id="_struct_car_command_1aa7d5dd64817c03d067d0e922cd35d75c"/><section>
+    <title>KI</title>
+<indexterm><primary>KI</primary><secondary>CarCommand</secondary></indexterm>
+<indexterm><primary>CarCommand</primary><secondary>KI</secondary></indexterm>
+<para><computeroutput>float KI</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00028">28</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<anchor xml:id="_struct_car_command_1abf14c0656fbb57a86c322a87af806030"/><section>
+    <title>KP</title>
+<indexterm><primary>KP</primary><secondary>CarCommand</secondary></indexterm>
+<indexterm><primary>CarCommand</primary><secondary>KP</secondary></indexterm>
+<para><computeroutput>float KP</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00027">27</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/motors/<link linkend="__motor_and_servo_control_8h">MotorAndServoControl.h</link></section>
+</section>

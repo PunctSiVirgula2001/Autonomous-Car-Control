@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_psa__crypto__driver__wrappers__no__static_8c_source" xml:lang="en-US">
+<title>psa_crypto_driver_wrappers_no_static.c</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls/library/psa_crypto_driver_wrappers_no_static.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;&#32;Functions&#32;to&#32;delegate&#32;cryptographic&#32;operations&#32;to&#32;an&#32;available</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00003"/>00003 <emphasis role="comment">&#32;*&#32;&#32;and&#32;appropriate&#32;accelerator.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Warning:&#32;This&#32;file&#32;is&#32;now&#32;auto-generated.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00005"/>00005 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00006"/>00006 <emphasis role="comment">/*&#32;&#32;Copyright&#32;The&#32;Mbed&#32;TLS&#32;Contributors</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00007"/>00007 <emphasis role="comment">&#32;*&#32;&#32;SPDX-License-Identifier:&#32;Apache-2.0</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00008"/>00008 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00009"/>00009 <emphasis role="comment">&#32;*&#32;&#32;Licensed&#32;under&#32;the&#32;Apache&#32;License,&#32;Version&#32;2.0&#32;(the&#32;&quot;License&quot;);&#32;you&#32;may</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00010"/>00010 <emphasis role="comment">&#32;*&#32;&#32;not&#32;use&#32;this&#32;file&#32;except&#32;in&#32;compliance&#32;with&#32;the&#32;License.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00011"/>00011 <emphasis role="comment">&#32;*&#32;&#32;You&#32;may&#32;obtain&#32;a&#32;copy&#32;of&#32;the&#32;License&#32;at</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00012"/>00012 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00013"/>00013 <emphasis role="comment">&#32;*&#32;&#32;http://www.apache.org/licenses/LICENSE-2.0</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00014"/>00014 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00015"/>00015 <emphasis role="comment">&#32;*&#32;&#32;Unless&#32;required&#32;by&#32;applicable&#32;law&#32;or&#32;agreed&#32;to&#32;in&#32;writing,&#32;software</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00016"/>00016 <emphasis role="comment">&#32;*&#32;&#32;distributed&#32;under&#32;the&#32;License&#32;is&#32;distributed&#32;on&#32;an&#32;&quot;AS&#32;IS&quot;&#32;BASIS,&#32;WITHOUT</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00017"/>00017 <emphasis role="comment">&#32;*&#32;&#32;WARRANTIES&#32;OR&#32;CONDITIONS&#32;OF&#32;ANY&#32;KIND,&#32;either&#32;express&#32;or&#32;implied.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00018"/>00018 <emphasis role="comment">&#32;*&#32;&#32;See&#32;the&#32;License&#32;for&#32;the&#32;specific&#32;language&#32;governing&#32;permissions&#32;and</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00019"/>00019 <emphasis role="comment">&#32;*&#32;&#32;limitations&#32;under&#32;the&#32;License.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00020"/>00020 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00021"/>00021 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00022"/>00022 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00023"/>00023 <emphasis role="comment">/*&#32;BEGIN-common&#32;headers&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00024"/>00024 <emphasis role="preprocessor">#include&#32;&quot;common.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00025"/>00025 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_aead.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00026"/>00026 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_cipher.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00027"/>00027 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_core.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00028"/>00028 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_driver_wrappers_no_static.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00029"/>00029 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_hash.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00030"/>00030 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_mac.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00031"/>00031 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_pake.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00032"/>00032 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_rsa.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00033"/>00033 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00034"/>00034 <emphasis role="preprocessor">#include&#32;&quot;mbedtls/platform.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00035"/>00035 <emphasis role="comment">/*&#32;END-common&#32;headers&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00036"/>00036 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00037"/>00037 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_C)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00038"/>00038 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00039"/>00039 <emphasis role="comment">/*&#32;BEGIN-driver&#32;headers&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00040"/>00040 <emphasis role="comment">/*&#32;Headers&#32;for&#32;mbedtls_test&#32;opaque&#32;driver&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00041"/>00041 <emphasis role="preprocessor">#if&#32;defined(PSA_CRYPTO_DRIVER_TEST)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00042"/>00042 <emphasis role="preprocessor">#include&#32;&quot;test/drivers/test_driver.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00043"/>00043 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00044"/>00044 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00045"/>00045 <emphasis role="comment">/*&#32;Headers&#32;for&#32;mbedtls_test&#32;transparent&#32;driver&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00046"/>00046 <emphasis role="preprocessor">#if&#32;defined(PSA_CRYPTO_DRIVER_TEST)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00047"/>00047 <emphasis role="preprocessor">#include&#32;&quot;test/drivers/test_driver.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00048"/>00048 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00049"/>00049 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00050"/>00050 <emphasis role="comment">/*&#32;Headers&#32;for&#32;p256&#32;transparent&#32;driver&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00051"/>00051 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_P256M_DRIVER_ENABLED)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00052"/>00052 <emphasis role="preprocessor">#include&#32;&quot;../3rdparty/p256-m/p256-m_driver_entrypoints.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00053"/>00053 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00054"/>00054 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00055"/>00055 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00056"/>00056 <emphasis role="comment">/*&#32;END-driver&#32;headers&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00057"/>00057 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00058"/>00058 <emphasis role="comment">/*&#32;Auto-generated&#32;values&#32;depending&#32;on&#32;which&#32;drivers&#32;are&#32;registered.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00059"/>00059 <emphasis role="comment">&#32;*&#32;ID&#32;0&#32;is&#32;reserved&#32;for&#32;unallocated&#32;operations.</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00060"/>00060 <emphasis role="comment">&#32;*&#32;ID&#32;1&#32;is&#32;reserved&#32;for&#32;the&#32;Mbed&#32;TLS&#32;software&#32;driver.&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00061"/>00061 <emphasis role="comment">/*&#32;BEGIN-driver&#32;id&#32;definition&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00062"/>00062 <emphasis role="preprocessor">#define&#32;PSA_CRYPTO_MBED_TLS_DRIVER_ID&#32;(1)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00063"/>00063 <emphasis role="preprocessor">#define&#32;MBEDTLS_TEST_OPAQUE_DRIVER_ID&#32;(2)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00064"/>00064 <emphasis role="preprocessor">#define&#32;MBEDTLS_TEST_TRANSPARENT_DRIVER_ID&#32;(3)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00065"/>00065 <emphasis role="preprocessor">#define&#32;P256_TRANSPARENT_DRIVER_ID&#32;(4)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00066"/>00066 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00067"/>00067 <emphasis role="comment">/*&#32;END-driver&#32;id&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00068"/>00068 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00069"/>00069 <emphasis role="comment">/*&#32;BEGIN-Common&#32;Macro&#32;definitions&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00070"/>00070 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00071"/>00071 <emphasis role="comment">/*&#32;END-Common&#32;Macro&#32;definitions&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00072"/>00072 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00073"/>00073 <emphasis role="comment">/*&#32;Support&#32;the&#32;&apos;old&apos;&#32;SE&#32;interface&#32;when&#32;asked&#32;to&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00074"/>00074 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_SE_C)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00075"/>00075 <emphasis role="comment">/*&#32;PSA_CRYPTO_DRIVER_PRESENT&#32;is&#32;defined&#32;when&#32;either&#32;a&#32;new-style&#32;or&#32;old-style</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00076"/>00076 <emphasis role="comment">&#32;*&#32;SE&#32;driver&#32;is&#32;present,&#32;to&#32;avoid&#32;unused&#32;argument&#32;errors&#32;at&#32;compile&#32;time.&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00077"/>00077 <emphasis role="preprocessor">#ifndef&#32;PSA_CRYPTO_DRIVER_PRESENT</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00078"/>00078 <emphasis role="preprocessor">#define&#32;PSA_CRYPTO_DRIVER_PRESENT</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00079"/>00079 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00080"/>00080 <emphasis role="preprocessor">#include&#32;&quot;psa_crypto_se.h&quot;</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00081"/>00081 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00082"/>00082 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00098"/>00098 psa_status_t&#32;psa_driver_wrapper_get_key_buffer_size(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00099"/>00099 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;psa_key_attributes_t&#32;*attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00100"/>00100 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;*key_buffer_size&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00101"/>00101 {
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00102"/>00102 &#32;&#32;&#32;&#32;psa_key_location_t&#32;location&#32;=&#32;PSA_KEY_LIFETIME_GET_LOCATION(&#32;attributes-&gt;core.lifetime&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00103"/>00103 &#32;&#32;&#32;&#32;psa_key_type_t&#32;key_type&#32;=&#32;attributes-&gt;core.type;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00104"/>00104 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;key_bits&#32;=&#32;attributes-&gt;core.bits;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00105"/>00105 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00106"/>00106 &#32;&#32;&#32;&#32;*key_buffer_size&#32;=&#32;0;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00107"/>00107 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>(&#32;location&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00108"/>00108 &#32;&#32;&#32;&#32;{
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00109"/>00109 <emphasis role="preprocessor">#if&#32;defined(PSA_CRYPTO_DRIVER_TEST)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00110"/>00110 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;PSA_CRYPTO_TEST_DRIVER_LOCATION:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00111"/>00111 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00112"/>00112 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Emulate&#32;property&#32;&apos;builtin_key_size&apos;&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00113"/>00113 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(&#32;psa_key_id_is_builtin(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00114"/>00114 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;MBEDTLS_SVC_KEY_ID_GET_KEY_ID(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00115"/>00115 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;psa_get_key_id(&#32;attributes&#32;)&#32;)&#32;)&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00116"/>00116 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00117"/>00117 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*key_buffer_size&#32;=&#32;<emphasis role="keyword">sizeof</emphasis>(&#32;psa_drv_slot_number_t&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00118"/>00118 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;PSA_SUCCESS&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00119"/>00119 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00120"/>00120 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00121"/>00121 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*key_buffer_size&#32;=&#32;mbedtls_test_opaque_size_function(&#32;key_type,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00122"/>00122 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_bits&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00123"/>00123 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;(&#32;*key_buffer_size&#32;!=&#32;0&#32;)&#32;?
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00124"/>00124 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;PSA_SUCCESS&#32;:&#32;PSA_ERROR_NOT_SUPPORTED&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00125"/>00125 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;PSA_CRYPTO_DRIVER_TEST&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00126"/>00126 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00127"/>00127 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00128"/>00128 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(void)key_type;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00129"/>00129 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(void)key_bits;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00130"/>00130 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;PSA_ERROR_INVALID_ARGUMENT&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00131"/>00131 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00132"/>00132 }
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00133"/>00133 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00134"/>00134 psa_status_t&#32;psa_driver_wrapper_export_public_key(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00135"/>00135 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;psa_key_attributes_t&#32;*attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00136"/>00136 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;uint8_t&#32;*key_buffer,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;key_buffer_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00137"/>00137 &#32;&#32;&#32;&#32;uint8_t&#32;*data,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;data_size,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;*data_length&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00138"/>00138 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00139"/>00139 {
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00140"/>00140 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00141"/>00141 &#32;&#32;&#32;&#32;psa_status_t&#32;status&#32;=&#32;PSA_ERROR_INVALID_ARGUMENT;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00142"/>00142 &#32;&#32;&#32;&#32;psa_key_location_t&#32;location&#32;=&#32;PSA_KEY_LIFETIME_GET_LOCATION(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00143"/>00143 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;psa_get_key_lifetime(&#32;attributes&#32;)&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00144"/>00144 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00145"/>00145 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Try&#32;dynamically-registered&#32;SE&#32;interface&#32;first&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00146"/>00146 <emphasis role="preprocessor">#if&#32;defined(MBEDTLS_PSA_CRYPTO_SE_C)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00147"/>00147 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;psa_drv_se_t&#32;*drv;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00148"/>00148 &#32;&#32;&#32;&#32;psa_drv_se_context_t&#32;*drv_context;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00149"/>00149 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00150"/>00150 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(&#32;psa_get_se_driver(&#32;attributes-&gt;core.lifetime,&#32;&amp;drv,&#32;&amp;drv_context&#32;)&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00151"/>00151 &#32;&#32;&#32;&#32;{
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00152"/>00152 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(&#32;(&#32;drv-&gt;key_management&#32;==&#32;NULL&#32;)&#32;||
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00153"/>00153 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(&#32;drv-&gt;key_management-&gt;p_export_public&#32;==&#32;NULL&#32;)&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00154"/>00154 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00155"/>00155 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;PSA_ERROR_NOT_SUPPORTED&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00156"/>00156 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00157"/>00157 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00158"/>00158 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;drv-&gt;key_management-&gt;p_export_public(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00159"/>00159 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;drv_context,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00160"/>00160 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*(&#32;(psa_key_slot_number_t&#32;*)key_buffer&#32;),
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00161"/>00161 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data,&#32;data_size,&#32;data_length&#32;)&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00162"/>00162 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00163"/>00163 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_SE_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00164"/>00164 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00165"/>00165 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>(&#32;location&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00166"/>00166 &#32;&#32;&#32;&#32;{
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00167"/>00167 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;PSA_KEY_LOCATION_LOCAL_STORAGE:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00168"/>00168 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Key&#32;is&#32;stored&#32;in&#32;the&#32;slot&#32;in&#32;export&#32;representation,&#32;so</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00169"/>00169 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*&#32;cycle&#32;through&#32;all&#32;known&#32;transparent&#32;accelerators&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00170"/>00170 <emphasis role="preprocessor">#if&#32;defined(PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00171"/>00171 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00172"/>00172 <emphasis role="preprocessor">#if&#32;(defined(PSA_CRYPTO_DRIVER_TEST)&#32;)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00173"/>00173 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;status&#32;=&#32;mbedtls_test_transparent_export_public_key
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00174"/>00174 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00175"/>00175 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00176"/>00176 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00177"/>00177 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00178"/>00178 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00179"/>00179 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_length
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00180"/>00180 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00181"/>00181 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00182"/>00182 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(&#32;status&#32;!=&#32;PSA_ERROR_NOT_SUPPORTED&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00183"/>00183 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;status&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00184"/>00184 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00185"/>00185 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00186"/>00186 <emphasis role="preprocessor">#if&#32;(defined(MBEDTLS_PSA_P256M_DRIVER_ENABLED)&#32;)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00187"/>00187 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;status&#32;=&#32;p256_transparent_export_public_key
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00188"/>00188 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00189"/>00189 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00190"/>00190 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00191"/>00191 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00192"/>00192 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00193"/>00193 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_length
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00194"/>00194 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00195"/>00195 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00196"/>00196 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(&#32;status&#32;!=&#32;PSA_ERROR_NOT_SUPPORTED&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00197"/>00197 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;status&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00198"/>00198 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00199"/>00199 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00200"/>00200 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00201"/>00201 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00202"/>00202 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Fell&#32;through,&#32;meaning&#32;no&#32;accelerator&#32;supports&#32;this&#32;operation&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00203"/>00203 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;psa_export_public_key_internal(&#32;attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00204"/>00204 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00205"/>00205 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00206"/>00206 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00207"/>00207 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00208"/>00208 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_length&#32;)&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00209"/>00209 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00210"/>00210 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Add&#32;cases&#32;for&#32;opaque&#32;driver&#32;here&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00211"/>00211 <emphasis role="preprocessor">#if&#32;defined(PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00212"/>00212 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00213"/>00213 <emphasis role="preprocessor">#if&#32;(defined(PSA_CRYPTO_DRIVER_TEST)&#32;)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00214"/>00214 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;0x7fffff:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00215"/>00215 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;mbedtls_test_opaque_export_public_key
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00216"/>00216 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00217"/>00217 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00218"/>00218 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00219"/>00219 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00220"/>00220 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00221"/>00221 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data_length
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00222"/>00222 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;));
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00223"/>00223 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00224"/>00224 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00225"/>00225 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00226"/>00226 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00227"/>00227 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00228"/>00228 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Key&#32;is&#32;declared&#32;with&#32;a&#32;lifetime&#32;not&#32;known&#32;to&#32;us&#32;*/</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00229"/>00229 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;status&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00230"/>00230 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00231"/>00231 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00232"/>00232 }
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00233"/>00233 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00234"/>00234 psa_status_t&#32;psa_driver_wrapper_get_builtin_key(
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00235"/>00235 &#32;&#32;&#32;&#32;psa_drv_slot_number_t&#32;slot_number,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00236"/>00236 &#32;&#32;&#32;&#32;psa_key_attributes_t&#32;*attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00237"/>00237 &#32;&#32;&#32;&#32;uint8_t&#32;*key_buffer,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;key_buffer_size,&#32;<emphasis role="keywordtype">size_t</emphasis>&#32;*key_buffer_length&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00238"/>00238 {
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00239"/>00239 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00240"/>00240 &#32;&#32;&#32;&#32;psa_key_location_t&#32;location&#32;=&#32;PSA_KEY_LIFETIME_GET_LOCATION(&#32;attributes-&gt;core.lifetime&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00241"/>00241 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>(&#32;location&#32;)
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00242"/>00242 &#32;&#32;&#32;&#32;{
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00243"/>00243 <emphasis role="preprocessor">#if&#32;defined(PSA_CRYPTO_DRIVER_TEST)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00244"/>00244 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00245"/>00245 <emphasis role="preprocessor">#if&#32;(defined(PSA_CRYPTO_DRIVER_TEST)&#32;)</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00246"/>00246 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;0x7fffff:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00247"/>00247 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;mbedtls_test_opaque_get_builtin_key
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00248"/>00248 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(slot_number,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00249"/>00249 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;attributes,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00250"/>00250 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00251"/>00251 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer_size,
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00252"/>00252 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;key_buffer_length
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00253"/>00253 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;));
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00254"/>00254 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00255"/>00255 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00256"/>00256 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00257"/>00257 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;PSA_CRYPTO_DRIVER_TEST&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00258"/>00258 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00259"/>00259 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(void)&#32;slot_number;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00260"/>00260 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(void)&#32;key_buffer;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00261"/>00261 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(void)&#32;key_buffer_size;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00262"/>00262 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(void)&#32;key_buffer_length;
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00263"/>00263 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>(&#32;PSA_ERROR_DOES_NOT_EXIST&#32;);
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00264"/>00264 &#32;&#32;&#32;&#32;}
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00265"/>00265 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00266"/>00266 }
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00267"/>00267 
+<anchor xml:id="_psa__crypto__driver__wrappers__no__static_8c_source_1l00268"/>00268 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;MBEDTLS_PSA_CRYPTO_C&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

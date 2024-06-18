@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_891daf6f03268ecb9722486c592eed09" xml:lang="en-US">
+<title>src/motors/drivers Directory Reference</title>
+<indexterm><primary>src/motors/drivers Directory Reference</primary></indexterm>
+Directory dependency graph for drivers:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_891daf6f03268ecb9722486c592eed09_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="__dc_motor_8c">DcMotor.c</link></para>
+</listitem>
+            <listitem><para>file <link linkend="_encoder_8c">encoder.c</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__servo_motor_8c">ServoMotor.c</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

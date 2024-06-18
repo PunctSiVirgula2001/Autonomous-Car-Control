@@ -31,32 +31,52 @@ char* stateSendToAppStrings[STATE_MAX] = {
 TaskHandle_t handlerBlinkLedTask = NULL;
 
 
-void wifi_init_softap() {
-	ESP_ERROR_CHECK(nvs_flash_init());
-	ESP_ERROR_CHECK(esp_netif_init());
-	ESP_ERROR_CHECK(esp_event_loop_create_default());
-	esp_netif_create_default_wifi_ap();
+void wifi_init_softap(void) {
+    // Initialize NVS
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
 
-	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    // Initialize the TCP/IP stack
+    ESP_ERROR_CHECK(esp_netif_init());
 
-	wifi_config_t wifi_config = {
-	  .ap = { .ssid = WIFI_SSID,
-	  .ssid_len = strlen(WIFI_SSID),
-	  .password = WIFI_PASS,
-	  .max_connection = MAX_STA_CONN,
-	  .authmode = WIFI_AUTH_WPA_WPA2_PSK },
-	};
-	if (strlen(WIFI_PASS) == 0) {
-		wifi_config.ap.authmode = WIFI_AUTH_OPEN;
-	}
+    // Create the event loop
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
-	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config));
-	ESP_ERROR_CHECK(esp_wifi_start());
+    // Create default WiFi AP
+    esp_netif_create_default_wifi_ap();
 
-	//ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s", WIFI_SSID,
-			//WIFI_PASS);
+    // Initialize WiFi with default configuration
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    // Configure the WiFi settings
+    wifi_config_t wifi_config = {
+        .ap = {
+            .ssid = WIFI_SSID,
+            .ssid_len = strlen(WIFI_SSID),
+            .password = WIFI_PASS,
+            .max_connection = MAX_STA_CONN,
+            .authmode = WIFI_AUTH_WPA_WPA2_PSK
+        },
+    };
+
+    // If password length is 0, set the auth mode to open
+    if (strlen(WIFI_PASS) == 0) {
+        wifi_config.ap.authmode = WIFI_AUTH_OPEN;
+    }
+
+    // Set the WiFi mode to Access Point
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+    // Set the WiFi configuration
+    ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP, &wifi_config));
+    // Start the WiFi AP
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s", WIFI_SSID, WIFI_PASS);
 }
 extern QueueHandle_t diagnosticModeControlQueue;
 

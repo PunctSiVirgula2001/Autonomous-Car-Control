@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_517b432c5cc8121204403a5913445cf4" xml:lang="en-US">
+<title>build/esp-idf/mbedtls/mbedtls/library Directory Reference</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls/library Directory Reference</primary></indexterm>
+Directory dependency graph for library:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_517b432c5cc8121204403a5913445cf4_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="_error_8c">error.c</link></para>
+</listitem>
+            <listitem><para>file <link linkend="_psa__crypto__driver__wrappers__no__static_8c">psa_crypto_driver_wrappers_no_static.c</link></para>
+</listitem>
+            <listitem><para>file <link linkend="_ssl__debug__helpers__generated_8c">ssl_debug_helpers_generated.c</link></para>
+
+<para>Automatically generated helper functions for debugging. </para>
+</listitem>
+            <listitem><para>file <link linkend="_version__features_8c">version_features.c</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

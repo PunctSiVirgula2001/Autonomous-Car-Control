@@ -1,0 +1,262 @@
+\doxysection{src/\+Network.c File Reference}
+\label{_network_8c}\index{src/Network.c@{src/Network.c}}
+{\ttfamily \#include "{}Network.\+h"{}}\newline
+Include dependency graph for Network.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ wifi\+\_\+init\+\_\+softap} ()
+\item 
+void \textbf{ send\+Message} (int sock, const char $\ast$message)
+\item 
+void \textbf{ udp\+\_\+server\+\_\+task} (void $\ast$pv\+Parameters)
+\item 
+char $\ast$ \textbf{ to\+\_\+string} (void $\ast$value, \textbf{ data\+\_\+type\+\_\+to\+\_\+send} type)
+\item 
+void \textbf{ HLD\+\_\+\+Send\+Message} (const char $\ast$message)
+\item 
+void \textbf{ send\+Command\+App} (\textbf{ Send\+Command\+Type\+\_\+app} command\+Type, void $\ast$command\+Value, \textbf{ data\+\_\+type\+\_\+to\+\_\+send} type)
+\item 
+void \textbf{ start\+\_\+network\+\_\+task} ()
+\item 
+void \textbf{ config\+\_\+\+Connected\+\_\+led} ()
+\item 
+void \textbf{ turn\+On\+LED\+\_\+connected} ()
+\item 
+void \textbf{ complement\+\_\+connected\+\_\+led} ()
+\item 
+void \textbf{ blink\+\_\+led\+\_\+task} (void $\ast$pv\+Parameters)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ allowed\+\_\+to\+\_\+send} = false
+\item 
+char \textbf{ rx\+\_\+buffer} [128]
+\item 
+struct sockaddr\+\_\+in6 \textbf{ source\+\_\+addr\+\_\+global}
+\item 
+socklen\+\_\+t \textbf{ addr\+\_\+len\+\_\+global}
+\item 
+int \textbf{ sock\+\_\+global}
+\item 
+char $\ast$ \textbf{ state\+Send\+To\+App\+Strings} [\textbf{ STATE\+\_\+\+MAX}]
+\item 
+Task\+Handle\+\_\+t \textbf{ handler\+Blink\+Led\+Task} = NULL
+\item 
+Queue\+Handle\+\_\+t \textbf{ diagnostic\+Mode\+Control\+Queue}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{Network.c@{Network.c}!blink\_led\_task@{blink\_led\_task}}
+\index{blink\_led\_task@{blink\_led\_task}!Network.c@{Network.c}}
+\doxysubsubsection{blink\_led\_task()}
+{\footnotesize\ttfamily \label{_network_8c_a39e7a5088757fe328c0162fe25d907bf} 
+void blink\+\_\+led\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 268} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!complement\_connected\_led@{complement\_connected\_led}}
+\index{complement\_connected\_led@{complement\_connected\_led}!Network.c@{Network.c}}
+\doxysubsubsection{complement\_connected\_led()}
+{\footnotesize\ttfamily \label{_network_8c_a905705994ae17126574c031328a39852} 
+void complement\+\_\+connected\+\_\+led (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 262} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!config\_Connected\_led@{config\_Connected\_led}}
+\index{config\_Connected\_led@{config\_Connected\_led}!Network.c@{Network.c}}
+\doxysubsubsection{config\_Connected\_led()}
+{\footnotesize\ttfamily \label{_network_8c_a1c5ac6591ff23b206b947213055f1fd1} 
+void config\+\_\+\+Connected\+\_\+led (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 253} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!HLD\_SendMessage@{HLD\_SendMessage}}
+\index{HLD\_SendMessage@{HLD\_SendMessage}!Network.c@{Network.c}}
+\doxysubsubsection{HLD\_SendMessage()}
+{\footnotesize\ttfamily \label{_network_8c_abeb264090352ce377a3c339bd3abe1fc} 
+void HLD\+\_\+\+Send\+Message (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 221} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!sendCommandApp@{sendCommandApp}}
+\index{sendCommandApp@{sendCommandApp}!Network.c@{Network.c}}
+\doxysubsubsection{sendCommandApp()}
+{\footnotesize\ttfamily \label{_network_8c_a979168b4c86e45871c79ddc820763652} 
+void send\+Command\+App (\begin{DoxyParamCaption}\item[{\textbf{ Send\+Command\+Type\+\_\+app}}]{command\+Type}{, }\item[{void $\ast$}]{command\+Value}{, }\item[{\textbf{ data\+\_\+type\+\_\+to\+\_\+send}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 225} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!sendMessage@{sendMessage}}
+\index{sendMessage@{sendMessage}!Network.c@{Network.c}}
+\doxysubsubsection{sendMessage()}
+{\footnotesize\ttfamily \label{_network_8c_a9fded88b7fb26171ee59015da76c65bb} 
+void send\+Message (\begin{DoxyParamCaption}\item[{int}]{sock}{, }\item[{const char $\ast$}]{message}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 120} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!start\_network\_task@{start\_network\_task}}
+\index{start\_network\_task@{start\_network\_task}!Network.c@{Network.c}}
+\doxysubsubsection{start\_network\_task()}
+{\footnotesize\ttfamily \label{_network_8c_a138c349a5f4bbbc10772842474798721} 
+void start\+\_\+network\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 241} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!Network.c@{Network.c}}
+\doxysubsubsection{to\_string()}
+{\footnotesize\ttfamily \label{_network_8c_abc2dbdf2bfc1c9415cdb2e5f984665ff} 
+char $\ast$ to\+\_\+string (\begin{DoxyParamCaption}\item[{void $\ast$}]{value}{, }\item[{\textbf{ data\+\_\+type\+\_\+to\+\_\+send}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 199} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!turnOnLED\_connected@{turnOnLED\_connected}}
+\index{turnOnLED\_connected@{turnOnLED\_connected}!Network.c@{Network.c}}
+\doxysubsubsection{turnOnLED\_connected()}
+{\footnotesize\ttfamily \label{_network_8c_a07ab52c7f55179654f5630a08b8c2abd} 
+void turn\+On\+LED\+\_\+connected (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 258} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!udp\_server\_task@{udp\_server\_task}}
+\index{udp\_server\_task@{udp\_server\_task}!Network.c@{Network.c}}
+\doxysubsubsection{udp\_server\_task()}
+{\footnotesize\ttfamily \label{_network_8c_a6da0cb155a639c33efc40d0582b6bb92} 
+void udp\+\_\+server\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 131} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!wifi\_init\_softap@{wifi\_init\_softap}}
+\index{wifi\_init\_softap@{wifi\_init\_softap}!Network.c@{Network.c}}
+\doxysubsubsection{wifi\_init\_softap()}
+{\footnotesize\ttfamily \label{_network_8c_a62dddf76eb27aacde1609464b8d9ebad} 
+void wifi\+\_\+init\+\_\+softap (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 34} of file \textbf{ Network.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{Network.c@{Network.c}!addr\_len\_global@{addr\_len\_global}}
+\index{addr\_len\_global@{addr\_len\_global}!Network.c@{Network.c}}
+\doxysubsubsection{addr\_len\_global}
+{\footnotesize\ttfamily \label{_network_8c_a469c44d5c9e380d3e6a531eb08d6ff1d} 
+socklen\+\_\+t addr\+\_\+len\+\_\+global}
+
+
+
+Definition at line \textbf{ 6} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!allowed\_to\_send@{allowed\_to\_send}}
+\index{allowed\_to\_send@{allowed\_to\_send}!Network.c@{Network.c}}
+\doxysubsubsection{allowed\_to\_send}
+{\footnotesize\ttfamily \label{_network_8c_a7316aaeee91623cd9fcab65f302ce7be} 
+bool allowed\+\_\+to\+\_\+send = false}
+
+
+
+Definition at line \textbf{ 2} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!diagnosticModeControlQueue@{diagnosticModeControlQueue}}
+\index{diagnosticModeControlQueue@{diagnosticModeControlQueue}!Network.c@{Network.c}}
+\doxysubsubsection{diagnosticModeControlQueue}
+{\footnotesize\ttfamily \label{_network_8c_a731dce19cc17cfa0419781203697bf14} 
+Queue\+Handle\+\_\+t diagnostic\+Mode\+Control\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 103} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{Network.c@{Network.c}!handlerBlinkLedTask@{handlerBlinkLedTask}}
+\index{handlerBlinkLedTask@{handlerBlinkLedTask}!Network.c@{Network.c}}
+\doxysubsubsection{handlerBlinkLedTask}
+{\footnotesize\ttfamily \label{_network_8c_ac048a12489340ef5b63ebdaae37e4be3} 
+Task\+Handle\+\_\+t handler\+Blink\+Led\+Task = NULL}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!rx\_buffer@{rx\_buffer}}
+\index{rx\_buffer@{rx\_buffer}!Network.c@{Network.c}}
+\doxysubsubsection{rx\_buffer}
+{\footnotesize\ttfamily \label{_network_8c_ac71568e7238007e8666f6ba60d8bfe35} 
+char rx\+\_\+buffer[128]}
+
+
+
+Definition at line \textbf{ 3} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!sock\_global@{sock\_global}}
+\index{sock\_global@{sock\_global}!Network.c@{Network.c}}
+\doxysubsubsection{sock\_global}
+{\footnotesize\ttfamily \label{_network_8c_a66d70c4b1933243b27cf9451b07de225} 
+int sock\+\_\+global}
+
+
+
+Definition at line \textbf{ 7} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!source\_addr\_global@{source\_addr\_global}}
+\index{source\_addr\_global@{source\_addr\_global}!Network.c@{Network.c}}
+\doxysubsubsection{source\_addr\_global}
+{\footnotesize\ttfamily \label{_network_8c_a53049234aa6eaa663203a7d6d2201e20} 
+struct sockaddr\+\_\+in6 source\+\_\+addr\+\_\+global}
+
+
+
+Definition at line \textbf{ 5} of file \textbf{ Network.\+c}.
+
+\index{Network.c@{Network.c}!stateSendToAppStrings@{stateSendToAppStrings}}
+\index{stateSendToAppStrings@{stateSendToAppStrings}!Network.c@{Network.c}}
+\doxysubsubsection{stateSendToAppStrings}
+{\footnotesize\ttfamily \label{_network_8c_a2fa235ed0bc5b7bb6f442944f98abb31} 
+char$\ast$ state\+Send\+To\+App\+Strings[\textbf{ STATE\+\_\+\+MAX}]}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}MEASURED\_VALUE"{}},\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}I\_TERM\_VALUE"{}},\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}OBSTACLE\_DETECTED\_VALUE"{}},\ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}ERROR\_PID\_VALUE"{}},\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}ACTUAL\_TIME\_OF\_SEND"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}TEMP\_VALUE"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}DistSensFw"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}DistSensBw"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}ADXL\_ROLL"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}ADXL\_PITCH"{}},}
+\DoxyCodeLine{\ \ \ \ \textcolor{stringliteral}{"{}NEWLINE\_LOG\_INFO"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line \textbf{ 8} of file \textbf{ Network.\+c}.
+

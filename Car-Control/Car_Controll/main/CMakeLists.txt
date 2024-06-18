@@ -10,7 +10,10 @@ idf_component_register(
          "../src/I2C/drivers/I2C_distanceSensor.c"
          "../src/I2C/drivers/I2C_temperatureSensor.c"
          "../src/I2C/I2C_sensorControl.c"
-         "../src/MotorAndServoControl.c"
+         "../src/motors/MotorAndServoControl.c"
+         "../src/motors/drivers/DcMotor.c"
+         "../src/motors/drivers/ServoMotor.c"
+         "../src/motors/drivers/encoder.c"
          "../src/Network.c"
          "../src/PID.c"
          "../src/UART_Jetson.c"
@@ -18,5 +21,8 @@ idf_component_register(
     INCLUDE_DIRS "../include"
                  "../include/I2C"
                  "../include/I2C/drivers"
+                 "../include/motors"
+                 "../include/motors/drivers"
     REQUIRES driver esp_wifi nvs_flash esp_timer
+   
 )

@@ -1,0 +1,505 @@
+\doxysection{include/\+I2\+C/drivers/\+I2\+C\+\_\+common.h File Reference}
+\label{_i2_c__common_8h}\index{include/I2C/drivers/I2C\_common.h@{include/I2C/drivers/I2C\_common.h}}
+{\ttfamily \#include "{}driver/i2c\+\_\+master.\+h"{}}\newline
+{\ttfamily \#include "{}freertos/\+Free\+RTOS.\+h"{}}\newline
+{\ttfamily \#include "{}freertos/task.\+h"{}}\newline
+{\ttfamily \#include "{}driver/gpio.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+log.\+h"{}}\newline
+{\ttfamily \#include "{}driver/i2c.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+task\+\_\+wdt.\+h"{}}\newline
+{\ttfamily \#include "{}math.\+h"{}}\newline
+{\ttfamily \#include "{}Network.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+Include dependency graph for I2\+C\+\_\+common.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ I2\+C\+\_\+\+SDA}~21
+\item 
+\#define \textbf{ I2\+C\+\_\+\+SCL}~22
+\item 
+\#define \textbf{ INTERNAL\+\_\+\+PULLUPS}~false
+\item 
+\#define \textbf{ GLITCH\+\_\+\+IGNORE\+\_\+\+CNT}~7
+\item 
+\#define \textbf{ SCL\+\_\+\+SPEED\+\_\+\+FAST\+\_\+\+MODE}~400000
+\item 
+\#define \textbf{ SCL\+\_\+\+SPEED\+\_\+\+SLOW\+\_\+\+MODE}~100000
+\item 
+\#define \textbf{ RST\+\_\+\+PIN\+\_\+\+MUX\+\_\+\+I2C}~23
+\item 
+\#define \textbf{ I2\+C\+\_\+\+COMMAND\+\_\+\+SIZE}~(sizeof(\textbf{ I2\+C\+\_\+\+COMMAND}))
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+I2C}~10
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ I2\+C\+\_\+devices\+\_\+multiplexer} \textbf{ I2\+C\+\_\+devices\+\_\+mux}
+\item 
+typedef enum \textbf{ I2\+C\+\_\+devices} \textbf{ I2\+C\+\_\+devices}
+\item 
+typedef enum \textbf{ I2\+C\+\_\+dev\+\_\+handles} \textbf{ I2\+C\+\_\+dev\+\_\+handles}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ I2\+C\+\_\+devices\+\_\+multiplexer} \{ \newline
+\textbf{ NO\+\_\+\+MUX\+\_\+\+SELECTED} = -\/1
+, \textbf{ I2\+C\+\_\+distance\+\_\+sens\+\_\+1\+\_\+mux} = 0
+, \textbf{ I2\+C\+\_\+distance\+\_\+sens\+\_\+2\+\_\+mux} = 1
+, \textbf{ I2\+C\+\_\+adxl345\+\_\+sens\+\_\+mux} = 3
+, \newline
+\textbf{ I2\+C\+\_\+temp\+\_\+sens\+\_\+mux} = 2
+, \textbf{ I2\+C\+\_\+oled\+\_\+display\+\_\+096\+\_\+mux} = 5
+, \textbf{ I2\+C\+\_\+pixy2\+\_\+camera\+\_\+mux} = 4
+ \}
+\item 
+enum \textbf{ I2\+C\+\_\+devices} \{ \newline
+\textbf{ I2\+C\+\_\+mux\+\_\+addr} = 0x70
+, \textbf{ I2\+C\+\_\+temp\+\_\+sens\+\_\+addr} = 0x76
+, \textbf{ I2\+C\+\_\+distance\+\_\+sens\+\_\+addr} = 0x29
+, \textbf{ I2\+C\+\_\+pixy2\+\_\+camera\+\_\+addr} = 0x54
+, \newline
+\textbf{ I2\+C\+\_\+adxl345\+\_\+sens\+\_\+addr} = 0x53
+, \textbf{ I2\+C\+\_\+oled\+\_\+display\+\_\+096\+\_\+addr} = 0x00
+ \}
+\item 
+enum \textbf{ I2\+C\+\_\+dev\+\_\+handles} \{ \newline
+\textbf{ I2\+C\+\_\+multiplexer\+\_\+dev\+\_\+handle}
+, \textbf{ I2\+C\+\_\+pixy2\+\_\+dev\+\_\+handle}
+, \textbf{ I2\+C\+\_\+distance\+\_\+sens1\+\_\+dev\+\_\+handle}
+, \textbf{ I2\+C\+\_\+distance\+\_\+sens2\+\_\+dev\+\_\+handle}
+, \newline
+\textbf{ I2\+C\+\_\+temp\+\_\+sens\+\_\+dev\+\_\+handle}
+, \textbf{ I2\+C\+\_\+oled\+\_\+display\+\_\+096\+\_\+dev\+\_\+handle}
+, \textbf{ I2\+C\+\_\+adxl345\+\_\+sens\+\_\+dev\+\_\+handle}
+, \textbf{ I2\+C\+\_\+\+MAX\+\_\+\+Num\+\_\+of\+\_\+dev\+\_\+handles}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ I2\+C\+\_\+master\+\_\+init} ()
+\item 
+void \textbf{ I2\+C\+\_\+select\+\_\+multiplexer\+\_\+channel} (\textbf{ I2\+C\+\_\+devices\+\_\+mux} num\+\_\+channel)
+\item 
+void \textbf{ I2\+C\+\_\+transmit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, unsigned char $\ast$data, size\+\_\+t write\+\_\+size)
+\item 
+void \textbf{ I2\+C\+\_\+receive} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t $\ast$data, size\+\_\+t read\+\_\+size)
+\item 
+uint8\+\_\+t \textbf{ I2\+C\+\_\+read\+Register8bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg)
+\item 
+uint16\+\_\+t \textbf{ I2\+C\+\_\+read\+Register16bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg)
+\item 
+uint32\+\_\+t \textbf{ I2\+C\+\_\+read\+Register32bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg)
+\item 
+void \textbf{ I2\+C\+\_\+write\+Register8bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg, uint8\+\_\+t value)
+\item 
+void \textbf{ I2\+C\+\_\+write\+Register16bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg, uint16\+\_\+t value)
+\item 
+void \textbf{ I2\+C\+\_\+write\+Register32bit} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t reg, uint32\+\_\+t value)
+\item 
+void \textbf{ write\+Multiple\+Registers} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, const uint8\+\_\+t($\ast$regs\+\_\+vals)[2], size\+\_\+t count)
+\item 
+void \textbf{ I2\+C\+\_\+add\+\_\+device} (uint8\+\_\+t device\+\_\+address)
+\item 
+void \textbf{ config\+\_\+rst\+\_\+pin\+\_\+i2c\+\_\+mux} ()
+\item 
+void \textbf{ rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+on} ()
+\item 
+void \textbf{ rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+off} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{I2C\_common.h@{I2C\_common.h}!GLITCH\_IGNORE\_CNT@{GLITCH\_IGNORE\_CNT}}
+\index{GLITCH\_IGNORE\_CNT@{GLITCH\_IGNORE\_CNT}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{GLITCH\_IGNORE\_CNT}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a5abfaf2b47dd07ff9c43c9300c3a2cf1} 
+\#define GLITCH\+\_\+\+IGNORE\+\_\+\+CNT~7}
+
+
+
+Definition at line \textbf{ 20} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_COMMAND\_SIZE@{I2C\_COMMAND\_SIZE}}
+\index{I2C\_COMMAND\_SIZE@{I2C\_COMMAND\_SIZE}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_COMMAND\_SIZE}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_aded0995a06cbb547ae74c74283a7109f} 
+\#define I2\+C\+\_\+\+COMMAND\+\_\+\+SIZE~(sizeof(\textbf{ I2\+C\+\_\+\+COMMAND}))}
+
+
+
+Definition at line \textbf{ 24} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_SCL@{I2C\_SCL}}
+\index{I2C\_SCL@{I2C\_SCL}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_SCL}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a212ca328a6409c98f8c3dfbbe1ba561d} 
+\#define I2\+C\+\_\+\+SCL~22}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_SDA@{I2C\_SDA}}
+\index{I2C\_SDA@{I2C\_SDA}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_SDA}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a18aefd12ad84d4c33dc97923cb821e47} 
+\#define I2\+C\+\_\+\+SDA~21}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!INTERNAL\_PULLUPS@{INTERNAL\_PULLUPS}}
+\index{INTERNAL\_PULLUPS@{INTERNAL\_PULLUPS}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{INTERNAL\_PULLUPS}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_aa01619630da6d91ae0ac6877226ab056} 
+\#define INTERNAL\+\_\+\+PULLUPS~false}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!QUEUE\_SIZE\_I2C@{QUEUE\_SIZE\_I2C}}
+\index{QUEUE\_SIZE\_I2C@{QUEUE\_SIZE\_I2C}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{QUEUE\_SIZE\_I2C}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_aefc0109bdbffec9c0d40e63654111db2} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+I2C~10}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!RST\_PIN\_MUX\_I2C@{RST\_PIN\_MUX\_I2C}}
+\index{RST\_PIN\_MUX\_I2C@{RST\_PIN\_MUX\_I2C}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{RST\_PIN\_MUX\_I2C}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a06c45257753b6f916524ef7ac1d9d17f} 
+\#define RST\+\_\+\+PIN\+\_\+\+MUX\+\_\+\+I2C~23}
+
+
+
+Definition at line \textbf{ 23} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!SCL\_SPEED\_FAST\_MODE@{SCL\_SPEED\_FAST\_MODE}}
+\index{SCL\_SPEED\_FAST\_MODE@{SCL\_SPEED\_FAST\_MODE}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{SCL\_SPEED\_FAST\_MODE}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a0658e1ac8d0cbe573414a682dc169abb} 
+\#define SCL\+\_\+\+SPEED\+\_\+\+FAST\+\_\+\+MODE~400000}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!SCL\_SPEED\_SLOW\_MODE@{SCL\_SPEED\_SLOW\_MODE}}
+\index{SCL\_SPEED\_SLOW\_MODE@{SCL\_SPEED\_SLOW\_MODE}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{SCL\_SPEED\_SLOW\_MODE}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a80b8d904712a0d978c551f79294691cb} 
+\#define SCL\+\_\+\+SPEED\+\_\+\+SLOW\+\_\+\+MODE~100000}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_dev\_handles@{I2C\_dev\_handles}}
+\index{I2C\_dev\_handles@{I2C\_dev\_handles}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_dev\_handles}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a559f5692b1b1a3e5c0edfa019b78bef1} 
+typedef enum \textbf{ I2\+C\+\_\+dev\+\_\+handles} \textbf{ I2\+C\+\_\+dev\+\_\+handles}}
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_devices@{I2C\_devices}}
+\index{I2C\_devices@{I2C\_devices}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_devices}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a311e33163393c931039f55061c6918fe} 
+typedef enum \textbf{ I2\+C\+\_\+devices} \textbf{ I2\+C\+\_\+devices}}
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_devices\_mux@{I2C\_devices\_mux}}
+\index{I2C\_devices\_mux@{I2C\_devices\_mux}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_devices\_mux}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a7eff4ae278040636bcb680cccc94c671} 
+typedef enum \textbf{ I2\+C\+\_\+devices\+\_\+multiplexer} \textbf{ I2\+C\+\_\+devices\+\_\+mux}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_dev\_handles@{I2C\_dev\_handles}}
+\index{I2C\_dev\_handles@{I2C\_dev\_handles}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_dev\_handles}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+enum \textbf{ I2\+C\+\_\+dev\+\_\+handles}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_multiplexer\_dev\_handle@{I2C\_multiplexer\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_multiplexer\_dev\_handle@{I2C\_multiplexer\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+multiplexer\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_pixy2\_dev\_handle@{I2C\_pixy2\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_pixy2\_dev\_handle@{I2C\_pixy2\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+pixy2\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_distance\_sens1\_dev\_handle@{I2C\_distance\_sens1\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_distance\_sens1\_dev\_handle@{I2C\_distance\_sens1\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+distance\+\_\+sens1\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_distance\_sens2\_dev\_handle@{I2C\_distance\_sens2\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_distance\_sens2\_dev\_handle@{I2C\_distance\_sens2\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+distance\+\_\+sens2\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_temp\_sens\_dev\_handle@{I2C\_temp\_sens\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_temp\_sens\_dev\_handle@{I2C\_temp\_sens\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+temp\+\_\+sens\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_oled\_display\_096\_dev\_handle@{I2C\_oled\_display\_096\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_oled\_display\_096\_dev\_handle@{I2C\_oled\_display\_096\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+oled\+\_\+display\+\_\+096\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_adxl345\_sens\_dev\_handle@{I2C\_adxl345\_sens\_dev\_handle}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_adxl345\_sens\_dev\_handle@{I2C\_adxl345\_sens\_dev\_handle}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+adxl345\+\_\+sens\+\_\+dev\+\_\+handle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MAX\_Num\_of\_dev\_handles@{I2C\_MAX\_Num\_of\_dev\_handles}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_MAX\_Num\_of\_dev\_handles@{I2C\_MAX\_Num\_of\_dev\_handles}}}\label{_i2_c__common_8h_a1aec57033a8a180b854b479b31a7a812} 
+I2\+C\+\_\+\+MAX\+\_\+\+Num\+\_\+of\+\_\+dev\+\_\+handles&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 48} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_devices@{I2C\_devices}}
+\index{I2C\_devices@{I2C\_devices}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_devices}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+enum \textbf{ I2\+C\+\_\+devices}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_mux\_addr@{I2C\_mux\_addr}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_mux\_addr@{I2C\_mux\_addr}}}\label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+I2\+C\+\_\+mux\+\_\+addr&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_temp\_sens\_addr@{I2C\_temp\_sens\_addr}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_temp\_sens\_addr@{I2C\_temp\_sens\_addr}}}\label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+I2\+C\+\_\+temp\+\_\+sens\+\_\+addr&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_distance\_sens\_addr@{I2C\_distance\_sens\_addr}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_distance\_sens\_addr@{I2C\_distance\_sens\_addr}}}\label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+I2\+C\+\_\+distance\+\_\+sens\+\_\+addr&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_pixy2\_camera\_addr@{I2C\_pixy2\_camera\_addr}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_pixy2\_camera\_addr@{I2C\_pixy2\_camera\_addr}}}\label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+I2\+C\+\_\+pixy2\+\_\+camera\+\_\+addr&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_adxl345\_sens\_addr@{I2C\_adxl345\_sens\_addr}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_adxl345\_sens\_addr@{I2C\_adxl345\_sens\_addr}}}\label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+I2\+C\+\_\+adxl345\+\_\+sens\+\_\+addr&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_oled\_display\_096\_addr@{I2C\_oled\_display\_096\_addr}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_oled\_display\_096\_addr@{I2C\_oled\_display\_096\_addr}}}\label{_i2_c__common_8h_a95a542263fbf01ce81beb07972a223b9} 
+I2\+C\+\_\+oled\+\_\+display\+\_\+096\+\_\+addr&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 39} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_devices\_multiplexer@{I2C\_devices\_multiplexer}}
+\index{I2C\_devices\_multiplexer@{I2C\_devices\_multiplexer}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_devices\_multiplexer}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+enum \textbf{ I2\+C\+\_\+devices\+\_\+multiplexer}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NO\_MUX\_SELECTED@{NO\_MUX\_SELECTED}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!NO\_MUX\_SELECTED@{NO\_MUX\_SELECTED}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+NO\+\_\+\+MUX\+\_\+\+SELECTED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_distance\_sens\_1\_mux@{I2C\_distance\_sens\_1\_mux}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_distance\_sens\_1\_mux@{I2C\_distance\_sens\_1\_mux}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+I2\+C\+\_\+distance\+\_\+sens\+\_\+1\+\_\+mux&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_distance\_sens\_2\_mux@{I2C\_distance\_sens\_2\_mux}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_distance\_sens\_2\_mux@{I2C\_distance\_sens\_2\_mux}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+I2\+C\+\_\+distance\+\_\+sens\+\_\+2\+\_\+mux&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_adxl345\_sens\_mux@{I2C\_adxl345\_sens\_mux}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_adxl345\_sens\_mux@{I2C\_adxl345\_sens\_mux}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+I2\+C\+\_\+adxl345\+\_\+sens\+\_\+mux&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_temp\_sens\_mux@{I2C\_temp\_sens\_mux}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_temp\_sens\_mux@{I2C\_temp\_sens\_mux}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+I2\+C\+\_\+temp\+\_\+sens\+\_\+mux&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_oled\_display\_096\_mux@{I2C\_oled\_display\_096\_mux}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_oled\_display\_096\_mux@{I2C\_oled\_display\_096\_mux}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+I2\+C\+\_\+oled\+\_\+display\+\_\+096\+\_\+mux&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_pixy2\_camera\_mux@{I2C\_pixy2\_camera\_mux}!I2C\_common.h@{I2C\_common.h}}\index{I2C\_common.h@{I2C\_common.h}!I2C\_pixy2\_camera\_mux@{I2C\_pixy2\_camera\_mux}}}\label{_i2_c__common_8h_a70c4c5f41ff220dd7e6a2819a3bcb1c6} 
+I2\+C\+\_\+pixy2\+\_\+camera\+\_\+mux&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 28} of file \textbf{ I2\+C\+\_\+common.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_common.h@{I2C\_common.h}!config\_rst\_pin\_i2c\_mux@{config\_rst\_pin\_i2c\_mux}}
+\index{config\_rst\_pin\_i2c\_mux@{config\_rst\_pin\_i2c\_mux}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{config\_rst\_pin\_i2c\_mux()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a793ef527029215fa4b7539adcc14e5e0} 
+void config\+\_\+rst\+\_\+pin\+\_\+i2c\+\_\+mux (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 297} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_add\_device@{I2C\_add\_device}}
+\index{I2C\_add\_device@{I2C\_add\_device}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_add\_device()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_ab80632e89563cc7cffa2bd9b6f301fcd} 
+void I2\+C\+\_\+add\+\_\+device (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{device\+\_\+address}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 51} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_master\_init@{I2C\_master\_init}}
+\index{I2C\_master\_init@{I2C\_master\_init}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_master\_init()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a195e5504c89aeda3a53f31710e405623} 
+void I2\+C\+\_\+master\+\_\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_readRegister16bit@{I2C\_readRegister16bit}}
+\index{I2C\_readRegister16bit@{I2C\_readRegister16bit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_readRegister16bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a795f59e507c5791c2e125c2f9a34f831} 
+uint16\+\_\+t I2\+C\+\_\+read\+Register16bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 220} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_readRegister32bit@{I2C\_readRegister32bit}}
+\index{I2C\_readRegister32bit@{I2C\_readRegister32bit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_readRegister32bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a6aea245d443d9090e23b331c086433b6} 
+uint32\+\_\+t I2\+C\+\_\+read\+Register32bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 236} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_readRegister8bit@{I2C\_readRegister8bit}}
+\index{I2C\_readRegister8bit@{I2C\_readRegister8bit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_readRegister8bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_ae9d6e477c0e54827a4bb9bbf8aa301d3} 
+uint8\+\_\+t I2\+C\+\_\+read\+Register8bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 210} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_receive@{I2C\_receive}}
+\index{I2C\_receive@{I2C\_receive}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_receive()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_aee26da50da18a761354c3d05c6ab0145} 
+void I2\+C\+\_\+receive (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t $\ast$}]{data}{, }\item[{size\+\_\+t}]{read\+\_\+size}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 153} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_select\_multiplexer\_channel@{I2C\_select\_multiplexer\_channel}}
+\index{I2C\_select\_multiplexer\_channel@{I2C\_select\_multiplexer\_channel}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_select\_multiplexer\_channel()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_aef48213de5230add491038aa4c4eb05a} 
+void I2\+C\+\_\+select\+\_\+multiplexer\+\_\+channel (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+devices\+\_\+mux}}]{num\+\_\+channel}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_transmit@{I2C\_transmit}}
+\index{I2C\_transmit@{I2C\_transmit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_transmit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_acd828c8912cd4c39d94408126b8ac7db} 
+void I2\+C\+\_\+transmit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{unsigned char $\ast$}]{data}{, }\item[{size\+\_\+t}]{write\+\_\+size}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 105} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_writeRegister16bit@{I2C\_writeRegister16bit}}
+\index{I2C\_writeRegister16bit@{I2C\_writeRegister16bit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_writeRegister16bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a08e5e4ac56fb1d15beeb7997e2fa97de} 
+void I2\+C\+\_\+write\+Register16bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint16\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 271} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_writeRegister32bit@{I2C\_writeRegister32bit}}
+\index{I2C\_writeRegister32bit@{I2C\_writeRegister32bit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_writeRegister32bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a4ba94f60644888082c968d910dd4c20e} 
+void I2\+C\+\_\+write\+Register32bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint32\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 283} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!I2C\_writeRegister8bit@{I2C\_writeRegister8bit}}
+\index{I2C\_writeRegister8bit@{I2C\_writeRegister8bit}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{I2C\_writeRegister8bit()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a122086f1509f736c9ccde786beb5b419} 
+void I2\+C\+\_\+write\+Register8bit (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 259} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!rst\_pin\_i2c\_mux\_off@{rst\_pin\_i2c\_mux\_off}}
+\index{rst\_pin\_i2c\_mux\_off@{rst\_pin\_i2c\_mux\_off}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{rst\_pin\_i2c\_mux\_off()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a0ac33d5cead56645b2d38faf5ff80e05} 
+void rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+off (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 306} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!rst\_pin\_i2c\_mux\_on@{rst\_pin\_i2c\_mux\_on}}
+\index{rst\_pin\_i2c\_mux\_on@{rst\_pin\_i2c\_mux\_on}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{rst\_pin\_i2c\_mux\_on()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a0606cd7138b8af0f8a5b55f87d85849e} 
+void rst\+\_\+pin\+\_\+i2c\+\_\+mux\+\_\+on (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 301} of file \textbf{ I2\+C\+\_\+common.\+c}.
+
+\index{I2C\_common.h@{I2C\_common.h}!writeMultipleRegisters@{writeMultipleRegisters}}
+\index{writeMultipleRegisters@{writeMultipleRegisters}!I2C\_common.h@{I2C\_common.h}}
+\doxysubsubsection{writeMultipleRegisters()}
+{\footnotesize\ttfamily \label{_i2_c__common_8h_a12e39c7748d800e1fc75f5242b56db82} 
+void write\+Multiple\+Registers (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{const uint8\+\_\+t($\ast$)}]{regs\+\_\+vals}{[2], }\item[{size\+\_\+t}]{count}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 204} of file \textbf{ I2\+C\+\_\+common.\+c}.
+

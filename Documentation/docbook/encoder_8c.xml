@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_encoder_8c" xml:lang="en-US">
+<title>src/motors/drivers/encoder.c File Reference</title>
+<indexterm><primary>src/motors/drivers/encoder.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;encoder.h&quot;<?linebreak?></programlisting>Include dependency graph for encoder.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="encoder_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>bool IRAM_ATTR <link linkend="_encoder_8c_1a7f03f72613de2893da4bc44eb8e1e011">example_pcnt_on_reach</link> (pcnt_unit_handle_t unit, const pcnt_watch_event_data_t *edata, void *user_ctx)</para>
+</listitem>
+            <listitem><para>void <link linkend="_encoder_8c_1a3924b07647d86be798a086541d2c13d7">configureEncoderInterrupts</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>QueueHandle_t <link linkend="_encoder_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link></para>
+</listitem>
+            <listitem><para>pcnt_unit_handle_t <link linkend="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15">pcnt_unit</link> = NULL</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_encoder_8c_1a3924b07647d86be798a086541d2c13d7"/><section>
+    <title>configureEncoderInterrupts()</title>
+<indexterm><primary>configureEncoderInterrupts</primary><secondary>encoder.c</secondary></indexterm>
+<indexterm><primary>encoder.c</primary><secondary>configureEncoderInterrupts</secondary></indexterm>
+<para><computeroutput>void configureEncoderInterrupts ( )</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00025">25</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+<anchor xml:id="_encoder_8c_1a7f03f72613de2893da4bc44eb8e1e011"/><section>
+    <title>example_pcnt_on_reach()</title>
+<indexterm><primary>example_pcnt_on_reach</primary><secondary>encoder.c</secondary></indexterm>
+<indexterm><primary>encoder.c</primary><secondary>example_pcnt_on_reach</secondary></indexterm>
+<para><computeroutput>bool IRAM_ATTR example_pcnt_on_reach (pcnt_unit_handle_t unit, const pcnt_watch_event_data_t * edata, void * user_ctx)</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00014">14</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="_encoder_8c_1a9d25e0a7060112519b1c36755051dc15"/><section>
+    <title>pcnt_unit</title>
+<indexterm><primary>pcnt_unit</primary><secondary>encoder.c</secondary></indexterm>
+<indexterm><primary>encoder.c</primary><secondary>pcnt_unit</secondary></indexterm>
+<para><computeroutput>pcnt_unit_handle_t pcnt_unit = NULL</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00012">12</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+<anchor xml:id="_encoder_8c_1a745d4a6c288386e09694294a5f19410a"/><section>
+    <title>pulse_encoderQueue</title>
+<indexterm><primary>pulse_encoderQueue</primary><secondary>encoder.c</secondary></indexterm>
+<indexterm><primary>encoder.c</primary><secondary>pulse_encoderQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t pulse_encoderQueue</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00011">11</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+</section>
+</section>

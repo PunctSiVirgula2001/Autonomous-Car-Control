@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__u_a_r_t___jetson_8c_source" xml:lang="en-US">
+<title>UART_Jetson.c</title>
+<indexterm><primary>src/UART_Jetson.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__u_a_r_t___jetson_8c_source_1l00001"/>00001 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__u_a_r_t___jetson_8h">UART_Jetson.h</link>&quot;</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00002"/>00002 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__motor_and_servo_control_8h">MotorAndServoControl.h</link>&quot;</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00003"/>00003 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00004"/>00004 <emphasis role="keyword">extern</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__u_a_r_t___jetson_8c_1aaa8698890fe268d44ede1ad83c711ffb">AutonomousMode</link>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00005"/><link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">00005</link> QueueHandle_t&#32;<link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00006"/>00006 <emphasis role="keyword">extern</emphasis>&#32;QueueHandle_t&#32;<link linkend="__u_a_r_t___jetson_8c_1a692b48efecf30c3cea7e1271c249b331">autonomousModeControlUartQueue</link>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00007"/>00007 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00008"/><link linkend="__u_a_r_t___jetson_8h_1ae4c5f3d1df2e79904d4e12cb88ade1b9">00008</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__u_a_r_t___jetson_8c_1ae4c5f3d1df2e79904d4e12cb88ade1b9">JetsonUartConfig</link>()
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00009"/>00009 {
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00010"/>00010 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;uart_port_t&#32;uart_num&#32;=&#32;<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00011"/>00011 &#32;&#32;&#32;&#32;uart_config_t&#32;uart_config&#32;=&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00012"/>00012 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.baud_rate&#32;=&#32;<link linkend="__u_a_r_t___jetson_8h_1a1fac9153314479ad0ad495d752f0224a">UART_BAUD</link>,
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00013"/>00013 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.data_bits&#32;=&#32;<link linkend="__u_a_r_t___jetson_8h_1a509e0eb2e8b70949b4fd2c019a6a0b96">UART_WORD_LENGTH_BITS</link>,
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00014"/>00014 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.parity&#32;=&#32;UART_PARITY_DISABLE,
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00015"/>00015 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.stop_bits&#32;=&#32;UART_STOP_BITS_1,
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00016"/>00016 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.flow_ctrl&#32;=&#32;UART_HW_FLOWCTRL_DISABLE,
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00017"/>00017 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;.source_clk&#32;=&#32;UART_SCLK_DEFAULT,
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00018"/>00018 &#32;&#32;&#32;&#32;};
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00019"/>00019 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Configure&#32;UART&#32;parameters</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00020"/>00020 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(uart_param_config(uart_num,&#32;&amp;uart_config));
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00021"/>00021 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(uart_set_pin(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>,&#32;<link linkend="__u_a_r_t___jetson_8h_1ac554053f778819e84a6234cbc100cd5d">UART_TX</link>,&#32;<link linkend="__u_a_r_t___jetson_8h_1afd4d579b12950a4770aeaa6088400c3b">UART_RX</link>,&#32;UART_PIN_NO_CHANGE,&#32;UART_PIN_NO_CHANGE));
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00022"/>00022 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00023"/>00023 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Install&#32;UART&#32;driver&#32;using&#32;an&#32;event&#32;queue</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00024"/>00024 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(uart_driver_install(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>,&#32;<link linkend="__u_a_r_t___jetson_8h_1a0d57378e32bf8278011460740bc29f7f">UART_BUFFER_SIZE</link>,&#32;<link linkend="__u_a_r_t___jetson_8h_1a0d57378e32bf8278011460740bc29f7f">UART_BUFFER_SIZE</link>,&#32;<link linkend="__u_a_r_t___jetson_8h_1ad7d907e1b65ddd7c6a8c89d7d76ecba1">UART_Queue_SIZE</link>,&#32;&amp;<link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link>,&#32;0));
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00025"/>00025 }
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00026"/>00026 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00027"/><link linkend="__u_a_r_t___jetson_8h_1ad9e288d6023d9fc1385c3a974f95c03a">00027</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__u_a_r_t___jetson_8c_1ad9e288d6023d9fc1385c3a974f95c03a">uart_Jetson_Task</link>&#32;(<emphasis role="keywordtype">void</emphasis>&#32;*params)
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00028"/>00028 {
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00029"/>00029 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00030"/>00030 &#32;&#32;&#32;&#32;uart_event_t&#32;uartJetsonEvent;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00031"/>00031 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>&#32;data[128];
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00032"/>00032 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;length&#32;=&#32;0;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00033"/>00033 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>(1)
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00034"/>00034 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00035"/>00035 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__u_a_r_t___jetson_8c_1aaa8698890fe268d44ede1ad83c711ffb">AutonomousMode</link>&#32;==&#32;<emphasis role="keyword">false</emphasis>)
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00036"/>00036 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00037"/>00037 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(100));
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00038"/>00038 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uart_flush(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00039"/>00039 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReset(<link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00040"/>00040 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00041"/>00041 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xQueueReceive(<link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link>,&#32;(<emphasis role="keywordtype">void</emphasis>&#32;*)&amp;uartJetsonEvent,&#32;portMAX_DELAY))
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00042"/>00042 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00043"/>00043 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>(uartJetsonEvent.type)
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00044"/>00044 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00045"/>00045 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;UART_DATA:
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00046"/>00046 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(uart_get_buffered_data_len(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>,&#32;(<emphasis role="keywordtype">size_t</emphasis>*)&amp;length));
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00047"/>00047 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uart_read_bytes(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>,&#32;data,&#32;length,&#32;portMAX_DELAY);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00048"/>00048 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;data[length]=<emphasis role="charliteral">&apos;\0&apos;</emphasis>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00049"/>00049 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>&#32;*data_sp&#32;=&#32;strtok(data,&#32;<emphasis role="stringliteral">&quot;&#32;&quot;</emphasis>);&#32;<emphasis role="comment">//&#32;speed</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00050"/>00050 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>&#32;*data_st&#32;=&#32;strtok(NULL,&#32;<emphasis role="stringliteral">&quot;&#32;&quot;</emphasis>);&#32;<emphasis role="comment">//&#32;steer</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00051"/>00051 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(data_sp&#32;==&#32;NULL&#32;||&#32;data_st&#32;==&#32;NULL)&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00052"/>00052 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<emphasis role="stringliteral">&quot;UART_ERROR&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;Splitting&#32;failed&#32;or&#32;incomplete&#32;command&#32;received&quot;</emphasis>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00053"/>00053 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;&#32;<emphasis role="comment">//&#32;Exit&#32;the&#32;case&#32;or&#32;handle&#32;the&#32;error&#32;appropriately</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00054"/>00054 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00055"/>00055 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xQueueSend(<link linkend="__u_a_r_t___jetson_8c_1a692b48efecf30c3cea7e1271c249b331">autonomousModeControlUartQueue</link>,&#32;&amp;data_sp,&#32;portMAX_DELAY)&#32;!=&#32;pdPASS)&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00056"/>00056 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<emphasis role="stringliteral">&quot;Error&#32;uart&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;Unable&#32;to&#32;send&#32;to&#32;queue&quot;</emphasis>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00057"/>00057 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00058"/>00058 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xQueueSend(<link linkend="__u_a_r_t___jetson_8c_1a692b48efecf30c3cea7e1271c249b331">autonomousModeControlUartQueue</link>,&#32;&amp;data_st,&#32;portMAX_DELAY)&#32;!=&#32;pdPASS)&#32;{
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00059"/>00059 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<emphasis role="stringliteral">&quot;Error&#32;uart&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;Unable&#32;to&#32;send&#32;to&#32;queue&quot;</emphasis>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00060"/>00060 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00061"/>00061 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00062"/>00062 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00063"/>00063 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00064"/>00064 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;UART_BUFFER_FULL:
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00065"/>00065 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<emphasis role="stringliteral">&quot;Event&#32;Uart&#32;&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;ring&#32;buffer&#32;full&quot;</emphasis>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00066"/>00066 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;If&#32;buffer&#32;full&#32;happened,&#32;you&#32;should&#32;consider&#32;increasing&#32;your&#32;buffer&#32;size</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00067"/>00067 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;As&#32;an&#32;example,&#32;we&#32;directly&#32;flush&#32;the&#32;rx&#32;buffer&#32;here&#32;in&#32;order&#32;to&#32;read&#32;more&#32;data.</emphasis>
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00068"/>00068 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uart_flush_input(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00069"/>00069 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReset(<link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00071"/>00071 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00072"/>00072 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;UART_FIFO_OVF:
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00073"/>00073 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<emphasis role="stringliteral">&quot;Event&#32;Uart&#32;&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;ring&#32;buffer&#32;ovf&quot;</emphasis>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00074"/>00074 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uart_flush_input(<link linkend="__u_a_r_t___jetson_8h_1aa7a5950d998e44d87137de0780bd0af3">UART_PORT</link>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00075"/>00075 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReset(<link linkend="__u_a_r_t___jetson_8c_1af9a3a2b3a4cb5323c872e9ee13b15827">uartJetsonQueue</link>);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00076"/>00076 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00077"/>00077 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00078"/>00078 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">default</emphasis>:
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00079"/>00079 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<emphasis role="stringliteral">&quot;Uart&#32;Event:&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;event&#32;type:&#32;%d&quot;</emphasis>,&#32;uartJetsonEvent.type);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00080"/>00080 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00081"/>00081 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00082"/>00082 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00083"/>00083 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00084"/>00084 }
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00085"/>00085 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00086"/><link linkend="__u_a_r_t___jetson_8h_1a95f2115a47f33b4cf7c628a79d6b914a">00086</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__u_a_r_t___jetson_8c_1a95f2115a47f33b4cf7c628a79d6b914a">start_UartJetson_task</link>()
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00087"/>00087 {
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00088"/>00088 &#32;&#32;&#32;&#32;<link linkend="__u_a_r_t___jetson_8c_1ae4c5f3d1df2e79904d4e12cb88ade1b9">JetsonUartConfig</link>();
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00089"/>00089 &#32;&#32;&#32;&#32;xTaskCreatePinnedToCore(<link linkend="__u_a_r_t___jetson_8c_1ad9e288d6023d9fc1385c3a974f95c03a">uart_Jetson_Task</link>,&#32;<emphasis role="stringliteral">&quot;uartJetson&quot;</emphasis>,&#32;4096,&#32;NULL,&#32;6,&#32;NULL,1U);
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00090"/>00090 }
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00091"/>00091 
+<anchor xml:id="__u_a_r_t___jetson_8c_source_1l00092"/>00092 
+</programlisting></section>

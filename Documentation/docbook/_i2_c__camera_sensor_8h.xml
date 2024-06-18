@@ -1,0 +1,286 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__camera_sensor_8h" xml:lang="en-US">
+<title>include/I2C/drivers/I2C_cameraSensor.h File Reference</title>
+<indexterm><primary>include/I2C/drivers/I2C_cameraSensor.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_common.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_cameraSensor.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__camera_sensor_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__camera_sensor_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Data Structures    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_struct_vector">Vector</link></para>
+</listitem>
+            <listitem><para>struct <link linkend="_struct_pixy2_lines">Pixy2Lines</link></para>
+</listitem>
+            <listitem><para>struct <link linkend="_structpixy2_commands">pixy2Commands</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1a241aeeb764887ae5e3de58b98f04b16d">WIDTH</link>&#160;&#160;&#160;78</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1aed89bd71aee8be823e8a20ec4e093c1e">HEIGHT</link>&#160;&#160;&#160;51</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1a082632a26f4a552fbb819400207f1663">QUEUE_SIZE_PIXY</link>&#160;&#160;&#160;20</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1a9811ee1dddcdf6b55c42dc66396b546d">QUEUE_SIZE_DATATYPE_PIXY</link>&#160;&#160;&#160;sizeof(uint8_t)</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1ad76d1750a6cdeebd506bfcd6752554d2">ON</link>&#160;&#160;&#160;1U</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1a29e413f6725b2ba32d165ffaa35b01e5">OFF</link>&#160;&#160;&#160;0U</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__camera_sensor_8h_1ac575b4f88be2a4ea6572166c34d25656">PIXY_DETECTION</link>&#160;&#160;&#160;<link linkend="__i2_c__camera_sensor_8h_1ad76d1750a6cdeebd506bfcd6752554d2">ON</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Enumerations    </title>
+        <itemizedlist>
+            <listitem><para>enum <link linkend="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9">Pixy2FeatureType</link> { <link linkend="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9a7228fe4cb5769659b95c27b8c7470d0e">LINE_VECTOR</link> = 1
+, <link linkend="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9a6d91f5ac73c89bf4ffe0d8f1aea7e3f6">LINE_INTERSECTION</link> = 2
+, <link linkend="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9abb38eb30c4cadfc111ab81985da585c8">LINE_BARCODE</link> = 4
+ }</para>
+</listitem>
+            <listitem><para>enum <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259">Pixy2RequestTypes</link> { <?linebreak?><link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259aa4fe11c1802c374a4ce1b1f449ffc1f1">PIXY2_REQUEST_GET_VERSION</link> = 14
+, <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a25d0058563b954a4793a3c7d41820c9d">PIXY2_REQUEST_GET_RESOLUTION</link> = 12
+, <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259ae6abbc9b8a52365941c9a9382d70e223">PIXY2_REQUEST_SET_CAMERA_BRIGHTNESS</link> = 16
+, <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a953d9ce999954e3e4c87a9371ceb1ba7">PIXY2_REQUEST_SET_LED</link> = 20
+, <?linebreak?><link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259adec9e56218fb314f4ea44cb2e9147b52">PIXY2_REQUEST_SET_LAMP</link> = 22
+, <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a413338387857c29e7b50b694f0764a64">PIXY2_REQUEST_GET_BLOCKS</link> = 32
+, <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a67c07369b200f761cd92855efe83c522">PIXY2_REQUEST_GET_MAIN_FEATURES</link> = 48
+, <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a9c7d64b055cea37f5a285218a292452a">PIXY2_REQUEST_SET_MODE</link> = 54
+ }</para>
+</listitem>
+            <listitem><para>enum <link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7">Pixy2ResponseTypes</link> { <?linebreak?><link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7a5bd19b5aa29b1b3d520ef3a7f7f50eab">PIXY2_RESPONSE_VERSION</link> = 15
+, <link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7a4169b010e0c156585a60c88994abe845">PIXY2_RESPONSE_RESOLUTION</link> = 13
+, <link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7a834175b9db22326f39733f6287c71f78">PIXY2_RESPONSE_ACK</link> = 1
+, <link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7aeea789a4e6bf390dce487442191fcaf8">PIXY2_RESPONSE_BLOCKS</link> = 33
+, <?linebreak?><link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7adaeeed24bdae450f90f6c5e5d73b1ff4">PIXY2_RESPONSE_MAIN_FEATURES</link> = 49
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8h_1a017600a7956da0f432bbd877932f6ac2">requestPixy2Version</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8h_1a3a0289ef7a1f4c39e1136f055d5aa52c">setPixy2Lamp</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t upper, uint8_t lower)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8h_1a7605d4b46b66c3378b326dbd298af8eb">setPixy2LED</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t r, uint8_t g, uint8_t b)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8h_1a59aa0718e545daa3e789822a7083071a">getPixy2Lines</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t features, bool wait, <link linkend="_struct_pixy2_lines">Pixy2Lines</link> *<link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link>)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__camera_sensor_8h_1a159c619bbd072d296d8caf684332b02a">getBestVectorLeft</link> (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> *<link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link>, <link linkend="_struct_vector">Vector</link> *vec)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__camera_sensor_8h_1a7a16c5ef87bf82cd88751462ced8c749">getBestVectorRight</link> (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> *<link linkend="__i2_c__sensor_control_8c_1add0400696ecb105e7b62b89241ff69ca">lines</link>, <link linkend="_struct_vector">Vector</link> *vec)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__camera_sensor_8h_1ae51dba7e896d5485d4aaf8a4247438bb">computeSpeedAndSteer</link> (<link linkend="_struct_vector">Vector</link> vecLeft, <link linkend="_struct_vector">Vector</link> vecRight, bool existsGoodVecLeft, bool existsGoodVecRight, <link linkend="_structpixy2_commands">pixy2Commands</link> *commands)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__i2_c__camera_sensor_8h_1aed89bd71aee8be823e8a20ec4e093c1e"/><section>
+    <title>HEIGHT</title>
+<indexterm><primary>HEIGHT</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>HEIGHT</secondary></indexterm>
+<para><computeroutput>#define HEIGHT&#160;&#160;&#160;51</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00014">14</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a29e413f6725b2ba32d165ffaa35b01e5"/><section>
+    <title>OFF</title>
+<indexterm><primary>OFF</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>OFF</secondary></indexterm>
+<para><computeroutput>#define OFF&#160;&#160;&#160;0U</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00019">19</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ad76d1750a6cdeebd506bfcd6752554d2"/><section>
+    <title>ON</title>
+<indexterm><primary>ON</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>ON</secondary></indexterm>
+<para><computeroutput>#define ON&#160;&#160;&#160;1U</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00018">18</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ac575b4f88be2a4ea6572166c34d25656"/><section>
+    <title>PIXY_DETECTION</title>
+<indexterm><primary>PIXY_DETECTION</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY_DETECTION</secondary></indexterm>
+<para><computeroutput>#define PIXY_DETECTION&#160;&#160;&#160;<link linkend="__i2_c__camera_sensor_8h_1ad76d1750a6cdeebd506bfcd6752554d2">ON</link></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00021">21</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a9811ee1dddcdf6b55c42dc66396b546d"/><section>
+    <title>QUEUE_SIZE_DATATYPE_PIXY</title>
+<indexterm><primary>QUEUE_SIZE_DATATYPE_PIXY</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>QUEUE_SIZE_DATATYPE_PIXY</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_DATATYPE_PIXY&#160;&#160;&#160;sizeof(uint8_t)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00016">16</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a082632a26f4a552fbb819400207f1663"/><section>
+    <title>QUEUE_SIZE_PIXY</title>
+<indexterm><primary>QUEUE_SIZE_PIXY</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>QUEUE_SIZE_PIXY</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_PIXY&#160;&#160;&#160;20</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00015">15</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a241aeeb764887ae5e3de58b98f04b16d"/><section>
+    <title>WIDTH</title>
+<indexterm><primary>WIDTH</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>WIDTH</secondary></indexterm>
+<para><computeroutput>#define WIDTH&#160;&#160;&#160;78</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00013">13</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Enumeration Type Documentation</title>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9"/><section>
+    <title>Pixy2FeatureType</title>
+<indexterm><primary>Pixy2FeatureType</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>Pixy2FeatureType</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9">Pixy2FeatureType</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>LINE_VECTOR</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>LINE_VECTOR</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9a7228fe4cb5769659b95c27b8c7470d0e"/>LINE_VECTOR</entry><entry></entry></row><row><entry><indexterm><primary>LINE_INTERSECTION</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>LINE_INTERSECTION</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9a6d91f5ac73c89bf4ffe0d8f1aea7e3f6"/>LINE_INTERSECTION</entry><entry></entry></row><row><entry><indexterm><primary>LINE_BARCODE</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>LINE_BARCODE</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab76fef93704abe0ec57d1ba3ae0b6be9abb38eb30c4cadfc111ab81985da585c8"/>LINE_BARCODE</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00023">23</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259"/><section>
+    <title>Pixy2RequestTypes</title>
+<indexterm><primary>Pixy2RequestTypes</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>Pixy2RequestTypes</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259">Pixy2RequestTypes</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>PIXY2_REQUEST_GET_VERSION</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_GET_VERSION</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259aa4fe11c1802c374a4ce1b1f449ffc1f1"/>PIXY2_REQUEST_GET_VERSION</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_GET_RESOLUTION</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_GET_RESOLUTION</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a25d0058563b954a4793a3c7d41820c9d"/>PIXY2_REQUEST_GET_RESOLUTION</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_SET_CAMERA_BRIGHTNESS</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_SET_CAMERA_BRIGHTNESS</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259ae6abbc9b8a52365941c9a9382d70e223"/>PIXY2_REQUEST_SET_CAMERA_BRIGHTNESS</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_SET_LED</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_SET_LED</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a953d9ce999954e3e4c87a9371ceb1ba7"/>PIXY2_REQUEST_SET_LED</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_SET_LAMP</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_SET_LAMP</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259adec9e56218fb314f4ea44cb2e9147b52"/>PIXY2_REQUEST_SET_LAMP</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_GET_BLOCKS</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_GET_BLOCKS</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a413338387857c29e7b50b694f0764a64"/>PIXY2_REQUEST_GET_BLOCKS</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_GET_MAIN_FEATURES</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_GET_MAIN_FEATURES</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a67c07369b200f761cd92855efe83c522"/>PIXY2_REQUEST_GET_MAIN_FEATURES</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_REQUEST_SET_MODE</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_REQUEST_SET_MODE</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ab2b9b7098b2db06a45d0c994bad5f259a9c7d64b055cea37f5a285218a292452a"/>PIXY2_REQUEST_SET_MODE</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00047">47</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7"/><section>
+    <title>Pixy2ResponseTypes</title>
+<indexterm><primary>Pixy2ResponseTypes</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>Pixy2ResponseTypes</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7">Pixy2ResponseTypes</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>PIXY2_RESPONSE_VERSION</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_RESPONSE_VERSION</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7a5bd19b5aa29b1b3d520ef3a7f7f50eab"/>PIXY2_RESPONSE_VERSION</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_RESPONSE_RESOLUTION</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_RESPONSE_RESOLUTION</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7a4169b010e0c156585a60c88994abe845"/>PIXY2_RESPONSE_RESOLUTION</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_RESPONSE_ACK</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_RESPONSE_ACK</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7a834175b9db22326f39733f6287c71f78"/>PIXY2_RESPONSE_ACK</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_RESPONSE_BLOCKS</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_RESPONSE_BLOCKS</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7aeea789a4e6bf390dce487442191fcaf8"/>PIXY2_RESPONSE_BLOCKS</entry><entry></entry></row><row><entry><indexterm><primary>PIXY2_RESPONSE_MAIN_FEATURES</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>PIXY2_RESPONSE_MAIN_FEATURES</secondary></indexterm>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a4951b170d553ffd771e052c58e5f92a7adaeeed24bdae450f90f6c5e5d73b1ff4"/>PIXY2_RESPONSE_MAIN_FEATURES</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00058">58</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__camera_sensor_8h_1ae51dba7e896d5485d4aaf8a4247438bb"/><section>
+    <title>computeSpeedAndSteer()</title>
+<indexterm><primary>computeSpeedAndSteer</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>computeSpeedAndSteer</secondary></indexterm>
+<para><computeroutput>void computeSpeedAndSteer (<link linkend="_struct_vector">Vector</link> vecLeft, <link linkend="_struct_vector">Vector</link> vecRight, bool existsGoodVecLeft, bool existsGoodVecRight, <link linkend="_structpixy2_commands">pixy2Commands</link> * commands)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00215">215</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a159c619bbd072d296d8caf684332b02a"/><section>
+    <title>getBestVectorLeft()</title>
+<indexterm><primary>getBestVectorLeft</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>getBestVectorLeft</secondary></indexterm>
+<para><computeroutput>bool getBestVectorLeft (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> * lines, <link linkend="_struct_vector">Vector</link> * vec)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00161">161</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a7a16c5ef87bf82cd88751462ced8c749"/><section>
+    <title>getBestVectorRight()</title>
+<indexterm><primary>getBestVectorRight</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>getBestVectorRight</secondary></indexterm>
+<para><computeroutput>bool getBestVectorRight (<link linkend="_struct_pixy2_lines">Pixy2Lines</link> * lines, <link linkend="_struct_vector">Vector</link> * vec)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00188">188</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a59aa0718e545daa3e789822a7083071a"/><section>
+    <title>getPixy2Lines()</title>
+<indexterm><primary>getPixy2Lines</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>getPixy2Lines</secondary></indexterm>
+<para><computeroutput>void getPixy2Lines (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t features, bool wait, <link linkend="_struct_pixy2_lines">Pixy2Lines</link> * lines)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00100">100</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a017600a7956da0f432bbd877932f6ac2"/><section>
+    <title>requestPixy2Version()</title>
+<indexterm><primary>requestPixy2Version</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>requestPixy2Version</secondary></indexterm>
+<para><computeroutput>void requestPixy2Version (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00018">18</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a3a0289ef7a1f4c39e1136f055d5aa52c"/><section>
+    <title>setPixy2Lamp()</title>
+<indexterm><primary>setPixy2Lamp</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>setPixy2Lamp</secondary></indexterm>
+<para><computeroutput>void setPixy2Lamp (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t upper, uint8_t lower)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00086">86</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__camera_sensor_8h_1a7605d4b46b66c3378b326dbd298af8eb"/><section>
+    <title>setPixy2LED()</title>
+<indexterm><primary>setPixy2LED</primary><secondary>I2C_cameraSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_cameraSensor.h</primary><secondary>setPixy2LED</secondary></indexterm>
+<para><computeroutput>void setPixy2LED (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> pixy2_handle, uint8_t r, uint8_t g, uint8_t b)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00075">75</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+</section>
+</section>

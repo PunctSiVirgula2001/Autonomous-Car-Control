@@ -1,0 +1,79 @@
+\doxysection{Network.\+h}
+\label{_network_8h_source}\index{include/Network.h@{include/Network.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ NETWORK\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ NETWORK\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}esp\_task\_wdt.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}freertos/FreeRTOS.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}freertos/task.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}driver/uart.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}driver/gpio.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}sdkconfig.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}freertos/queue.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}driver/pulse\_cnt.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}driver/gpio.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}esp\_log.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}esp\_sleep.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}esp\_system.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}esp\_wifi.h"{}}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}esp\_event.h"{}}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ "{}nvs\_flash.h"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}lwip/sockets.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}lwip/netdb.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}errno.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ WIFI\_SSID\ "{}Car\_Ac\_Tuiasi"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#define\ WIFI\_PASS\ "{}123456789"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ MAX\_STA\_CONN\ 4\ \ }\textcolor{comment}{/*Number\ of\ maximum\ connections\ allowed\ on\ access\ point.\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ PORT\ 80\ \ \ \ \ \ \ \ \ }\textcolor{comment}{/*Port\ at\ which\ the\ access\ point\ has\ been\ started.\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ INBUILT\_LED\_CONNECTED\ GPIO\_NUM\_2}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{comment}{/*COMMANDS\ TO\ SEND\ TO\ APP*/}}
+\DoxyCodeLine{00035\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00036\ \ \ \ \ MEASURED\_VALUE,}
+\DoxyCodeLine{00037\ \ \ \ \ I\_TERM\_VALUE,}
+\DoxyCodeLine{00038\ \ \ \ \ OBSTACLE\_DETECTED\_VALUE,}
+\DoxyCodeLine{00039\ \ \ \ \ ERROR\_PID\_VALUE,}
+\DoxyCodeLine{00040\ \ \ \ \ ACTUAL\_TIME\_OF\_SEND,}
+\DoxyCodeLine{00041\ \ \ \ \ TEMPERATURE,}
+\DoxyCodeLine{00042\ \ \ \ \ DistSensFw,}
+\DoxyCodeLine{00043\ \ \ \ \ DistSensBw,}
+\DoxyCodeLine{00044\ \ \ \ \ ADXL\_ROLL,}
+\DoxyCodeLine{00045\ \ \ \ \ ADXL\_PITCH,}
+\DoxyCodeLine{00046\ \ \ \ \ NEWLINE\_LOG\_INFO,}
+\DoxyCodeLine{00047\ \ \ \ \ STATE\_MAX}
+\DoxyCodeLine{00048\ \}\ SendCommandType\_app;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ data\_type\_to\_send}
+\DoxyCodeLine{00051\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ INT,}
+\DoxyCodeLine{00053\ \ \ \ \ FLOAT,}
+\DoxyCodeLine{00054\ \ \ \ \ DOUBLE}
+\DoxyCodeLine{00055\ \}data\_type\_to\_send;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{//utility\ function\ for\ strings}}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{char}*\ to\_string(\textcolor{keywordtype}{void}\ *value,\ data\_type\_to\_send\ type);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{//static\ void\ wifi\_event\_handler(void*\ arg,\ esp\_event\_base\_t\ event\_base,\ int32\_t\ event\_id,\ void*\ event\_data);}}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ wifi\_init\_softap();}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ udp\_server\_task(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ start\_network\_task();}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ sendMessage(\textcolor{keywordtype}{int}\ sock,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message);}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ HLD\_SendMessage(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{void}\ sendCommandApp(SendCommandType\_app\ commandType,\ \textcolor{keywordtype}{void}*\ commandValue,\ data\_type\_to\_send\ type);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ config\_Connected\_led();}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ turnOnLED\_connected();}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{void}\ complement\_connected\_led();}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ blink\_led\_task(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ NETWORK\_H\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,356 @@
+\doxysection{include/\+Network.h File Reference}
+\label{_network_8h}\index{include/Network.h@{include/Network.h}}
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include "{}esp\+\_\+task\+\_\+wdt.\+h"{}}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include "{}freertos/\+Free\+RTOS.\+h"{}}\newline
+{\ttfamily \#include "{}freertos/task.\+h"{}}\newline
+{\ttfamily \#include "{}driver/uart.\+h"{}}\newline
+{\ttfamily \#include "{}driver/gpio.\+h"{}}\newline
+{\ttfamily \#include "{}sdkconfig.\+h"{}}\newline
+{\ttfamily \#include "{}freertos/queue.\+h"{}}\newline
+{\ttfamily \#include "{}driver/pulse\+\_\+cnt.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+log.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+sleep.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+system.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+wifi.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+event.\+h"{}}\newline
+{\ttfamily \#include "{}nvs\+\_\+flash.\+h"{}}\newline
+{\ttfamily \#include "{}lwip/sockets.\+h"{}}\newline
+{\ttfamily \#include "{}lwip/netdb.\+h"{}}\newline
+{\ttfamily \#include "{}errno.\+h"{}}\newline
+Include dependency graph for Network.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ WIFI\+\_\+\+SSID}~"{}Car\+\_\+\+Ac\+\_\+\+Tuiasi"{}
+\item 
+\#define \textbf{ WIFI\+\_\+\+PASS}~"{}123456789"{}
+\item 
+\#define \textbf{ MAX\+\_\+\+STA\+\_\+\+CONN}~4  /$\ast$Number of maximum connections allowed on access point. $\ast$/
+\item 
+\#define \textbf{ PORT}~80   /$\ast$Port at which the access point has been started. $\ast$/
+\item 
+\#define \textbf{ INBUILT\+\_\+\+LED\+\_\+\+CONNECTED}~GPIO\+\_\+\+NUM\+\_\+2
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ data\+\_\+type\+\_\+to\+\_\+send} \textbf{ data\+\_\+type\+\_\+to\+\_\+send}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Send\+Command\+Type\+\_\+app} \{ \newline
+\textbf{ MEASURED\+\_\+\+VALUE}
+, \textbf{ I\+\_\+\+TERM\+\_\+\+VALUE}
+, \textbf{ OBSTACLE\+\_\+\+DETECTED\+\_\+\+VALUE}
+, \textbf{ ERROR\+\_\+\+PID\+\_\+\+VALUE}
+, \newline
+\textbf{ ACTUAL\+\_\+\+TIME\+\_\+\+OF\+\_\+\+SEND}
+, \textbf{ TEMPERATURE}
+, \textbf{ Dist\+Sens\+Fw}
+, \textbf{ Dist\+Sens\+Bw}
+, \newline
+\textbf{ ADXL\+\_\+\+ROLL}
+, \textbf{ ADXL\+\_\+\+PITCH}
+, \textbf{ NEWLINE\+\_\+\+LOG\+\_\+\+INFO}
+, \textbf{ STATE\+\_\+\+MAX}
+ \}
+\item 
+enum \textbf{ data\+\_\+type\+\_\+to\+\_\+send} \{ \textbf{ INT}
+, \textbf{ FLOAT}
+, \textbf{ DOUBLE}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ \textbf{ to\+\_\+string} (void $\ast$value, \textbf{ data\+\_\+type\+\_\+to\+\_\+send} type)
+\item 
+void \textbf{ wifi\+\_\+init\+\_\+softap} ()
+\item 
+void \textbf{ udp\+\_\+server\+\_\+task} (void $\ast$pv\+Parameters)
+\item 
+void \textbf{ start\+\_\+network\+\_\+task} ()
+\item 
+void \textbf{ send\+Message} (int sock, const char $\ast$message)
+\item 
+void \textbf{ HLD\+\_\+\+Send\+Message} (const char $\ast$message)
+\item 
+void \textbf{ send\+Command\+App} (\textbf{ Send\+Command\+Type\+\_\+app} command\+Type, void $\ast$command\+Value, \textbf{ data\+\_\+type\+\_\+to\+\_\+send} type)
+\item 
+void \textbf{ config\+\_\+\+Connected\+\_\+led} ()
+\item 
+void \textbf{ turn\+On\+LED\+\_\+connected} ()
+\item 
+void \textbf{ complement\+\_\+connected\+\_\+led} ()
+\item 
+void \textbf{ blink\+\_\+led\+\_\+task} (void $\ast$pv\+Parameters)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{Network.h@{Network.h}!INBUILT\_LED\_CONNECTED@{INBUILT\_LED\_CONNECTED}}
+\index{INBUILT\_LED\_CONNECTED@{INBUILT\_LED\_CONNECTED}!Network.h@{Network.h}}
+\doxysubsubsection{INBUILT\_LED\_CONNECTED}
+{\footnotesize\ttfamily \label{_network_8h_a41641baa09fa4c4b5afa152d61918969} 
+\#define INBUILT\+\_\+\+LED\+\_\+\+CONNECTED~GPIO\+\_\+\+NUM\+\_\+2}
+
+
+
+Definition at line \textbf{ 32} of file \textbf{ Network.\+h}.
+
+\index{Network.h@{Network.h}!MAX\_STA\_CONN@{MAX\_STA\_CONN}}
+\index{MAX\_STA\_CONN@{MAX\_STA\_CONN}!Network.h@{Network.h}}
+\doxysubsubsection{MAX\_STA\_CONN}
+{\footnotesize\ttfamily \label{_network_8h_a428d6fc23e06208d09595c62b0a98aa9} 
+\#define MAX\+\_\+\+STA\+\_\+\+CONN~4  /$\ast$Number of maximum connections allowed on access point. $\ast$/}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ Network.\+h}.
+
+\index{Network.h@{Network.h}!PORT@{PORT}}
+\index{PORT@{PORT}!Network.h@{Network.h}}
+\doxysubsubsection{PORT}
+{\footnotesize\ttfamily \label{_network_8h_a614217d263be1fb1a5f76e2ff7be19a2} 
+\#define PORT~80   /$\ast$Port at which the access point has been started. $\ast$/}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ Network.\+h}.
+
+\index{Network.h@{Network.h}!WIFI\_PASS@{WIFI\_PASS}}
+\index{WIFI\_PASS@{WIFI\_PASS}!Network.h@{Network.h}}
+\doxysubsubsection{WIFI\_PASS}
+{\footnotesize\ttfamily \label{_network_8h_a3c95561b03d0fcf9048b231ae2ba90fb} 
+\#define WIFI\+\_\+\+PASS~"{}123456789"{}}
+
+
+
+Definition at line \textbf{ 29} of file \textbf{ Network.\+h}.
+
+\index{Network.h@{Network.h}!WIFI\_SSID@{WIFI\_SSID}}
+\index{WIFI\_SSID@{WIFI\_SSID}!Network.h@{Network.h}}
+\doxysubsubsection{WIFI\_SSID}
+{\footnotesize\ttfamily \label{_network_8h_a586542b79d00e4db7e1d5a667ae83a2b} 
+\#define WIFI\+\_\+\+SSID~"{}Car\+\_\+\+Ac\+\_\+\+Tuiasi"{}}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ Network.\+h}.
+
+
+
+\doxysubsection{Typedef Documentation}
+\index{Network.h@{Network.h}!data\_type\_to\_send@{data\_type\_to\_send}}
+\index{data\_type\_to\_send@{data\_type\_to\_send}!Network.h@{Network.h}}
+\doxysubsubsection{data\_type\_to\_send}
+{\footnotesize\ttfamily \label{_network_8h_ad8f97e88259cf600da25c064ceb711eb} 
+typedef enum \textbf{ data\+\_\+type\+\_\+to\+\_\+send} \textbf{ data\+\_\+type\+\_\+to\+\_\+send}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{Network.h@{Network.h}!data\_type\_to\_send@{data\_type\_to\_send}}
+\index{data\_type\_to\_send@{data\_type\_to\_send}!Network.h@{Network.h}}
+\doxysubsubsection{data\_type\_to\_send}
+{\footnotesize\ttfamily \label{_network_8h_a05e8c8420da1c24552059209fc234b2f} 
+enum \textbf{ data\+\_\+type\+\_\+to\+\_\+send}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INT@{INT}!Network.h@{Network.h}}\index{Network.h@{Network.h}!INT@{INT}}}\label{_network_8h_a05e8c8420da1c24552059209fc234b2f} 
+INT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FLOAT@{FLOAT}!Network.h@{Network.h}}\index{Network.h@{Network.h}!FLOAT@{FLOAT}}}\label{_network_8h_a05e8c8420da1c24552059209fc234b2f} 
+FLOAT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DOUBLE@{DOUBLE}!Network.h@{Network.h}}\index{Network.h@{Network.h}!DOUBLE@{DOUBLE}}}\label{_network_8h_a05e8c8420da1c24552059209fc234b2f} 
+DOUBLE&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 50} of file \textbf{ Network.\+h}.
+
+\index{Network.h@{Network.h}!SendCommandType\_app@{SendCommandType\_app}}
+\index{SendCommandType\_app@{SendCommandType\_app}!Network.h@{Network.h}}
+\doxysubsubsection{SendCommandType\_app}
+{\footnotesize\ttfamily \label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+enum \textbf{ Send\+Command\+Type\+\_\+app}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MEASURED\_VALUE@{MEASURED\_VALUE}!Network.h@{Network.h}}\index{Network.h@{Network.h}!MEASURED\_VALUE@{MEASURED\_VALUE}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+MEASURED\+\_\+\+VALUE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I\_TERM\_VALUE@{I\_TERM\_VALUE}!Network.h@{Network.h}}\index{Network.h@{Network.h}!I\_TERM\_VALUE@{I\_TERM\_VALUE}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+I\+\_\+\+TERM\+\_\+\+VALUE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{OBSTACLE\_DETECTED\_VALUE@{OBSTACLE\_DETECTED\_VALUE}!Network.h@{Network.h}}\index{Network.h@{Network.h}!OBSTACLE\_DETECTED\_VALUE@{OBSTACLE\_DETECTED\_VALUE}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+OBSTACLE\+\_\+\+DETECTED\+\_\+\+VALUE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ERROR\_PID\_VALUE@{ERROR\_PID\_VALUE}!Network.h@{Network.h}}\index{Network.h@{Network.h}!ERROR\_PID\_VALUE@{ERROR\_PID\_VALUE}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+ERROR\+\_\+\+PID\+\_\+\+VALUE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ACTUAL\_TIME\_OF\_SEND@{ACTUAL\_TIME\_OF\_SEND}!Network.h@{Network.h}}\index{Network.h@{Network.h}!ACTUAL\_TIME\_OF\_SEND@{ACTUAL\_TIME\_OF\_SEND}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+ACTUAL\+\_\+\+TIME\+\_\+\+OF\+\_\+\+SEND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TEMPERATURE@{TEMPERATURE}!Network.h@{Network.h}}\index{Network.h@{Network.h}!TEMPERATURE@{TEMPERATURE}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+TEMPERATURE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DistSensFw@{DistSensFw}!Network.h@{Network.h}}\index{Network.h@{Network.h}!DistSensFw@{DistSensFw}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+Dist\+Sens\+Fw&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DistSensBw@{DistSensBw}!Network.h@{Network.h}}\index{Network.h@{Network.h}!DistSensBw@{DistSensBw}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+Dist\+Sens\+Bw&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL\_ROLL@{ADXL\_ROLL}!Network.h@{Network.h}}\index{Network.h@{Network.h}!ADXL\_ROLL@{ADXL\_ROLL}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+ADXL\+\_\+\+ROLL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ADXL\_PITCH@{ADXL\_PITCH}!Network.h@{Network.h}}\index{Network.h@{Network.h}!ADXL\_PITCH@{ADXL\_PITCH}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+ADXL\+\_\+\+PITCH&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NEWLINE\_LOG\_INFO@{NEWLINE\_LOG\_INFO}!Network.h@{Network.h}}\index{Network.h@{Network.h}!NEWLINE\_LOG\_INFO@{NEWLINE\_LOG\_INFO}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+NEWLINE\+\_\+\+LOG\+\_\+\+INFO&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{STATE\_MAX@{STATE\_MAX}!Network.h@{Network.h}}\index{Network.h@{Network.h}!STATE\_MAX@{STATE\_MAX}}}\label{_network_8h_a57a739fb3d417e5abded6e0ac98c115b} 
+STATE\+\_\+\+MAX&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 35} of file \textbf{ Network.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{Network.h@{Network.h}!blink\_led\_task@{blink\_led\_task}}
+\index{blink\_led\_task@{blink\_led\_task}!Network.h@{Network.h}}
+\doxysubsubsection{blink\_led\_task()}
+{\footnotesize\ttfamily \label{_network_8h_a39e7a5088757fe328c0162fe25d907bf} 
+void blink\+\_\+led\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 268} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!complement\_connected\_led@{complement\_connected\_led}}
+\index{complement\_connected\_led@{complement\_connected\_led}!Network.h@{Network.h}}
+\doxysubsubsection{complement\_connected\_led()}
+{\footnotesize\ttfamily \label{_network_8h_a905705994ae17126574c031328a39852} 
+void complement\+\_\+connected\+\_\+led (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 262} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!config\_Connected\_led@{config\_Connected\_led}}
+\index{config\_Connected\_led@{config\_Connected\_led}!Network.h@{Network.h}}
+\doxysubsubsection{config\_Connected\_led()}
+{\footnotesize\ttfamily \label{_network_8h_a1c5ac6591ff23b206b947213055f1fd1} 
+void config\+\_\+\+Connected\+\_\+led (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 253} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!HLD\_SendMessage@{HLD\_SendMessage}}
+\index{HLD\_SendMessage@{HLD\_SendMessage}!Network.h@{Network.h}}
+\doxysubsubsection{HLD\_SendMessage()}
+{\footnotesize\ttfamily \label{_network_8h_abeb264090352ce377a3c339bd3abe1fc} 
+void HLD\+\_\+\+Send\+Message (\begin{DoxyParamCaption}\item[{const char $\ast$}]{message}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 221} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!sendCommandApp@{sendCommandApp}}
+\index{sendCommandApp@{sendCommandApp}!Network.h@{Network.h}}
+\doxysubsubsection{sendCommandApp()}
+{\footnotesize\ttfamily \label{_network_8h_a979168b4c86e45871c79ddc820763652} 
+void send\+Command\+App (\begin{DoxyParamCaption}\item[{\textbf{ Send\+Command\+Type\+\_\+app}}]{command\+Type}{, }\item[{void $\ast$}]{command\+Value}{, }\item[{\textbf{ data\+\_\+type\+\_\+to\+\_\+send}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 225} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!sendMessage@{sendMessage}}
+\index{sendMessage@{sendMessage}!Network.h@{Network.h}}
+\doxysubsubsection{sendMessage()}
+{\footnotesize\ttfamily \label{_network_8h_a9fded88b7fb26171ee59015da76c65bb} 
+void send\+Message (\begin{DoxyParamCaption}\item[{int}]{sock}{, }\item[{const char $\ast$}]{message}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 120} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!start\_network\_task@{start\_network\_task}}
+\index{start\_network\_task@{start\_network\_task}!Network.h@{Network.h}}
+\doxysubsubsection{start\_network\_task()}
+{\footnotesize\ttfamily \label{_network_8h_a138c349a5f4bbbc10772842474798721} 
+void start\+\_\+network\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 241} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!to\_string@{to\_string}}
+\index{to\_string@{to\_string}!Network.h@{Network.h}}
+\doxysubsubsection{to\_string()}
+{\footnotesize\ttfamily \label{_network_8h_abc2dbdf2bfc1c9415cdb2e5f984665ff} 
+char $\ast$ to\+\_\+string (\begin{DoxyParamCaption}\item[{void $\ast$}]{value}{, }\item[{\textbf{ data\+\_\+type\+\_\+to\+\_\+send}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 199} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!turnOnLED\_connected@{turnOnLED\_connected}}
+\index{turnOnLED\_connected@{turnOnLED\_connected}!Network.h@{Network.h}}
+\doxysubsubsection{turnOnLED\_connected()}
+{\footnotesize\ttfamily \label{_network_8h_a07ab52c7f55179654f5630a08b8c2abd} 
+void turn\+On\+LED\+\_\+connected (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 258} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!udp\_server\_task@{udp\_server\_task}}
+\index{udp\_server\_task@{udp\_server\_task}!Network.h@{Network.h}}
+\doxysubsubsection{udp\_server\_task()}
+{\footnotesize\ttfamily \label{_network_8h_a6da0cb155a639c33efc40d0582b6bb92} 
+void udp\+\_\+server\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 131} of file \textbf{ Network.\+c}.
+
+\index{Network.h@{Network.h}!wifi\_init\_softap@{wifi\_init\_softap}}
+\index{wifi\_init\_softap@{wifi\_init\_softap}!Network.h@{Network.h}}
+\doxysubsubsection{wifi\_init\_softap()}
+{\footnotesize\ttfamily \label{_network_8h_a62dddf76eb27aacde1609464b8d9ebad} 
+void wifi\+\_\+init\+\_\+softap (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 34} of file \textbf{ Network.\+c}.
+

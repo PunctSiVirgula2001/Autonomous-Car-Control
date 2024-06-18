@@ -1,0 +1,53 @@
+\doxysection{UART\+\_\+\+Jetson.\+h}
+\label{_u_a_r_t___jetson_8h_source}\index{include/UART\_Jetson.h@{include/UART\_Jetson.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ }
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#ifndef\ MAIN\_UART\_JETSON\_H\_}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#define\ MAIN\_UART\_JETSON\_H\_}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}MotorAndServoControl.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}driver/uart.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{/*UART\ Settings\ */}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ UART\_BAUD\ 115200}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ UART\_WORD\_LENGTH\_BITS\ UART\_DATA\_8\_BITS}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ UART\_PORT\ UART\_NUM\_2}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ UART\_TX\ 17}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ UART\_RX\ 16}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ UART\_BUFFER\_SIZE\ 1024\ *\ 2}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ UART\_Queue\_SIZE\ 20}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ UART\_RTS\_PIN\ 18}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ UART\_CTS\_PIN\ 19}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ StopJetson\ =\ 0,}
+\DoxyCodeLine{00021\ \ \ \ \ GreenJetson\ =\ 6,}
+\DoxyCodeLine{00022\ \ \ \ \ ParkingJetson\ =\ 1,}
+\DoxyCodeLine{00023\ \ \ \ \ ChargingStationJetson\ =\ 2,}
+\DoxyCodeLine{00024\ \ \ \ \ PedestrianCrossingJetson\ =\ 3,}
+\DoxyCodeLine{00025\ \ \ \ \ RedJetson\ =\ 5,}
+\DoxyCodeLine{00026\ \ \ \ \ YellowJetson\ =\ 4,}
+\DoxyCodeLine{00027\ \ \ \ \ DrivingJetson\ =\ 7}
+\DoxyCodeLine{00028\ \}ReceivedState\_jetson;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ state;}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ Steer;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{int}\ Speed;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ class\_id;}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ class\_confidence;}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ det\_confidence;}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ x;}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ y;}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long}\ width;}
+\DoxyCodeLine{00040\ \}\ commandReceived\_jetson;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ JetsonUartConfig();}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ uart\_Jetson\_Task\ (\textcolor{keywordtype}{void}\ *params);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ start\_UartJetson\_task();}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MAIN\_UART\_JETSON\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

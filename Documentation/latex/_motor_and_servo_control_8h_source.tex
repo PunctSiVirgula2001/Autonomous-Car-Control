@@ -1,0 +1,47 @@
+\doxysection{Motor\+And\+Servo\+Control.\+h}
+\label{_motor_and_servo_control_8h_source}\index{include/motors/MotorAndServoControl.h@{include/motors/MotorAndServoControl.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MOTORANDSERVOCONTROL}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MOTORANDSERVOCONTROL}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}drivers/DcMotor.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}drivers/ServoMotor.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}drivers/encoder.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{/*Car\ control*/}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ QUEUE\_SIZE\_CAR\_COMMANDS\ 20}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS\ (sizeof(char*))}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{/*COMMANDS\ RECEIVED\ FROM\ APP*/}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ StopReceived\ =\ 0,\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 00}}
+\DoxyCodeLine{00015\ \ \ \ \ ForwardReceived\ =\ 1,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ 01}}
+\DoxyCodeLine{00016\ \ \ \ \ BackwardReceived\ =\ 2,\ \ \ \ \ \ \ \textcolor{comment}{//\ 02\ //03\ -\/>left\ light,\ 04\ -\/>\ right\ light}}
+\DoxyCodeLine{00017\ \ \ \ \ SpeedReceived\ =\ 5,\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 05}}
+\DoxyCodeLine{00018\ \ \ \ \ SteerReceived\ =\ 6,\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 06}}
+\DoxyCodeLine{00019\ \ \ \ \ AutonomousReceived\ =\ 7,\ \ \ \ \ \ \ \textcolor{comment}{//\ 07}}
+\DoxyCodeLine{00020\ \ \ \ \ PID\_Changed\ =\ 8}
+\DoxyCodeLine{00021\ \}\ ReceivedState\_app;}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00024\ \ \ \ \ ReceivedState\_app\ command;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ command\_value;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_value;\ \textcolor{comment}{//\ Indicates\ whether\ command\_value\ is\ valid}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{float}\ KP;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{float}\ KI;}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{float}\ KD;}
+\DoxyCodeLine{00030\ \}\ CarCommand;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{/*Car\ control\ tasks*/}}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ carControl\_Task(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ steer\_task(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*Car\ control\ functions*/}}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ carControl\_init();}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ carControl\_Backward\_init(\textcolor{keywordtype}{int}\ break\_value);}
+\DoxyCodeLine{00039\ CarCommand\ parseCommand(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ commandStr);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

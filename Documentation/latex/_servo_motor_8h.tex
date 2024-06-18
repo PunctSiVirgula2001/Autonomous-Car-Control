@@ -1,0 +1,127 @@
+\doxysection{include/motors/drivers/\+Servo\+Motor.h File Reference}
+\label{_servo_motor_8h}\index{include/motors/drivers/ServoMotor.h@{include/motors/drivers/ServoMotor.h}}
+{\ttfamily \#include "{}motors\+\_\+common.\+h"{}}\newline
+Include dependency graph for Servo\+Motor.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ LEDC\+\_\+\+SERVO\+\_\+\+GPIO}~(27)
+\item 
+\#define \textbf{ LEDC\+\_\+\+SERVO\+\_\+\+TIMER}~LEDC\+\_\+\+TIMER\+\_\+0
+\item 
+\#define \textbf{ LEDC\+\_\+\+SERVO\+\_\+\+CH0\+\_\+\+CHANNEL}~LEDC\+\_\+\+CHANNEL\+\_\+0
+\item 
+\#define \textbf{ LEDC\+\_\+\+SERVO\+\_\+\+DUTY\+\_\+\+RESOLUTION}~LEDC\+\_\+\+TIMER\+\_\+16\+\_\+\+BIT
+\item 
+\#define \textbf{ MAX\+\_\+\+SERVO\+\_\+\+DUTY\+\_\+\+US}~(1700)
+\item 
+\#define \textbf{ MIN\+\_\+\+SERVO\+\_\+\+DUTY\+\_\+\+US}~(1300)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ init\+\_\+servo\+\_\+pwm} ()
+\item 
+void \textbf{ update\+\_\+servo\+\_\+pwm} (int pulse\+\_\+width\+\_\+us)
+\item 
+void \textbf{ change\+STEER} (int value)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{ServoMotor.h@{ServoMotor.h}!LEDC\_SERVO\_CH0\_CHANNEL@{LEDC\_SERVO\_CH0\_CHANNEL}}
+\index{LEDC\_SERVO\_CH0\_CHANNEL@{LEDC\_SERVO\_CH0\_CHANNEL}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{LEDC\_SERVO\_CH0\_CHANNEL}
+{\footnotesize\ttfamily \label{_servo_motor_8h_aed5b7c798fceeba9adeb55c73045b24d} 
+\#define LEDC\+\_\+\+SERVO\+\_\+\+CH0\+\_\+\+CHANNEL~LEDC\+\_\+\+CHANNEL\+\_\+0}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ Servo\+Motor.\+h}.
+
+\index{ServoMotor.h@{ServoMotor.h}!LEDC\_SERVO\_DUTY\_RESOLUTION@{LEDC\_SERVO\_DUTY\_RESOLUTION}}
+\index{LEDC\_SERVO\_DUTY\_RESOLUTION@{LEDC\_SERVO\_DUTY\_RESOLUTION}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{LEDC\_SERVO\_DUTY\_RESOLUTION}
+{\footnotesize\ttfamily \label{_servo_motor_8h_a55e2b6eba98c6bb89e853502cc490254} 
+\#define LEDC\+\_\+\+SERVO\+\_\+\+DUTY\+\_\+\+RESOLUTION~LEDC\+\_\+\+TIMER\+\_\+16\+\_\+\+BIT}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ Servo\+Motor.\+h}.
+
+\index{ServoMotor.h@{ServoMotor.h}!LEDC\_SERVO\_GPIO@{LEDC\_SERVO\_GPIO}}
+\index{LEDC\_SERVO\_GPIO@{LEDC\_SERVO\_GPIO}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{LEDC\_SERVO\_GPIO}
+{\footnotesize\ttfamily \label{_servo_motor_8h_a9597e59d40c94263bc1a883914f2d309} 
+\#define LEDC\+\_\+\+SERVO\+\_\+\+GPIO~(27)}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ Servo\+Motor.\+h}.
+
+\index{ServoMotor.h@{ServoMotor.h}!LEDC\_SERVO\_TIMER@{LEDC\_SERVO\_TIMER}}
+\index{LEDC\_SERVO\_TIMER@{LEDC\_SERVO\_TIMER}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{LEDC\_SERVO\_TIMER}
+{\footnotesize\ttfamily \label{_servo_motor_8h_a58568c21d74e00bb66060888632e220c} 
+\#define LEDC\+\_\+\+SERVO\+\_\+\+TIMER~LEDC\+\_\+\+TIMER\+\_\+0}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ Servo\+Motor.\+h}.
+
+\index{ServoMotor.h@{ServoMotor.h}!MAX\_SERVO\_DUTY\_US@{MAX\_SERVO\_DUTY\_US}}
+\index{MAX\_SERVO\_DUTY\_US@{MAX\_SERVO\_DUTY\_US}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{MAX\_SERVO\_DUTY\_US}
+{\footnotesize\ttfamily \label{_servo_motor_8h_a460ef6ce131fa79ad8ba76277a2476ef} 
+\#define MAX\+\_\+\+SERVO\+\_\+\+DUTY\+\_\+\+US~(1700)}
+
+
+
+Definition at line \textbf{ 21} of file \textbf{ Servo\+Motor.\+h}.
+
+\index{ServoMotor.h@{ServoMotor.h}!MIN\_SERVO\_DUTY\_US@{MIN\_SERVO\_DUTY\_US}}
+\index{MIN\_SERVO\_DUTY\_US@{MIN\_SERVO\_DUTY\_US}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{MIN\_SERVO\_DUTY\_US}
+{\footnotesize\ttfamily \label{_servo_motor_8h_ad5a4d81410d62a1454276c98458d7b05} 
+\#define MIN\+\_\+\+SERVO\+\_\+\+DUTY\+\_\+\+US~(1300)}
+
+
+
+Definition at line \textbf{ 22} of file \textbf{ Servo\+Motor.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{ServoMotor.h@{ServoMotor.h}!changeSTEER@{changeSTEER}}
+\index{changeSTEER@{changeSTEER}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{changeSTEER()}
+{\footnotesize\ttfamily \label{_servo_motor_8h_ad0d869b0abb9912862634615c3563d9c} 
+void change\+STEER (\begin{DoxyParamCaption}\item[{int}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 117} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.h@{ServoMotor.h}!init\_servo\_pwm@{init\_servo\_pwm}}
+\index{init\_servo\_pwm@{init\_servo\_pwm}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{init\_servo\_pwm()}
+{\footnotesize\ttfamily \label{_servo_motor_8h_a471346290cd96bae9ad577caa60fce18} 
+void init\+\_\+servo\+\_\+pwm (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ Servo\+Motor.\+c}.
+
+\index{ServoMotor.h@{ServoMotor.h}!update\_servo\_pwm@{update\_servo\_pwm}}
+\index{update\_servo\_pwm@{update\_servo\_pwm}!ServoMotor.h@{ServoMotor.h}}
+\doxysubsubsection{update\_servo\_pwm()}
+{\footnotesize\ttfamily \label{_servo_motor_8h_af33292d0ddf5be1cc69616acceb92a3a} 
+void update\+\_\+servo\+\_\+pwm (\begin{DoxyParamCaption}\item[{int}]{pulse\+\_\+width\+\_\+us}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 106} of file \textbf{ Servo\+Motor.\+c}.
+

@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_struct_sequence_step_timeouts" xml:lang="en-US">
+<title>SequenceStepTimeouts Struct Reference</title>
+<indexterm><primary>SequenceStepTimeouts</primary></indexterm>
+<para>
+<computeroutput>#include &lt;I2C_distanceSensor.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>uint16_t <link linkend="_struct_sequence_step_timeouts_1a88aaa76425e1eb13dab9fe542ec6f84e">pre_range_vcsel_period_pclks</link></para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="_struct_sequence_step_timeouts_1a6dd93dfa018f47ff2dc30f87f47b2657">final_range_vcsel_period_pclks</link></para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="_struct_sequence_step_timeouts_1a009d2acc62c05c623d58f75ef4e55b31">msrc_dss_tcc_mclks</link></para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="_struct_sequence_step_timeouts_1a37fee92b9c5509810a6b327af02f6da1">pre_range_mclks</link></para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="_struct_sequence_step_timeouts_1a86d1850d1cb7b68d86988e4db01b9bce">final_range_mclks</link></para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link></para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="_struct_sequence_step_timeouts_1a546676f6f14b66380474e69be858c772">pre_range_us</link></para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="_struct_sequence_step_timeouts_1a8b477925da0a79f38a8f95fc054a359e">final_range_us</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00102">102</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_struct_sequence_step_timeouts_1a86d1850d1cb7b68d86988e4db01b9bce"/><section>
+    <title>final_range_mclks</title>
+<indexterm><primary>final_range_mclks</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>final_range_mclks</secondary></indexterm>
+<para><computeroutput>uint16_t final_range_mclks</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00106">106</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1a8b477925da0a79f38a8f95fc054a359e"/><section>
+    <title>final_range_us</title>
+<indexterm><primary>final_range_us</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>final_range_us</secondary></indexterm>
+<para><computeroutput>uint32_t final_range_us</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00107">107</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1a6dd93dfa018f47ff2dc30f87f47b2657"/><section>
+    <title>final_range_vcsel_period_pclks</title>
+<indexterm><primary>final_range_vcsel_period_pclks</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>final_range_vcsel_period_pclks</secondary></indexterm>
+<para><computeroutput>uint16_t final_range_vcsel_period_pclks</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00104">104</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1a009d2acc62c05c623d58f75ef4e55b31"/><section>
+    <title>msrc_dss_tcc_mclks</title>
+<indexterm><primary>msrc_dss_tcc_mclks</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>msrc_dss_tcc_mclks</secondary></indexterm>
+<para><computeroutput>uint16_t msrc_dss_tcc_mclks</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00106">106</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725"/><section>
+    <title>msrc_dss_tcc_us</title>
+<indexterm><primary>msrc_dss_tcc_us</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>msrc_dss_tcc_us</secondary></indexterm>
+<para><computeroutput>uint32_t msrc_dss_tcc_us</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00107">107</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1a37fee92b9c5509810a6b327af02f6da1"/><section>
+    <title>pre_range_mclks</title>
+<indexterm><primary>pre_range_mclks</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>pre_range_mclks</secondary></indexterm>
+<para><computeroutput>uint16_t pre_range_mclks</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00106">106</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1a546676f6f14b66380474e69be858c772"/><section>
+    <title>pre_range_us</title>
+<indexterm><primary>pre_range_us</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>pre_range_us</secondary></indexterm>
+<para><computeroutput>uint32_t pre_range_us</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00107">107</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_timeouts_1a88aaa76425e1eb13dab9fe542ec6f84e"/><section>
+    <title>pre_range_vcsel_period_pclks</title>
+<indexterm><primary>pre_range_vcsel_period_pclks</primary><secondary>SequenceStepTimeouts</secondary></indexterm>
+<indexterm><primary>SequenceStepTimeouts</primary><secondary>pre_range_vcsel_period_pclks</secondary></indexterm>
+<para><computeroutput>uint16_t pre_range_vcsel_period_pclks</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00104">104</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/I2C/drivers/<link linkend="__i2_c__distance_sensor_8h">I2C_distanceSensor.h</link></section>
+</section>

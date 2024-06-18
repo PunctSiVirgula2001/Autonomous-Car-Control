@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_struct_pixy2_lines" xml:lang="en-US">
+<title>Pixy2Lines Struct Reference</title>
+<indexterm><primary>Pixy2Lines</primary></indexterm>
+<para>
+<computeroutput>#include &lt;I2C_cameraSensor.h&gt;</computeroutput>
+</para>
+Collaboration diagram for Pixy2Lines:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="struct_pixy2_lines__coll__graph.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>uint8_t <link linkend="_struct_pixy2_lines_1ada3cbc6e6df239bc17e5c729f7f9096e">numVectors</link></para>
+</listitem>
+            <listitem><para><link linkend="_struct_vector">Vector</link> <link linkend="_struct_pixy2_lines_1ac06a1294e15a50001ba99cf72749a137">vectors</link> [100]</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00037">37</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_struct_pixy2_lines_1ada3cbc6e6df239bc17e5c729f7f9096e"/><section>
+    <title>numVectors</title>
+<indexterm><primary>numVectors</primary><secondary>Pixy2Lines</secondary></indexterm>
+<indexterm><primary>Pixy2Lines</primary><secondary>numVectors</secondary></indexterm>
+<para><computeroutput>uint8_t numVectors</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00038">38</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_pixy2_lines_1ac06a1294e15a50001ba99cf72749a137"/><section>
+    <title>vectors</title>
+<indexterm><primary>vectors</primary><secondary>Pixy2Lines</secondary></indexterm>
+<indexterm><primary>Pixy2Lines</primary><secondary>vectors</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_vector">Vector</link> vectors[100]</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00039">39</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/I2C/drivers/<link linkend="__i2_c__camera_sensor_8h">I2C_cameraSensor.h</link></section>
+</section>

@@ -1,0 +1,88 @@
+\doxysection{I2\+C\+\_\+common.\+h}
+\label{_i2_c__common_8h_source}\index{include/I2C/drivers/I2C\_common.h@{include/I2C/drivers/I2C\_common.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ I2C\_COMMON\_H}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ I2C\_COMMON\_H}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}driver/i2c\_master.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}freertos/FreeRTOS.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}freertos/task.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}driver/gpio.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}esp\_log.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}driver/i2c.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}esp\_task\_wdt.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}driver/i2c\_master.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}math.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}Network.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ I2C\ config}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ I2C\_SDA\ 21}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ I2C\_SCL\ 22}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ INTERNAL\_PULLUPS\ false}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ GLITCH\_IGNORE\_CNT\ 7}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ SCL\_SPEED\_FAST\_MODE\ 400000}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ SCL\_SPEED\_SLOW\_MODE\ 100000}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ RST\_PIN\_MUX\_I2C\ 23}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ I2C\_COMMAND\_SIZE\ (sizeof(I2C\_COMMAND))}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ QUEUE\_SIZE\_I2C\ 10}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ I2C\ 8\ devices\ connected\ to\ the\ I2C\ multiplexer.\ -\/-\/>\ control\ register\ mux}}
+\DoxyCodeLine{00028\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ I2C\_devices\_multiplexer\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ NO\_MUX\_SELECTED\ =\ -\/1,}
+\DoxyCodeLine{00030\ \ \ \ \ I2C\_distance\_sens\_1\_mux\ \ =\ 0,}
+\DoxyCodeLine{00031\ \ \ \ \ I2C\_distance\_sens\_2\_mux\ \ =\ 1,}
+\DoxyCodeLine{00032\ \ \ \ \ I2C\_adxl345\_sens\_mux\ \ \ \ \ =\ 3,}
+\DoxyCodeLine{00033\ \ \ \ \ I2C\_temp\_sens\_mux\ \ \ \ \ \ \ =\ 2,}
+\DoxyCodeLine{00034\ \ \ \ \ I2C\_oled\_display\_096\_mux\ =\ 5,}
+\DoxyCodeLine{00035\ \ \ \ \ I2C\_pixy2\_camera\_mux\ \ \ \ \ =\ 4,}
+\DoxyCodeLine{00036\ \}I2C\_devices\_mux;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ Each\ device\ connected\ to\ the\ car\ that\ works\ with\ I2C.\ -\/-\/>\ device\ address}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ I2C\_devices\{}
+\DoxyCodeLine{00040\ \ \ \ \ I2C\_mux\_addr\ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ 0x70,\ \textcolor{comment}{//\ 1110\ 000\ 0/1\ transmit/receive}}
+\DoxyCodeLine{00041\ \ \ \ \ I2C\_temp\_sens\_addr\ \ \ \ \ \ \ \ \ \ =\ 0x76,}
+\DoxyCodeLine{00042\ \ \ \ \ I2C\_distance\_sens\_addr\ \ \ \ =\ 0x29,}
+\DoxyCodeLine{00043\ \ \ \ \ I2C\_pixy2\_camera\_addr\ \ \ \ =\ 0x54,}
+\DoxyCodeLine{00044\ \ \ \ \ I2C\_adxl345\_sens\_addr\ \ \ \ =\ 0x53,}
+\DoxyCodeLine{00045\ \ \ \ \ I2C\_oled\_display\_096\_addr\ =\ 0x00}
+\DoxyCodeLine{00046\ \}I2C\_devices;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ I2C\_dev\_handles}
+\DoxyCodeLine{00049\ \{}
+\DoxyCodeLine{00050\ \ \ I2C\_multiplexer\_dev\_handle,}
+\DoxyCodeLine{00051\ \ \ I2C\_pixy2\_dev\_handle,}
+\DoxyCodeLine{00052\ \ \ I2C\_distance\_sens1\_dev\_handle,\ \textcolor{comment}{//\ fata}}
+\DoxyCodeLine{00053\ \ \ I2C\_distance\_sens2\_dev\_handle,\ \textcolor{comment}{//\ spate}}
+\DoxyCodeLine{00054\ \ \ I2C\_temp\_sens\_dev\_handle,}
+\DoxyCodeLine{00055\ \ \ I2C\_oled\_display\_096\_dev\_handle,}
+\DoxyCodeLine{00056\ \ \ I2C\_adxl345\_sens\_dev\_handle,}
+\DoxyCodeLine{00057\ \ \ I2C\_MAX\_Num\_of\_dev\_handles}
+\DoxyCodeLine{00058\ \}I2C\_dev\_handles;}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \textcolor{comment}{//\ Init\ I2C\ for\ esp32\ as\ master}}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ I2C\_master\_init();}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ I2C\_select\_multiplexer\_channel(I2C\_devices\_mux\ num\_channel);}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ I2C\_transmit(I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ data,\ \textcolor{keywordtype}{size\_t}\ write\_size);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ I2C\_receive(I2C\_dev\_handles\ device\_handle,\ uint8\_t*\ data,\ \textcolor{keywordtype}{size\_t}\ read\_size);}
+\DoxyCodeLine{00066\ uint8\_t\ I2C\_readRegister8bit(I2C\_dev\_handles\ device\_handle,uint8\_t\ reg);}
+\DoxyCodeLine{00067\ uint16\_t\ I2C\_readRegister16bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg);}
+\DoxyCodeLine{00068\ uint32\_t\ I2C\_readRegister32bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ I2C\_writeRegister8bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg,\ uint8\_t\ value);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{void}\ I2C\_writeRegister16bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg,\ uint16\_t\ value);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ I2C\_writeRegister32bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg,\ uint32\_t\ value);}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ writeMultipleRegisters(I2C\_dev\_handles\ device\_handle,\ \textcolor{keyword}{const}\ uint8\_t\ (*regs\_vals)[2],\ \textcolor{keywordtype}{size\_t}\ count);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ I2C\_add\_device(uint8\_t\ device\_address);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ config\_rst\_pin\_i2c\_mux();}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ rst\_pin\_i2c\_mux\_on();}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ rst\_pin\_i2c\_mux\_off();}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ I2C\_COMMON\_H}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ }
+
+\end{DoxyCode}

@@ -1,0 +1,98 @@
+\doxysection{UART\+\_\+\+Jetson.\+c}
+\label{_u_a_r_t___jetson_8c_source}\index{src/UART\_Jetson.c@{src/UART\_Jetson.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}UART\_Jetson.h"{}}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}MotorAndServoControl.h"{}}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{bool}\ AutonomousMode;}
+\DoxyCodeLine{00005\ QueueHandle\_t\ uartJetsonQueue;}
+\DoxyCodeLine{00006\ \textcolor{keyword}{extern}\ QueueHandle\_t\ autonomousModeControlUartQueue;}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keywordtype}{void}\ JetsonUartConfig()}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{const}\ uart\_port\_t\ uart\_num\ =\ UART\_PORT;}
+\DoxyCodeLine{00011\ \ \ \ \ uart\_config\_t\ uart\_config\ =\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ .baud\_rate\ =\ UART\_BAUD,}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ .data\_bits\ =\ UART\_WORD\_LENGTH\_BITS,}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ .parity\ =\ UART\_PARITY\_DISABLE,}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ .stop\_bits\ =\ UART\_STOP\_BITS\_1,}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ .flow\_ctrl\ =\ UART\_HW\_FLOWCTRL\_DISABLE,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ .source\_clk\ =\ UART\_SCLK\_DEFAULT,}
+\DoxyCodeLine{00018\ \ \ \ \ \};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//\ Configure\ UART\ parameters}}
+\DoxyCodeLine{00020\ \ \ \ \ ESP\_ERROR\_CHECK(uart\_param\_config(uart\_num,\ \&uart\_config));}
+\DoxyCodeLine{00021\ \ \ \ \ ESP\_ERROR\_CHECK(uart\_set\_pin(UART\_PORT,\ UART\_TX,\ UART\_RX,\ UART\_PIN\_NO\_CHANGE,\ UART\_PIN\_NO\_CHANGE));}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ Install\ UART\ driver\ using\ an\ event\ queue}}
+\DoxyCodeLine{00024\ \ \ \ \ ESP\_ERROR\_CHECK(uart\_driver\_install(UART\_PORT,\ UART\_BUFFER\_SIZE,\ UART\_BUFFER\_SIZE,\ UART\_Queue\_SIZE,\ \&uartJetsonQueue,\ 0));}
+\DoxyCodeLine{00025\ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ uart\_Jetson\_Task\ (\textcolor{keywordtype}{void}\ *params)}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ uart\_event\_t\ uartJetsonEvent;}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{char}\ data[128];}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{int}\ length\ =\ 0;}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordflow}{while}(1)}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(AutonomousMode\ ==\ \textcolor{keyword}{false})}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(100));}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ uart\_flush(UART\_PORT);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReset(uartJetsonQueue);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (xQueueReceive(uartJetsonQueue,\ (\textcolor{keywordtype}{void}\ *)\&uartJetsonEvent,\ portMAX\_DELAY))}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}(uartJetsonEvent.type)}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ UART\_DATA:}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(uart\_get\_buffered\_data\_len(UART\_PORT,\ (\textcolor{keywordtype}{size\_t}*)\&length));}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uart\_read\_bytes(UART\_PORT,\ data,\ length,\ portMAX\_DELAY);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ data[length]=\textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *data\_sp\ =\ strtok(data,\ \textcolor{stringliteral}{"{}\ "{}});\ \textcolor{comment}{//\ speed}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ *data\_st\ =\ strtok(NULL,\ \textcolor{stringliteral}{"{}\ "{}});\ \textcolor{comment}{//\ steer}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (data\_sp\ ==\ NULL\ ||\ data\_st\ ==\ NULL)\ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}UART\_ERROR"{}},\ \textcolor{stringliteral}{"{}Splitting\ failed\ or\ incomplete\ command\ received"{}});}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ Exit\ the\ case\ or\ handle\ the\ error\ appropriately}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xQueueSend(autonomousModeControlUartQueue,\ \&data\_sp,\ portMAX\_DELAY)\ !=\ pdPASS)\ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}Error\ uart"{}},\ \textcolor{stringliteral}{"{}Unable\ to\ send\ to\ queue"{}});}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (xQueueSend(autonomousModeControlUartQueue,\ \&data\_st,\ portMAX\_DELAY)\ !=\ pdPASS)\ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}Error\ uart"{}},\ \textcolor{stringliteral}{"{}Unable\ to\ send\ to\ queue"{}});}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ UART\_BUFFER\_FULL:}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}Event\ Uart\ "{}},\ \textcolor{stringliteral}{"{}ring\ buffer\ full"{}});}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ buffer\ full\ happened,\ you\ should\ consider\ increasing\ your\ buffer\ size}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ As\ an\ example,\ we\ directly\ flush\ the\ rx\ buffer\ here\ in\ order\ to\ read\ more\ data.}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uart\_flush\_input(UART\_PORT);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReset(uartJetsonQueue);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ UART\_FIFO\_OVF:}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}Event\ Uart\ "{}},\ \textcolor{stringliteral}{"{}ring\ buffer\ ovf"{}});}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uart\_flush\_input(UART\_PORT);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ xQueueReset(uartJetsonQueue);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}Uart\ Event:"{}},\ \textcolor{stringliteral}{"{}event\ type:\ \%d"{}},\ uartJetsonEvent.type);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ start\_UartJetson\_task()}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \ \ \ \ JetsonUartConfig();}
+\DoxyCodeLine{00089\ \ \ \ \ xTaskCreatePinnedToCore(uart\_Jetson\_Task,\ \textcolor{stringliteral}{"{}uartJetson"{}},\ 4096,\ NULL,\ 6,\ NULL,1U);}
+\DoxyCodeLine{00090\ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ }
+
+\end{DoxyCode}

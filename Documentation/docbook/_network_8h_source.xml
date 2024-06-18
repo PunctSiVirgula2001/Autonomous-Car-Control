@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__network_8h_source" xml:lang="en-US">
+<title>Network.h</title>
+<indexterm><primary>include/Network.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__network_8h_source_1l00001"/>00001 <emphasis role="preprocessor">#ifndef&#32;NETWORK_H</emphasis>
+<anchor xml:id="__network_8h_source_1l00002"/>00002 <emphasis role="preprocessor">#define&#32;NETWORK_H</emphasis>
+<anchor xml:id="__network_8h_source_1l00003"/>00003 
+<anchor xml:id="__network_8h_source_1l00004"/>00004 <emphasis role="preprocessor">#include&#32;&lt;stdio.h&gt;</emphasis>
+<anchor xml:id="__network_8h_source_1l00005"/>00005 <emphasis role="preprocessor">#include&#32;&lt;stdlib.h&gt;</emphasis>
+<anchor xml:id="__network_8h_source_1l00006"/>00006 <emphasis role="preprocessor">#include&#32;&quot;esp_task_wdt.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00007"/>00007 <emphasis role="preprocessor">#include&#32;&lt;string.h&gt;</emphasis>
+<anchor xml:id="__network_8h_source_1l00008"/>00008 <emphasis role="preprocessor">#include&#32;&quot;freertos/FreeRTOS.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00009"/>00009 <emphasis role="preprocessor">#include&#32;&quot;freertos/task.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00010"/>00010 <emphasis role="preprocessor">#include&#32;&quot;driver/uart.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00011"/>00011 <emphasis role="preprocessor">#include&#32;&quot;driver/gpio.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00012"/>00012 <emphasis role="preprocessor">#include&#32;&quot;sdkconfig.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00013"/>00013 <emphasis role="preprocessor">#include&#32;&quot;freertos/queue.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00014"/>00014 <emphasis role="preprocessor">#include&#32;&quot;driver/pulse_cnt.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00015"/>00015 <emphasis role="preprocessor">#include&#32;&quot;driver/gpio.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00016"/>00016 <emphasis role="preprocessor">#include&#32;&quot;esp_log.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00017"/>00017 <emphasis role="preprocessor">#include&#32;&quot;esp_sleep.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00018"/>00018 <emphasis role="preprocessor">#include&#32;&quot;esp_system.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00019"/>00019 <emphasis role="preprocessor">#include&#32;&quot;esp_wifi.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00020"/>00020 <emphasis role="preprocessor">#include&#32;&quot;esp_event.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00021"/>00021 <emphasis role="preprocessor">#include&#32;&quot;nvs_flash.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00022"/>00022 <emphasis role="preprocessor">#include&#32;&quot;lwip/sockets.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00023"/>00023 <emphasis role="preprocessor">#include&#32;&quot;lwip/netdb.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00024"/>00024 <emphasis role="preprocessor">#include&#32;&quot;errno.h&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00025"/>00025 <emphasis role="preprocessor">#include&#32;&lt;stdlib.h&gt;</emphasis>
+<anchor xml:id="__network_8h_source_1l00026"/>00026 
+<anchor xml:id="__network_8h_source_1l00027"/>00027 
+<anchor xml:id="__network_8h_source_1l00028"/><link linkend="__network_8h_1a586542b79d00e4db7e1d5a667ae83a2b">00028</link> <emphasis role="preprocessor">#define&#32;WIFI_SSID&#32;&quot;Car_Ac_Tuiasi&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00029"/><link linkend="__network_8h_1a3c95561b03d0fcf9048b231ae2ba90fb">00029</link> <emphasis role="preprocessor">#define&#32;WIFI_PASS&#32;&quot;123456789&quot;</emphasis>
+<anchor xml:id="__network_8h_source_1l00030"/><link linkend="__network_8h_1a428d6fc23e06208d09595c62b0a98aa9">00030</link> <emphasis role="preprocessor">#define&#32;MAX_STA_CONN&#32;4&#32;&#32;</emphasis><emphasis role="comment">/*Number&#32;of&#32;maximum&#32;connections&#32;allowed&#32;on&#32;access&#32;point.&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="__network_8h_source_1l00031"/><link linkend="__network_8h_1a614217d263be1fb1a5f76e2ff7be19a2">00031</link> <emphasis role="preprocessor">#define&#32;PORT&#32;80&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;</emphasis><emphasis role="comment">/*Port&#32;at&#32;which&#32;the&#32;access&#32;point&#32;has&#32;been&#32;started.&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+<anchor xml:id="__network_8h_source_1l00032"/><link linkend="__network_8h_1a41641baa09fa4c4b5afa152d61918969">00032</link> <emphasis role="preprocessor">#define&#32;INBUILT_LED_CONNECTED&#32;GPIO_NUM_2</emphasis>
+<anchor xml:id="__network_8h_source_1l00033"/>00033 
+<anchor xml:id="__network_8h_source_1l00034"/>00034 <emphasis role="comment">/*COMMANDS&#32;TO&#32;SEND&#32;TO&#32;APP*/</emphasis>
+<anchor xml:id="__network_8h_source_1l00035"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115b">00035</link> <emphasis role="keyword">typedef</emphasis>&#32;<emphasis role="keyword">enum</emphasis>&#32;{
+<anchor xml:id="__network_8h_source_1l00036"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba11bb3150ead5cd3528035bccb556b0eb">00036</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba11bb3150ead5cd3528035bccb556b0eb">MEASURED_VALUE</link>,
+<anchor xml:id="__network_8h_source_1l00037"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115baa29218b762f6fd8c27eab599ed620f91">00037</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115baa29218b762f6fd8c27eab599ed620f91">I_TERM_VALUE</link>,
+<anchor xml:id="__network_8h_source_1l00038"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bab876a46d543ebff9c220f8c731900e08">00038</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bab876a46d543ebff9c220f8c731900e08">OBSTACLE_DETECTED_VALUE</link>,
+<anchor xml:id="__network_8h_source_1l00039"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bab2b2cdb376a9a073bf897cc228bbcac3">00039</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bab2b2cdb376a9a073bf897cc228bbcac3">ERROR_PID_VALUE</link>,
+<anchor xml:id="__network_8h_source_1l00040"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba02b142d6856e4b1ce3babfb5f0eb0ba0">00040</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba02b142d6856e4b1ce3babfb5f0eb0ba0">ACTUAL_TIME_OF_SEND</link>,
+<anchor xml:id="__network_8h_source_1l00041"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bac4ae6787ff1d8b2d1cf0ae9aa696e56c">00041</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bac4ae6787ff1d8b2d1cf0ae9aa696e56c">TEMPERATURE</link>,
+<anchor xml:id="__network_8h_source_1l00042"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba1397744e3bab2c358b7250d459aef0f4">00042</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba1397744e3bab2c358b7250d459aef0f4">DistSensFw</link>,
+<anchor xml:id="__network_8h_source_1l00043"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad0ea62e65fa39f2c36d6c5267af85178">00043</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad0ea62e65fa39f2c36d6c5267af85178">DistSensBw</link>,
+<anchor xml:id="__network_8h_source_1l00044"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba1887b44606444dfa414ff58bbf3df2d8">00044</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba1887b44606444dfa414ff58bbf3df2d8">ADXL_ROLL</link>,
+<anchor xml:id="__network_8h_source_1l00045"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba2943602fbb81a3e04ce7721b6c0833dd">00045</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba2943602fbb81a3e04ce7721b6c0833dd">ADXL_PITCH</link>,
+<anchor xml:id="__network_8h_source_1l00046"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba6aea177d30cfb5ce005e8a765de1e895">00046</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba6aea177d30cfb5ce005e8a765de1e895">NEWLINE_LOG_INFO</link>,
+<anchor xml:id="__network_8h_source_1l00047"/>00047 &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad7ec8301f00391890098cf55556a921d">STATE_MAX</link>
+<anchor xml:id="__network_8h_source_1l00048"/><link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad7ec8301f00391890098cf55556a921d">00048</link> }&#32;<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115b">SendCommandType_app</link>;
+<anchor xml:id="__network_8h_source_1l00049"/>00049 
+<anchor xml:id="__network_8h_source_1l00050"/><link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">00050</link> <emphasis role="keyword">typedef</emphasis>&#32;<emphasis role="keyword">enum</emphasis>&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link>
+<anchor xml:id="__network_8h_source_1l00051"/>00051 {
+<anchor xml:id="__network_8h_source_1l00052"/><link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fafd5a5f51ce25953f3db2c7e93eb7864a">00052</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fafd5a5f51ce25953f3db2c7e93eb7864a">INT</link>,
+<anchor xml:id="__network_8h_source_1l00053"/><link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fa9cf4a0866224b0bb4a7a895da27c9c4c">00053</link> &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fa9cf4a0866224b0bb4a7a895da27c9c4c">FLOAT</link>,
+<anchor xml:id="__network_8h_source_1l00054"/>00054 &#32;&#32;&#32;&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fa33465d1d419b1074fb259ef444609e92">DOUBLE</link>
+<anchor xml:id="__network_8h_source_1l00055"/><link linkend="__network_8h_1ad8f97e88259cf600da25c064ceb711eb">00055</link> }<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link>;
+<anchor xml:id="__network_8h_source_1l00056"/>00056 
+<anchor xml:id="__network_8h_source_1l00057"/>00057 
+<anchor xml:id="__network_8h_source_1l00058"/>00058 <emphasis role="comment">//utility&#32;function&#32;for&#32;strings</emphasis>
+<anchor xml:id="__network_8h_source_1l00059"/>00059 <emphasis role="keywordtype">char</emphasis>*&#32;<link linkend="__network_8h_1abc2dbdf2bfc1c9415cdb2e5f984665ff">to_string</link>(<emphasis role="keywordtype">void</emphasis>&#32;*value,&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link>&#32;type);
+<anchor xml:id="__network_8h_source_1l00060"/>00060 
+<anchor xml:id="__network_8h_source_1l00061"/>00061 <emphasis role="comment">//static&#32;void&#32;wifi_event_handler(void*&#32;arg,&#32;esp_event_base_t&#32;event_base,&#32;int32_t&#32;event_id,&#32;void*&#32;event_data);</emphasis>
+<anchor xml:id="__network_8h_source_1l00062"/>00062 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a62dddf76eb27aacde1609464b8d9ebad">wifi_init_softap</link>();
+<anchor xml:id="__network_8h_source_1l00063"/>00063 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a6da0cb155a639c33efc40d0582b6bb92">udp_server_task</link>(<emphasis role="keywordtype">void</emphasis>&#32;*pvParameters);
+<anchor xml:id="__network_8h_source_1l00064"/>00064 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a138c349a5f4bbbc10772842474798721">start_network_task</link>();
+<anchor xml:id="__network_8h_source_1l00065"/>00065 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a9fded88b7fb26171ee59015da76c65bb">sendMessage</link>(<emphasis role="keywordtype">int</emphasis>&#32;sock,&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*message);
+<anchor xml:id="__network_8h_source_1l00066"/>00066 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1abeb264090352ce377a3c339bd3abe1fc">HLD_SendMessage</link>(<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>*&#32;message);
+<anchor xml:id="__network_8h_source_1l00067"/>00067 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a979168b4c86e45871c79ddc820763652">sendCommandApp</link>(<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115b">SendCommandType_app</link>&#32;commandType,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;commandValue,&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link>&#32;type);
+<anchor xml:id="__network_8h_source_1l00068"/>00068 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a1c5ac6591ff23b206b947213055f1fd1">config_Connected_led</link>();
+<anchor xml:id="__network_8h_source_1l00069"/>00069 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a07ab52c7f55179654f5630a08b8c2abd">turnOnLED_connected</link>();
+<anchor xml:id="__network_8h_source_1l00070"/>00070 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a905705994ae17126574c031328a39852">complement_connected_led</link>();
+<anchor xml:id="__network_8h_source_1l00071"/>00071 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8h_1a39e7a5088757fe328c0162fe25d907bf">blink_led_task</link>(<emphasis role="keywordtype">void</emphasis>&#32;*pvParameters);
+<anchor xml:id="__network_8h_source_1l00072"/>00072 
+<anchor xml:id="__network_8h_source_1l00073"/>00073 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;NETWORK_H&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

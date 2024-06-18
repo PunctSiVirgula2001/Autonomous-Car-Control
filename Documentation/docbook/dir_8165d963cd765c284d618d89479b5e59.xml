@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_8165d963cd765c284d618d89479b5e59" xml:lang="en-US">
+<title>build/config Directory Reference</title>
+<indexterm><primary>build/config Directory Reference</primary></indexterm>
+Directory dependency graph for config:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_8165d963cd765c284d618d89479b5e59_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="_config_2sdkconfig_8h">sdkconfig.h</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

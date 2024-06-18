@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_annotated" xml:lang="en-US">
+<title>Data Structures</title>
+Here are the data structures with brief descriptions:<link linkend="_structbme280__calib__data">bme280_calib_data</link><link linkend="_struct_car_command">CarCommand</link><link linkend="_structcommand_received__jetson">commandReceived_jetson</link><link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link><link linkend="_struct_p_i_d__t">PID_t</link><link linkend="_structpixy2_commands">pixy2Commands</link><link linkend="_struct_pixy2_lines">Pixy2Lines</link><link linkend="_structsensor__t">sensor_t</link><link linkend="_struct_sequence_step_enables">SequenceStepEnables</link><link linkend="_struct_sequence_step_timeouts">SequenceStepTimeouts</link><link linkend="_struct_vector">Vector</link></section>

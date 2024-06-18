@@ -1,0 +1,30 @@
+\doxysection{encoder.\+h}
+\label{encoder_8h_source}\index{include/motors/drivers/encoder.h@{include/motors/drivers/encoder.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ encoder.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 18\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ INCLUDE\_MOTORS\_ENCODER\_H\_}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ INCLUDE\_MOTORS\_ENCODER\_H\_}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}motors\_common.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*Encoder*/}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ QUEUE\_SIZE\_ENCODER\_PULSE\ \ \ \ \ \ \ \ \ \ \ 20}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE\ (sizeof(int))}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ PCNT\_HIGH\_LIMIT\_WATCHPOINT\ \ \ \ \ \ \ \ \ 4\ }\textcolor{comment}{//\ at\ every\ 6\ pulses\ forward\ the\ car\ has\ moved\ half\ a\ wheel\ and\ the\ callback\ is\ called}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ PCNT\_LOW\_LIMIT\_WATCHPOINT\ \ \ \ \ \ \ \ \ -\/4}\textcolor{comment}{//\ at\ every\ 6\ pulses\ backward\ the\ car\ has\ moved\ half\ a\ wheel\ and\ the\ callback\ is\ called}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ encoderGPIO\_A\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 35}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ encoderGPIO\_B\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 14}}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{bool}\ example\_pcnt\_on\_reach(pcnt\_unit\_handle\_t\ unit,\textcolor{keyword}{const}\ pcnt\_watch\_event\_data\_t\ *edata,\ \textcolor{keywordtype}{void}\ *user\_ctx);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ configureEncoderInterrupts();}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ INCLUDE\_MOTORS\_ENCODER\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

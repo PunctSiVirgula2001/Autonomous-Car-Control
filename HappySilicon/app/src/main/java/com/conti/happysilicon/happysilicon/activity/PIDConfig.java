@@ -20,6 +20,7 @@ import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -60,6 +61,7 @@ public class PIDConfig extends AppCompatActivity {
     private ArrayList<Entry> buffer = new ArrayList<>();
     private static final int BUFFER_SIZE = 2; // Update the chart after every 5 entries
     boolean start_new_command_after_reset = false;
+    private LimitLine setpointLine;
 
     @SuppressLint("MissingInflatedId")
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,7 @@ public class PIDConfig extends AppCompatActivity {
                 udpClient.tx++;
                 progressTestDCSeekBar = progressValue;
                 udpClient.sendMessage("05"+progressValue);
+                updateSetpointLine(progressValue); // Update the setpoint line position
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -218,6 +221,7 @@ public class PIDConfig extends AppCompatActivity {
             actualKD.setText(String.valueOf(carModel.getActualKD()));
             integralValue.setText(String.valueOf(carModel.getIntegralValue()));
             measuredValue.setText(String.valueOf(carModel.getCarSpeed()));
+            float speed = carModel.getCarSpeed();
             testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
 
             if (!Car.allowed_to_receive) {
@@ -315,5 +319,21 @@ public class PIDConfig extends AppCompatActivity {
         chart.zoom(1f, 1f, 0f, 0f);
         chart.invalidate();
     }
+
+    private void updateSetpointLine(float setpoint) {
+        if (setpointLine != null) {
+            leftAxis.removeLimitLine(setpointLine);
+        }
+
+        setpointLine = new LimitLine(setpoint, "Setpoint: " + setpoint + " Hz");
+        setpointLine.setLineColor(Color.BLACK);
+        setpointLine.setLineWidth(2f);
+        setpointLine.setTextColor(Color.BLACK);
+        setpointLine.setTextSize(12f);
+        leftAxis.addLimitLine(setpointLine);
+        chart.invalidate(); // Refresh the chart to apply changes
+    }
+
+
 
 }

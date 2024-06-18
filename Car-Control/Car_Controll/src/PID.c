@@ -13,18 +13,23 @@ bool sens_bw_has_obstacle = false;
 extern int speed_distance_sens_scaling;
 
 
+TickType_t xLastWakePulse = 0U;
+TickType_t xNewWakeTime = 0U;
+TickType_t pulse_time_ms = 0U;
+
+
 void speedCheckTickHook(void) {
-    static unsigned int old_speed = 0U;
-    static unsigned int new_speed = 0U;
+    static TickType_t old_time = 0U;
+    static TickType_t new_time = 0U;
     static uint32_t unchanged_ticks = 0; // Counter for unchanged ticks
 
-    new_speed = motorPID.measured;
+    new_time = xNewWakeTime;
 
-    if (new_speed == old_speed) {
+    if (new_time == old_time) {
         unchanged_ticks++;
     } else {
         unchanged_ticks = 0;
-        old_speed = new_speed;
+        old_time = new_time;
     }
 
     if (unchanged_ticks >= 200) { // If speed hasn't changed for 200 ticks (1 second if tick rate is 1 ms)
@@ -66,7 +71,14 @@ void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
 #endif
 }
 
-// Compute PID
+// Define constants at a global scope
+const float primarySmoothingFactor = 0.1;  // Primary EMA smoothing factor
+const float secondarySmoothingFactor = 0.05;  // Secondary EMA smoothing factor
+const float maxChangePerCycle = 5.0;  // Maximum rate of output change per cycle
+
+static float secondaryEMA = 0;  // Initialize secondary EMA output
+
+// Compute PID with enhanced smoothing mechanisms
 void PID_Compute(PID_t *pid) {
     float error = pid->setpoint - pid->measured;
 
@@ -87,16 +99,38 @@ void PID_Compute(PID_t *pid) {
     pid->D_term = pid->Kd * (error - pid->previous_error);
 #endif
 
-    // Calculate output
-    pid->Output = pid->P_term + pid->I_term + pid->D_term;
+    // Calculate the proposed new output
+    float newOutput = pid->P_term + pid->I_term + pid->D_term;
+
+    // Apply primary Exponential Moving Average (EMA)
+    float primaryEMAOutput = primarySmoothingFactor * newOutput + (1 - primarySmoothingFactor) * pid->previousOutput;
+
+    // Apply secondary EMA for further smoothing
+    secondaryEMA = secondarySmoothingFactor * primaryEMAOutput + (1 - secondarySmoothingFactor) * secondaryEMA;
+
+    // Apply rate limiting to smooth large jumps
+    float outputDifference = secondaryEMA - pid->previousOutput;
+    if (fabs(outputDifference) > maxChangePerCycle) {
+        if (outputDifference > 0) {
+            pid->Output = pid->previousOutput + maxChangePerCycle;
+        } else {
+            pid->Output = pid->previousOutput - maxChangePerCycle;
+        }
+    } else {
+        pid->Output = secondaryEMA;
+    }
+
+    // Ensure the output is within the allowed range
     clamp_int(&(pid->Output), -100, 100);  // Ensure Output is within bounds
 
     // Update previous values for next iteration
+    pid->previousOutput = pid->Output;
     pid->previous_error = error;
 #if low_pass_filter_derivative_chan == ON
     pid->previous_D_term = raw_D_term;
 #endif
 }
+
 
 void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
 	// Optionally lock the task if needed to prevent concurrent access
@@ -160,10 +194,7 @@ extern QueueHandle_t pulse_encoderQueue;
 extern QueueHandle_t speed_commandQueue;
 extern QueueHandle_t PID_commandQueue;
 extern QueueHandle_t I2C_commandQueue;
-extern QueueSetHandle_t QueueSetGeneralCommands;
-TickType_t xLastWakePulse = 0U;
-TickType_t xNewWakeTime = 0U;
-TickType_t pulse_time_ms = 0U;
+extern QueueSetHandle_t QueueSetPIDNecessaryCommands;
 CarCommand onlyPIDValues;
 I2C_COMMAND I2C_command;
 int old_setpoint;
@@ -192,7 +223,7 @@ void PIDTask(void *pvParameters) {
 
 	while (1) {
 
-		xActivatedMember = xQueueSelectFromSet(QueueSetGeneralCommands, pdMS_TO_TICKS(100));
+		xActivatedMember = xQueueSelectFromSet(QueueSetPIDNecessaryCommands, pdMS_TO_TICKS(100));
 		if (xActivatedMember == pulse_encoderQueue)
 		{
 			xQueueReceive(xActivatedMember, &pulse_direction, 0);
@@ -255,10 +286,6 @@ void PIDTask(void *pvParameters) {
 			old_setpoint = motorPID.setpoint;
 			motorPID.setpoint = 0;
 		}
-//		else if(motorPID.setpoint == 0){
-//			motorPID.setpoint = old_setpoint;
-//
-//		}
 
 		/* IN CASE OF CONFUSION:  -> Setpoint is given by the user, so only the Setpoint can
 		 * 						     decide if the car should go backwards or not.
@@ -281,11 +308,8 @@ void PIDTask(void *pvParameters) {
 		}
 		else if(motorPID.Output >= 0)
 			backward = false;
-		//printf("Output %d \n", motorPID.Output);
 
 		changeMotorSpeed(motorPID.Output);
-
-
 
 		/* Send diagnostic data to phone app in order to monitor the speed and behaviour of Integral value. */
 

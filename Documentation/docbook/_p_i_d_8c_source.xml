@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__p_i_d_8c_source" xml:lang="en-US">
+<title>PID.c</title>
+<indexterm><primary>src/PID.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__p_i_d_8c_source_1l00001"/>00001 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__i2_c__common_8h">I2C_common.h</link>&quot;</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00002"/>00002 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__p_i_d_8h">PID.h</link>&quot;</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00003"/>00003 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__network_8h">Network.h</link>&quot;</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00004"/>00004 <emphasis role="preprocessor">#include&#32;&lt;math.h&gt;</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00005"/>00005 
+<anchor xml:id="__p_i_d_8c_source_1l00006"/>00006 <emphasis role="comment">/*Init&#32;motor&apos;s&#32;PID&#32;structure*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00007"/><link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">00007</link> <link linkend="_struct_p_i_d__t">PID_t</link>&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00008"/>00008 <emphasis role="comment">/*&#32;TODO:&#32;Add&#32;steerPID&#32;for&#32;a&#32;greater&#32;efficiency&#32;in&#32;car&apos;s&#32;control&#32;when&#32;it&#32;enters&#32;autonomous&#32;mode.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00009"/><link linkend="__p_i_d_8c_1aef9aaf46d3a817fcb1cf11d655d3bebe">00009</link> <link linkend="_struct_p_i_d__t">PID_t</link>&#32;<link linkend="__p_i_d_8c_1aef9aaf46d3a817fcb1cf11d655d3bebe">steerPID</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00010"/>00010 
+<anchor xml:id="__p_i_d_8c_source_1l00011"/><link linkend="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba">00011</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba">sens_fw_has_obstacle</link>&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00012"/><link linkend="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62">00012</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62">sens_bw_has_obstacle</link>&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00013"/>00013 <emphasis role="keyword">extern</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;<link linkend="__p_i_d_8c_1a798a61f7f4a9d94f40e4a0c59bece8a0">speed_distance_sens_scaling</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00014"/>00014 
+<anchor xml:id="__p_i_d_8c_source_1l00015"/>00015 
+<anchor xml:id="__p_i_d_8c_source_1l00016"/><link linkend="__p_i_d_8c_1adf2bc2f5a2cb2f6d8e95dc0f9762180f">00016</link> TickType_t&#32;<link linkend="__p_i_d_8c_1adf2bc2f5a2cb2f6d8e95dc0f9762180f">xLastWakePulse</link>&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00017"/><link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">00017</link> TickType_t&#32;<link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">xNewWakeTime</link>&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00018"/><link linkend="__p_i_d_8c_1a3b0c3fc0d365276e3572f2c6e0b117e7">00018</link> TickType_t&#32;<link linkend="__p_i_d_8c_1a3b0c3fc0d365276e3572f2c6e0b117e7">pulse_time_ms</link>&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00019"/>00019 
+<anchor xml:id="__p_i_d_8c_source_1l00020"/>00020 
+<anchor xml:id="__p_i_d_8c_source_1l00021"/><link linkend="__p_i_d_8h_1affd6ece3243c73ae7033a9e67d3f23c2">00021</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1affd6ece3243c73ae7033a9e67d3f23c2">speedCheckTickHook</link>(<emphasis role="keywordtype">void</emphasis>)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00022"/>00022 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;TickType_t&#32;old_time&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00023"/>00023 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;TickType_t&#32;new_time&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00024"/>00024 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;uint32_t&#32;unchanged_ticks&#32;=&#32;0;&#32;<emphasis role="comment">//&#32;Counter&#32;for&#32;unchanged&#32;ticks</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00025"/>00025 
+<anchor xml:id="__p_i_d_8c_source_1l00026"/>00026 &#32;&#32;&#32;&#32;new_time&#32;=&#32;<link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">xNewWakeTime</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00027"/>00027 
+<anchor xml:id="__p_i_d_8c_source_1l00028"/>00028 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(new_time&#32;==&#32;old_time)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00029"/>00029 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;unchanged_ticks++;
+<anchor xml:id="__p_i_d_8c_source_1l00030"/>00030 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00031"/>00031 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;unchanged_ticks&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00032"/>00032 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;old_time&#32;=&#32;new_time;
+<anchor xml:id="__p_i_d_8c_source_1l00033"/>00033 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00034"/>00034 
+<anchor xml:id="__p_i_d_8c_source_1l00035"/>00035 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(unchanged_ticks&#32;&gt;=&#32;200)&#32;{&#32;<emphasis role="comment">//&#32;If&#32;speed&#32;hasn&apos;t&#32;changed&#32;for&#32;200&#32;ticks&#32;(1&#32;second&#32;if&#32;tick&#32;rate&#32;is&#32;1&#32;ms)</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00036"/>00036 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>&#32;=&#32;0;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Reset&#32;measured&#32;speed&#32;to&#32;0</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00037"/>00037 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;==&#32;0)
+<anchor xml:id="__p_i_d_8c_source_1l00038"/>00038 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00039"/>00039 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;unchanged_ticks&#32;=&#32;0;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Reset&#32;the&#32;unchanged&#32;ticks&#32;counter</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00040"/>00040 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00041"/>00041 
+<anchor xml:id="__p_i_d_8c_source_1l00042"/>00042 }
+<anchor xml:id="__p_i_d_8c_source_1l00043"/>00043 
+<anchor xml:id="__p_i_d_8c_source_1l00044"/>00044 
+<anchor xml:id="__p_i_d_8c_source_1l00045"/><link linkend="__p_i_d_8h_1ab1cfced9ea996bf91c861133e0d91e49">00045</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1ab1cfced9ea996bf91c861133e0d91e49">init_speedCheckTickHook</link>(<emphasis role="keywordtype">void</emphasis>)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00046"/>00046 &#32;&#32;&#32;&#32;esp_err_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00047"/>00047 &#32;&#32;&#32;&#32;UBaseType_t&#32;cpuid&#32;=&#32;1U;&#32;<emphasis role="comment">//&#32;Get&#32;the&#32;ID&#32;of&#32;the&#32;current&#32;core</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00048"/>00048 
+<anchor xml:id="__p_i_d_8c_source_1l00049"/>00049 &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>&#32;=&#32;esp_register_freertos_tick_hook_for_cpu(<link linkend="__p_i_d_8c_1affd6ece3243c73ae7033a9e67d3f23c2">speedCheckTickHook</link>,&#32;cpuid);
+<anchor xml:id="__p_i_d_8c_source_1l00050"/>00050 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>&#32;!=&#32;ESP_OK)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00051"/>00051 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Handle&#32;error</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00052"/>00052 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00053"/>00053 }
+<anchor xml:id="__p_i_d_8c_source_1l00054"/>00054 
+<anchor xml:id="__p_i_d_8c_source_1l00055"/>00055 
+<anchor xml:id="__p_i_d_8c_source_1l00056"/>00056 <emphasis role="comment">//&#32;PID&#32;Initialization</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00057"/><link linkend="__p_i_d_8h_1a26c8b95db9397895630f51f4d291aab5">00057</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1a26c8b95db9397895630f51f4d291aab5">PID_Init</link>(<link linkend="_struct_p_i_d__t">PID_t</link>&#32;*pid,&#32;<emphasis role="keywordtype">float</emphasis>&#32;Kp,&#32;<emphasis role="keywordtype">float</emphasis>&#32;Ki,&#32;<emphasis role="keywordtype">float</emphasis>&#32;Kd)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00058"/>00058 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00059"/>00059 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00060"/>00060 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4">previous_error</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00061"/>00061 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a1174af01b8a329a6d465ea6e0951b3e5">integral</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00062"/>00062 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a09cfc766a233ad617270562cc4146d07">Kp</link>&#32;=&#32;Kp;
+<anchor xml:id="__p_i_d_8c_source_1l00063"/>00063 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a59fac16f568541187ff485c4c47b0ec5">Ki</link>&#32;=&#32;Ki;
+<anchor xml:id="__p_i_d_8c_source_1l00064"/>00064 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a98268d71502ba080d88a9b1f50fdbe80">Kd</link>&#32;=&#32;Kd;
+<anchor xml:id="__p_i_d_8c_source_1l00065"/>00065 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a60e830ee0f71c2d98c55973a6f9b7b05">P_term</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00066"/>00066 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00067"/>00067 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6">D_term</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00068"/>00068 <emphasis role="preprocessor">#if&#32;low_pass_filter_derivative_chan&#32;==&#32;ON</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00069"/>00069 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a03ec09eeaedd2105010cbb15a8e4f2dd">previous_D_term</link>&#32;=&#32;0;&#32;<emphasis role="comment">//&#32;Add&#32;this&#32;to&#32;store&#32;the&#32;previous&#32;derivative&#32;term</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ab1551d8043c2aa4410fb7dbb1fe3be7b">alpha</link>&#32;=&#32;0;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Smoothing&#32;factor&#32;for&#32;the&#32;low-pass&#32;filter</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00071"/>00071 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00072"/>00072 }
+<anchor xml:id="__p_i_d_8c_source_1l00073"/>00073 
+<anchor xml:id="__p_i_d_8c_source_1l00074"/>00074 <emphasis role="comment">//&#32;Define&#32;constants&#32;at&#32;a&#32;global&#32;scope</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00075"/><link linkend="__p_i_d_8c_1a04e33c17501dc544f4f170a5fdd10d98">00075</link> <emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">float</emphasis>&#32;<link linkend="__p_i_d_8c_1a04e33c17501dc544f4f170a5fdd10d98">primarySmoothingFactor</link>&#32;=&#32;0.1;&#32;&#32;<emphasis role="comment">//&#32;Primary&#32;EMA&#32;smoothing&#32;factor</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00076"/><link linkend="__p_i_d_8c_1ad064e89649dcb2aeffc176cd64738ca2">00076</link> <emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">float</emphasis>&#32;<link linkend="__p_i_d_8c_1ad064e89649dcb2aeffc176cd64738ca2">secondarySmoothingFactor</link>&#32;=&#32;0.05;&#32;&#32;<emphasis role="comment">//&#32;Secondary&#32;EMA&#32;smoothing&#32;factor</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00077"/><link linkend="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77">00077</link> <emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">float</emphasis>&#32;<link linkend="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77">maxChangePerCycle</link>&#32;=&#32;5.0;&#32;&#32;<emphasis role="comment">//&#32;Maximum&#32;rate&#32;of&#32;output&#32;change&#32;per&#32;cycle</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00078"/>00078 
+<anchor xml:id="__p_i_d_8c_source_1l00079"/>00079 <emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">float</emphasis>&#32;secondaryEMA&#32;=&#32;0;&#32;&#32;<emphasis role="comment">//&#32;Initialize&#32;secondary&#32;EMA&#32;output</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00080"/>00080 
+<anchor xml:id="__p_i_d_8c_source_1l00081"/>00081 <emphasis role="comment">//&#32;Compute&#32;PID&#32;with&#32;enhanced&#32;smoothing&#32;mechanisms</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00082"/><link linkend="__p_i_d_8h_1a6120ff3d44feed1033e54547b47c7856">00082</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1a6120ff3d44feed1033e54547b47c7856">PID_Compute</link>(<link linkend="_struct_p_i_d__t">PID_t</link>&#32;*pid)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00083"/>00083 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;error&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;-&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00084"/>00084 
+<anchor xml:id="__p_i_d_8c_source_1l00085"/>00085 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Proportional&#32;term</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00086"/>00086 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a60e830ee0f71c2d98c55973a6f9b7b05">P_term</link>&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a09cfc766a233ad617270562cc4146d07">Kp</link>&#32;*&#32;error;
+<anchor xml:id="__p_i_d_8c_source_1l00087"/>00087 
+<anchor xml:id="__p_i_d_8c_source_1l00088"/>00088 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Integral&#32;term</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00089"/>00089 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>&#32;+=&#32;(pid-&gt;<link linkend="_struct_p_i_d__t_1a59fac16f568541187ff485c4c47b0ec5">Ki</link>&#32;*&#32;error);
+<anchor xml:id="__p_i_d_8c_source_1l00090"/>00090 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a616f6b0cb89c5861abaa85bbd1058645">clamp_float</link>(&amp;(pid-&gt;<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>),&#32;-40,&#32;40);&#32;&#32;<emphasis role="comment">//&#32;Ensure&#32;I_term&#32;is&#32;within&#32;bounds</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00091"/>00091 
+<anchor xml:id="__p_i_d_8c_source_1l00092"/>00092 <emphasis role="preprocessor">#if&#32;low_pass_filter_derivative_chan&#32;==&#32;ON</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00093"/>00093 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Derivative&#32;term&#32;with&#32;low-pass&#32;filter</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00094"/>00094 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;raw_D_term&#32;=&#32;error&#32;-&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4">previous_error</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00095"/>00095 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6">D_term</link>&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ab1551d8043c2aa4410fb7dbb1fe3be7b">alpha</link>&#32;*&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a03ec09eeaedd2105010cbb15a8e4f2dd">previous_D_term</link>&#32;+&#32;(1&#32;-&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ab1551d8043c2aa4410fb7dbb1fe3be7b">alpha</link>)&#32;*&#32;raw_D_term;
+<anchor xml:id="__p_i_d_8c_source_1l00096"/>00096 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6">D_term</link>&#32;*=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a98268d71502ba080d88a9b1f50fdbe80">Kd</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00097"/>00097 <emphasis role="preprocessor">#else</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00098"/>00098 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Derivative&#32;term&#32;without&#32;low-pass&#32;filter</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00099"/>00099 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6">D_term</link>&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a98268d71502ba080d88a9b1f50fdbe80">Kd</link>&#32;*&#32;(error&#32;-&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4">previous_error</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00100"/>00100 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00101"/>00101 
+<anchor xml:id="__p_i_d_8c_source_1l00102"/>00102 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Calculate&#32;the&#32;proposed&#32;new&#32;output</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00103"/>00103 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;newOutput&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a60e830ee0f71c2d98c55973a6f9b7b05">P_term</link>&#32;+&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>&#32;+&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6">D_term</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00104"/>00104 
+<anchor xml:id="__p_i_d_8c_source_1l00105"/>00105 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Apply&#32;primary&#32;Exponential&#32;Moving&#32;Average&#32;(EMA)</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00106"/>00106 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;primaryEMAOutput&#32;=&#32;<link linkend="__p_i_d_8c_1a04e33c17501dc544f4f170a5fdd10d98">primarySmoothingFactor</link>&#32;*&#32;newOutput&#32;+&#32;(1&#32;-&#32;<link linkend="__p_i_d_8c_1a04e33c17501dc544f4f170a5fdd10d98">primarySmoothingFactor</link>)&#32;*&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b">previousOutput</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00107"/>00107 
+<anchor xml:id="__p_i_d_8c_source_1l00108"/>00108 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Apply&#32;secondary&#32;EMA&#32;for&#32;further&#32;smoothing</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00109"/>00109 &#32;&#32;&#32;&#32;secondaryEMA&#32;=&#32;<link linkend="__p_i_d_8c_1ad064e89649dcb2aeffc176cd64738ca2">secondarySmoothingFactor</link>&#32;*&#32;primaryEMAOutput&#32;+&#32;(1&#32;-&#32;<link linkend="__p_i_d_8c_1ad064e89649dcb2aeffc176cd64738ca2">secondarySmoothingFactor</link>)&#32;*&#32;secondaryEMA;
+<anchor xml:id="__p_i_d_8c_source_1l00110"/>00110 
+<anchor xml:id="__p_i_d_8c_source_1l00111"/>00111 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Apply&#32;rate&#32;limiting&#32;to&#32;smooth&#32;large&#32;jumps</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00112"/>00112 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;outputDifference&#32;=&#32;secondaryEMA&#32;-&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b">previousOutput</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00113"/>00113 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(fabs(outputDifference)&#32;&gt;&#32;<link linkend="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77">maxChangePerCycle</link>)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00114"/>00114 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(outputDifference&#32;&gt;&#32;0)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00115"/>00115 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b">previousOutput</link>&#32;+&#32;<link linkend="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77">maxChangePerCycle</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00116"/>00116 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00117"/>00117 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b">previousOutput</link>&#32;-&#32;<link linkend="__p_i_d_8c_1a168a8ff637383086cadfea00ae95ef77">maxChangePerCycle</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00118"/>00118 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00119"/>00119 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00120"/>00120 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>&#32;=&#32;secondaryEMA;
+<anchor xml:id="__p_i_d_8c_source_1l00121"/>00121 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00122"/>00122 
+<anchor xml:id="__p_i_d_8c_source_1l00123"/>00123 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Ensure&#32;the&#32;output&#32;is&#32;within&#32;the&#32;allowed&#32;range</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00124"/>00124 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe">clamp_int</link>(&amp;(pid-&gt;<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>),&#32;-100,&#32;100);&#32;&#32;<emphasis role="comment">//&#32;Ensure&#32;Output&#32;is&#32;within&#32;bounds</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00125"/>00125 
+<anchor xml:id="__p_i_d_8c_source_1l00126"/>00126 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Update&#32;previous&#32;values&#32;for&#32;next&#32;iteration</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00127"/>00127 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b">previousOutput</link>&#32;=&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00128"/>00128 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4">previous_error</link>&#32;=&#32;error;
+<anchor xml:id="__p_i_d_8c_source_1l00129"/>00129 <emphasis role="preprocessor">#if&#32;low_pass_filter_derivative_chan&#32;==&#32;ON</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00130"/>00130 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a03ec09eeaedd2105010cbb15a8e4f2dd">previous_D_term</link>&#32;=&#32;raw_D_term;
+<anchor xml:id="__p_i_d_8c_source_1l00131"/>00131 <emphasis role="preprocessor">#endif</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00132"/>00132 }
+<anchor xml:id="__p_i_d_8c_source_1l00133"/>00133 
+<anchor xml:id="__p_i_d_8c_source_1l00134"/>00134 
+<anchor xml:id="__p_i_d_8c_source_1l00135"/><link linkend="__p_i_d_8h_1ad55b9d5b8311b147f528a7e6d0fba01c">00135</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1ad55b9d5b8311b147f528a7e6d0fba01c">PID_UpdateParams</link>(<link linkend="_struct_p_i_d__t">PID_t</link>&#32;*pid,&#32;<emphasis role="keywordtype">float</emphasis>&#32;new_Kp,&#32;<emphasis role="keywordtype">float</emphasis>&#32;new_Ki,&#32;<emphasis role="keywordtype">float</emphasis>&#32;new_Kd)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00136"/>00136 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Optionally&#32;lock&#32;the&#32;task&#32;if&#32;needed&#32;to&#32;prevent&#32;concurrent&#32;access</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00137"/>00137 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;taskENTER_CRITICAL();</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00138"/>00138 
+<anchor xml:id="__p_i_d_8c_source_1l00139"/>00139 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Update&#32;the&#32;PID&#32;coefficients</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00140"/>00140 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a09cfc766a233ad617270562cc4146d07">Kp</link>&#32;=&#32;new_Kp;
+<anchor xml:id="__p_i_d_8c_source_1l00141"/>00141 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a59fac16f568541187ff485c4c47b0ec5">Ki</link>&#32;=&#32;new_Ki;
+<anchor xml:id="__p_i_d_8c_source_1l00142"/>00142 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a98268d71502ba080d88a9b1f50fdbe80">Kd</link>&#32;=&#32;new_Kd;
+<anchor xml:id="__p_i_d_8c_source_1l00143"/>00143 
+<anchor xml:id="__p_i_d_8c_source_1l00144"/>00144 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Reinitialize&#32;any&#32;error&#32;sums&#32;or&#32;stateful&#32;terms&#32;if&#32;necessary</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00145"/>00145 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>&#32;=&#32;0;&#32;<emphasis role="comment">//&#32;Reset&#32;integral&#32;term&#32;if&#32;needed</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00146"/>00146 &#32;&#32;&#32;&#32;pid-&gt;<link linkend="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4">previous_error</link>&#32;=&#32;0;&#32;<emphasis role="comment">//&#32;Reset&#32;the&#32;previous&#32;error&#32;if&#32;the&#32;derivative&#32;term&#32;should&#32;be&#32;reinitialized</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00147"/>00147 
+<anchor xml:id="__p_i_d_8c_source_1l00148"/>00148 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Optionally&#32;include&#32;anti-windup&#32;logic&#32;or&#32;re-initialize&#32;other&#32;elements&#32;here</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00149"/>00149 
+<anchor xml:id="__p_i_d_8c_source_1l00150"/>00150 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Optionally&#32;unlock&#32;the&#32;task&#32;if&#32;it&#32;was&#32;previously&#32;locked</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00151"/>00151 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;taskEXIT_CRITICAL();</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00152"/>00152 }
+<anchor xml:id="__p_i_d_8c_source_1l00153"/>00153 
+<anchor xml:id="__p_i_d_8c_source_1l00154"/>00154 <emphasis role="comment">/*&#32;Speed&#32;scaler&#32;for&#32;determining&#32;the&#32;correct&#32;threshold&#32;for&#32;distance&#32;of&#32;stop.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00155"/><link linkend="__p_i_d_8h_1aabae7507a2291726cf102c305e3f02c5">00155</link> <emphasis role="keywordtype">float</emphasis>&#32;<link linkend="__p_i_d_8c_1aabae7507a2291726cf102c305e3f02c5">get_speed_distance_sens_scaling</link>(<emphasis role="keywordtype">float</emphasis>&#32;speed,&#32;<emphasis role="keywordtype">float</emphasis>&#32;speed_min,&#32;<emphasis role="keywordtype">float</emphasis>&#32;speed_max)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00156"/>00156 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(speed&#32;&lt;=&#32;speed_min)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00157"/>00157 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;1.0;
+<anchor xml:id="__p_i_d_8c_source_1l00158"/>00158 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(speed&#32;&gt;=&#32;speed_max)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00159"/>00159 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;5.0;
+<anchor xml:id="__p_i_d_8c_source_1l00160"/>00160 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00161"/>00161 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Linear&#32;scaling&#32;between&#32;1.0&#32;and&#32;5.0&#32;for&#32;speeds&#32;between&#32;speed_min&#32;and&#32;speed_max</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00162"/>00162 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;t&#32;=&#32;(speed&#32;-&#32;speed_min)&#32;/&#32;(speed_max&#32;-&#32;speed_min);&#32;<emphasis role="comment">//&#32;Normalized&#32;speed&#32;in&#32;range&#32;[0,&#32;1]</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00163"/>00163 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;1.0&#32;+&#32;t&#32;*&#32;(5.0&#32;-&#32;1.0);&#32;<emphasis role="comment">//&#32;Linear&#32;interpolation</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00164"/>00164 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00165"/>00165 }
+<anchor xml:id="__p_i_d_8c_source_1l00166"/>00166 
+<anchor xml:id="__p_i_d_8c_source_1l00167"/>00167 
+<anchor xml:id="__p_i_d_8c_source_1l00168"/>00168 
+<anchor xml:id="__p_i_d_8c_source_1l00169"/>00169 <emphasis role="comment">/*SLIDING&#32;MEAN&#32;AVERAGE&#32;function*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00170"/><link linkend="__p_i_d_8c_1a121db7071e2b0e646e8ef5ab354e8627">00170</link> <emphasis role="keywordtype">double</emphasis>&#32;<link linkend="__p_i_d_8c_1a121db7071e2b0e646e8ef5ab354e8627">buffer</link>[<link linkend="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70">WINDOW_SIZE_SMA</link>]&#32;=&#32;{&#32;0.0&#32;};
+<anchor xml:id="__p_i_d_8c_source_1l00171"/><link linkend="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b">00171</link> <emphasis role="keywordtype">double</emphasis>&#32;<link linkend="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b">sum</link>&#32;=&#32;0.0;
+<anchor xml:id="__p_i_d_8c_source_1l00172"/>00172 
+<anchor xml:id="__p_i_d_8c_source_1l00173"/>00173 <emphasis role="comment">//&#32;Function&#32;to&#32;add&#32;value&#32;to&#32;the&#32;buffer&#32;and&#32;update&#32;the&#32;sliding&#32;mean</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00174"/><link linkend="__p_i_d_8h_1aa67df0089f15bc7920286170fbdf904b">00174</link> <emphasis role="keywordtype">double</emphasis>&#32;<link linkend="__p_i_d_8c_1aa67df0089f15bc7920286170fbdf904b">Sliding_Mean_Average</link>(<emphasis role="keywordtype">int</emphasis>&#32;newValue)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00175"/>00175 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;To&#32;keep&#32;track&#32;of&#32;the&#32;oldest&#32;value&apos;s&#32;index&#32;in&#32;the&#32;circular&#32;buffer</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00176"/>00176 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;index&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00177"/>00177 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Subtract&#32;the&#32;oldest&#32;value&#32;from&#32;the&#32;sum</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00178"/>00178 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b">sum</link>&#32;-=&#32;<link linkend="__p_i_d_8c_1a121db7071e2b0e646e8ef5ab354e8627">buffer</link>[index];
+<anchor xml:id="__p_i_d_8c_source_1l00179"/>00179 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Add&#32;the&#32;new&#32;value&#32;to&#32;the&#32;buffer&#32;and&#32;to&#32;the&#32;sum</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00180"/>00180 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a121db7071e2b0e646e8ef5ab354e8627">buffer</link>[index]&#32;=&#32;(double)&#32;newValue;
+<anchor xml:id="__p_i_d_8c_source_1l00181"/>00181 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b">sum</link>&#32;+=&#32;newValue;
+<anchor xml:id="__p_i_d_8c_source_1l00182"/>00182 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Calculate&#32;the&#32;new&#32;mean</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00183"/>00183 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;mean&#32;=&#32;<link linkend="__p_i_d_8c_1a2943e5895f5488ed44ed4a86e59dcf1b">sum</link>&#32;/&#32;(double)&#32;<link linkend="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70">WINDOW_SIZE_SMA</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00184"/>00184 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Move&#32;the&#32;index&#32;to&#32;the&#32;next&#32;position&#32;(circularly)</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00185"/>00185 &#32;&#32;&#32;&#32;index&#32;=&#32;(index&#32;+&#32;1)&#32;%&#32;<link linkend="__p_i_d_8h_1a4976bce6bc5be73bd93625c12b853e70">WINDOW_SIZE_SMA</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00186"/>00186 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;mean;
+<anchor xml:id="__p_i_d_8c_source_1l00187"/>00187 }
+<anchor xml:id="__p_i_d_8c_source_1l00188"/>00188 
+<anchor xml:id="__p_i_d_8c_source_1l00189"/>00189 <emphasis role="comment">/*CONFIG_FREERTOS_HZ&#32;is&#32;set&#32;to&#32;1000,&#32;this&#32;means&#32;the&#32;operating&#32;system&#32;tick&#32;rate&#32;is&#32;1000&#32;ticks&#32;per&#32;second.&#32;Each&#32;tick&#32;would</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00190"/>00190 <emphasis role="comment">&#32;therefore&#32;represent&#32;1&#32;millisecond&#32;(since&#32;1000&#32;milliseconds&#32;/&#32;1000&#32;ticks&#32;=&#32;1&#32;millisecond&#32;per&#32;tick).</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00191"/>00191 <emphasis role="comment">&#32;To&#32;convert&#32;a&#32;tick&#32;count&#32;to&#32;milliseconds,&#32;you&#32;can&#32;multiply&#32;the&#32;number&#32;of&#32;ticks&#32;by&#32;1*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00192"/>00192 
+<anchor xml:id="__p_i_d_8c_source_1l00193"/>00193 <emphasis role="keyword">extern</emphasis>&#32;QueueHandle_t&#32;<link linkend="__p_i_d_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00194"/>00194 <emphasis role="keyword">extern</emphasis>&#32;QueueHandle_t&#32;<link linkend="__p_i_d_8c_1adb1f977be6734adfcc8e37d4f2659ec5">speed_commandQueue</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00195"/>00195 <emphasis role="keyword">extern</emphasis>&#32;QueueHandle_t&#32;<link linkend="__p_i_d_8c_1a52c196f65d55f3b464764bf630e6f05e">PID_commandQueue</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00196"/>00196 <emphasis role="keyword">extern</emphasis>&#32;QueueHandle_t&#32;<link linkend="__p_i_d_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f">I2C_commandQueue</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00197"/>00197 <emphasis role="keyword">extern</emphasis>&#32;QueueSetHandle_t&#32;<link linkend="__p_i_d_8c_1a5c87d10806c8bb41d42841fc2fb559d9">QueueSetPIDNecessaryCommands</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00198"/><link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">00198</link> <link linkend="_struct_car_command">CarCommand</link>&#32;<link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">onlyPIDValues</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00199"/><link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">00199</link> <link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link>&#32;<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00200"/><link linkend="__p_i_d_8c_1a8080e5c331191a287a253bd49be7fb4d">00200</link> <emphasis role="keywordtype">int</emphasis>&#32;<link linkend="__p_i_d_8c_1a8080e5c331191a287a253bd49be7fb4d">old_setpoint</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00201"/><link linkend="__p_i_d_8c_1ad13f649750458a5efd053ba378823d4a">00201</link> TickType_t&#32;<link linkend="__p_i_d_8c_1ad13f649750458a5efd053ba378823d4a">startInitialSendingTime</link>&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00202"/><link linkend="__p_i_d_8c_1a0812e85483a0266e964dfe718008bd95">00202</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__p_i_d_8c_1a0812e85483a0266e964dfe718008bd95">car_stays_stopped</link>&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00203"/><link linkend="__p_i_d_8h_1a0b5432e9eb596af445a114d06ffccd81">00203</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1a0b5432e9eb596af445a114d06ffccd81">PIDTask</link>(<emphasis role="keywordtype">void</emphasis>&#32;*pvParameters)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00204"/>00204 
+<anchor xml:id="__p_i_d_8c_source_1l00205"/>00205 
+<anchor xml:id="__p_i_d_8c_source_1l00206"/>00206 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a26c8b95db9397895630f51f4d291aab5">PID_Init</link>(&amp;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>,&#32;0,&#32;0,&#32;0);
+<anchor xml:id="__p_i_d_8c_source_1l00207"/>00207 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;pulse_direction&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00208"/>00208 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;setpoint_speed&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00209"/>00209 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">double</emphasis>&#32;SMA_frequency&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00210"/>00210 &#32;&#32;&#32;&#32;TickType_t&#32;newTime_backward&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00211"/>00211 &#32;&#32;&#32;&#32;TickType_t&#32;newTime_stop&#32;=&#32;0U;
+<anchor xml:id="__p_i_d_8c_source_1l00212"/>00212 
+<anchor xml:id="__p_i_d_8c_source_1l00213"/>00213 &#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;xActivatedMember&#32;receives&#32;messages&#32;from&#32;different&#32;queues,&#32;for&#32;example:</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00214"/>00214 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;-&gt;&#32;Encoder&#32;pulses:&#32;-&#32;each&#32;time&#32;a&#32;series&#32;of&#32;PCNT_HIGH_LIMIT_WATCHPOINT&#32;/&#32;PCNT_LOW_LIMIT_WATCHPOINT</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00215"/>00215 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pulses&#32;happen,&#32;pulse_encoderQueue&#32;will&#32;be&#32;filled&#32;with&#32;either&#32;-1&#32;or&#32;+1&#32;depening</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00216"/>00216 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;on&#32;the&#32;direction&#32;of&#32;the&#32;wheel&#32;spin,&#32;which&#32;will&#32;be&#32;further&#32;used&#32;to&#32;time&#32;stamp&#32;the</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00217"/>00217 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;moment&#32;when&#32;the&#32;car&#32;has&#32;performed&#32;the&#32;desired&#32;number&#32;of&#32;pulses.</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00218"/>00218 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;-&gt;&#32;User&apos;s&#32;setpoint&#32;for&#32;speed:&#32;-&#32;each&#32;time&#32;the&#32;user&#32;sets&#32;the&#32;desired&#32;speed&#32;on&#32;the&#32;app,&#32;then&#32;the&#32;speed_commandQueue</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00219"/>00219 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;queue&#32;will&#32;be&#32;filled&#32;with&#32;a&#32;value&#32;between&#32;-100&#32;and&#32;100,&#32;sign&#32;depending</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00220"/>00220 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;on&#32;the&#32;state&#32;:&#32;Backward&#32;or&#32;Forward&#32;selected&#32;by&#32;the&#32;user.</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00221"/>00221 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;*&#32;-&gt;&#32;User&apos;s&#32;desired&#32;configuration&#32;for&#32;PID&apos;s&#32;constants:&#32;-&#32;fills&#32;PID_commandQueue&#32;everytime&#32;a&#32;change&#32;in&#32;KP,&#32;KD,&#32;KI&#32;in&#32;app.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00222"/>00222 &#32;&#32;&#32;&#32;QueueSetMemberHandle_t&#32;xActivatedMember;
+<anchor xml:id="__p_i_d_8c_source_1l00223"/>00223 
+<anchor xml:id="__p_i_d_8c_source_1l00224"/>00224 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(1)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00225"/>00225 
+<anchor xml:id="__p_i_d_8c_source_1l00226"/>00226 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xActivatedMember&#32;=&#32;xQueueSelectFromSet(<link linkend="__p_i_d_8c_1a5c87d10806c8bb41d42841fc2fb559d9">QueueSetPIDNecessaryCommands</link>,&#32;pdMS_TO_TICKS(100));
+<anchor xml:id="__p_i_d_8c_source_1l00227"/>00227 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xActivatedMember&#32;==&#32;<link linkend="__p_i_d_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link>)
+<anchor xml:id="__p_i_d_8c_source_1l00228"/>00228 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00229"/>00229 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReceive(xActivatedMember,&#32;&amp;pulse_direction,&#32;0);
+<anchor xml:id="__p_i_d_8c_source_1l00230"/>00230 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(pulse_direction&#32;&gt;&#32;0)
+<anchor xml:id="__p_i_d_8c_source_1l00231"/>00231 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pulse_direction&#32;=&#32;1;
+<anchor xml:id="__p_i_d_8c_source_1l00232"/>00232 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(pulse_direction&#32;&lt;&#32;0)
+<anchor xml:id="__p_i_d_8c_source_1l00233"/>00233 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;pulse_direction&#32;=&#32;-1;
+<anchor xml:id="__p_i_d_8c_source_1l00234"/>00234 
+<anchor xml:id="__p_i_d_8c_source_1l00235"/>00235 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Calculate&#32;time&#32;between&#32;each&#32;series&#32;of&#32;pulses&#32;and&#32;then&#32;convert&#32;it&#32;to&#32;HZ.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00236"/>00236 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">xNewWakeTime</link>&#32;=&#32;xTaskGetTickCount();
+<anchor xml:id="__p_i_d_8c_source_1l00237"/>00237 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a3b0c3fc0d365276e3572f2c6e0b117e7">pulse_time_ms</link>&#32;=&#32;pdTICKS_TO_MS((<link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">xNewWakeTime</link>&#32;-&#32;<link linkend="__p_i_d_8c_1adf2bc2f5a2cb2f6d8e95dc0f9762180f">xLastWakePulse</link>));
+<anchor xml:id="__p_i_d_8c_source_1l00238"/>00238 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;SMA_frequency&#32;=&#32;1.0&#32;/&#32;(<link linkend="__p_i_d_8c_1aa67df0089f15bc7920286170fbdf904b">Sliding_Mean_Average</link>(<link linkend="__p_i_d_8c_1a3b0c3fc0d365276e3572f2c6e0b117e7">pulse_time_ms</link>)&#32;/&#32;1000.0);
+<anchor xml:id="__p_i_d_8c_source_1l00239"/>00239 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1adf2bc2f5a2cb2f6d8e95dc0f9762180f">xLastWakePulse</link>&#32;=&#32;<link linkend="__p_i_d_8c_1ace114d5e7194cfd2e47d5de531a270dc">xNewWakeTime</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00240"/>00240 
+<anchor xml:id="__p_i_d_8c_source_1l00241"/>00241 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Update&#32;the&#32;measured&#32;value.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00242"/>00242 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>&#32;=&#32;pulse_direction&#32;*&#32;SMA_frequency;&#32;<emphasis role="comment">//&#32;MEASURED</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00243"/>00243 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a798a61f7f4a9d94f40e4a0c59bece8a0">speed_distance_sens_scaling</link>&#32;&#32;=&#32;<link linkend="__p_i_d_8c_1aabae7507a2291726cf102c305e3f02c5">get_speed_distance_sens_scaling</link>(fabs((<emphasis role="keywordtype">double</emphasis>)<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>),5,40);
+<anchor xml:id="__p_i_d_8c_source_1l00244"/>00244 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;PID&quot;,&#32;&quot;Frequency:&#32;%f&quot;,&#32;pulse_direction&#32;*&#32;SMA_frequency);</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00245"/>00245 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00246"/>00246 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xActivatedMember&#32;==&#32;<link linkend="__p_i_d_8c_1adb1f977be6734adfcc8e37d4f2659ec5">speed_commandQueue</link>)
+<anchor xml:id="__p_i_d_8c_source_1l00247"/>00247 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00248"/>00248 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReceive(xActivatedMember,&#32;&amp;setpoint_speed,&#32;0);
+<anchor xml:id="__p_i_d_8c_source_1l00249"/>00249 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;=&#32;setpoint_speed;
+<anchor xml:id="__p_i_d_8c_source_1l00250"/>00250 
+<anchor xml:id="__p_i_d_8c_source_1l00251"/>00251 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;If&#32;the&#32;setpoint&#32;is&#32;set&#32;to&#32;0&#32;then&#32;update&#32;the&#32;Measured&#32;Value</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00252"/>00252 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*&#32;to&#32;0&#32;so&#32;it&#32;will&#32;not&#32;interfere&#32;with&#32;PID&#32;updates.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00253"/>00253 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(setpoint_speed&#32;==&#32;0)
+<anchor xml:id="__p_i_d_8c_source_1l00254"/>00254 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00255"/>00255 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00256"/>00256 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;newTime_stop&#32;=&#32;xTaskGetTickCount();
+<anchor xml:id="__p_i_d_8c_source_1l00257"/>00257 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00258"/>00258 
+<anchor xml:id="__p_i_d_8c_source_1l00259"/>00259 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;PID&quot;,&#32;&quot;Speed&#32;Setpoint:&#32;%d&quot;,&#32;setpoint_speed);</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00260"/>00260 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00261"/>00261 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xActivatedMember&#32;==&#32;<link linkend="__p_i_d_8c_1a52c196f65d55f3b464764bf630e6f05e">PID_commandQueue</link>)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00262"/>00262 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReceive(xActivatedMember,&#32;&amp;<link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">onlyPIDValues</link>,&#32;0);
+<anchor xml:id="__p_i_d_8c_source_1l00263"/>00263 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad55b9d5b8311b147f528a7e6d0fba01c">PID_UpdateParams</link>(&amp;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>,&#32;<link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">onlyPIDValues</link>.<link linkend="_struct_car_command_1abf14c0656fbb57a86c322a87af806030">KP</link>,&#32;<link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">onlyPIDValues</link>.<link linkend="_struct_car_command_1aa7d5dd64817c03d067d0e922cd35d75c">KI</link>,
+<anchor xml:id="__p_i_d_8c_source_1l00264"/>00264 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a2588eb1c369a6e0fe260908e9bd50eb6">onlyPIDValues</link>.<link linkend="_struct_car_command_1a16424cc4cde718119fedda0db72c792f">KD</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00265"/>00265 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00266"/>00266 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(xActivatedMember&#32;==&#32;<link linkend="__p_i_d_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f">I2C_commandQueue</link>)
+<anchor xml:id="__p_i_d_8c_source_1l00267"/>00267 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00268"/>00268 
+<anchor xml:id="__p_i_d_8c_source_1l00269"/>00269 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;xQueueReceive(xActivatedMember,&#32;&amp;<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>,&#32;0);
+<anchor xml:id="__p_i_d_8c_source_1l00270"/>00270 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1af093706b79cdd89f26148de82c235225">sendingSensor</link>&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>&#32;&amp;&amp;&#32;<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1a5ff35ccbaea55a46f1f7306f278c552f">command</link>&#32;==&#32;<link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a975499341bc3acadc20fde0e2e00f4e1">I2C_STOP_MOTOR</link>&#32;)
+<anchor xml:id="__p_i_d_8c_source_1l00271"/>00271 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba">sens_fw_has_obstacle</link>&#32;=&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00272"/>00272 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1af093706b79cdd89f26148de82c235225">sendingSensor</link>&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>&#32;&amp;&amp;&#32;<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1a5ff35ccbaea55a46f1f7306f278c552f">command</link>&#32;==&#32;<link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53aac41faa6d3b03bb6bd35322356468386">I2C_START_MOTOR</link>)
+<anchor xml:id="__p_i_d_8c_source_1l00273"/>00273 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00274"/>00274 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba">sens_fw_has_obstacle</link>&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00275"/>00275 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00276"/>00276 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1af093706b79cdd89f26148de82c235225">sendingSensor</link>&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>&#32;&amp;&amp;&#32;<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1a5ff35ccbaea55a46f1f7306f278c552f">command</link>&#32;==&#32;<link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53a975499341bc3acadc20fde0e2e00f4e1">I2C_STOP_MOTOR</link>&#32;)
+<anchor xml:id="__p_i_d_8c_source_1l00277"/>00277 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62">sens_bw_has_obstacle</link>&#32;=&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00278"/>00278 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1af093706b79cdd89f26148de82c235225">sendingSensor</link>&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>&#32;&amp;&amp;&#32;<link linkend="__p_i_d_8c_1ac9b783e0f4c9361c5894c7a7dd7996ff">I2C_command</link>.<link linkend="_struct_i2_c___c_o_m_m_a_n_d_1a5ff35ccbaea55a46f1f7306f278c552f">command</link>&#32;==&#32;<link linkend="__i2_c__sensor_control_8h_1aab3c5ccae58c975d0afd2e876992ba53aac41faa6d3b03bb6bd35322356468386">I2C_START_MOTOR</link>)
+<anchor xml:id="__p_i_d_8c_source_1l00279"/>00279 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00280"/>00280 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62">sens_bw_has_obstacle</link>&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00281"/>00281 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00282"/>00282 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00283"/>00283 
+<anchor xml:id="__p_i_d_8c_source_1l00284"/>00284 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>((<link linkend="__p_i_d_8c_1a23e5064cecba4d74af07c3eb5cd7c7ba">sens_fw_has_obstacle</link>&#32;==&#32;<emphasis role="keyword">true</emphasis>&#32;&amp;&amp;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;&gt;&#32;0)&#32;||&#32;(<link linkend="__p_i_d_8c_1a117fa0cc46d9de108be106975435dd62">sens_bw_has_obstacle</link>&#32;==&#32;<emphasis role="keyword">true</emphasis>&#32;&amp;&amp;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;&lt;&#32;0))
+<anchor xml:id="__p_i_d_8c_source_1l00285"/>00285 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00286"/>00286 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a8080e5c331191a287a253bd49be7fb4d">old_setpoint</link>&#32;=&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>;
+<anchor xml:id="__p_i_d_8c_source_1l00287"/>00287 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link>&#32;=&#32;0;
+<anchor xml:id="__p_i_d_8c_source_1l00288"/>00288 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00289"/>00289 
+<anchor xml:id="__p_i_d_8c_source_1l00290"/>00290 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;IN&#32;CASE&#32;OF&#32;CONFUSION:&#32;&#32;-&gt;&#32;Setpoint&#32;is&#32;given&#32;by&#32;the&#32;user,&#32;so&#32;only&#32;the&#32;Setpoint&#32;can</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00291"/>00291 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;decide&#32;if&#32;the&#32;car&#32;should&#32;go&#32;backwards&#32;or&#32;not.</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00292"/>00292 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;-&gt;&#32;Output&#32;value&#32;if&#32;it&#32;goes&#32;below&#32;0,&#32;it&#32;shall&#32;not&#32;bring&#32;the&#32;car</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00293"/>00293 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;in&#32;a&#32;backward&#32;mode&#32;because&#32;it&#32;wasn&apos;t&#32;decided&#32;by&#32;the&#32;user.&#32;&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00294"/>00294 
+<anchor xml:id="__p_i_d_8c_source_1l00295"/>00295 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Each&#32;time&#32;a&#32;pulse&#32;has&#32;happened,&#32;the&#32;task&#32;will&#32;be&#32;notified</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00296"/>00296 <emphasis role="comment">&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*&#32;and&#32;PID&#32;will&#32;compute&#32;next&#32;OUTPUT&#32;value.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00297"/>00297 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;If&#32;the&#32;Setpoint&#32;is&#32;crossing&#32;the&#32;backward&#32;moving&#32;zone,&#32;brake.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00298"/>00298 
+<anchor xml:id="__p_i_d_8c_source_1l00299"/>00299 
+<anchor xml:id="__p_i_d_8c_source_1l00300"/>00300 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*If&#32;the&#32;time&#32;between&#32;pulses&#32;is&#32;too&#32;long&#32;set&#32;the&#32;measured&#32;value&#32;to&#32;0.*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00301"/>00301 
+<anchor xml:id="__p_i_d_8c_source_1l00302"/>00302 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1a6120ff3d44feed1033e54547b47c7856">PID_Compute</link>(&amp;<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00303"/>00303 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;backward&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00304"/>00304 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>&#32;&lt;&#32;0&#32;&amp;&amp;&#32;backward&#32;==&#32;<emphasis role="keyword">false</emphasis>)
+<anchor xml:id="__p_i_d_8c_source_1l00305"/>00305 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00306"/>00306 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__motor_and_servo_control_8h_1a64174a9e686c6f19ea9dc54d1d47085b">carControl_Backward_init</link>(4*<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00307"/>00307 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;backward&#32;=&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00308"/>00308 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00309"/>00309 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>&#32;&gt;=&#32;0)
+<anchor xml:id="__p_i_d_8c_source_1l00310"/>00310 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;backward&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__p_i_d_8c_source_1l00311"/>00311 
+<anchor xml:id="__p_i_d_8c_source_1l00312"/>00312 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__dc_motor_8h_1a435592e73c533f6e72459bff52e6b60e">changeMotorSpeed</link>(<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00313"/>00313 
+<anchor xml:id="__p_i_d_8c_source_1l00314"/>00314 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Send&#32;diagnostic&#32;data&#32;to&#32;phone&#32;app&#32;in&#32;order&#32;to&#32;monitor&#32;the&#32;speed&#32;and&#32;behaviour&#32;of&#32;Integral&#32;value.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00315"/>00315 
+<anchor xml:id="__p_i_d_8c_source_1l00316"/>00316 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;abs_measured&#32;=&#32;abs(<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00317"/>00317 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">float</emphasis>&#32;abs_I_term&#32;=&#32;fabs((<emphasis role="keywordtype">double</emphasis>)<link linkend="__p_i_d_8c_1ad50fee9031092ad3e701f5792d0021f9">motorPID</link>.<link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00318"/>00318 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;old_abs_measured;
+<anchor xml:id="__p_i_d_8c_source_1l00319"/>00319 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">float</emphasis>&#32;old_abs_I_term;
+<anchor xml:id="__p_i_d_8c_source_1l00320"/>00320 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">/*&#32;Send&#32;only&#32;the&#32;data&#32;the&#32;is&#32;different&#32;from&#32;the&#32;one&#32;sent&#32;before.&#32;*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00321"/>00321 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//if(abs_measured&#32;!=&#32;old_abs_measured&#32;||&#32;abs_I_term&#32;!=&#32;old_abs_I_term)</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00322"/>00322 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;{</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00323"/>00323 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8h_1a979168b4c86e45871c79ddc820763652">sendCommandApp</link>(<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115ba11bb3150ead5cd3528035bccb556b0eb">MEASURED_VALUE</link>,&#32;(<emphasis role="keywordtype">int</emphasis>*)&amp;abs_measured,&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fafd5a5f51ce25953f3db2c7e93eb7864a">INT</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00324"/>00324 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8h_1a979168b4c86e45871c79ddc820763652">sendCommandApp</link>(<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115baa29218b762f6fd8c27eab599ed620f91">I_TERM_VALUE</link>,&#32;(<emphasis role="keywordtype">float</emphasis>*)&amp;abs_I_term,&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fa9cf4a0866224b0bb4a7a895da27c9c4c">FLOAT</link>);
+<anchor xml:id="__p_i_d_8c_source_1l00325"/>00325 <emphasis role="comment">//&#32;&#32;&#32;&#32;&#32;&#32;old_abs_measured&#32;=&#32;abs_measured;</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00326"/>00326 <emphasis role="comment">//&#32;&#32;&#32;&#32;&#32;&#32;old_abs_I_term&#32;=&#32;abs_I_term;</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00327"/>00327 <emphasis role="comment">//&#32;&#32;&#32;&#32;&#32;&#32;}</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00328"/>00328 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00329"/>00329 }
+<anchor xml:id="__p_i_d_8c_source_1l00330"/>00330 
+<anchor xml:id="__p_i_d_8c_source_1l00331"/>00331 <emphasis role="comment">/*Clamp&#32;function&#32;for&#32;PID*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00332"/><link linkend="__p_i_d_8h_1a616f6b0cb89c5861abaa85bbd1058645">00332</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1a616f6b0cb89c5861abaa85bbd1058645">clamp_float</link>(<emphasis role="keywordtype">float</emphasis>&#32;*value,&#32;<emphasis role="keywordtype">float</emphasis>&#32;min,&#32;<emphasis role="keywordtype">float</emphasis>&#32;max)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00333"/>00333 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(*value&#32;&gt;&#32;max)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00334"/>00334 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*value&#32;=&#32;max;
+<anchor xml:id="__p_i_d_8c_source_1l00335"/>00335 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(*value&#32;&lt;&#32;min)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00336"/>00336 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*value&#32;=&#32;min;
+<anchor xml:id="__p_i_d_8c_source_1l00337"/>00337 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00338"/>00338 }
+<anchor xml:id="__p_i_d_8c_source_1l00339"/>00339 
+<anchor xml:id="__p_i_d_8c_source_1l00340"/><link linkend="__p_i_d_8h_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe">00340</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1a7a4dd36c5f2e49d4aa2f2f48fdd0aabe">clamp_int</link>(<emphasis role="keywordtype">int</emphasis>&#32;*value,&#32;<emphasis role="keywordtype">int</emphasis>&#32;min,&#32;<emphasis role="keywordtype">int</emphasis>&#32;max)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00341"/>00341 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(*value&#32;&gt;&#32;max)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00342"/>00342 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*value&#32;=&#32;max;
+<anchor xml:id="__p_i_d_8c_source_1l00343"/>00343 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(*value&#32;&lt;&#32;min)&#32;{
+<anchor xml:id="__p_i_d_8c_source_1l00344"/>00344 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;*value&#32;=&#32;min;
+<anchor xml:id="__p_i_d_8c_source_1l00345"/>00345 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__p_i_d_8c_source_1l00346"/>00346 }
+<anchor xml:id="__p_i_d_8c_source_1l00347"/>00347 
+<anchor xml:id="__p_i_d_8c_source_1l00348"/>00348 <emphasis role="comment">/*START&#32;PID&#32;TASK&#32;function*/</emphasis>
+<anchor xml:id="__p_i_d_8c_source_1l00349"/>00349 
+<anchor xml:id="__p_i_d_8c_source_1l00350"/><link linkend="__p_i_d_8h_1a9e7e9a86b0b7bb64ee265afc5cb27264">00350</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__p_i_d_8c_1a9e7e9a86b0b7bb64ee265afc5cb27264">start_PID_task</link>()
+<anchor xml:id="__p_i_d_8c_source_1l00351"/>00351 {
+<anchor xml:id="__p_i_d_8c_source_1l00352"/>00352 &#32;&#32;&#32;&#32;<link linkend="__p_i_d_8c_1ab1cfced9ea996bf91c861133e0d91e49">init_speedCheckTickHook</link>();
+<anchor xml:id="__p_i_d_8c_source_1l00353"/>00353 &#32;&#32;&#32;&#32;xTaskCreatePinnedToCore(<link linkend="__p_i_d_8c_1a0b5432e9eb596af445a114d06ffccd81">PIDTask</link>,&#32;<emphasis role="stringliteral">&quot;PIDTask&quot;</emphasis>,&#32;4096,&#32;NULL,&#32;7,&#32;NULL,&#32;1U);
+<anchor xml:id="__p_i_d_8c_source_1l00354"/>00354 }
+</programlisting></section>

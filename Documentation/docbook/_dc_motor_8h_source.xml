@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__dc_motor_8h_source" xml:lang="en-US">
+<title>DcMotor.h</title>
+<indexterm><primary>include/motors/drivers/DcMotor.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__dc_motor_8h_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;DcMotor.h</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Created&#32;on:&#32;18&#32;iun.&#32;2024</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;&#32;&#32;&#32;&#32;Author:&#32;racov</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00006"/>00006 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00007"/>00007 
+<anchor xml:id="__dc_motor_8h_source_1l00008"/>00008 <emphasis role="preprocessor">#ifndef&#32;INCLUDE_MOTORS_DCMOTOR_H_</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00009"/>00009 <emphasis role="preprocessor">#define&#32;INCLUDE_MOTORS_DCMOTOR_H_</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00010"/>00010 
+<anchor xml:id="__dc_motor_8h_source_1l00011"/>00011 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="_motors__common_8h">motors_common.h</link>&quot;</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00012"/>00012 
+<anchor xml:id="__dc_motor_8h_source_1l00013"/>00013 
+<anchor xml:id="__dc_motor_8h_source_1l00014"/>00014 <emphasis role="comment">/*Pwm&#32;settings&#32;for&#32;dc&#32;motor&#32;*/</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00015"/><link linkend="__dc_motor_8h_1a9bcd6003acb282bdb8b96b35019f7c99">00015</link> <emphasis role="preprocessor">#define&#32;LEDC_MOTOR_TIMER&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;LEDC_TIMER_1</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00016"/><link linkend="__dc_motor_8h_1adc0811ca91c90f7ab5d1dc76456f00f7">00016</link> <emphasis role="preprocessor">#define&#32;LEDC_MOTOR_CH1_CHANNEL&#32;&#32;&#32;&#32;&#32;&#32;LEDC_CHANNEL_1</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00017"/><link linkend="__dc_motor_8h_1ae983a296248e7538f8639b0376327c79">00017</link> <emphasis role="preprocessor">#define&#32;LEDC_MOTOR_GPIO&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(4)</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00018"/><link linkend="__dc_motor_8h_1a90ca3d995f78628254e22f975157224c">00018</link> <emphasis role="preprocessor">#define&#32;LEDC_MOTOR_DUTY_RESOLUTION&#32;&#32;LEDC_TIMER_16_BIT</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00019"/>00019 
+<anchor xml:id="__dc_motor_8h_source_1l00020"/><link linkend="__dc_motor_8h_1aa40e12b5209229906b274e17f06354be">00020</link> <emphasis role="preprocessor">#define&#32;MAX_MOTOR_FW_DUTY_US&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(1650)</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00021"/><link linkend="__dc_motor_8h_1a7e9c37fe10a92ad6f695589b13a3c4b8">00021</link> <emphasis role="preprocessor">#define&#32;MIN_MOTOR_FW_DUTY_US&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(1535)</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00022"/><link linkend="__dc_motor_8h_1acd72577f66c01d6483d1e3fcc2f6f547">00022</link> <emphasis role="preprocessor">#define&#32;MAX_MOTOR_BW_DUTY_US&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(1435)</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00023"/><link linkend="__dc_motor_8h_1ad549708befda03c421ddd809015220b3">00023</link> <emphasis role="preprocessor">#define&#32;MIN_MOTOR_BW_DUTY_US&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(1200)</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00024"/>00024 
+<anchor xml:id="__dc_motor_8h_source_1l00025"/>00025 <emphasis role="comment">/*&#32;Motor&#32;functions&#32;*/</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00026"/><link linkend="__dc_motor_8h_1a42c5dd9183c235e13cea65c7b41d6f88">00026</link> <emphasis role="preprocessor">#define&#32;QUEUE_SIZE_SPEED&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;20</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00027"/><link linkend="__dc_motor_8h_1aadaec1b31a325f19d1a0bd21d6863bcf">00027</link> <emphasis role="preprocessor">#define&#32;QUEUE_SIZE_DATATYPE_SPEED&#32;(sizeof(int))</emphasis>
+<anchor xml:id="__dc_motor_8h_source_1l00028"/>00028 
+<anchor xml:id="__dc_motor_8h_source_1l00029"/>00029 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__dc_motor_8h_1a611fa4f4361e4e307befb3becc0a5f4f">init_motor_pwm</link>();
+<anchor xml:id="__dc_motor_8h_source_1l00030"/>00030 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__dc_motor_8h_1aacc86a8fac6d46c80e8c5c41ea7786b6">carControl_calibrate_motor</link>();
+<anchor xml:id="__dc_motor_8h_source_1l00031"/>00031 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__dc_motor_8h_1a701f471f5cefb57b8bd8d0fc2e8b9597">update_motor_pwm</link>(<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">int</emphasis>&#32;pulse_width_us);
+<anchor xml:id="__dc_motor_8h_source_1l00032"/>00032 <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__dc_motor_8h_1a435592e73c533f6e72459bff52e6b60e">changeMotorSpeed</link>(<emphasis role="keywordtype">int</emphasis>&#32;value);
+<anchor xml:id="__dc_motor_8h_source_1l00033"/>00033 
+<anchor xml:id="__dc_motor_8h_source_1l00034"/>00034 
+<anchor xml:id="__dc_motor_8h_source_1l00035"/>00035 
+<anchor xml:id="__dc_motor_8h_source_1l00036"/>00036 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;INCLUDE_MOTORS_DCMOTOR_H_&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

@@ -1,0 +1,247 @@
+\doxysection{src/\+I2\+C/drivers/\+I2\+C\+\_\+distance\+Sensor.c File Reference}
+\label{_i2_c__distance_sensor_8c}\index{src/I2C/drivers/I2C\_distanceSensor.c@{src/I2C/drivers/I2C\_distanceSensor.c}}
+{\ttfamily \#include "{}I2\+C\+\_\+distance\+Sensor.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+distance\+Sensor.\+c\+:
+% FIG 0
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef enum \textbf{ err} \textbf{ type\+\_\+error}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ err} \{ \textbf{ not\+\_\+err} =0
+, \textbf{ err} =1
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+get\+Spad\+Info} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t $\ast$count, bool $\ast$type\+\_\+is\+\_\+aperture)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+\+Init} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+uint32\+\_\+t \textbf{ VL53\+L0\+X\+\_\+get\+Measurement\+Timing\+Budget} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+set\+Measurement\+Timing\+Budget} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint32\+\_\+t budget\+\_\+us)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Enables} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, \textbf{ Sequence\+Step\+Enables} $\ast$enables)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Timeouts} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, \textbf{ Sequence\+Step\+Enables} const $\ast$enables, \textbf{ Sequence\+Step\+Timeouts} $\ast$timeouts)
+\item 
+uint8\+\_\+t \textbf{ VL53\+L0\+X\+\_\+get\+Vcsel\+Pulse\+Period} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, \textbf{ vcsel\+Period\+Type} type)
+\item 
+uint32\+\_\+t \textbf{ VL53\+L0\+X\+\_\+timeout\+Mclks\+To\+Microseconds} (uint16\+\_\+t timeout\+\_\+period\+\_\+mclks, uint8\+\_\+t vcsel\+\_\+period\+\_\+pclks)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+decode\+Timeout} (uint16\+\_\+t reg\+\_\+val)
+\item 
+uint32\+\_\+t \textbf{ VL53\+L0\+X\+\_\+timeout\+Microseconds\+To\+Mclks} (uint32\+\_\+t timeout\+\_\+period\+\_\+us, uint8\+\_\+t vcsel\+\_\+period\+\_\+pclks)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+encode\+Timeout} (uint32\+\_\+t timeout\+\_\+mclks)
+\item 
+bool \textbf{ VL53\+L0\+X\+\_\+perform\+Single\+Ref\+Calibration} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint8\+\_\+t vhv\+\_\+init\+\_\+byte)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+read\+Range\+Single\+Millimeters} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+uint16\+\_\+t \textbf{ VL53\+L0\+X\+\_\+read\+Range\+Continuous\+Millimeters} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+\+Set\+Interrupt\+Thresholds} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle, uint32\+\_\+t Threshold\+Low, uint32\+\_\+t Threshold\+High)
+\item 
+void \textbf{ VL53\+L0\+X\+\_\+setup\+I2\+CRegisters} (\textbf{ I2\+C\+\_\+dev\+\_\+handles} device\+\_\+handle)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!type\_error@{type\_error}}
+\index{type\_error@{type\_error}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{type\_error}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a0d64dc15ca6f44f7a7e287f755af5f54} 
+typedef enum \textbf{ err} \textbf{ type\+\_\+error}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!err@{err}}
+\index{err@{err}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{err}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a52482fdd3721e7db69dc740aefee8ad4} 
+enum \textbf{ err}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{not\_err@{not\_err}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!not\_err@{not\_err}}}\label{_i2_c__distance_sensor_8c_a52482fdd3721e7db69dc740aefee8ad4} 
+not\+\_\+err&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{err@{err}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!err@{err}}}\label{_i2_c__distance_sensor_8c_a52482fdd3721e7db69dc740aefee8ad4} 
+err&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 52} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_decodeTimeout@{VL53L0X\_decodeTimeout}}
+\index{VL53L0X\_decodeTimeout@{VL53L0X\_decodeTimeout}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_decodeTimeout()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a742eb3eac2ef903017b22ff1ff230435} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+decode\+Timeout (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{reg\+\_\+val}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 349} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_encodeTimeout@{VL53L0X\_encodeTimeout}}
+\index{VL53L0X\_encodeTimeout@{VL53L0X\_encodeTimeout}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_encodeTimeout()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a1af131196086cfcf0778d02947cba96d} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+encode\+Timeout (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+mclks}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 362} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_getMeasurementTimingBudget@{VL53L0X\_getMeasurementTimingBudget}}
+\index{VL53L0X\_getMeasurementTimingBudget@{VL53L0X\_getMeasurementTimingBudget}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_getMeasurementTimingBudget()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a9c8f3cbd359979ecde38fec6987ed195} 
+uint32\+\_\+t VL53\+L0\+X\+\_\+get\+Measurement\+Timing\+Budget (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 167} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_getSequenceStepEnables@{VL53L0X\_getSequenceStepEnables}}
+\index{VL53L0X\_getSequenceStepEnables@{VL53L0X\_getSequenceStepEnables}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_getSequenceStepEnables()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a8ee705f0be16b20143f497e07752abdc} 
+void VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Enables (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{\textbf{ Sequence\+Step\+Enables} $\ast$}]{enables}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 294} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_getSequenceStepTimeouts@{VL53L0X\_getSequenceStepTimeouts}}
+\index{VL53L0X\_getSequenceStepTimeouts@{VL53L0X\_getSequenceStepTimeouts}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_getSequenceStepTimeouts()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_ab989058cad88daf6ba4bc5ce002dc627} 
+void VL53\+L0\+X\+\_\+get\+Sequence\+Step\+Timeouts (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{\textbf{ Sequence\+Step\+Enables} const $\ast$}]{enables}{, }\item[{\textbf{ Sequence\+Step\+Timeouts} $\ast$}]{timeouts}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 305} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_getSpadInfo@{VL53L0X\_getSpadInfo}}
+\index{VL53L0X\_getSpadInfo@{VL53L0X\_getSpadInfo}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_getSpadInfo()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a26fa9307118b65bff1bd9e4d1ede7564} 
+bool VL53\+L0\+X\+\_\+get\+Spad\+Info (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t $\ast$}]{count}{, }\item[{bool $\ast$}]{type\+\_\+is\+\_\+aperture}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_getVcselPulsePeriod@{VL53L0X\_getVcselPulsePeriod}}
+\index{VL53L0X\_getVcselPulsePeriod@{VL53L0X\_getVcselPulsePeriod}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_getVcselPulsePeriod()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a6a4808d414aea04141e02db7207aa06b} 
+uint8\+\_\+t VL53\+L0\+X\+\_\+get\+Vcsel\+Pulse\+Period (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{\textbf{ vcsel\+Period\+Type}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 329} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_Init@{VL53L0X\_Init}}
+\index{VL53L0X\_Init@{VL53L0X\_Init}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_Init()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_acca8dcfdeb3dc0146dbc884e9daae43b} 
+bool VL53\+L0\+X\+\_\+\+Init (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 67} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_performSingleRefCalibration@{VL53L0X\_performSingleRefCalibration}}
+\index{VL53L0X\_performSingleRefCalibration@{VL53L0X\_performSingleRefCalibration}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_performSingleRefCalibration()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a5d0bba70599f6a7974f1b373151b97b2} 
+bool VL53\+L0\+X\+\_\+perform\+Single\+Ref\+Calibration (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint8\+\_\+t}]{vhv\+\_\+init\+\_\+byte}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 384} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_readRangeContinuousMillimeters@{VL53L0X\_readRangeContinuousMillimeters}}
+\index{VL53L0X\_readRangeContinuousMillimeters@{VL53L0X\_readRangeContinuousMillimeters}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_readRangeContinuousMillimeters()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a852c08c9a46bddf494f7ea798ff66b49} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+read\+Range\+Continuous\+Millimeters (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 430} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_readRangeSingleMillimeters@{VL53L0X\_readRangeSingleMillimeters}}
+\index{VL53L0X\_readRangeSingleMillimeters@{VL53L0X\_readRangeSingleMillimeters}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_readRangeSingleMillimeters()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a22e63225273a04aa44bf1035a3cfd42f} 
+uint16\+\_\+t VL53\+L0\+X\+\_\+read\+Range\+Single\+Millimeters (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 404} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_SetInterruptThresholds@{VL53L0X\_SetInterruptThresholds}}
+\index{VL53L0X\_SetInterruptThresholds@{VL53L0X\_SetInterruptThresholds}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_SetInterruptThresholds()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a67d1697b468e1fabc1d23dad50737fa3} 
+void VL53\+L0\+X\+\_\+\+Set\+Interrupt\+Thresholds (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint32\+\_\+t}]{Threshold\+Low}{, }\item[{uint32\+\_\+t}]{Threshold\+High}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 470} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_setMeasurementTimingBudget@{VL53L0X\_setMeasurementTimingBudget}}
+\index{VL53L0X\_setMeasurementTimingBudget@{VL53L0X\_setMeasurementTimingBudget}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_setMeasurementTimingBudget()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_aee9fa60f3c5658bf0d738e89c43d21ab} 
+bool VL53\+L0\+X\+\_\+set\+Measurement\+Timing\+Budget (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{, }\item[{uint32\+\_\+t}]{budget\+\_\+us}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 214} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_setupI2CRegisters@{VL53L0X\_setupI2CRegisters}}
+\index{VL53L0X\_setupI2CRegisters@{VL53L0X\_setupI2CRegisters}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_setupI2CRegisters()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a4c311642f1da537825a5d16843cbdbd8} 
+void VL53\+L0\+X\+\_\+setup\+I2\+CRegisters (\begin{DoxyParamCaption}\item[{\textbf{ I2\+C\+\_\+dev\+\_\+handles}}]{device\+\_\+handle}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 489} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_timeoutMclksToMicroseconds@{VL53L0X\_timeoutMclksToMicroseconds}}
+\index{VL53L0X\_timeoutMclksToMicroseconds@{VL53L0X\_timeoutMclksToMicroseconds}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_timeoutMclksToMicroseconds()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a56c3bec1b14ca5942e26cf92bcba025d} 
+uint32\+\_\+t VL53\+L0\+X\+\_\+timeout\+Mclks\+To\+Microseconds (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{timeout\+\_\+period\+\_\+mclks}{, }\item[{uint8\+\_\+t}]{vcsel\+\_\+period\+\_\+pclks}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 342} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+
+\index{I2C\_distanceSensor.c@{I2C\_distanceSensor.c}!VL53L0X\_timeoutMicrosecondsToMclks@{VL53L0X\_timeoutMicrosecondsToMclks}}
+\index{VL53L0X\_timeoutMicrosecondsToMclks@{VL53L0X\_timeoutMicrosecondsToMclks}!I2C\_distanceSensor.c@{I2C\_distanceSensor.c}}
+\doxysubsubsection{VL53L0X\_timeoutMicrosecondsToMclks()}
+{\footnotesize\ttfamily \label{_i2_c__distance_sensor_8c_a6c11730133b4d029b5c6b9fcf5e43841} 
+uint32\+\_\+t VL53\+L0\+X\+\_\+timeout\+Microseconds\+To\+Mclks (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+period\+\_\+us}{, }\item[{uint8\+\_\+t}]{vcsel\+\_\+period\+\_\+pclks}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 356} of file \textbf{ I2\+C\+\_\+distance\+Sensor.\+c}.
+

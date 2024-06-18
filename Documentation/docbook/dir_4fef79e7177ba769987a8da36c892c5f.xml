@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_4fef79e7177ba769987a8da36c892c5f" xml:lang="en-US">
+<title>build Directory Reference</title>
+<indexterm><primary>build Directory Reference</primary></indexterm>
+<simplesect>
+    <title>Directories    </title>
+        <itemizedlist>
+            <listitem><para>directory <link linkend="_dir_95184fd9bed3ca1f63a503303d942f41">bootloader</link></para>
+</listitem>
+            <listitem><para>directory <link linkend="_dir_63772b626f2709090f0bdca0f40827b4">CMakeFiles</link></para>
+</listitem>
+            <listitem><para>directory <link linkend="_dir_8165d963cd765c284d618d89479b5e59">config</link></para>
+</listitem>
+            <listitem><para>directory <link linkend="_dir_16cd375328abb2f371198fccef29fd98">esp-idf</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="_detect__compiler__builtins_8c">detect_compiler_builtins.c</link></para>
+</listitem>
+            <listitem><para>file <link linkend="_detect__compiler__builtins_8cpp">detect_compiler_builtins.cpp</link></para>
+</listitem>
+            <listitem><para>file <link linkend="_project__elf__src__esp32_8c">project_elf_src_esp32.c</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

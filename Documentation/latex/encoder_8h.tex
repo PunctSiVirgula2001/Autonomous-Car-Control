@@ -1,0 +1,115 @@
+\doxysection{include/motors/drivers/encoder.h File Reference}
+\label{encoder_8h}\index{include/motors/drivers/encoder.h@{include/motors/drivers/encoder.h}}
+{\ttfamily \#include "{}motors\+\_\+common.\+h"{}}\newline
+Include dependency graph for encoder.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+ENCODER\+\_\+\+PULSE}~20
+\item 
+\#define \textbf{ QUEUE\+\_\+\+SIZE\+\_\+\+DATATYPE\+\_\+\+ENCODER\+\_\+\+PULSE}~(sizeof(int))
+\item 
+\#define \textbf{ PCNT\+\_\+\+HIGH\+\_\+\+LIMIT\+\_\+\+WATCHPOINT}~4
+\item 
+\#define \textbf{ PCNT\+\_\+\+LOW\+\_\+\+LIMIT\+\_\+\+WATCHPOINT}~-\/4
+\item 
+\#define \textbf{ encoder\+GPIO\+\_\+A}~35
+\item 
+\#define \textbf{ encoder\+GPIO\+\_\+B}~14
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \textbf{ example\+\_\+pcnt\+\_\+on\+\_\+reach} (pcnt\+\_\+unit\+\_\+handle\+\_\+t unit, const pcnt\+\_\+watch\+\_\+event\+\_\+data\+\_\+t $\ast$edata, void $\ast$user\+\_\+ctx)
+\item 
+void \textbf{ configure\+Encoder\+Interrupts} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{encoder.h@{encoder.h}!encoderGPIO\_A@{encoderGPIO\_A}}
+\index{encoderGPIO\_A@{encoderGPIO\_A}!encoder.h@{encoder.h}}
+\doxysubsubsection{encoderGPIO\_A}
+{\footnotesize\ttfamily \label{encoder_8h_a2963f69d0020917a6ab12f36c4849e3a} 
+\#define encoder\+GPIO\+\_\+A~35}
+
+
+
+Definition at line \textbf{ 18} of file \textbf{ encoder.\+h}.
+
+\index{encoder.h@{encoder.h}!encoderGPIO\_B@{encoderGPIO\_B}}
+\index{encoderGPIO\_B@{encoderGPIO\_B}!encoder.h@{encoder.h}}
+\doxysubsubsection{encoderGPIO\_B}
+{\footnotesize\ttfamily \label{encoder_8h_a37e7e189eff6f1915eb646f2bc237be2} 
+\#define encoder\+GPIO\+\_\+B~14}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ encoder.\+h}.
+
+\index{encoder.h@{encoder.h}!PCNT\_HIGH\_LIMIT\_WATCHPOINT@{PCNT\_HIGH\_LIMIT\_WATCHPOINT}}
+\index{PCNT\_HIGH\_LIMIT\_WATCHPOINT@{PCNT\_HIGH\_LIMIT\_WATCHPOINT}!encoder.h@{encoder.h}}
+\doxysubsubsection{PCNT\_HIGH\_LIMIT\_WATCHPOINT}
+{\footnotesize\ttfamily \label{encoder_8h_aee5fc9c5b11218b66cdde67f9dc40926} 
+\#define PCNT\+\_\+\+HIGH\+\_\+\+LIMIT\+\_\+\+WATCHPOINT~4}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ encoder.\+h}.
+
+\index{encoder.h@{encoder.h}!PCNT\_LOW\_LIMIT\_WATCHPOINT@{PCNT\_LOW\_LIMIT\_WATCHPOINT}}
+\index{PCNT\_LOW\_LIMIT\_WATCHPOINT@{PCNT\_LOW\_LIMIT\_WATCHPOINT}!encoder.h@{encoder.h}}
+\doxysubsubsection{PCNT\_LOW\_LIMIT\_WATCHPOINT}
+{\footnotesize\ttfamily \label{encoder_8h_a144826d61042c284d1e9390af5039857} 
+\#define PCNT\+\_\+\+LOW\+\_\+\+LIMIT\+\_\+\+WATCHPOINT~-\/4}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ encoder.\+h}.
+
+\index{encoder.h@{encoder.h}!QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE@{QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE}}
+\index{QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE@{QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE}!encoder.h@{encoder.h}}
+\doxysubsubsection{QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE}
+{\footnotesize\ttfamily \label{encoder_8h_a7286adb75de013565be5bba181749db3} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+DATATYPE\+\_\+\+ENCODER\+\_\+\+PULSE~(sizeof(int))}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ encoder.\+h}.
+
+\index{encoder.h@{encoder.h}!QUEUE\_SIZE\_ENCODER\_PULSE@{QUEUE\_SIZE\_ENCODER\_PULSE}}
+\index{QUEUE\_SIZE\_ENCODER\_PULSE@{QUEUE\_SIZE\_ENCODER\_PULSE}!encoder.h@{encoder.h}}
+\doxysubsubsection{QUEUE\_SIZE\_ENCODER\_PULSE}
+{\footnotesize\ttfamily \label{encoder_8h_afedb249703350ba8ef0b6c591f0891cc} 
+\#define QUEUE\+\_\+\+SIZE\+\_\+\+ENCODER\+\_\+\+PULSE~20}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ encoder.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{encoder.h@{encoder.h}!configureEncoderInterrupts@{configureEncoderInterrupts}}
+\index{configureEncoderInterrupts@{configureEncoderInterrupts}!encoder.h@{encoder.h}}
+\doxysubsubsection{configureEncoderInterrupts()}
+{\footnotesize\ttfamily \label{encoder_8h_a3924b07647d86be798a086541d2c13d7} 
+void configure\+Encoder\+Interrupts (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ encoder.\+c}.
+
+\index{encoder.h@{encoder.h}!example\_pcnt\_on\_reach@{example\_pcnt\_on\_reach}}
+\index{example\_pcnt\_on\_reach@{example\_pcnt\_on\_reach}!encoder.h@{encoder.h}}
+\doxysubsubsection{example\_pcnt\_on\_reach()}
+{\footnotesize\ttfamily \label{encoder_8h_a87512eb7bfce47cf96e5fbd5bd0c2f3c} 
+bool example\+\_\+pcnt\+\_\+on\+\_\+reach (\begin{DoxyParamCaption}\item[{pcnt\+\_\+unit\+\_\+handle\+\_\+t}]{unit}{, }\item[{const pcnt\+\_\+watch\+\_\+event\+\_\+data\+\_\+t $\ast$}]{edata}{, }\item[{void $\ast$}]{user\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ encoder.\+c}.
+

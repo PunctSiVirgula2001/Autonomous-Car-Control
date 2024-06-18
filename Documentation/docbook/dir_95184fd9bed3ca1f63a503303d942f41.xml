@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_95184fd9bed3ca1f63a503303d942f41" xml:lang="en-US">
+<title>build/bootloader Directory Reference</title>
+<indexterm><primary>build/bootloader Directory Reference</primary></indexterm>
+Directory dependency graph for bootloader:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_95184fd9bed3ca1f63a503303d942f41_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Directories    </title>
+        <itemizedlist>
+            <listitem><para>directory <link linkend="_dir_c6ef69ba2a0993bf73d8aa3d755b7427">CMakeFiles</link></para>
+</listitem>
+            <listitem><para>directory <link linkend="_dir_eed08600d5be68c0e052465144c43a72">config</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="_bootloader_2project__elf__src__esp32_8c">project_elf_src_esp32.c</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__distance_sensor_8c" xml:lang="en-US">
+<title>src/I2C/drivers/I2C_distanceSensor.c File Reference</title>
+<indexterm><primary>src/I2C/drivers/I2C_distanceSensor.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_distanceSensor.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_distanceSensor.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__distance_sensor_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Typedefs    </title>
+        <itemizedlist>
+            <listitem><para>typedef enum <link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link> <link linkend="__i2_c__distance_sensor_8c_1a0d64dc15ca6f44f7a7e287f755af5f54">type_error</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Enumerations    </title>
+        <itemizedlist>
+            <listitem><para>enum <link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link> { <link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4afe67d8e2b90a9d5292b4c1b4e1848f68">not_err</link> =0
+, <link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4ac16f69770bf5601fbace0a55304daa99">err</link> =1
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="__i2_c__distance_sensor_8c_1a26fa9307118b65bff1bd9e4d1ede7564">VL53L0X_getSpadInfo</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t *count, bool *type_is_aperture)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__distance_sensor_8c_1acca8dcfdeb3dc0146dbc884e9daae43b">VL53L0X_Init</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="__i2_c__distance_sensor_8c_1a9c8f3cbd359979ecde38fec6987ed195">VL53L0X_getMeasurementTimingBudget</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__distance_sensor_8c_1aee9fa60f3c5658bf0d738e89c43d21ab">VL53L0X_setMeasurementTimingBudget</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint32_t budget_us)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__distance_sensor_8c_1a8ee705f0be16b20143f497e07752abdc">VL53L0X_getSequenceStepEnables</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, <link linkend="_struct_sequence_step_enables">SequenceStepEnables</link> *enables)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__distance_sensor_8c_1ab989058cad88daf6ba4bc5ce002dc627">VL53L0X_getSequenceStepTimeouts</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, <link linkend="_struct_sequence_step_enables">SequenceStepEnables</link> const *enables, <link linkend="_struct_sequence_step_timeouts">SequenceStepTimeouts</link> *timeouts)</para>
+</listitem>
+            <listitem><para>uint8_t <link linkend="__i2_c__distance_sensor_8c_1a6a4808d414aea04141e02db7207aa06b">VL53L0X_getVcselPulsePeriod</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, <link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896c">vcselPeriodType</link> type)</para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="__i2_c__distance_sensor_8c_1a56c3bec1b14ca5942e26cf92bcba025d">VL53L0X_timeoutMclksToMicroseconds</link> (uint16_t timeout_period_mclks, uint8_t vcsel_period_pclks)</para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="__i2_c__distance_sensor_8c_1a742eb3eac2ef903017b22ff1ff230435">VL53L0X_decodeTimeout</link> (uint16_t reg_val)</para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="__i2_c__distance_sensor_8c_1a6c11730133b4d029b5c6b9fcf5e43841">VL53L0X_timeoutMicrosecondsToMclks</link> (uint32_t timeout_period_us, uint8_t vcsel_period_pclks)</para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="__i2_c__distance_sensor_8c_1a1af131196086cfcf0778d02947cba96d">VL53L0X_encodeTimeout</link> (uint32_t timeout_mclks)</para>
+</listitem>
+            <listitem><para>bool <link linkend="__i2_c__distance_sensor_8c_1a5d0bba70599f6a7974f1b373151b97b2">VL53L0X_performSingleRefCalibration</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t vhv_init_byte)</para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="__i2_c__distance_sensor_8c_1a22e63225273a04aa44bf1035a3cfd42f">VL53L0X_readRangeSingleMillimeters</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="__i2_c__distance_sensor_8c_1a852c08c9a46bddf494f7ea798ff66b49">VL53L0X_readRangeContinuousMillimeters</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__distance_sensor_8c_1a67d1697b468e1fabc1d23dad50737fa3">VL53L0X_SetInterruptThresholds</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint32_t ThresholdLow, uint32_t ThresholdHigh)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__distance_sensor_8c_1a4c311642f1da537825a5d16843cbdbd8">VL53L0X_setupI2CRegisters</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Typedef Documentation</title>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a0d64dc15ca6f44f7a7e287f755af5f54"/><section>
+    <title>type_error</title>
+<indexterm><primary>type_error</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>type_error</secondary></indexterm>
+<para><computeroutput>typedef enum <link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link> <link linkend="__i2_c__distance_sensor_8c_1a0d64dc15ca6f44f7a7e287f755af5f54">type_error</link></computeroutput></para></section>
+</section>
+<section>
+<title>Enumeration Type Documentation</title>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4"/><section>
+    <title>err</title>
+<indexterm><primary>err</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>err</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>not_err</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>not_err</secondary></indexterm>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4afe67d8e2b90a9d5292b4c1b4e1848f68"/>not_err</entry><entry></entry></row><row><entry><indexterm><primary>err</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>err</secondary></indexterm>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4ac16f69770bf5601fbace0a55304daa99"/>err</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00052">52</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a742eb3eac2ef903017b22ff1ff230435"/><section>
+    <title>VL53L0X_decodeTimeout()</title>
+<indexterm><primary>VL53L0X_decodeTimeout</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_decodeTimeout</secondary></indexterm>
+<para><computeroutput>uint16_t VL53L0X_decodeTimeout (uint16_t reg_val)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00349">349</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a1af131196086cfcf0778d02947cba96d"/><section>
+    <title>VL53L0X_encodeTimeout()</title>
+<indexterm><primary>VL53L0X_encodeTimeout</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_encodeTimeout</secondary></indexterm>
+<para><computeroutput>uint16_t VL53L0X_encodeTimeout (uint32_t timeout_mclks)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00362">362</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a9c8f3cbd359979ecde38fec6987ed195"/><section>
+    <title>VL53L0X_getMeasurementTimingBudget()</title>
+<indexterm><primary>VL53L0X_getMeasurementTimingBudget</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_getMeasurementTimingBudget</secondary></indexterm>
+<para><computeroutput>uint32_t VL53L0X_getMeasurementTimingBudget (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00167">167</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a8ee705f0be16b20143f497e07752abdc"/><section>
+    <title>VL53L0X_getSequenceStepEnables()</title>
+<indexterm><primary>VL53L0X_getSequenceStepEnables</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_getSequenceStepEnables</secondary></indexterm>
+<para><computeroutput>void VL53L0X_getSequenceStepEnables (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, <link linkend="_struct_sequence_step_enables">SequenceStepEnables</link> * enables)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00294">294</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1ab989058cad88daf6ba4bc5ce002dc627"/><section>
+    <title>VL53L0X_getSequenceStepTimeouts()</title>
+<indexterm><primary>VL53L0X_getSequenceStepTimeouts</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_getSequenceStepTimeouts</secondary></indexterm>
+<para><computeroutput>void VL53L0X_getSequenceStepTimeouts (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, <link linkend="_struct_sequence_step_enables">SequenceStepEnables</link> const * enables, <link linkend="_struct_sequence_step_timeouts">SequenceStepTimeouts</link> * timeouts)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00305">305</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a26fa9307118b65bff1bd9e4d1ede7564"/><section>
+    <title>VL53L0X_getSpadInfo()</title>
+<indexterm><primary>VL53L0X_getSpadInfo</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_getSpadInfo</secondary></indexterm>
+<para><computeroutput>bool VL53L0X_getSpadInfo (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t * count, bool * type_is_aperture)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00012">12</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a6a4808d414aea04141e02db7207aa06b"/><section>
+    <title>VL53L0X_getVcselPulsePeriod()</title>
+<indexterm><primary>VL53L0X_getVcselPulsePeriod</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_getVcselPulsePeriod</secondary></indexterm>
+<para><computeroutput>uint8_t VL53L0X_getVcselPulsePeriod (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, <link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896c">vcselPeriodType</link> type)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00329">329</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1acca8dcfdeb3dc0146dbc884e9daae43b"/><section>
+    <title>VL53L0X_Init()</title>
+<indexterm><primary>VL53L0X_Init</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_Init</secondary></indexterm>
+<para><computeroutput>bool VL53L0X_Init (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00067">67</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a5d0bba70599f6a7974f1b373151b97b2"/><section>
+    <title>VL53L0X_performSingleRefCalibration()</title>
+<indexterm><primary>VL53L0X_performSingleRefCalibration</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_performSingleRefCalibration</secondary></indexterm>
+<para><computeroutput>bool VL53L0X_performSingleRefCalibration (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t vhv_init_byte)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00384">384</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a852c08c9a46bddf494f7ea798ff66b49"/><section>
+    <title>VL53L0X_readRangeContinuousMillimeters()</title>
+<indexterm><primary>VL53L0X_readRangeContinuousMillimeters</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_readRangeContinuousMillimeters</secondary></indexterm>
+<para><computeroutput>uint16_t VL53L0X_readRangeContinuousMillimeters (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00430">430</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a22e63225273a04aa44bf1035a3cfd42f"/><section>
+    <title>VL53L0X_readRangeSingleMillimeters()</title>
+<indexterm><primary>VL53L0X_readRangeSingleMillimeters</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_readRangeSingleMillimeters</secondary></indexterm>
+<para><computeroutput>uint16_t VL53L0X_readRangeSingleMillimeters (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00404">404</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a67d1697b468e1fabc1d23dad50737fa3"/><section>
+    <title>VL53L0X_SetInterruptThresholds()</title>
+<indexterm><primary>VL53L0X_SetInterruptThresholds</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_SetInterruptThresholds</secondary></indexterm>
+<para><computeroutput>void VL53L0X_SetInterruptThresholds (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint32_t ThresholdLow, uint32_t ThresholdHigh)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00470">470</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1aee9fa60f3c5658bf0d738e89c43d21ab"/><section>
+    <title>VL53L0X_setMeasurementTimingBudget()</title>
+<indexterm><primary>VL53L0X_setMeasurementTimingBudget</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_setMeasurementTimingBudget</secondary></indexterm>
+<para><computeroutput>bool VL53L0X_setMeasurementTimingBudget (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint32_t budget_us)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00214">214</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a4c311642f1da537825a5d16843cbdbd8"/><section>
+    <title>VL53L0X_setupI2CRegisters()</title>
+<indexterm><primary>VL53L0X_setupI2CRegisters</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_setupI2CRegisters</secondary></indexterm>
+<para><computeroutput>void VL53L0X_setupI2CRegisters (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00489">489</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a56c3bec1b14ca5942e26cf92bcba025d"/><section>
+    <title>VL53L0X_timeoutMclksToMicroseconds()</title>
+<indexterm><primary>VL53L0X_timeoutMclksToMicroseconds</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_timeoutMclksToMicroseconds</secondary></indexterm>
+<para><computeroutput>uint32_t VL53L0X_timeoutMclksToMicroseconds (uint16_t timeout_period_mclks, uint8_t vcsel_period_pclks)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00342">342</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__distance_sensor_8c_1a6c11730133b4d029b5c6b9fcf5e43841"/><section>
+    <title>VL53L0X_timeoutMicrosecondsToMclks()</title>
+<indexterm><primary>VL53L0X_timeoutMicrosecondsToMclks</primary><secondary>I2C_distanceSensor.c</secondary></indexterm>
+<indexterm><primary>I2C_distanceSensor.c</primary><secondary>VL53L0X_timeoutMicrosecondsToMclks</secondary></indexterm>
+<para><computeroutput>uint32_t VL53L0X_timeoutMicrosecondsToMclks (uint32_t timeout_period_us, uint8_t vcsel_period_pclks)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8c_source_1l00356">356</link> of file <link linkend="__i2_c__distance_sensor_8c_source">I2C_distanceSensor.c</link>.</para>
+</section>
+</section>
+</section>

@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_motors__common_8h" xml:lang="en-US">
+<title>include/motors/drivers/motors_common.h File Reference</title>
+<indexterm><primary>include/motors/drivers/motors_common.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;esp_log.h&quot;<?linebreak?>#include &quot;driver/ledc.h&quot;<?linebreak?>#include &quot;esp_task_wdt.h&quot;<?linebreak?>#include &quot;driver/mcpwm_timer.h&quot;<?linebreak?>#include &quot;driver/mcpwm_cmpr.h&quot;<?linebreak?>#include &quot;driver/mcpwm_oper.h&quot;<?linebreak?>#include &quot;driver/mcpwm_gen.h&quot;<?linebreak?>#include &quot;driver/pulse_cnt.h&quot;<?linebreak?>#include &quot;freertos/FreeRTOS.h&quot;<?linebreak?>#include &lt;stdbool.h&gt;<?linebreak?>#include &lt;stdlib.h&gt;<?linebreak?>#include &lt;string.h&gt;<?linebreak?></programlisting>Include dependency graph for motors_common.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="motors__common_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="motors__common_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="_motors__common_8h_1ad76d1750a6cdeebd506bfcd6752554d2">ON</link>&#160;&#160;&#160;0U</para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1a29e413f6725b2ba32d165ffaa35b01e5">OFF</link>&#160;&#160;&#160;1U</para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1a65a9263cda85cf3299a01d37a8f5edba">MOTOR_MOCK_TEST</link>&#160;&#160;&#160;<link linkend="__i2_c__camera_sensor_8h_1a29e413f6725b2ba32d165ffaa35b01e5">OFF</link></para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1ab95bc8e342e8e5b490a92bc3c9b40077">MCPWM</link>&#160;&#160;&#160;0U</para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1a9b91c9624204fe677d2bb41dec81f95f">LEDC</link>&#160;&#160;&#160;1U</para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1acc8d4fdab6323cf3b9525cebb8acc2d1">MOTOR_CONTROL</link>&#160;&#160;&#160;<link linkend="_motors__common_8h_1ab95bc8e342e8e5b490a92bc3c9b40077">MCPWM</link></para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1a58fbe70544ed1f31e9286ce8fea92c6a">LEDC_Motor_And_Servo_MODE</link>&#160;&#160;&#160;LEDC_HIGH_SPEED_MODE</para>
+</listitem>
+            <listitem><para>#define <link linkend="_motors__common_8h_1a08858e91847f0c86c5c9e9abd17403ce">LEDC_Motor_And_Servo_FREQ</link>&#160;&#160;&#160;50</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="_motors__common_8h_1a9b91c9624204fe677d2bb41dec81f95f"/><section>
+    <title>LEDC</title>
+<indexterm><primary>LEDC</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>LEDC</secondary></indexterm>
+<para><computeroutput>#define LEDC&#160;&#160;&#160;1U</computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00031">31</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1a08858e91847f0c86c5c9e9abd17403ce"/><section>
+    <title>LEDC_Motor_And_Servo_FREQ</title>
+<indexterm><primary>LEDC_Motor_And_Servo_FREQ</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>LEDC_Motor_And_Servo_FREQ</secondary></indexterm>
+<para><computeroutput>#define LEDC_Motor_And_Servo_FREQ&#160;&#160;&#160;50</computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00038">38</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1a58fbe70544ed1f31e9286ce8fea92c6a"/><section>
+    <title>LEDC_Motor_And_Servo_MODE</title>
+<indexterm><primary>LEDC_Motor_And_Servo_MODE</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>LEDC_Motor_And_Servo_MODE</secondary></indexterm>
+<para><computeroutput>#define LEDC_Motor_And_Servo_MODE&#160;&#160;&#160;LEDC_HIGH_SPEED_MODE</computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00037">37</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1ab95bc8e342e8e5b490a92bc3c9b40077"/><section>
+    <title>MCPWM</title>
+<indexterm><primary>MCPWM</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>MCPWM</secondary></indexterm>
+<para><computeroutput>#define MCPWM&#160;&#160;&#160;0U</computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00030">30</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1acc8d4fdab6323cf3b9525cebb8acc2d1"/><section>
+    <title>MOTOR_CONTROL</title>
+<indexterm><primary>MOTOR_CONTROL</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>MOTOR_CONTROL</secondary></indexterm>
+<para><computeroutput>#define MOTOR_CONTROL&#160;&#160;&#160;<link linkend="_motors__common_8h_1ab95bc8e342e8e5b490a92bc3c9b40077">MCPWM</link></computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00034">34</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1a65a9263cda85cf3299a01d37a8f5edba"/><section>
+    <title>MOTOR_MOCK_TEST</title>
+<indexterm><primary>MOTOR_MOCK_TEST</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>MOTOR_MOCK_TEST</secondary></indexterm>
+<para><computeroutput>#define MOTOR_MOCK_TEST&#160;&#160;&#160;<link linkend="__i2_c__camera_sensor_8h_1a29e413f6725b2ba32d165ffaa35b01e5">OFF</link></computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00028">28</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1a29e413f6725b2ba32d165ffaa35b01e5"/><section>
+    <title>OFF</title>
+<indexterm><primary>OFF</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>OFF</secondary></indexterm>
+<para><computeroutput>#define OFF&#160;&#160;&#160;1U</computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00026">26</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+<anchor xml:id="_motors__common_8h_1ad76d1750a6cdeebd506bfcd6752554d2"/><section>
+    <title>ON</title>
+<indexterm><primary>ON</primary><secondary>motors_common.h</secondary></indexterm>
+<indexterm><primary>motors_common.h</primary><secondary>ON</secondary></indexterm>
+<para><computeroutput>#define ON&#160;&#160;&#160;0U</computeroutput></para><para>
+Definition at line <link linkend="_motors__common_8h_source_1l00025">25</link> of file <link linkend="_motors__common_8h_source">motors_common.h</link>.</para>
+</section>
+</section>
+</section>

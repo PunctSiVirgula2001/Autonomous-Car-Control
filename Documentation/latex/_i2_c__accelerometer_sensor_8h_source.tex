@@ -1,0 +1,40 @@
+\doxysection{I2\+C\+\_\+accelerometer\+Sensor.\+h}
+\label{_i2_c__accelerometer_sensor_8h_source}\index{include/I2C/drivers/I2C\_accelerometerSensor.h@{include/I2C/drivers/I2C\_accelerometerSensor.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_accelerometerSensor.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ INCLUDE\_I2C\_I2C\_ACCELEROMETERSENSOR\_H\_}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ INCLUDE\_I2C\_I2C\_ACCELEROMETERSENSOR\_H\_}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}I2C\_common.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/*\ ADXL\ 345\ accelerometer\ sensor\ */}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ ADXL1345\_READ\_RATE\ 200.0\ }\textcolor{comment}{//\ HZ}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ ALPHA\ 0.8}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ ADXL\_345\_reg}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ ADXL345\_REG\_BW\_RATE\ \ \ \ \ \ =\ 0x2C,}
+\DoxyCodeLine{00020\ \ \ ADXL345\_REG\_POWER\_CTL\ \ \ =\ 0x2D,}
+\DoxyCodeLine{00021\ \ \ ADXL345\_REG\_DATA\_FORMAT\ =\ 0x31,}
+\DoxyCodeLine{00022\ \ \ ADXL345\_REG\_DATAX0\ \ \ \ \ \ =\ 0x32,}
+\DoxyCodeLine{00023\ \ \ ADXL345\_REG\_DATAX1\ \ \ \ =\ 0x33,}
+\DoxyCodeLine{00024\ \ \ ADXL345\_REG\_DATAY0\ \ \ \ =\ 0x34,}
+\DoxyCodeLine{00025\ \ \ ADXL345\_REG\_DATAY1\ \ \ \ =\ 0x35,}
+\DoxyCodeLine{00026\ \ \ ADXL345\_REG\_DATAZ0\ \ \ \ =\ 0x36,}
+\DoxyCodeLine{00027\ \ \ ADXL345\_REG\_DATAZ1\ \ \ \ =\ 0x37}
+\DoxyCodeLine{00028\ \}ADX\_345\_reg;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ I2C\_read\_adxl345\_data(I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{double}*\ x,\ \textcolor{keywordtype}{double}*\ y,\ \textcolor{keywordtype}{double}*\ z);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ I2C\_adxl345\_init(I2C\_dev\_handles\ device\_handle);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ I2C\_adxl345\_setRate(I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{double}\ rate);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ INCLUDE\_I2C\_I2C\_ACCELEROMETERSENSOR\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__motor_and_servo_control_8h" xml:lang="en-US">
+<title>include/motors/MotorAndServoControl.h File Reference</title>
+<indexterm><primary>include/motors/MotorAndServoControl.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;drivers/DcMotor.h&quot;<?linebreak?>#include &quot;drivers/ServoMotor.h&quot;<?linebreak?>#include &quot;drivers/encoder.h&quot;<?linebreak?></programlisting>Include dependency graph for MotorAndServoControl.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_motor_and_servo_control_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_motor_and_servo_control_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Data Structures    </title>
+        <itemizedlist>
+            <listitem><para>struct <link linkend="_struct_car_command">CarCommand</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__motor_and_servo_control_8h_1ae4c4a214147677f463f9ba6a33c4022c">QUEUE_SIZE_CAR_COMMANDS</link>&#160;&#160;&#160;20</para>
+</listitem>
+            <listitem><para>#define <link linkend="__motor_and_servo_control_8h_1ad0a5a563f7a841de2fd8aa720c0f70f9">QUEUE_SIZE_DATATYPE_CAR_COMMANDS</link>&#160;&#160;&#160;(sizeof(char*))</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Enumerations    </title>
+        <itemizedlist>
+            <listitem><para>enum <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6">ReceivedState_app</link> { <?linebreak?><link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a38ff3124e97bad134a6c47fa91f40273">StopReceived</link> = 0
+, <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a2f84761275322f61b7e1abea99187620">ForwardReceived</link> = 1
+, <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6ac47cb1c3582d438ab4dbaf9303c0a5c2">BackwardReceived</link> = 2
+, <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a36bfd0a5ed9bd3bf8c1cc31778e6f734">SpeedReceived</link> = 5
+, <?linebreak?><link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a18f72057a72b84c91c71e9a29779b889">SteerReceived</link> = 6
+, <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6af7d72e81b866e7bd38f8ba2240caee98">AutonomousReceived</link> = 7
+, <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a83b13685e6cda59d2c8e05ead61a7287">PID_Changed</link> = 8
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8h_1a356958ec8c1d6b214ec4228ce5ae6f56">carControl_Task</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8h_1a111cf66cc0671765a5325a79a37773a2">steer_task</link> (void *pvParameters)</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8h_1a3b1a84c1a0e08894d761413c5c66c701">carControl_init</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__motor_and_servo_control_8h_1a64174a9e686c6f19ea9dc54d1d47085b">carControl_Backward_init</link> (int break_value)</para>
+</listitem>
+            <listitem><para><link linkend="_struct_car_command">CarCommand</link> <link linkend="__motor_and_servo_control_8h_1a5bdc71d98132147d476bffaf9a319080">parseCommand</link> (const char *commandStr)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__motor_and_servo_control_8h_1ae4c4a214147677f463f9ba6a33c4022c"/><section>
+    <title>QUEUE_SIZE_CAR_COMMANDS</title>
+<indexterm><primary>QUEUE_SIZE_CAR_COMMANDS</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>QUEUE_SIZE_CAR_COMMANDS</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_CAR_COMMANDS&#160;&#160;&#160;20</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00009">9</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8h_1ad0a5a563f7a841de2fd8aa720c0f70f9"/><section>
+    <title>QUEUE_SIZE_DATATYPE_CAR_COMMANDS</title>
+<indexterm><primary>QUEUE_SIZE_DATATYPE_CAR_COMMANDS</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>QUEUE_SIZE_DATATYPE_CAR_COMMANDS</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_DATATYPE_CAR_COMMANDS&#160;&#160;&#160;(sizeof(char*))</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00010">10</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Enumeration Type Documentation</title>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6"/><section>
+    <title>ReceivedState_app</title>
+<indexterm><primary>ReceivedState_app</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>ReceivedState_app</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6">ReceivedState_app</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>StopReceived</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>StopReceived</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a38ff3124e97bad134a6c47fa91f40273"/>StopReceived</entry><entry></entry></row><row><entry><indexterm><primary>ForwardReceived</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>ForwardReceived</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a2f84761275322f61b7e1abea99187620"/>ForwardReceived</entry><entry></entry></row><row><entry><indexterm><primary>BackwardReceived</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>BackwardReceived</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6ac47cb1c3582d438ab4dbaf9303c0a5c2"/>BackwardReceived</entry><entry></entry></row><row><entry><indexterm><primary>SpeedReceived</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>SpeedReceived</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a36bfd0a5ed9bd3bf8c1cc31778e6f734"/>SpeedReceived</entry><entry></entry></row><row><entry><indexterm><primary>SteerReceived</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>SteerReceived</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a18f72057a72b84c91c71e9a29779b889"/>SteerReceived</entry><entry></entry></row><row><entry><indexterm><primary>AutonomousReceived</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>AutonomousReceived</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6af7d72e81b866e7bd38f8ba2240caee98"/>AutonomousReceived</entry><entry></entry></row><row><entry><indexterm><primary>PID_Changed</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>PID_Changed</secondary></indexterm>
+<anchor xml:id="__motor_and_servo_control_8h_1a7b15d67975290586b9379fb94d061cf6a83b13685e6cda59d2c8e05ead61a7287"/>PID_Changed</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__motor_and_servo_control_8h_source_1l00013">13</link> of file <link linkend="__motor_and_servo_control_8h_source">MotorAndServoControl.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__motor_and_servo_control_8h_1a64174a9e686c6f19ea9dc54d1d47085b"/><section>
+    <title>carControl_Backward_init()</title>
+<indexterm><primary>carControl_Backward_init</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>carControl_Backward_init</secondary></indexterm>
+<para><computeroutput>void carControl_Backward_init (int break_value)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00042">42</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8h_1a3b1a84c1a0e08894d761413c5c66c701"/><section>
+    <title>carControl_init()</title>
+<indexterm><primary>carControl_init</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>carControl_init</secondary></indexterm>
+<para><computeroutput>void carControl_init ( )</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00239">239</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8h_1a356958ec8c1d6b214ec4228ce5ae6f56"/><section>
+    <title>carControl_Task()</title>
+<indexterm><primary>carControl_Task</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>carControl_Task</secondary></indexterm>
+<para><computeroutput>void carControl_Task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00112">112</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8h_1a5bdc71d98132147d476bffaf9a319080"/><section>
+    <title>parseCommand()</title>
+<indexterm><primary>parseCommand</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>parseCommand</secondary></indexterm>
+<para><computeroutput><link linkend="_struct_car_command">CarCommand</link> parseCommand (const char * commandStr)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00009">9</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="__motor_and_servo_control_8h_1a111cf66cc0671765a5325a79a37773a2"/><section>
+    <title>steer_task()</title>
+<indexterm><primary>steer_task</primary><secondary>MotorAndServoControl.h</secondary></indexterm>
+<indexterm><primary>MotorAndServoControl.h</primary><secondary>steer_task</secondary></indexterm>
+<para><computeroutput>void steer_task (void * pvParameters)</computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00227">227</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+</section>
+</section>

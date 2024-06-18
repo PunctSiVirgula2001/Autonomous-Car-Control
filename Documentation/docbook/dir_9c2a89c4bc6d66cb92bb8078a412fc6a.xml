@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_9c2a89c4bc6d66cb92bb8078a412fc6a" xml:lang="en-US">
+<title>include/I2C/drivers Directory Reference</title>
+<indexterm><primary>include/I2C/drivers Directory Reference</primary></indexterm>
+Directory dependency graph for drivers:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_9c2a89c4bc6d66cb92bb8078a412fc6a_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="__i2_c__accelerometer_sensor_8h">I2C_accelerometerSensor.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__i2_c__camera_sensor_8h">I2C_cameraSensor.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__i2_c__common_8h">I2C_common.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__i2_c__distance_sensor_8h">I2C_distanceSensor.h</link></para>
+</listitem>
+            <listitem><para>file <link linkend="__i2_c__temperature_sensor_8h">I2C_temperatureSensor.h</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

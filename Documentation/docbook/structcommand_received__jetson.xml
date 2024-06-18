@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structcommand_received__jetson" xml:lang="en-US">
+<title>commandReceived_jetson Struct Reference</title>
+<indexterm><primary>commandReceived_jetson</primary></indexterm>
+<para>
+<computeroutput>#include &lt;UART_Jetson.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1af7504fc0e249186b115eb5f51a297878">state</link></para>
+</listitem>
+            <listitem><para>int <link linkend="_structcommand_received__jetson_1a708891e917f5094fa0804de4af0a3445">Steer</link></para>
+</listitem>
+            <listitem><para>int <link linkend="_structcommand_received__jetson_1a04caa6dcdf90645ea95e5f3281d780cd">Speed</link></para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1af968cc9aaf2f7d8f6b4687f4fb4fbe3e">class_id</link></para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1a5adac8170aba2db54aedbbfaa629b2b9">class_confidence</link></para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1a87106f120edc8abd5df178ccfa4a1306">det_confidence</link></para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1a3539f71fd772fb26bff625c8ec793564">x</link></para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1ae5c6479412433fd5a775c5cd3caf7865">y</link></para>
+</listitem>
+            <listitem><para>unsigned long <link linkend="_structcommand_received__jetson_1a3f3081bbf4aed5f1d478704ef9f0ec49">width</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00030">30</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_structcommand_received__jetson_1a5adac8170aba2db54aedbbfaa629b2b9"/><section>
+    <title>class_confidence</title>
+<indexterm><primary>class_confidence</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>class_confidence</secondary></indexterm>
+<para><computeroutput>unsigned long class_confidence</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00035">35</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1af968cc9aaf2f7d8f6b4687f4fb4fbe3e"/><section>
+    <title>class_id</title>
+<indexterm><primary>class_id</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>class_id</secondary></indexterm>
+<para><computeroutput>unsigned long class_id</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00034">34</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1a87106f120edc8abd5df178ccfa4a1306"/><section>
+    <title>det_confidence</title>
+<indexterm><primary>det_confidence</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>det_confidence</secondary></indexterm>
+<para><computeroutput>unsigned long det_confidence</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00036">36</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1a04caa6dcdf90645ea95e5f3281d780cd"/><section>
+    <title>Speed</title>
+<indexterm><primary>Speed</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>Speed</secondary></indexterm>
+<para><computeroutput>int Speed</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00033">33</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1af7504fc0e249186b115eb5f51a297878"/><section>
+    <title>state</title>
+<indexterm><primary>state</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>state</secondary></indexterm>
+<para><computeroutput>unsigned long state</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00031">31</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1a708891e917f5094fa0804de4af0a3445"/><section>
+    <title>Steer</title>
+<indexterm><primary>Steer</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>Steer</secondary></indexterm>
+<para><computeroutput>int Steer</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00032">32</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1a3f3081bbf4aed5f1d478704ef9f0ec49"/><section>
+    <title>width</title>
+<indexterm><primary>width</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>width</secondary></indexterm>
+<para><computeroutput>unsigned long width</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00039">39</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1a3539f71fd772fb26bff625c8ec793564"/><section>
+    <title>x</title>
+<indexterm><primary>x</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>x</secondary></indexterm>
+<para><computeroutput>unsigned long x</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00037">37</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<anchor xml:id="_structcommand_received__jetson_1ae5c6479412433fd5a775c5cd3caf7865"/><section>
+    <title>y</title>
+<indexterm><primary>y</primary><secondary>commandReceived_jetson</secondary></indexterm>
+<indexterm><primary>commandReceived_jetson</primary><secondary>y</secondary></indexterm>
+<para><computeroutput>unsigned long y</computeroutput></para><para>
+Definition at line <link linkend="__u_a_r_t___jetson_8h_source_1l00038">38</link> of file <link linkend="__u_a_r_t___jetson_8h_source">UART_Jetson.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/<link linkend="__u_a_r_t___jetson_8h">UART_Jetson.h</link></section>
+</section>

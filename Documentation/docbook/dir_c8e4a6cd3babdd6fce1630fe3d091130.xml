@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_c8e4a6cd3babdd6fce1630fe3d091130" xml:lang="en-US">
+<title>build/esp-idf/mbedtls/mbedtls Directory Reference</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls Directory Reference</primary></indexterm>
+Directory dependency graph for mbedtls:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_c8e4a6cd3babdd6fce1630fe3d091130_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Directories    </title>
+        <itemizedlist>
+            <listitem><para>directory <link linkend="_dir_517b432c5cc8121204403a5913445cf4">library</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

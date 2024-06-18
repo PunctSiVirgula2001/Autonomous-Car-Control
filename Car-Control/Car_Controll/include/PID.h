@@ -22,6 +22,7 @@ typedef struct {
     float I_term;     // Integral term
     float D_term;     // Derivative term
     int Output;       // PID output
+    int previousOutput;
 #if low_pass_filter_derivative_chan == ON
     float previous_D_term; // Add this to store the previous derivative term
     float alpha;           // Smoothing factor for the low-pass filter

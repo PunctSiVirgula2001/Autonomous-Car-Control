@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_encoder_8h" xml:lang="en-US">
+<title>include/motors/drivers/encoder.h File Reference</title>
+<indexterm><primary>include/motors/drivers/encoder.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;motors_common.h&quot;<?linebreak?></programlisting>Include dependency graph for encoder.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="encoder_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="encoder_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="_encoder_8h_1afedb249703350ba8ef0b6c591f0891cc">QUEUE_SIZE_ENCODER_PULSE</link>&#160;&#160;&#160;20</para>
+</listitem>
+            <listitem><para>#define <link linkend="_encoder_8h_1a7286adb75de013565be5bba181749db3">QUEUE_SIZE_DATATYPE_ENCODER_PULSE</link>&#160;&#160;&#160;(sizeof(int))</para>
+</listitem>
+            <listitem><para>#define <link linkend="_encoder_8h_1aee5fc9c5b11218b66cdde67f9dc40926">PCNT_HIGH_LIMIT_WATCHPOINT</link>&#160;&#160;&#160;4</para>
+</listitem>
+            <listitem><para>#define <link linkend="_encoder_8h_1a144826d61042c284d1e9390af5039857">PCNT_LOW_LIMIT_WATCHPOINT</link>&#160;&#160;&#160;-4</para>
+</listitem>
+            <listitem><para>#define <link linkend="_encoder_8h_1a2963f69d0020917a6ab12f36c4849e3a">encoderGPIO_A</link>&#160;&#160;&#160;35</para>
+</listitem>
+            <listitem><para>#define <link linkend="_encoder_8h_1a37e7e189eff6f1915eb646f2bc237be2">encoderGPIO_B</link>&#160;&#160;&#160;14</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="_encoder_8h_1a87512eb7bfce47cf96e5fbd5bd0c2f3c">example_pcnt_on_reach</link> (pcnt_unit_handle_t unit, const pcnt_watch_event_data_t *edata, void *user_ctx)</para>
+</listitem>
+            <listitem><para>void <link linkend="_encoder_8h_1a3924b07647d86be798a086541d2c13d7">configureEncoderInterrupts</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="_encoder_8h_1a2963f69d0020917a6ab12f36c4849e3a"/><section>
+    <title>encoderGPIO_A</title>
+<indexterm><primary>encoderGPIO_A</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>encoderGPIO_A</secondary></indexterm>
+<para><computeroutput>#define encoderGPIO_A&#160;&#160;&#160;35</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8h_source_1l00018">18</link> of file <link linkend="_encoder_8h_source">encoder.h</link>.</para>
+</section>
+<anchor xml:id="_encoder_8h_1a37e7e189eff6f1915eb646f2bc237be2"/><section>
+    <title>encoderGPIO_B</title>
+<indexterm><primary>encoderGPIO_B</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>encoderGPIO_B</secondary></indexterm>
+<para><computeroutput>#define encoderGPIO_B&#160;&#160;&#160;14</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8h_source_1l00019">19</link> of file <link linkend="_encoder_8h_source">encoder.h</link>.</para>
+</section>
+<anchor xml:id="_encoder_8h_1aee5fc9c5b11218b66cdde67f9dc40926"/><section>
+    <title>PCNT_HIGH_LIMIT_WATCHPOINT</title>
+<indexterm><primary>PCNT_HIGH_LIMIT_WATCHPOINT</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>PCNT_HIGH_LIMIT_WATCHPOINT</secondary></indexterm>
+<para><computeroutput>#define PCNT_HIGH_LIMIT_WATCHPOINT&#160;&#160;&#160;4</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8h_source_1l00016">16</link> of file <link linkend="_encoder_8h_source">encoder.h</link>.</para>
+</section>
+<anchor xml:id="_encoder_8h_1a144826d61042c284d1e9390af5039857"/><section>
+    <title>PCNT_LOW_LIMIT_WATCHPOINT</title>
+<indexterm><primary>PCNT_LOW_LIMIT_WATCHPOINT</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>PCNT_LOW_LIMIT_WATCHPOINT</secondary></indexterm>
+<para><computeroutput>#define PCNT_LOW_LIMIT_WATCHPOINT&#160;&#160;&#160;-4</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8h_source_1l00017">17</link> of file <link linkend="_encoder_8h_source">encoder.h</link>.</para>
+</section>
+<anchor xml:id="_encoder_8h_1a7286adb75de013565be5bba181749db3"/><section>
+    <title>QUEUE_SIZE_DATATYPE_ENCODER_PULSE</title>
+<indexterm><primary>QUEUE_SIZE_DATATYPE_ENCODER_PULSE</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>QUEUE_SIZE_DATATYPE_ENCODER_PULSE</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_DATATYPE_ENCODER_PULSE&#160;&#160;&#160;(sizeof(int))</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8h_source_1l00015">15</link> of file <link linkend="_encoder_8h_source">encoder.h</link>.</para>
+</section>
+<anchor xml:id="_encoder_8h_1afedb249703350ba8ef0b6c591f0891cc"/><section>
+    <title>QUEUE_SIZE_ENCODER_PULSE</title>
+<indexterm><primary>QUEUE_SIZE_ENCODER_PULSE</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>QUEUE_SIZE_ENCODER_PULSE</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_ENCODER_PULSE&#160;&#160;&#160;20</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8h_source_1l00014">14</link> of file <link linkend="_encoder_8h_source">encoder.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_encoder_8h_1a3924b07647d86be798a086541d2c13d7"/><section>
+    <title>configureEncoderInterrupts()</title>
+<indexterm><primary>configureEncoderInterrupts</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>configureEncoderInterrupts</secondary></indexterm>
+<para><computeroutput>void configureEncoderInterrupts ( )</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00025">25</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+<anchor xml:id="_encoder_8h_1a87512eb7bfce47cf96e5fbd5bd0c2f3c"/><section>
+    <title>example_pcnt_on_reach()</title>
+<indexterm><primary>example_pcnt_on_reach</primary><secondary>encoder.h</secondary></indexterm>
+<indexterm><primary>encoder.h</primary><secondary>example_pcnt_on_reach</secondary></indexterm>
+<para><computeroutput>bool example_pcnt_on_reach (pcnt_unit_handle_t unit, const pcnt_watch_event_data_t * edata, void * user_ctx)</computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00014">14</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+</section>
+</section>

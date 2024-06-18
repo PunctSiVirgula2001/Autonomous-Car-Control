@@ -1,0 +1,844 @@
+\doxysection{version\+\_\+features.\+c}
+\label{version__features_8c_source}\index{build/esp-\/idf/mbedtls/mbedtls/library/version\_features.c@{build/esp-\/idf/mbedtls/mbedtls/library/version\_features.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ \ Version\ feature\ information}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Copyright\ The\ Mbed\ TLS\ Contributors}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ SPDX-\/License-\/Identifier:\ Apache-\/2.0}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ \ Licensed\ under\ the\ Apache\ License,\ Version\ 2.0\ (the\ "{}License"{});\ you\ may}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ \ not\ use\ this\ file\ except\ in\ compliance\ with\ the\ License.}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ \ You\ may\ obtain\ a\ copy\ of\ the\ License\ at}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ *\ \ http://www.apache.org/licenses/LICENSE-\/2.0}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ *\ \ Unless\ required\ by\ applicable\ law\ or\ agreed\ to\ in\ writing,\ software}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ *\ \ distributed\ under\ the\ License\ is\ distributed\ on\ an\ "{}AS\ IS"{}\ BASIS,\ WITHOUT}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ *\ \ WARRANTIES\ OR\ CONDITIONS\ OF\ ANY\ KIND,\ either\ express\ or\ implied.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ *\ \ See\ the\ License\ for\ the\ specific\ language\ governing\ permissions\ and}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ *\ \ limitations\ under\ the\ License.}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ "{}common.h"{}}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_VERSION\_C)}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}mbedtls/version.h"{}}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\ \textcolor{keyword}{const}\ features[]\ =\ \{}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_VERSION\_FEATURES)}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\ \ \ \ \#if\ defined(MBEDTLS\_HAVE\_ASM)}}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{stringliteral}{"{}HAVE\_ASM"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HAVE\_ASM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NO\_UDBL\_DIVISION)}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{stringliteral}{"{}NO\_UDBL\_DIVISION"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NO\_UDBL\_DIVISION\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NO\_64BIT\_MULTIPLICATION)}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{stringliteral}{"{}NO\_64BIT\_MULTIPLICATION"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NO\_64BIT\_MULTIPLICATION\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HAVE\_SSE2)}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{stringliteral}{"{}HAVE\_SSE2"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HAVE\_SSE2\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HAVE\_TIME)}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{stringliteral}{"{}HAVE\_TIME"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HAVE\_TIME\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HAVE\_TIME\_DATE)}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{stringliteral}{"{}HAVE\_TIME\_DATE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HAVE\_TIME\_DATE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_MEMORY)}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_MEMORY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_MEMORY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_NO\_STD\_FUNCTIONS)}}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_NO\_STD\_FUNCTIONS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_NO\_STD\_FUNCTIONS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_SETBUF\_ALT)}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_SETBUF\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_SETBUF\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_EXIT\_ALT)}}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_EXIT\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_EXIT\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_TIME\_ALT)}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_TIME\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_TIME\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_FPRINTF\_ALT)}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_FPRINTF\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_FPRINTF\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_PRINTF\_ALT)}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_PRINTF\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00068\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_PRINTF\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_SNPRINTF\_ALT)}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_SNPRINTF\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00071\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_SNPRINTF\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00072\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_VSNPRINTF\_ALT)}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_VSNPRINTF\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00074\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_VSNPRINTF\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_NV\_SEED\_ALT)}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_NV\_SEED\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_NV\_SEED\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_SETUP\_TEARDOWN\_ALT)}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_SETUP\_TEARDOWN\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_SETUP\_TEARDOWN\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_MS\_TIME\_ALT)}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_MS\_TIME\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_MS\_TIME\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_GMTIME\_R\_ALT)}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_GMTIME\_R\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_GMTIME\_R\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_ZEROIZE\_ALT)}}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_ZEROIZE\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_ZEROIZE\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DEPRECATED\_WARNING)}}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{stringliteral}{"{}DEPRECATED\_WARNING"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DEPRECATED\_WARNING\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DEPRECATED\_REMOVED)}}
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{stringliteral}{"{}DEPRECATED\_REMOVED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DEPRECATED\_REMOVED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_TIMING\_ALT)}}
+\DoxyCodeLine{00097\ \ \ \ \ \textcolor{stringliteral}{"{}TIMING\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_TIMING\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_ALT)}}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ARIA\_ALT)}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{stringliteral}{"{}ARIA\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ARIA\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CAMELLIA\_ALT)}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{stringliteral}{"{}CAMELLIA\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CAMELLIA\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CCM\_ALT)}}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{stringliteral}{"{}CCM\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CCM\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHA20\_ALT)}}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{stringliteral}{"{}CHACHA20\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00113\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHACHA20\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00114\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHAPOLY\_ALT)}}
+\DoxyCodeLine{00115\ \ \ \ \ \textcolor{stringliteral}{"{}CHACHAPOLY\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00116\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHACHAPOLY\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00117\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CMAC\_ALT)}}
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{stringliteral}{"{}CMAC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00119\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CMAC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00120\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES\_ALT)}}
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{stringliteral}{"{}DES\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00122\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DES\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00123\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DHM\_ALT)}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{stringliteral}{"{}DHM\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00125\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DHM\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00126\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECJPAKE\_ALT)}}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{stringliteral}{"{}ECJPAKE\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00128\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECJPAKE\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00129\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_GCM\_ALT)}}
+\DoxyCodeLine{00130\ \ \ \ \ \textcolor{stringliteral}{"{}GCM\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00131\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_GCM\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00132\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NIST\_KW\_ALT)}}
+\DoxyCodeLine{00133\ \ \ \ \ \textcolor{stringliteral}{"{}NIST\_KW\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00134\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NIST\_KW\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00135\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MD5\_ALT)}}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{stringliteral}{"{}MD5\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00137\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MD5\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00138\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_POLY1305\_ALT)}}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{stringliteral}{"{}POLY1305\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00140\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_POLY1305\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00141\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RIPEMD160\_ALT)}}
+\DoxyCodeLine{00142\ \ \ \ \ \textcolor{stringliteral}{"{}RIPEMD160\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00143\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RIPEMD160\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00144\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RSA\_ALT)}}
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{stringliteral}{"{}RSA\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00146\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RSA\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00147\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA1\_ALT)}}
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{stringliteral}{"{}SHA1\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00149\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA1\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_ALT)}}
+\DoxyCodeLine{00151\ \ \ \ \ \textcolor{stringliteral}{"{}SHA256\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00152\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00153\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_ALT)}}
+\DoxyCodeLine{00154\ \ \ \ \ \textcolor{stringliteral}{"{}SHA512\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00155\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00156\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_ALT)}}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00158\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MD5\_PROCESS\_ALT)}}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{stringliteral}{"{}MD5\_PROCESS\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00161\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MD5\_PROCESS\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00162\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RIPEMD160\_PROCESS\_ALT)}}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{stringliteral}{"{}RIPEMD160\_PROCESS\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00164\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RIPEMD160\_PROCESS\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00165\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA1\_PROCESS\_ALT)}}
+\DoxyCodeLine{00166\ \ \ \ \ \textcolor{stringliteral}{"{}SHA1\_PROCESS\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00167\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA1\_PROCESS\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00168\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_PROCESS\_ALT)}}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{stringliteral}{"{}SHA256\_PROCESS\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00170\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_PROCESS\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00171\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_PROCESS\_ALT)}}
+\DoxyCodeLine{00172\ \ \ \ \ \textcolor{stringliteral}{"{}SHA512\_PROCESS\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00173\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_PROCESS\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00174\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES\_SETKEY\_ALT)}}
+\DoxyCodeLine{00175\ \ \ \ \ \textcolor{stringliteral}{"{}DES\_SETKEY\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00176\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DES\_SETKEY\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00177\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES\_CRYPT\_ECB\_ALT)}}
+\DoxyCodeLine{00178\ \ \ \ \ \textcolor{stringliteral}{"{}DES\_CRYPT\_ECB\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00179\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DES\_CRYPT\_ECB\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00180\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES3\_CRYPT\_ECB\_ALT)}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{stringliteral}{"{}DES3\_CRYPT\_ECB\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00182\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DES3\_CRYPT\_ECB\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00183\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_SETKEY\_ENC\_ALT)}}
+\DoxyCodeLine{00184\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_SETKEY\_ENC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00185\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_SETKEY\_ENC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00186\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_SETKEY\_DEC\_ALT)}}
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_SETKEY\_DEC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_SETKEY\_DEC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00189\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_ENCRYPT\_ALT)}}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_ENCRYPT\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00191\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_ENCRYPT\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_DECRYPT\_ALT)}}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_DECRYPT\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00194\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_DECRYPT\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDH\_GEN\_PUBLIC\_ALT)}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{stringliteral}{"{}ECDH\_GEN\_PUBLIC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00197\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDH\_GEN\_PUBLIC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00198\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDH\_COMPUTE\_SHARED\_ALT)}}
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{stringliteral}{"{}ECDH\_COMPUTE\_SHARED\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00200\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDH\_COMPUTE\_SHARED\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDSA\_VERIFY\_ALT)}}
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{stringliteral}{"{}ECDSA\_VERIFY\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00203\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDSA\_VERIFY\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDSA\_SIGN\_ALT)}}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{stringliteral}{"{}ECDSA\_SIGN\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00206\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDSA\_SIGN\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDSA\_GENKEY\_ALT)}}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{stringliteral}{"{}ECDSA\_GENKEY\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00209\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDSA\_GENKEY\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_INTERNAL\_ALT)}}
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_INTERNAL\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_INTERNAL\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00213\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_NO\_FALLBACK)}}
+\DoxyCodeLine{00214\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_NO\_FALLBACK"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_NO\_FALLBACK\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00216\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_RANDOMIZE\_JAC\_ALT)}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_RANDOMIZE\_JAC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00218\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_RANDOMIZE\_JAC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_ADD\_MIXED\_ALT)}}
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_ADD\_MIXED\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_ADD\_MIXED\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00222\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DOUBLE\_JAC\_ALT)}}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DOUBLE\_JAC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00224\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DOUBLE\_JAC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_NORMALIZE\_JAC\_MANY\_ALT)}}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_NORMALIZE\_JAC\_MANY\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00227\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_NORMALIZE\_JAC\_MANY\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00228\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_NORMALIZE\_JAC\_ALT)}}
+\DoxyCodeLine{00229\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_NORMALIZE\_JAC\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00230\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_NORMALIZE\_JAC\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00231\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DOUBLE\_ADD\_MXZ\_ALT)}}
+\DoxyCodeLine{00232\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DOUBLE\_ADD\_MXZ\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DOUBLE\_ADD\_MXZ\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_RANDOMIZE\_MXZ\_ALT)}}
+\DoxyCodeLine{00235\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_RANDOMIZE\_MXZ\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00236\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_RANDOMIZE\_MXZ\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00237\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_NORMALIZE\_MXZ\_ALT)}}
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_NORMALIZE\_MXZ\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00239\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_NORMALIZE\_MXZ\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00240\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ENTROPY\_HARDWARE\_ALT)}}
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{stringliteral}{"{}ENTROPY\_HARDWARE\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00242\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ENTROPY\_HARDWARE\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00243\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_ROM\_TABLES)}}
+\DoxyCodeLine{00244\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_ROM\_TABLES"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00245\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_ROM\_TABLES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_FEWER\_TABLES)}}
+\DoxyCodeLine{00247\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_FEWER\_TABLES"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_FEWER\_TABLES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00249\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_ONLY\_128\_BIT\_KEY\_LENGTH)}}
+\DoxyCodeLine{00250\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_ONLY\_128\_BIT\_KEY\_LENGTH"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_ONLY\_128\_BIT\_KEY\_LENGTH\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00252\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_USE\_HARDWARE\_ONLY)}}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_USE\_HARDWARE\_ONLY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00254\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_USE\_HARDWARE\_ONLY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00255\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CAMELLIA\_SMALL\_MEMORY)}}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{stringliteral}{"{}CAMELLIA\_SMALL\_MEMORY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00257\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CAMELLIA\_SMALL\_MEMORY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00258\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHECK\_RETURN\_WARNING)}}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{stringliteral}{"{}CHECK\_RETURN\_WARNING"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00260\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHECK\_RETURN\_WARNING\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00261\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_MODE\_CBC)}}
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_MODE\_CBC"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00263\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_MODE\_CBC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_MODE\_CFB)}}
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_MODE\_CFB"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00266\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_MODE\_CFB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00267\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_MODE\_CTR)}}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_MODE\_CTR"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00269\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_MODE\_CTR\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00270\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_MODE\_OFB)}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_MODE\_OFB"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00272\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_MODE\_OFB\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00273\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_MODE\_XTS)}}
+\DoxyCodeLine{00274\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_MODE\_XTS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00275\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_MODE\_XTS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00276\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_NULL\_CIPHER)}}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_NULL\_CIPHER"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00278\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_NULL\_CIPHER\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00279\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_PADDING\_PKCS7)}}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_PADDING\_PKCS7"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00281\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_PADDING\_PKCS7\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00282\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_PADDING\_ONE\_AND\_ZEROS)}}
+\DoxyCodeLine{00283\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_PADDING\_ONE\_AND\_ZEROS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00284\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_PADDING\_ONE\_AND\_ZEROS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00285\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_PADDING\_ZEROS\_AND\_LEN)}}
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_PADDING\_ZEROS\_AND\_LEN"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00287\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_PADDING\_ZEROS\_AND\_LEN\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00288\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_PADDING\_ZEROS)}}
+\DoxyCodeLine{00289\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_PADDING\_ZEROS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00290\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_PADDING\_ZEROS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00291\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CTR\_DRBG\_USE\_128\_BIT\_KEY)}}
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{stringliteral}{"{}CTR\_DRBG\_USE\_128\_BIT\_KEY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00293\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CTR\_DRBG\_USE\_128\_BIT\_KEY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00294\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDH\_VARIANT\_EVEREST\_ENABLED)}}
+\DoxyCodeLine{00295\ \ \ \ \ \textcolor{stringliteral}{"{}ECDH\_VARIANT\_EVEREST\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00296\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDH\_VARIANT\_EVEREST\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00297\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP192R1\_ENABLED)}}
+\DoxyCodeLine{00298\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP192R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00299\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP192R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00300\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP224R1\_ENABLED)}}
+\DoxyCodeLine{00301\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP224R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00302\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP224R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00303\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP256R1\_ENABLED)}}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP256R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00305\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP256R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00306\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP384R1\_ENABLED)}}
+\DoxyCodeLine{00307\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP384R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00308\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP384R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00309\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP521R1\_ENABLED)}}
+\DoxyCodeLine{00310\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP521R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00311\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP521R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00312\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP192K1\_ENABLED)}}
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP192K1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00314\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP192K1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00315\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP224K1\_ENABLED)}}
+\DoxyCodeLine{00316\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP224K1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00317\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP224K1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00318\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_SECP256K1\_ENABLED)}}
+\DoxyCodeLine{00319\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_SECP256K1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00320\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_SECP256K1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00321\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_BP256R1\_ENABLED)}}
+\DoxyCodeLine{00322\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_BP256R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00323\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_BP256R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00324\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_BP384R1\_ENABLED)}}
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_BP384R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00326\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_BP384R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00327\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_BP512R1\_ENABLED)}}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_BP512R1\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00329\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_BP512R1\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00330\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_CURVE25519\_ENABLED)}}
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_CURVE25519\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00332\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_CURVE25519\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00333\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_DP\_CURVE448\_ENABLED)}}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_DP\_CURVE448\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00335\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_DP\_CURVE448\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00336\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_NIST\_OPTIM)}}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_NIST\_OPTIM"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00338\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_NIST\_OPTIM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00339\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_RESTARTABLE)}}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_RESTARTABLE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00341\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_RESTARTABLE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00342\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_WITH\_MPI\_UINT)}}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_WITH\_MPI\_UINT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00344\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_WITH\_MPI\_UINT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00345\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDSA\_DETERMINISTIC)}}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{stringliteral}{"{}ECDSA\_DETERMINISTIC"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00347\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDSA\_DETERMINISTIC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00348\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_PSK\_ENABLED)}}
+\DoxyCodeLine{00349\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_PSK\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00350\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_PSK\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00351\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_DHE\_PSK\_ENABLED)}}
+\DoxyCodeLine{00352\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_DHE\_PSK\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00353\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_DHE\_PSK\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00354\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_ECDHE\_PSK\_ENABLED)}}
+\DoxyCodeLine{00355\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_ECDHE\_PSK\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00356\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_ECDHE\_PSK\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00357\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_RSA\_PSK\_ENABLED)}}
+\DoxyCodeLine{00358\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_RSA\_PSK\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00359\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_RSA\_PSK\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00360\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_RSA\_ENABLED)}}
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_RSA\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00362\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_RSA\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00363\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_DHE\_RSA\_ENABLED)}}
+\DoxyCodeLine{00364\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_DHE\_RSA\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00365\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_DHE\_RSA\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00366\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_ECDHE\_RSA\_ENABLED)}}
+\DoxyCodeLine{00367\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_ECDHE\_RSA\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00368\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_ECDHE\_RSA\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00369\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_ECDHE\_ECDSA\_ENABLED)}}
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_ECDHE\_ECDSA\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00371\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_ECDHE\_ECDSA\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00372\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_ECDH\_ECDSA\_ENABLED)}}
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_ECDH\_ECDSA\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00374\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_ECDH\_ECDSA\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00375\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_ECDH\_RSA\_ENABLED)}}
+\DoxyCodeLine{00376\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_ECDH\_RSA\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00377\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_ECDH\_RSA\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00378\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_KEY\_EXCHANGE\_ECJPAKE\_ENABLED)}}
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{stringliteral}{"{}KEY\_EXCHANGE\_ECJPAKE\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00380\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_KEY\_EXCHANGE\_ECJPAKE\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00381\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_PARSE\_EC\_EXTENDED)}}
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{stringliteral}{"{}PK\_PARSE\_EC\_EXTENDED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00383\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_PARSE\_EC\_EXTENDED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00384\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_PARSE\_EC\_COMPRESSED)}}
+\DoxyCodeLine{00385\ \ \ \ \ \textcolor{stringliteral}{"{}PK\_PARSE\_EC\_COMPRESSED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00386\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_PARSE\_EC\_COMPRESSED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00387\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ERROR\_STRERROR\_DUMMY)}}
+\DoxyCodeLine{00388\ \ \ \ \ \textcolor{stringliteral}{"{}ERROR\_STRERROR\_DUMMY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00389\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ERROR\_STRERROR\_DUMMY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00390\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_GENPRIME)}}
+\DoxyCodeLine{00391\ \ \ \ \ \textcolor{stringliteral}{"{}GENPRIME"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00392\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_GENPRIME\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00393\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_FS\_IO)}}
+\DoxyCodeLine{00394\ \ \ \ \ \textcolor{stringliteral}{"{}FS\_IO"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00395\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_FS\_IO\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00396\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NO\_DEFAULT\_ENTROPY\_SOURCES)}}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{stringliteral}{"{}NO\_DEFAULT\_ENTROPY\_SOURCES"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00398\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NO\_DEFAULT\_ENTROPY\_SOURCES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00399\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NO\_PLATFORM\_ENTROPY)}}
+\DoxyCodeLine{00400\ \ \ \ \ \textcolor{stringliteral}{"{}NO\_PLATFORM\_ENTROPY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00401\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NO\_PLATFORM\_ENTROPY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00402\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ENTROPY\_FORCE\_SHA256)}}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{stringliteral}{"{}ENTROPY\_FORCE\_SHA256"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00404\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ENTROPY\_FORCE\_SHA256\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00405\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ENTROPY\_NV\_SEED)}}
+\DoxyCodeLine{00406\ \ \ \ \ \textcolor{stringliteral}{"{}ENTROPY\_NV\_SEED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00407\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ENTROPY\_NV\_SEED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00408\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_KEY\_ID\_ENCODES\_OWNER)}}
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_KEY\_ID\_ENCODES\_OWNER"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00410\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_KEY\_ID\_ENCODES\_OWNER\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00411\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MEMORY\_DEBUG)}}
+\DoxyCodeLine{00412\ \ \ \ \ \textcolor{stringliteral}{"{}MEMORY\_DEBUG"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00413\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MEMORY\_DEBUG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00414\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MEMORY\_BACKTRACE)}}
+\DoxyCodeLine{00415\ \ \ \ \ \textcolor{stringliteral}{"{}MEMORY\_BACKTRACE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MEMORY\_BACKTRACE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00417\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_RSA\_ALT\_SUPPORT)}}
+\DoxyCodeLine{00418\ \ \ \ \ \textcolor{stringliteral}{"{}PK\_RSA\_ALT\_SUPPORT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00419\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_RSA\_ALT\_SUPPORT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00420\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS1\_V15)}}
+\DoxyCodeLine{00421\ \ \ \ \ \textcolor{stringliteral}{"{}PKCS1\_V15"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00422\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS1\_V15\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00423\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS1\_V21)}}
+\DoxyCodeLine{00424\ \ \ \ \ \textcolor{stringliteral}{"{}PKCS1\_V21"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00425\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS1\_V21\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00426\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_BUILTIN\_KEYS)}}
+\DoxyCodeLine{00427\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_BUILTIN\_KEYS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00428\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_BUILTIN\_KEYS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00429\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_CLIENT)}}
+\DoxyCodeLine{00430\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_CLIENT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00431\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_CLIENT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00432\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_EXTERNAL\_RNG)}}
+\DoxyCodeLine{00433\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_EXTERNAL\_RNG"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00434\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_EXTERNAL\_RNG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00435\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_SPM)}}
+\DoxyCodeLine{00436\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_SPM"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00437\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_SPM\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00438\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_P256M\_DRIVER\_ENABLED)}}
+\DoxyCodeLine{00439\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_P256M\_DRIVER\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00440\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_P256M\_DRIVER\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00441\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_INJECT\_ENTROPY)}}
+\DoxyCodeLine{00442\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_INJECT\_ENTROPY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00443\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_INJECT\_ENTROPY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00444\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RSA\_NO\_CRT)}}
+\DoxyCodeLine{00445\ \ \ \ \ \textcolor{stringliteral}{"{}RSA\_NO\_CRT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00446\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RSA\_NO\_CRT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00447\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SELF\_TEST)}}
+\DoxyCodeLine{00448\ \ \ \ \ \textcolor{stringliteral}{"{}SELF\_TEST"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00449\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SELF\_TEST\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00450\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_SMALLER)}}
+\DoxyCodeLine{00451\ \ \ \ \ \textcolor{stringliteral}{"{}SHA256\_SMALLER"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00452\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_SMALLER\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00453\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_SMALLER)}}
+\DoxyCodeLine{00454\ \ \ \ \ \textcolor{stringliteral}{"{}SHA512\_SMALLER"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00455\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_SMALLER\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00456\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_ALL\_ALERT\_MESSAGES)}}
+\DoxyCodeLine{00457\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_ALL\_ALERT\_MESSAGES"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00458\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_ALL\_ALERT\_MESSAGES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00459\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DTLS\_CONNECTION\_ID)}}
+\DoxyCodeLine{00460\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DTLS\_CONNECTION\_ID"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00461\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DTLS\_CONNECTION\_ID\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00462\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DTLS\_CONNECTION\_ID\_COMPAT)}}
+\DoxyCodeLine{00463\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DTLS\_CONNECTION\_ID\_COMPAT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00464\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DTLS\_CONNECTION\_ID\_COMPAT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00465\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_ASYNC\_PRIVATE)}}
+\DoxyCodeLine{00466\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_ASYNC\_PRIVATE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00467\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_ASYNC\_PRIVATE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00468\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_CONTEXT\_SERIALIZATION)}}
+\DoxyCodeLine{00469\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_CONTEXT\_SERIALIZATION"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00470\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_CONTEXT\_SERIALIZATION\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00471\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DEBUG\_ALL)}}
+\DoxyCodeLine{00472\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DEBUG\_ALL"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00473\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DEBUG\_ALL\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00474\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_ENCRYPT\_THEN\_MAC)}}
+\DoxyCodeLine{00475\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_ENCRYPT\_THEN\_MAC"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00476\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_ENCRYPT\_THEN\_MAC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00477\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_EXTENDED\_MASTER\_SECRET)}}
+\DoxyCodeLine{00478\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_EXTENDED\_MASTER\_SECRET"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00479\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_EXTENDED\_MASTER\_SECRET\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00480\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_KEEP\_PEER\_CERTIFICATE)}}
+\DoxyCodeLine{00481\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_KEEP\_PEER\_CERTIFICATE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00482\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_KEEP\_PEER\_CERTIFICATE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00483\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_RENEGOTIATION)}}
+\DoxyCodeLine{00484\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_RENEGOTIATION"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00485\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_RENEGOTIATION\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00486\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_MAX\_FRAGMENT\_LENGTH)}}
+\DoxyCodeLine{00487\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_MAX\_FRAGMENT\_LENGTH"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00488\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_MAX\_FRAGMENT\_LENGTH\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00489\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_RECORD\_SIZE\_LIMIT)}}
+\DoxyCodeLine{00490\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_RECORD\_SIZE\_LIMIT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00491\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_RECORD\_SIZE\_LIMIT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00492\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_PROTO\_TLS1\_2)}}
+\DoxyCodeLine{00493\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_PROTO\_TLS1\_2"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00494\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_PROTO\_TLS1\_2\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00495\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_PROTO\_TLS1\_3)}}
+\DoxyCodeLine{00496\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_PROTO\_TLS1\_3"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00497\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_PROTO\_TLS1\_3\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00498\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS1\_3\_COMPATIBILITY\_MODE)}}
+\DoxyCodeLine{00499\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_TLS1\_3\_COMPATIBILITY\_MODE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00500\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS1\_3\_COMPATIBILITY\_MODE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00501\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_PSK\_ENABLED)}}
+\DoxyCodeLine{00502\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_PSK\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00503\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_PSK\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00504\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_EPHEMERAL\_ENABLED)}}
+\DoxyCodeLine{00505\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_EPHEMERAL\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00506\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_EPHEMERAL\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00507\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_PSK\_EPHEMERAL\_ENABLED)}}
+\DoxyCodeLine{00508\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_PSK\_EPHEMERAL\_ENABLED"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00509\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS1\_3\_KEY\_EXCHANGE\_MODE\_PSK\_EPHEMERAL\_ENABLED\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00510\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_EARLY\_DATA)}}
+\DoxyCodeLine{00511\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_EARLY\_DATA"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00512\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_EARLY\_DATA\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00513\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_PROTO\_DTLS)}}
+\DoxyCodeLine{00514\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_PROTO\_DTLS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00515\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_PROTO\_DTLS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00516\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_ALPN)}}
+\DoxyCodeLine{00517\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_ALPN"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00518\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_ALPN\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00519\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DTLS\_ANTI\_REPLAY)}}
+\DoxyCodeLine{00520\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DTLS\_ANTI\_REPLAY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00521\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DTLS\_ANTI\_REPLAY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00522\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DTLS\_HELLO\_VERIFY)}}
+\DoxyCodeLine{00523\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DTLS\_HELLO\_VERIFY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00524\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DTLS\_HELLO\_VERIFY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00525\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DTLS\_SRTP)}}
+\DoxyCodeLine{00526\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DTLS\_SRTP"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00527\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DTLS\_SRTP\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00528\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_DTLS\_CLIENT\_PORT\_REUSE)}}
+\DoxyCodeLine{00529\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_DTLS\_CLIENT\_PORT\_REUSE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00530\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_DTLS\_CLIENT\_PORT\_REUSE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00531\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_SESSION\_TICKETS)}}
+\DoxyCodeLine{00532\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_SESSION\_TICKETS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00533\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_SESSION\_TICKETS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00534\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_SERVER\_NAME\_INDICATION)}}
+\DoxyCodeLine{00535\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_SERVER\_NAME\_INDICATION"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00536\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_SERVER\_NAME\_INDICATION\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00537\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_VARIABLE\_BUFFER\_LENGTH)}}
+\DoxyCodeLine{00538\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_VARIABLE\_BUFFER\_LENGTH"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00539\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_VARIABLE\_BUFFER\_LENGTH\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00540\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_TEST\_CONSTANT\_FLOW\_MEMSAN)}}
+\DoxyCodeLine{00541\ \ \ \ \ \textcolor{stringliteral}{"{}TEST\_CONSTANT\_FLOW\_MEMSAN"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00542\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_TEST\_CONSTANT\_FLOW\_MEMSAN\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00543\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_TEST\_CONSTANT\_FLOW\_VALGRIND)}}
+\DoxyCodeLine{00544\ \ \ \ \ \textcolor{stringliteral}{"{}TEST\_CONSTANT\_FLOW\_VALGRIND"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00545\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_TEST\_CONSTANT\_FLOW\_VALGRIND\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00546\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_TEST\_HOOKS)}}
+\DoxyCodeLine{00547\ \ \ \ \ \textcolor{stringliteral}{"{}TEST\_HOOKS"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00548\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_TEST\_HOOKS\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00549\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_THREADING\_ALT)}}
+\DoxyCodeLine{00550\ \ \ \ \ \textcolor{stringliteral}{"{}THREADING\_ALT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00551\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_THREADING\_ALT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00552\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_THREADING\_PTHREAD)}}
+\DoxyCodeLine{00553\ \ \ \ \ \textcolor{stringliteral}{"{}THREADING\_PTHREAD"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00554\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_THREADING\_PTHREAD\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00555\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_USE\_PSA\_CRYPTO)}}
+\DoxyCodeLine{00556\ \ \ \ \ \textcolor{stringliteral}{"{}USE\_PSA\_CRYPTO"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00557\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_USE\_PSA\_CRYPTO\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00558\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_CONFIG)}}
+\DoxyCodeLine{00559\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_CONFIG"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00560\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_CONFIG\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00561\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_VERSION\_FEATURES)}}
+\DoxyCodeLine{00562\ \ \ \ \ \textcolor{stringliteral}{"{}VERSION\_FEATURES"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00563\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_VERSION\_FEATURES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00564\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_TRUSTED\_CERTIFICATE\_CALLBACK)}}
+\DoxyCodeLine{00565\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_TRUSTED\_CERTIFICATE\_CALLBACK"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00566\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_TRUSTED\_CERTIFICATE\_CALLBACK\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00567\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_REMOVE\_INFO)}}
+\DoxyCodeLine{00568\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_REMOVE\_INFO"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00569\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_REMOVE\_INFO\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00570\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_RSASSA\_PSS\_SUPPORT)}}
+\DoxyCodeLine{00571\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_RSASSA\_PSS\_SUPPORT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00572\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_RSASSA\_PSS\_SUPPORT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00573\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AESNI\_C)}}
+\DoxyCodeLine{00574\ \ \ \ \ \textcolor{stringliteral}{"{}AESNI\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00575\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AESNI\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00576\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AESCE\_C)}}
+\DoxyCodeLine{00577\ \ \ \ \ \textcolor{stringliteral}{"{}AESCE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00578\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AESCE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00579\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_AES\_C)}}
+\DoxyCodeLine{00580\ \ \ \ \ \textcolor{stringliteral}{"{}AES\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00581\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_AES\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00582\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ASN1\_PARSE\_C)}}
+\DoxyCodeLine{00583\ \ \ \ \ \textcolor{stringliteral}{"{}ASN1\_PARSE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00584\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ASN1\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00585\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ASN1\_WRITE\_C)}}
+\DoxyCodeLine{00586\ \ \ \ \ \textcolor{stringliteral}{"{}ASN1\_WRITE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00587\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ASN1\_WRITE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00588\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_BASE64\_C)}}
+\DoxyCodeLine{00589\ \ \ \ \ \textcolor{stringliteral}{"{}BASE64\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00590\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_BASE64\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00591\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_BIGNUM\_C)}}
+\DoxyCodeLine{00592\ \ \ \ \ \textcolor{stringliteral}{"{}BIGNUM\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00593\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_BIGNUM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00594\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CAMELLIA\_C)}}
+\DoxyCodeLine{00595\ \ \ \ \ \textcolor{stringliteral}{"{}CAMELLIA\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00596\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CAMELLIA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00597\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ARIA\_C)}}
+\DoxyCodeLine{00598\ \ \ \ \ \textcolor{stringliteral}{"{}ARIA\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00599\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ARIA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00600\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CCM\_C)}}
+\DoxyCodeLine{00601\ \ \ \ \ \textcolor{stringliteral}{"{}CCM\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00602\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CCM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00603\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHA20\_C)}}
+\DoxyCodeLine{00604\ \ \ \ \ \textcolor{stringliteral}{"{}CHACHA20\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00605\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHACHA20\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00606\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CHACHAPOLY\_C)}}
+\DoxyCodeLine{00607\ \ \ \ \ \textcolor{stringliteral}{"{}CHACHAPOLY\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00608\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CHACHAPOLY\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00609\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CIPHER\_C)}}
+\DoxyCodeLine{00610\ \ \ \ \ \textcolor{stringliteral}{"{}CIPHER\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00611\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CIPHER\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00612\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CMAC\_C)}}
+\DoxyCodeLine{00613\ \ \ \ \ \textcolor{stringliteral}{"{}CMAC\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00614\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CMAC\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00615\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_CTR\_DRBG\_C)}}
+\DoxyCodeLine{00616\ \ \ \ \ \textcolor{stringliteral}{"{}CTR\_DRBG\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00617\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_CTR\_DRBG\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00618\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DEBUG\_C)}}
+\DoxyCodeLine{00619\ \ \ \ \ \textcolor{stringliteral}{"{}DEBUG\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00620\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DEBUG\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00621\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DES\_C)}}
+\DoxyCodeLine{00622\ \ \ \ \ \textcolor{stringliteral}{"{}DES\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00623\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DES\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00624\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_DHM\_C)}}
+\DoxyCodeLine{00625\ \ \ \ \ \textcolor{stringliteral}{"{}DHM\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00626\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_DHM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00627\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDH\_C)}}
+\DoxyCodeLine{00628\ \ \ \ \ \textcolor{stringliteral}{"{}ECDH\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00629\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDH\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00630\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECDSA\_C)}}
+\DoxyCodeLine{00631\ \ \ \ \ \textcolor{stringliteral}{"{}ECDSA\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00632\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECDSA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00633\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECJPAKE\_C)}}
+\DoxyCodeLine{00634\ \ \ \ \ \textcolor{stringliteral}{"{}ECJPAKE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00635\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECJPAKE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00636\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ECP\_C)}}
+\DoxyCodeLine{00637\ \ \ \ \ \textcolor{stringliteral}{"{}ECP\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00638\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ECP\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00639\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ENTROPY\_C)}}
+\DoxyCodeLine{00640\ \ \ \ \ \textcolor{stringliteral}{"{}ENTROPY\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00641\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ENTROPY\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00642\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_ERROR\_C)}}
+\DoxyCodeLine{00643\ \ \ \ \ \textcolor{stringliteral}{"{}ERROR\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00644\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_ERROR\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00645\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_GCM\_C)}}
+\DoxyCodeLine{00646\ \ \ \ \ \textcolor{stringliteral}{"{}GCM\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00647\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_GCM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00648\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HKDF\_C)}}
+\DoxyCodeLine{00649\ \ \ \ \ \textcolor{stringliteral}{"{}HKDF\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00650\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HKDF\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00651\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_HMAC\_DRBG\_C)}}
+\DoxyCodeLine{00652\ \ \ \ \ \textcolor{stringliteral}{"{}HMAC\_DRBG\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00653\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_HMAC\_DRBG\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00654\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_LMS\_C)}}
+\DoxyCodeLine{00655\ \ \ \ \ \textcolor{stringliteral}{"{}LMS\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00656\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_LMS\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00657\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_LMS\_PRIVATE)}}
+\DoxyCodeLine{00658\ \ \ \ \ \textcolor{stringliteral}{"{}LMS\_PRIVATE"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00659\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_LMS\_PRIVATE\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00660\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NIST\_KW\_C)}}
+\DoxyCodeLine{00661\ \ \ \ \ \textcolor{stringliteral}{"{}NIST\_KW\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00662\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NIST\_KW\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00663\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MD\_C)}}
+\DoxyCodeLine{00664\ \ \ \ \ \textcolor{stringliteral}{"{}MD\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00665\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MD\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00666\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MD5\_C)}}
+\DoxyCodeLine{00667\ \ \ \ \ \textcolor{stringliteral}{"{}MD5\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00668\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MD5\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00669\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_MEMORY\_BUFFER\_ALLOC\_C)}}
+\DoxyCodeLine{00670\ \ \ \ \ \textcolor{stringliteral}{"{}MEMORY\_BUFFER\_ALLOC\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00671\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_MEMORY\_BUFFER\_ALLOC\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00672\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_NET\_C)}}
+\DoxyCodeLine{00673\ \ \ \ \ \textcolor{stringliteral}{"{}NET\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00674\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_NET\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00675\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_OID\_C)}}
+\DoxyCodeLine{00676\ \ \ \ \ \textcolor{stringliteral}{"{}OID\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00677\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_OID\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00678\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PADLOCK\_C)}}
+\DoxyCodeLine{00679\ \ \ \ \ \textcolor{stringliteral}{"{}PADLOCK\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00680\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PADLOCK\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00681\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PEM\_PARSE\_C)}}
+\DoxyCodeLine{00682\ \ \ \ \ \textcolor{stringliteral}{"{}PEM\_PARSE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00683\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PEM\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00684\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PEM\_WRITE\_C)}}
+\DoxyCodeLine{00685\ \ \ \ \ \textcolor{stringliteral}{"{}PEM\_WRITE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00686\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PEM\_WRITE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00687\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_C)}}
+\DoxyCodeLine{00688\ \ \ \ \ \textcolor{stringliteral}{"{}PK\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00689\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00690\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_PARSE\_C)}}
+\DoxyCodeLine{00691\ \ \ \ \ \textcolor{stringliteral}{"{}PK\_PARSE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00692\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00693\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PK\_WRITE\_C)}}
+\DoxyCodeLine{00694\ \ \ \ \ \textcolor{stringliteral}{"{}PK\_WRITE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00695\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PK\_WRITE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00696\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS5\_C)}}
+\DoxyCodeLine{00697\ \ \ \ \ \textcolor{stringliteral}{"{}PKCS5\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00698\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS5\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00699\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS7\_C)}}
+\DoxyCodeLine{00700\ \ \ \ \ \textcolor{stringliteral}{"{}PKCS7\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00701\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS7\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00702\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PKCS12\_C)}}
+\DoxyCodeLine{00703\ \ \ \ \ \textcolor{stringliteral}{"{}PKCS12\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00704\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PKCS12\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00705\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PLATFORM\_C)}}
+\DoxyCodeLine{00706\ \ \ \ \ \textcolor{stringliteral}{"{}PLATFORM\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00707\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PLATFORM\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00708\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_POLY1305\_C)}}
+\DoxyCodeLine{00709\ \ \ \ \ \textcolor{stringliteral}{"{}POLY1305\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00710\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_POLY1305\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00711\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_C)}}
+\DoxyCodeLine{00712\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00713\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00714\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_SE\_C)}}
+\DoxyCodeLine{00715\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_SE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00716\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_SE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00717\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_CRYPTO\_STORAGE\_C)}}
+\DoxyCodeLine{00718\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_CRYPTO\_STORAGE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00719\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_CRYPTO\_STORAGE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00720\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_PSA\_ITS\_FILE\_C)}}
+\DoxyCodeLine{00721\ \ \ \ \ \textcolor{stringliteral}{"{}PSA\_ITS\_FILE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00722\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_PSA\_ITS\_FILE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00723\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RIPEMD160\_C)}}
+\DoxyCodeLine{00724\ \ \ \ \ \textcolor{stringliteral}{"{}RIPEMD160\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00725\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RIPEMD160\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00726\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_RSA\_C)}}
+\DoxyCodeLine{00727\ \ \ \ \ \textcolor{stringliteral}{"{}RSA\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00728\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_RSA\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00729\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA1\_C)}}
+\DoxyCodeLine{00730\ \ \ \ \ \textcolor{stringliteral}{"{}SHA1\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00731\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA1\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00732\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA224\_C)}}
+\DoxyCodeLine{00733\ \ \ \ \ \textcolor{stringliteral}{"{}SHA224\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00734\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA224\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00735\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_C)}}
+\DoxyCodeLine{00736\ \ \ \ \ \textcolor{stringliteral}{"{}SHA256\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00737\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00738\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_USE\_A64\_CRYPTO\_IF\_PRESENT)}}
+\DoxyCodeLine{00739\ \ \ \ \ \textcolor{stringliteral}{"{}SHA256\_USE\_A64\_CRYPTO\_IF\_PRESENT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00740\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_USE\_A64\_CRYPTO\_IF\_PRESENT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00741\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA256\_USE\_A64\_CRYPTO\_ONLY)}}
+\DoxyCodeLine{00742\ \ \ \ \ \textcolor{stringliteral}{"{}SHA256\_USE\_A64\_CRYPTO\_ONLY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00743\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA256\_USE\_A64\_CRYPTO\_ONLY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00744\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA384\_C)}}
+\DoxyCodeLine{00745\ \ \ \ \ \textcolor{stringliteral}{"{}SHA384\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00746\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA384\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00747\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_C)}}
+\DoxyCodeLine{00748\ \ \ \ \ \textcolor{stringliteral}{"{}SHA512\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00749\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00750\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA3\_C)}}
+\DoxyCodeLine{00751\ \ \ \ \ \textcolor{stringliteral}{"{}SHA3\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00752\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA3\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00753\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_USE\_A64\_CRYPTO\_IF\_PRESENT)}}
+\DoxyCodeLine{00754\ \ \ \ \ \textcolor{stringliteral}{"{}SHA512\_USE\_A64\_CRYPTO\_IF\_PRESENT"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00755\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_USE\_A64\_CRYPTO\_IF\_PRESENT\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00756\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SHA512\_USE\_A64\_CRYPTO\_ONLY)}}
+\DoxyCodeLine{00757\ \ \ \ \ \textcolor{stringliteral}{"{}SHA512\_USE\_A64\_CRYPTO\_ONLY"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00758\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SHA512\_USE\_A64\_CRYPTO\_ONLY\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00759\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_CACHE\_C)}}
+\DoxyCodeLine{00760\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_CACHE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00761\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_CACHE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00762\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_COOKIE\_C)}}
+\DoxyCodeLine{00763\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_COOKIE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00764\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_COOKIE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00765\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TICKET\_C)}}
+\DoxyCodeLine{00766\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_TICKET\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00767\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TICKET\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00768\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_CLI\_C)}}
+\DoxyCodeLine{00769\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_CLI\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00770\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_CLI\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00771\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_SRV\_C)}}
+\DoxyCodeLine{00772\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_SRV\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00773\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_SRV\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00774\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_SSL\_TLS\_C)}}
+\DoxyCodeLine{00775\ \ \ \ \ \textcolor{stringliteral}{"{}SSL\_TLS\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00776\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_SSL\_TLS\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00777\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_THREADING\_C)}}
+\DoxyCodeLine{00778\ \ \ \ \ \textcolor{stringliteral}{"{}THREADING\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00779\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_THREADING\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00780\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_TIMING\_C)}}
+\DoxyCodeLine{00781\ \ \ \ \ \textcolor{stringliteral}{"{}TIMING\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00782\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_TIMING\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00783\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_VERSION\_C)}}
+\DoxyCodeLine{00784\ \ \ \ \ \textcolor{stringliteral}{"{}VERSION\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00785\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_VERSION\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00786\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_USE\_C)}}
+\DoxyCodeLine{00787\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_USE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00788\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_USE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00789\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_CRT\_PARSE\_C)}}
+\DoxyCodeLine{00790\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_CRT\_PARSE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00791\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_CRT\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00792\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_CRL\_PARSE\_C)}}
+\DoxyCodeLine{00793\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_CRL\_PARSE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00794\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_CRL\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00795\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_CSR\_PARSE\_C)}}
+\DoxyCodeLine{00796\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_CSR\_PARSE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00797\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_CSR\_PARSE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00798\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_CREATE\_C)}}
+\DoxyCodeLine{00799\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_CREATE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00800\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_CREATE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00801\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_CRT\_WRITE\_C)}}
+\DoxyCodeLine{00802\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_CRT\_WRITE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00803\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_CRT\_WRITE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00804\ \textcolor{preprocessor}{\#if\ defined(MBEDTLS\_X509\_CSR\_WRITE\_C)}}
+\DoxyCodeLine{00805\ \ \ \ \ \textcolor{stringliteral}{"{}X509\_CSR\_WRITE\_C"{}},\ \textcolor{comment}{//no-\/check-\/names}}
+\DoxyCodeLine{00806\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_X509\_CSR\_WRITE\_C\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00807\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_VERSION\_FEATURES\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00808\ \ \ \ \ NULL}
+\DoxyCodeLine{00809\ \};}
+\DoxyCodeLine{00810\ }
+\DoxyCodeLine{00811\ \textcolor{keywordtype}{int}\ mbedtls\_version\_check\_feature(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *feature)}
+\DoxyCodeLine{00812\ \{}
+\DoxyCodeLine{00813\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\ \textcolor{keyword}{const}\ *idx\ =\ features;}
+\DoxyCodeLine{00814\ }
+\DoxyCodeLine{00815\ \ \ \ \ \textcolor{keywordflow}{if}\ (*idx\ ==\ NULL)\ \{}
+\DoxyCodeLine{00816\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/2;}
+\DoxyCodeLine{00817\ \ \ \ \ \}}
+\DoxyCodeLine{00818\ }
+\DoxyCodeLine{00819\ \ \ \ \ \textcolor{keywordflow}{if}\ (feature\ ==\ NULL)\ \{}
+\DoxyCodeLine{00820\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00821\ \ \ \ \ \}}
+\DoxyCodeLine{00822\ }
+\DoxyCodeLine{00823\ \ \ \ \ \textcolor{keywordflow}{if}\ (strncmp(feature,\ \textcolor{stringliteral}{"{}MBEDTLS\_"{}},\ 8))\ \{}
+\DoxyCodeLine{00824\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00825\ \ \ \ \ \}}
+\DoxyCodeLine{00826\ }
+\DoxyCodeLine{00827\ \ \ \ \ feature\ +=\ 8;}
+\DoxyCodeLine{00828\ }
+\DoxyCodeLine{00829\ \ \ \ \ \textcolor{keywordflow}{while}\ (*idx\ !=\ NULL)\ \{}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!strcmp(*idx,\ feature))\ \{}
+\DoxyCodeLine{00831\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ idx++;}
+\DoxyCodeLine{00834\ \ \ \ \ \}}
+\DoxyCodeLine{00835\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{00836\ \}}
+\DoxyCodeLine{00837\ }
+\DoxyCodeLine{00838\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ MBEDTLS\_VERSION\_C\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

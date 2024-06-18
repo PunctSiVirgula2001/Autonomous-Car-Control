@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_version__features_8c" xml:lang="en-US">
+<title>build/esp-idf/mbedtls/mbedtls/library/version_features.c File Reference</title>
+<indexterm><primary>build/esp-idf/mbedtls/mbedtls/library/version_features.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;common.h&quot;<?linebreak?></programlisting>Include dependency graph for version_features.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="version__features_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+</section>

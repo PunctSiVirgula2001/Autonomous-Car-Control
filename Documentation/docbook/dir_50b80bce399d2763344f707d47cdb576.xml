@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_50b80bce399d2763344f707d47cdb576" xml:lang="en-US">
+<title>include/I2C Directory Reference</title>
+<indexterm><primary>include/I2C Directory Reference</primary></indexterm>
+Directory dependency graph for I2C:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_50b80bce399d2763344f707d47cdb576_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Directories    </title>
+        <itemizedlist>
+            <listitem><para>directory <link linkend="_dir_9c2a89c4bc6d66cb92bb8078a412fc6a">drivers</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="__i2_c__sensor_control_8h">I2C_sensorControl.h</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

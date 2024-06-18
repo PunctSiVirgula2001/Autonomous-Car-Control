@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_dir_9c690d15579abbd45f3ee286c2a9e682" xml:lang="en-US">
+<title>build/bootloader/CMakeFiles/CheckTypeSize Directory Reference</title>
+<indexterm><primary>build/bootloader/CMakeFiles/CheckTypeSize Directory Reference</primary></indexterm>
+Directory dependency graph for CheckTypeSize:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="dir_9c690d15579abbd45f3ee286c2a9e682_dep.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Files    </title>
+        <itemizedlist>
+            <listitem><para>file <link linkend="_bootloader_2_c_make_files_2_check_type_size_2_t_i_m_e___t___s_i_z_e_8c">TIME_T_SIZE.c</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+</section>

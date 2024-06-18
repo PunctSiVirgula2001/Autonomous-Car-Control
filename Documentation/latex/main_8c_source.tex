@@ -1,0 +1,118 @@
+\doxysection{main.\+c}
+\label{main_8c_source}\index{main/main.c@{main/main.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*Brief\ for\ on\ which\ cores\ are\ the\ tasks\ running}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ \ \ \ PIDTask:\ \ \ \ \ \ \ \ \ \ \ \ Core\ 1,\ Prio\ 7}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ \ CarControlTask:\ \ \ \ \ Core\ 0,\ Prio\ 6}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ \ \ \ SteerTask:\ \ \ \ \ \ \ \ \ \ Core\ 1,\ Prio\ 6}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ \ \ \ UdpAccessPointTask:\ Core\ 0,\ Prio\ 5}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ \ \ \ I2cTask:\ \ \ \ \ \ \ \ \ \ \ \ Core\ 0,\ Prio\ 7}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ \ \ \ UartJetsonTask\ \ \ \ \ \ Core\ 1,\ Prio\ 6}}
+\DoxyCodeLine{00008\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/*Brief\ for\ the\ main\ function}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ \ \ 1.\ Create\ the\ necessary\ queues\ for\ the\ tasks.}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ \ \ 2.\ Create\ a\ set\ which\ holds\ data\ from\ all\ necessary\ queues.}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ \ \ 3.\ Start\ the\ network\ tasks.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ \ \ 4.\ Initialize\ the\ car\ control.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ \ \ 5.\ Configure\ the\ encoder\ interrupts.}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ 6.\ Create\ the\ PID\ task.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <unistd.h>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ "{}freertos/FreeRTOS.h"{}}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ "{}freertos/task.h"{}}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ "{}esp\_log.h"{}}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ "{}MotorAndServoControl.h"{}}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ "{}PID.h"{}}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#include\ "{}Network.h"{}}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#include\ "{}../include/I2C/I2C\_sensorControl.h"{}}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#include\ "{}UART\_Jetson.h"{}}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{bool}\ allowed\_to\_send;}
+\DoxyCodeLine{00033\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{char}\ rx\_buffer[128];}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{/*\ Used\ for\ directly\ controlling\ the\ car\ from\ the\ app.\ */}}
+\DoxyCodeLine{00036\ \textcolor{keyword}{extern}\ QueueHandle\_t\ diagnosticModeControlQueue;}
+\DoxyCodeLine{00037\ \textcolor{comment}{/*\ Used\ for\ the\ car\ for\ driving\ itself\ based\ on\ the\ information\ comming\ from\ either\ PIXY\ or\ JETSON.\ */}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#if\ (PIXY\_DETECTION\ ==\ OFF)}}
+\DoxyCodeLine{00039\ \textcolor{keyword}{extern}\ QueueHandle\_t\ autonomousModeControlUartQueue;}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#elif\ (PIXY\_DETECTION\ ==\ ON)}}
+\DoxyCodeLine{00041\ \textcolor{keyword}{extern}\ QueueHandle\_t\ autonomousModeControlPixyQueue;}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00043\ \textcolor{comment}{/*\ Set\ which\ holds\ both\ Autonomous\ mode\ and\ Diagnostic\ mode\ queus.*/}}
+\DoxyCodeLine{00044\ \textcolor{keyword}{extern}\ QueueSetHandle\_t\ QueueSetAutonomousOrDiagnostic;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{extern}\ QueueHandle\_t\ pulse\_encoderQueue;\ \textcolor{comment}{//\ holds\ the\ trasnformed\ time\ pulse\ differences\ incomming\ from\ encoder.}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{extern}\ QueueHandle\_t\ speed\_commandQueue;}
+\DoxyCodeLine{00049\ \textcolor{keyword}{extern}\ QueueHandle\_t\ steer\_commandQueue;}
+\DoxyCodeLine{00050\ \textcolor{keyword}{extern}\ QueueHandle\_t\ PID\_commandQueue;}
+\DoxyCodeLine{00051\ \textcolor{keyword}{extern}\ QueueHandle\_t\ I2C\_commandQueue;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keyword}{extern}\ QueueSetHandle\_t\ QueueSetPIDNecessaryCommands;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{bool}\ I2C\_sensors\_initiated;}
+\DoxyCodeLine{00056\ \textcolor{comment}{//\#define\ ESP\_LOGI(a,b)\ printf(b);}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{void}\ app\_main(\textcolor{keywordtype}{void})\ \{}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ steer\_commandQueue\ =\ xQueueCreate(20,QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE);}
+\DoxyCodeLine{00062\ \ \ \ \ diagnosticModeControlQueue\ =\ xQueueCreate(QUEUE\_SIZE\_CAR\_COMMANDS,\ QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS);}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\#if\ (PIXY\_DETECTION\ ==\ OFF)}}
+\DoxyCodeLine{00064\ \ \ \ \ autonomousModeControlUartQueue\ =\ xQueueCreate(QUEUE\_SIZE\_CAR\_COMMANDS,\ QUEUE\_SIZE\_DATATYPE\_CAR\_COMMANDS);}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#elif\ (PIXY\_DETECTION\ ==\ ON)}}
+\DoxyCodeLine{00066\ \ \ \ \ autonomousModeControlPixyQueue\ =\ xQueueCreate(QUEUE\_SIZE\_PIXY,\ QUEUE\_SIZE\_DATATYPE\_PIXY);}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00068\ \ \ \ \ pulse\_encoderQueue\ =\ xQueueCreate(QUEUE\_SIZE\_ENCODER\_PULSE,\ QUEUE\_SIZE\_DATATYPE\_ENCODER\_PULSE);}
+\DoxyCodeLine{00069\ \ \ \ \ speed\_commandQueue\ =\ xQueueCreate(QUEUE\_SIZE\_SPEED,\ QUEUE\_SIZE\_DATATYPE\_SPEED);}
+\DoxyCodeLine{00070\ \ \ \ \ PID\_commandQueue\ =\ xQueueCreate(5,\ \textcolor{keyword}{sizeof}(CarCommand));}
+\DoxyCodeLine{00071\ \ \ \ \ I2C\_commandQueue\ =\ xQueueCreate(20,\ I2C\_COMMAND\_SIZE);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{comment}{/*\ Create\ a\ set\ which\ would\ hold\ both\ Autonomous\ mode\ and\ Diagnostic\ mode\ queues\ */}}
+\DoxyCodeLine{00074\ \ \ \ \ QueueSetAutonomousOrDiagnostic\ =\ xQueueCreateSet(QUEUE\_SIZE\_CAR\_COMMANDS);}
+\DoxyCodeLine{00075\ \ \ \ \ xQueueAddToSet(diagnosticModeControlQueue,\ QueueSetAutonomousOrDiagnostic);}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#if\ (PIXY\_DETECTION\ ==\ OFF)}}
+\DoxyCodeLine{00077\ \ \ \ \ xQueueAddToSet(autonomousModeControlUartQueue,\ QueueSetAutonomousOrDiagnostic);}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#elif\ (PIXY\_DETECTION\ ==\ ON)}}
+\DoxyCodeLine{00079\ \ \ \ \ xQueueAddToSet(autonomousModeControlPixyQueue,\ QueueSetAutonomousOrDiagnostic);}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{/*\ Create\ a\ set\ which\ holds\ data\ from\ all\ necessary\ queues.\ */}}
+\DoxyCodeLine{00083\ \ \ \ \ QueueSetPIDNecessaryCommands\ =\ xQueueCreateSet(QUEUE\_SIZE\_CAR\_COMMANDS\ +\ QUEUE\_SIZE\_ENCODER\_PULSE\ +\ QUEUE\_SIZE\_I2C);}
+\DoxyCodeLine{00084\ \ \ \ \ configASSERT(speed\_commandQueue);}
+\DoxyCodeLine{00085\ \ \ \ \ configASSERT(pulse\_encoderQueue);}
+\DoxyCodeLine{00086\ \ \ \ \ configASSERT(speed\_commandQueue);}
+\DoxyCodeLine{00087\ \ \ \ \ configASSERT(PID\_commandQueue);}
+\DoxyCodeLine{00088\ \ \ \ \ configASSERT(steer\_commandQueue);}
+\DoxyCodeLine{00089\ \ \ \ \ configASSERT(QueueSetPIDNecessaryCommands);}
+\DoxyCodeLine{00090\ \ \ \ \ xQueueAddToSet(speed\_commandQueue,\ QueueSetPIDNecessaryCommands);}
+\DoxyCodeLine{00091\ \ \ \ \ xQueueAddToSet(pulse\_encoderQueue,\ QueueSetPIDNecessaryCommands);}
+\DoxyCodeLine{00092\ \ \ \ \ xQueueAddToSet(PID\_commandQueue,\ QueueSetPIDNecessaryCommands);}
+\DoxyCodeLine{00093\ \ \ \ \ xQueueAddToSet(I2C\_commandQueue,\ QueueSetPIDNecessaryCommands);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{comment}{/*\ Start\ application\ tasks\ */}}
+\DoxyCodeLine{00096\ \ \ \ \ carControl\_init();}
+\DoxyCodeLine{00097\ \ \ \ \ configureEncoderInterrupts();}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\#if\ (MOTOR\_MOCK\_TEST\ ==\ OFF)}}
+\DoxyCodeLine{00099\ \ \ \ \ start\_I2C\_devices\_task();}
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordflow}{while}(I2C\_sensors\_initiated\ ==\ \textcolor{keyword}{false})\ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00102\ \ \ \ \ start\_network\_task();}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\#if\ (MOTOR\_MOCK\_TEST\ ==\ OFF)}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keywordflow}{while}(allowed\_to\_send\ ==\ \textcolor{keyword}{false})\ vTaskDelay(pdMS\_TO\_TICKS(50));}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00106\ \ \ \ \ start\_PID\_task();}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#if\ (PIXY\_DETECTION\ ==\ OFF)}}
+\DoxyCodeLine{00108\ \ \ \ \ start\_UartJetson\_task();}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \}}
+
+\end{DoxyCode}

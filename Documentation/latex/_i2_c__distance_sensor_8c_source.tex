@@ -1,0 +1,518 @@
+\doxysection{I2\+C\+\_\+distance\+Sensor.\+c}
+\label{_i2_c__distance_sensor_8c_source}\index{src/I2C/drivers/I2C\_distanceSensor.c@{src/I2C/drivers/I2C\_distanceSensor.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_distanceSensor.c}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}I2C\_distanceSensor.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{/********\ VLX\ sensor\ **********/}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{bool}\ VL53L0X\_getSpadInfo(I2C\_dev\_handles\ device\_handle\ ,uint8\_t\ *\ count,\ \textcolor{keywordtype}{bool}\ *\ type\_is\_aperture)}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ uint8\_t\ tmp;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x01);}
+\DoxyCodeLine{00017\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x01);}
+\DoxyCodeLine{00018\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x00,\ 0x00);}
+\DoxyCodeLine{00019\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x06);}
+\DoxyCodeLine{00020\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x83,\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ 0x83)>>8)\ |\ 0x04);}
+\DoxyCodeLine{00021\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x07);}
+\DoxyCodeLine{00022\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x81,\ 0x01);}
+\DoxyCodeLine{00023\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x01);}
+\DoxyCodeLine{00024\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x94,\ 0x6b);}
+\DoxyCodeLine{00025\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x83,\ 0x00);}
+\DoxyCodeLine{00026\ \ \ uint8\_t\ reg;}
+\DoxyCodeLine{00027\ \ \ startTimeout();}
+\DoxyCodeLine{00028\ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00029\ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ reg\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ 0x83)>>8);}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordflow}{if}\ (checkTimeoutExpired())\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00032\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00033\ \ \ \}\ \textcolor{keywordflow}{while}(reg\ ==\ 0x00);}
+\DoxyCodeLine{00034\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x83,\ 0x01);}
+\DoxyCodeLine{00035\ \ \ tmp\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ 0x92)>>8);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ *count\ =\ tmp\ \&\ 0x7f;}
+\DoxyCodeLine{00038\ \ \ *type\_is\_aperture\ =\ (tmp\ >>\ 7)\ \&\ 0x01;}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x81,\ 0x00);}
+\DoxyCodeLine{00041\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x06);}
+\DoxyCodeLine{00042\ \textcolor{comment}{//\ \ uint8\_t\ data;}}
+\DoxyCodeLine{00043\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x83,\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ 0x83)>>8)\ \&\ \string~0x04);}
+\DoxyCodeLine{00044\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x01);}
+\DoxyCodeLine{00045\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x00,\ 0x01);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x00);}
+\DoxyCodeLine{00048\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x00);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00051\ \}}
+\DoxyCodeLine{00052\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ err}
+\DoxyCodeLine{00053\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ not\_err=0,}
+\DoxyCodeLine{00055\ \ \ \ \ err=1}
+\DoxyCodeLine{00056\ \}type\_error;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{keyword}{static}\ type\_error\ VL53L0X\_setSignalRateLimit\ (I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{float}\ limit\_Mcps)}
+\DoxyCodeLine{00059\ \{}
+\DoxyCodeLine{00060\ \ \ \ \textcolor{keywordflow}{if}\ (limit\_Mcps\ <\ 0\ ||\ limit\_Mcps\ >\ 511.99)}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ err;}
+\DoxyCodeLine{00062\ \ \ \ \textcolor{comment}{//\ Q9.7\ fixed\ point\ format\ (9\ integer\ bits,\ 7\ fractional\ bits)}}
+\DoxyCodeLine{00063\ \ \ \ I2C\_writeRegister16bit(device\_handle,\ FINAL\_RANGE\_CONFIG\_MIN\_COUNT\_RATE\_RTN\_LIMIT,\ limit\_Mcps\ *\ (1\ <<\ 7));}
+\DoxyCodeLine{00064\ \ \ \ \textcolor{keywordflow}{return}\ not\_err;}
+\DoxyCodeLine{00065\ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{bool}\ VL53L0X\_Init(I2C\_dev\_handles\ device\_handle)}
+\DoxyCodeLine{00068\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \textcolor{keywordflow}{if}((uint8\_t)(I2C\_readRegister16bit(device\_handle,\ IDENTIFICATION\_MODEL\_ID)>>8)!=0xEE)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ uint16\_t\ data;}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \textcolor{comment}{//\ "{}Set\ I2C\ standard\ mode"{}}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0x88,\ 0x00);}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0x80,\ 0x01);}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0xFF,\ 0x01);}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0x00,\ 0x00);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ stop\_variable\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ 0x91)>>8);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}\ "{}},\ \textcolor{stringliteral}{"{}stop\_variable:\ \%u"{}},\ stop\_variable);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0x00,\ 0x01);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0xFF,\ 0x00);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,0x80,\ 0x00);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \textcolor{comment}{//\ disable\ SIGNAL\_RATE\_MSRC\ (bit\ 1)\ and\ SIGNAL\_RATE\_PRE\_RANGE\ (bit\ 4)\ limit\ checks}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ uint8\_t\ MSRC\_CONFIG\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ MSRC\_CONFIG\_CONTROL)>>8);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ MSRC\_CONFIG\_CONTROL,\ MSRC\_CONFIG\ |\ 0x12)\ ;}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ data\ =\ VL53L0X\_setSignalRateLimit\ (device\_handle,\ 0.25);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_SEQUENCE\_CONFIG,\ 0xFF);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ uint8\_t\ spad\_count;}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ spad\_type\_is\_aperture;}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!VL53L0X\_getSpadInfo(device\_handle\ ,\&spad\_count,\ \&spad\_type\_is\_aperture))\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}\ "{},"{}VL53L0X\_getSpadInfo\ false"{});}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ uint8\_t\ ref\_spad\_map[6];}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ uint8\_t\ spad\_enables\_ref\_0\ =\ GLOBAL\_CONFIG\_SPAD\_ENABLES\_REF\_0;}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ I2C\_transmit(device\_handle,\ \&spad\_enables\_ref\_0,\ 1);}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ I2C\_receive(device\_handle,\ ref\_spad\_map,\ 6);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x01);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ DYNAMIC\_SPAD\_REF\_EN\_START\_OFFSET,\ 0x00);}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ DYNAMIC\_SPAD\_NUM\_REQUESTED\_REF\_SPAD,\ 0x2C);}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x00);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ GLOBAL\_CONFIG\_REF\_EN\_START\_SELECT,\ 0xB4);}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \ \ uint8\_t\ first\_spad\_to\_enable\ =\ spad\_type\_is\_aperture\ ?\ 12\ :\ 0;\ \textcolor{comment}{//\ 12\ is\ the\ first\ aperture\ spad}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ uint8\_t\ spads\_enabled\ =\ 0;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (uint8\_t\ i\ =\ 0;\ i\ <\ 48;\ i++)}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ first\_spad\_to\_enable\ ||\ spads\_enabled\ ==\ spad\_count)}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ This\ bit\ is\ lower\ than\ the\ first\ one\ that\ should\ be\ enabled,\ or}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (reference\_spad\_count)\ bits\ have\ already\ been\ enabled,\ so\ zero\ this\ bit}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ ref\_spad\_map[i\ /\ 8]\ \&=\ \string~(1\ <<\ (i\ \%\ 8));}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((ref\_spad\_map[i\ /\ 8]\ >>\ (i\ \%\ 8))\ \&\ 0x1)}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ spads\_enabled++;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ I2C\_transmit(device\_handle,\ \&spad\_enables\_ref\_0,\ 1);}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ I2C\_transmit(device\_handle,\ ref\_spad\_map,\ \textcolor{keyword}{sizeof}(ref\_spad\_map));\ \textcolor{comment}{//\ 6}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ VL53L0X\_setupI2CRegisters(device\_handle);}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_INTERRUPT\_CONFIG\_GPIO,\ 0x04);}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ GPIO\_HV\_MUX\_ACTIVE\_HIGH,\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ GPIO\_HV\_MUX\_ACTIVE\_HIGH)>>8)\ \&\ \string~0x10);\ \textcolor{comment}{//\ active\ low}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_INTERRUPT\_CLEAR,\ 0x01);}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ measurement\_timing\_budget\_us\ =\ VL53L0X\_getMeasurementTimingBudget(device\_handle);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}\ "{}},\textcolor{stringliteral}{"{}VL53L0X\_setMeasurementTimingBudget\ \%"{}}PRIu32\textcolor{stringliteral}{"{}\ \(\backslash\)n"{}},\ measurement\_timing\_budget\_us);}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_SEQUENCE\_CONFIG,\ 0xE8);}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!VL53L0X\_setMeasurementTimingBudget(device\_handle,measurement\_timing\_budget\_us-\/10))\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}\ "{},"{}VL53L0X\_setMeasurementTimingBudget\ false\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_SEQUENCE\_CONFIG,\ 0x01);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!VL53L0X\_performSingleRefCalibration(device\_handle,\ 0x40))\ \{}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}\ "{},"{}VL53L0X\_performSingleRefCalibration1\ false\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_SEQUENCE\_CONFIG,\ 0x02);}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!VL53L0X\_performSingleRefCalibration(device\_handle,\ 0x00))\ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ESP\_LOGI("{}\ "{},"{}VL53L0X\_performSingleRefCalibration2\ false\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_SEQUENCE\_CONFIG,\ 0xE8);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}\ "{},"{}VLX\ sensor\ init\ done!\ \(\backslash\)n"{});}}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00165\ \}}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ uint32\_t\ VL53L0X\_getMeasurementTimingBudget(I2C\_dev\_handles\ device\_handle)}
+\DoxyCodeLine{00168\ \{}
+\DoxyCodeLine{00169\ \ \ SequenceStepEnables\ enables;}
+\DoxyCodeLine{00170\ \ \ SequenceStepTimeouts\ timeouts;}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \ \ uint16\_t\ \textcolor{keyword}{const}\ StartOverhead\ \ \ \ \ =\ 1910;}
+\DoxyCodeLine{00173\ \ \ uint16\_t\ \textcolor{keyword}{const}\ EndOverhead\ \ \ \ \ \ \ \ =\ 960;}
+\DoxyCodeLine{00174\ \ \ uint16\_t\ \textcolor{keyword}{const}\ MsrcOverhead\ \ \ \ \ \ \ =\ 660;}
+\DoxyCodeLine{00175\ \ \ uint16\_t\ \textcolor{keyword}{const}\ TccOverhead\ \ \ \ \ \ \ \ =\ 590;}
+\DoxyCodeLine{00176\ \ \ uint16\_t\ \textcolor{keyword}{const}\ DssOverhead\ \ \ \ \ \ \ \ =\ 690;}
+\DoxyCodeLine{00177\ \ \ uint16\_t\ \textcolor{keyword}{const}\ PreRangeOverhead\ \ \ =\ 660;}
+\DoxyCodeLine{00178\ \ \ uint16\_t\ \textcolor{keyword}{const}\ FinalRangeOverhead\ =\ 550;}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \textcolor{comment}{//\ "{}Start\ and\ end\ overhead\ times\ always\ present"{}}}
+\DoxyCodeLine{00181\ \ \ uint32\_t\ budget\_us\ =\ StartOverhead\ +\ EndOverhead;}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ VL53L0X\_getSequenceStepEnables(device\_handle\ ,\ \&enables);}
+\DoxyCodeLine{00184\ \ \ VL53L0X\_getSequenceStepTimeouts(device\_handle,\ \&enables,\ \&timeouts);}
+\DoxyCodeLine{00185\ }
+\DoxyCodeLine{00186\ \ \ \textcolor{keywordflow}{if}\ (enables.tcc)}
+\DoxyCodeLine{00187\ \ \ \{}
+\DoxyCodeLine{00188\ \ \ \ \ budget\_us\ +=\ (timeouts.msrc\_dss\_tcc\_us\ +\ TccOverhead);}
+\DoxyCodeLine{00189\ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \textcolor{keywordflow}{if}\ (enables.dss)}
+\DoxyCodeLine{00192\ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ budget\_us\ +=\ 2\ *\ (timeouts.msrc\_dss\_tcc\_us\ +\ DssOverhead);}
+\DoxyCodeLine{00194\ \ \ \}}
+\DoxyCodeLine{00195\ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (enables.msrc)}
+\DoxyCodeLine{00196\ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ budget\_us\ +=\ (timeouts.msrc\_dss\_tcc\_us\ +\ MsrcOverhead);}
+\DoxyCodeLine{00198\ \ \ \}}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \textcolor{keywordflow}{if}\ (enables.pre\_range)}
+\DoxyCodeLine{00201\ \ \ \{}
+\DoxyCodeLine{00202\ \ \ \ \ budget\_us\ +=\ (timeouts.pre\_range\_us\ +\ PreRangeOverhead);}
+\DoxyCodeLine{00203\ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \textcolor{keywordflow}{if}\ (enables.final\_range)}
+\DoxyCodeLine{00206\ \ \ \{}
+\DoxyCodeLine{00207\ \ \ \ \ budget\_us\ +=\ (timeouts.final\_range\_us\ +\ FinalRangeOverhead);}
+\DoxyCodeLine{00208\ \ \ \}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \ \ measurement\_timing\_budget\_us\ =\ budget\_us;\ \textcolor{comment}{//\ store\ for\ internal\ reuse}}
+\DoxyCodeLine{00211\ \ \ \textcolor{keywordflow}{return}\ budget\_us;}
+\DoxyCodeLine{00212\ \}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \textcolor{keywordtype}{bool}\ VL53L0X\_setMeasurementTimingBudget(I2C\_dev\_handles\ device\_handle,\ uint32\_t\ budget\_us)}
+\DoxyCodeLine{00215\ \{}
+\DoxyCodeLine{00216\ \ \ SequenceStepEnables\ enables;}
+\DoxyCodeLine{00217\ \ \ SequenceStepTimeouts\ timeouts;}
+\DoxyCodeLine{00218\ }
+\DoxyCodeLine{00219\ \ \ uint16\_t\ \textcolor{keyword}{const}\ StartOverhead\ \ \ \ \ =\ 1910;}
+\DoxyCodeLine{00220\ \ \ uint16\_t\ \textcolor{keyword}{const}\ EndOverhead\ \ \ \ \ \ \ \ =\ 960;}
+\DoxyCodeLine{00221\ \ \ uint16\_t\ \textcolor{keyword}{const}\ MsrcOverhead\ \ \ \ \ \ \ =\ 660;}
+\DoxyCodeLine{00222\ \ \ uint16\_t\ \textcolor{keyword}{const}\ TccOverhead\ \ \ \ \ \ \ \ =\ 590;}
+\DoxyCodeLine{00223\ \ \ uint16\_t\ \textcolor{keyword}{const}\ DssOverhead\ \ \ \ \ \ \ \ =\ 690;}
+\DoxyCodeLine{00224\ \ \ uint16\_t\ \textcolor{keyword}{const}\ PreRangeOverhead\ \ \ =\ 660;}
+\DoxyCodeLine{00225\ \ \ uint16\_t\ \textcolor{keyword}{const}\ FinalRangeOverhead\ =\ 550;}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ uint32\_t\ used\_budget\_us\ =\ StartOverhead\ +\ EndOverhead;}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \ \ VL53L0X\_getSequenceStepEnables(device\_handle,\&enables);}
+\DoxyCodeLine{00230\ \ \ VL53L0X\_getSequenceStepTimeouts(device\_handle,\&enables,\ \&timeouts);}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \textcolor{keywordflow}{if}\ (enables.tcc)}
+\DoxyCodeLine{00233\ \ \ \{}
+\DoxyCodeLine{00234\ \ \ \ \ used\_budget\_us\ +=\ (timeouts.msrc\_dss\_tcc\_us\ +\ TccOverhead);}
+\DoxyCodeLine{00235\ \ \ \}}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \textcolor{keywordflow}{if}\ (enables.dss)}
+\DoxyCodeLine{00238\ \ \ \{}
+\DoxyCodeLine{00239\ \ \ \ \ used\_budget\_us\ +=\ 2\ *\ (timeouts.msrc\_dss\_tcc\_us\ +\ DssOverhead);}
+\DoxyCodeLine{00240\ \ \ \}}
+\DoxyCodeLine{00241\ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (enables.msrc)}
+\DoxyCodeLine{00242\ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ used\_budget\_us\ +=\ (timeouts.msrc\_dss\_tcc\_us\ +\ MsrcOverhead);}
+\DoxyCodeLine{00244\ \ \ \}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00246\ \ \ \textcolor{keywordflow}{if}\ (enables.pre\_range)}
+\DoxyCodeLine{00247\ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ used\_budget\_us\ +=\ (timeouts.pre\_range\_us\ +\ PreRangeOverhead);}
+\DoxyCodeLine{00249\ \ \ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00251\ \ \ \textcolor{keywordflow}{if}\ (enables.final\_range)}
+\DoxyCodeLine{00252\ \ \ \{}
+\DoxyCodeLine{00253\ \ \ \ \ used\_budget\_us\ +=\ FinalRangeOverhead;}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{comment}{//\ "{}Note\ that\ the\ final\ range\ timeout\ is\ determined\ by\ the\ timing}}
+\DoxyCodeLine{00256\ \ \ \ \ \textcolor{comment}{//\ budget\ and\ the\ sum\ of\ all\ other\ timeouts\ within\ the\ sequence.}}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{comment}{//\ If\ there\ is\ no\ room\ for\ the\ final\ range\ timeout,\ then\ an\ error}}
+\DoxyCodeLine{00258\ \ \ \ \ \textcolor{comment}{//\ will\ be\ set.\ Otherwise\ the\ remaining\ time\ will\ be\ applied\ to}}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{comment}{//\ the\ final\ range."{}}}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \textcolor{keywordflow}{if}\ (used\_budget\_us\ >\ budget\_us)}
+\DoxyCodeLine{00262\ \ \ \ \ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \textcolor{comment}{//\ "{}Requested\ timeout\ too\ big."{}}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00265\ \ \ \ \ \}}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ uint32\_t\ final\_range\_timeout\_us\ =\ budget\_us\ -\/\ used\_budget\_us;}
+\DoxyCodeLine{00268\ \ \ \ \ \textcolor{comment}{//\ (SequenceStepId\ ==\ VL53L0X\_SEQUENCESTEP\_FINAL\_RANGE)}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \textcolor{comment}{//\ "{}For\ the\ final\ range\ timeout,\ the\ pre-\/range\ timeout}}
+\DoxyCodeLine{00271\ \ \ \ \ \textcolor{comment}{//\ \ must\ be\ added.\ To\ do\ this\ both\ final\ and\ pre-\/range}}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{comment}{//\ \ timeouts\ must\ be\ expressed\ in\ macro\ periods\ MClks}}
+\DoxyCodeLine{00273\ \ \ \ \ \textcolor{comment}{//\ \ because\ they\ have\ different\ vcsel\ periods."{}}}
+\DoxyCodeLine{00274\ \ \ \ \ uint32\_t\ final\_range\_timeout\_mclks\ =}
+\DoxyCodeLine{00275\ \ \ \ \ VL53L0X\_timeoutMicrosecondsToMclks(final\_range\_timeout\_us,}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ timeouts.final\_range\_vcsel\_period\_pclks);}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{keywordflow}{if}\ (enables.pre\_range)}
+\DoxyCodeLine{00279\ \ \ \ \ \{}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ final\_range\_timeout\_mclks\ +=\ timeouts.pre\_range\_mclks;}
+\DoxyCodeLine{00281\ \ \ \ \ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI,}
+\DoxyCodeLine{00284\ \ \ \ \ VL53L0X\_encodeTimeout(final\_range\_timeout\_mclks));}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \ \ \textcolor{comment}{//\ set\_sequence\_step\_timeout()\ end}}
+\DoxyCodeLine{00287\ }
+\DoxyCodeLine{00288\ \ \ \ \ measurement\_timing\_budget\_us\ =\ budget\_us;\ \textcolor{comment}{//\ store\ for\ internal\ reuse}}
+\DoxyCodeLine{00289\ \ \ \}}
+\DoxyCodeLine{00290\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00291\ \}}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ }
+\DoxyCodeLine{00294\ \textcolor{keywordtype}{void}\ VL53L0X\_getSequenceStepEnables(I2C\_dev\_handles\ device\_handle,\ SequenceStepEnables\ *\ enables)}
+\DoxyCodeLine{00295\ \{}
+\DoxyCodeLine{00296\ \ \ uint8\_t\ sequence\_config\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ SYSTEM\_SEQUENCE\_CONFIG)>>8);}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ enables-\/>tcc\ \ \ \ \ \ \ \ \ \ =\ (sequence\_config\ >>\ 4)\ \&\ 0x1;}
+\DoxyCodeLine{00299\ \ \ enables-\/>dss\ \ \ \ \ \ \ \ \ \ =\ (sequence\_config\ >>\ 3)\ \&\ 0x1;}
+\DoxyCodeLine{00300\ \ \ enables-\/>msrc\ \ \ \ \ \ \ \ \ =\ (sequence\_config\ >>\ 2)\ \&\ 0x1;}
+\DoxyCodeLine{00301\ \ \ enables-\/>pre\_range\ \ \ \ =\ (sequence\_config\ >>\ 6)\ \&\ 0x1;}
+\DoxyCodeLine{00302\ \ \ enables-\/>final\_range\ \ =\ (sequence\_config\ >>\ 7)\ \&\ 0x1;}
+\DoxyCodeLine{00303\ \}}
+\DoxyCodeLine{00304\ }
+\DoxyCodeLine{00305\ \textcolor{keywordtype}{void}\ VL53L0X\_getSequenceStepTimeouts(I2C\_dev\_handles\ device\_handle,\ SequenceStepEnables\ \textcolor{keyword}{const}\ *\ enables,\ SequenceStepTimeouts\ *\ timeouts)}
+\DoxyCodeLine{00306\ \{}
+\DoxyCodeLine{00307\ \ \ timeouts-\/>pre\_range\_vcsel\_period\_pclks\ =\ VL53L0X\_getVcselPulsePeriod(device\_handle,\ VcselPeriodPreRange);}
+\DoxyCodeLine{00308\ \ \ timeouts-\/>msrc\_dss\_tcc\_mclks\ =\ (uint8\_t)(I2C\_readRegister16bit(device\_handle,\ MSRC\_CONFIG\_TIMEOUT\_MACROP)>>8)\ +\ 1;}
+\DoxyCodeLine{00309\ \ \ timeouts-\/>msrc\_dss\_tcc\_us\ =\ VL53L0X\_timeoutMclksToMicroseconds(timeouts-\/>msrc\_dss\_tcc\_mclks,}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ timeouts-\/>pre\_range\_vcsel\_period\_pclks);}
+\DoxyCodeLine{00311\ \ \ timeouts-\/>pre\_range\_mclks\ =\ VL53L0X\_decodeTimeout(I2C\_readRegister16bit(device\_handle,\ PRE\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI));}
+\DoxyCodeLine{00312\ \ \ timeouts-\/>pre\_range\_us\ =VL53L0X\_timeoutMclksToMicroseconds(timeouts-\/>pre\_range\_mclks,}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ timeouts-\/>pre\_range\_vcsel\_period\_pclks);}
+\DoxyCodeLine{00314\ \ \ timeouts-\/>final\_range\_vcsel\_period\_pclks\ =\ VL53L0X\_getVcselPulsePeriod(device\_handle,\ VcselPeriodFinalRange);}
+\DoxyCodeLine{00315\ \ \ timeouts-\/>final\_range\_mclks\ =}
+\DoxyCodeLine{00316\ \ \ \ \ VL53L0X\_decodeTimeout(I2C\_readRegister16bit(device\_handle,\ FINAL\_RANGE\_CONFIG\_TIMEOUT\_MACROP\_HI));}
+\DoxyCodeLine{00317\ }
+\DoxyCodeLine{00318\ \ \ \textcolor{keywordflow}{if}\ (enables-\/>pre\_range)}
+\DoxyCodeLine{00319\ \ \ \{}
+\DoxyCodeLine{00320\ \ \ \ \ timeouts-\/>final\_range\_mclks\ -\/=\ timeouts-\/>pre\_range\_mclks;}
+\DoxyCodeLine{00321\ \ \ \}}
+\DoxyCodeLine{00322\ \ \ timeouts-\/>final\_range\_us\ =}
+\DoxyCodeLine{00323\ \ \ \ \ VL53L0X\_timeoutMclksToMicroseconds(timeouts-\/>final\_range\_mclks,}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ timeouts-\/>final\_range\_vcsel\_period\_pclks);}
+\DoxyCodeLine{00325\ \}}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \textcolor{comment}{//\ Get\ the\ VCSEL\ pulse\ period\ in\ PCLKs\ for\ the\ given\ period\ type.}}
+\DoxyCodeLine{00328\ \textcolor{comment}{//\ based\ on\ VL53L0X\_get\_vcsel\_pulse\_period()}}
+\DoxyCodeLine{00329\ uint8\_t\ VL53L0X\_getVcselPulsePeriod(I2C\_dev\_handles\ device\_handle,\ vcselPeriodType\ type)}
+\DoxyCodeLine{00330\ \{}
+\DoxyCodeLine{00331\ \ \ \textcolor{keywordflow}{if}\ (type\ ==\ VcselPeriodPreRange)}
+\DoxyCodeLine{00332\ \ \ \{}
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordflow}{return}\ decodeVcselPeriod((uint8\_t)(I2C\_readRegister16bit(device\_handle,\ PRE\_RANGE\_CONFIG\_VCSEL\_PERIOD)>>8));}
+\DoxyCodeLine{00334\ \ \ \}}
+\DoxyCodeLine{00335\ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (type\ ==\ VcselPeriodFinalRange)}
+\DoxyCodeLine{00336\ \ \ \{}
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keywordflow}{return}\ decodeVcselPeriod((uint8\_t)(I2C\_readRegister16bit(device\_handle,\ FINAL\_RANGE\_CONFIG\_VCSEL\_PERIOD)>>8));}
+\DoxyCodeLine{00338\ \ \ \}}
+\DoxyCodeLine{00339\ \ \ \textcolor{keywordflow}{else}\ \{\ \textcolor{keywordflow}{return}\ 255;\ \}}
+\DoxyCodeLine{00340\ \}}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ uint32\_t\ VL53L0X\_timeoutMclksToMicroseconds(uint16\_t\ timeout\_period\_mclks,\ uint8\_t\ vcsel\_period\_pclks)}
+\DoxyCodeLine{00343\ \{}
+\DoxyCodeLine{00344\ \ \ uint32\_t\ macro\_period\_ns\ =\ calcMacroPeriod(vcsel\_period\_pclks);}
+\DoxyCodeLine{00345\ }
+\DoxyCodeLine{00346\ \ \ \textcolor{keywordflow}{return}\ ((timeout\_period\_mclks\ *\ macro\_period\_ns)\ +\ 500)\ /\ 1000;}
+\DoxyCodeLine{00347\ \}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00349\ uint16\_t\ VL53L0X\_decodeTimeout(uint16\_t\ reg\_val)}
+\DoxyCodeLine{00350\ \{}
+\DoxyCodeLine{00351\ \ \ \textcolor{comment}{//\ format:\ "{}(LSByte\ *\ 2\string^MSByte)\ +\ 1"{}}}
+\DoxyCodeLine{00352\ \ \ \textcolor{keywordflow}{return}\ (uint16\_t)((reg\_val\ \&\ 0x00FF)\ <<}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ (uint16\_t)((reg\_val\ \&\ 0xFF00)\ >>\ 8))\ +\ 1;}
+\DoxyCodeLine{00354\ \}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ uint32\_t\ VL53L0X\_timeoutMicrosecondsToMclks(uint32\_t\ timeout\_period\_us,\ uint8\_t\ vcsel\_period\_pclks)}
+\DoxyCodeLine{00357\ \{}
+\DoxyCodeLine{00358\ \ \ uint32\_t\ macro\_period\_ns\ =\ calcMacroPeriod(vcsel\_period\_pclks);}
+\DoxyCodeLine{00359\ \ \ \textcolor{keywordflow}{return}\ (((timeout\_period\_us\ *\ 1000)\ +\ (macro\_period\_ns\ /\ 2))\ /\ macro\_period\_ns);}
+\DoxyCodeLine{00360\ \}}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ uint16\_t\ VL53L0X\_encodeTimeout(uint32\_t\ timeout\_mclks)}
+\DoxyCodeLine{00363\ \{}
+\DoxyCodeLine{00364\ \ \ \textcolor{comment}{//\ format:\ "{}(LSByte\ *\ 2\string^MSByte)\ +\ 1"{}}}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \ \ uint32\_t\ ls\_byte\ =\ 0;}
+\DoxyCodeLine{00367\ \ \ uint16\_t\ ms\_byte\ =\ 0;}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \textcolor{keywordflow}{if}\ (timeout\_mclks\ >\ 0)}
+\DoxyCodeLine{00370\ \ \ \{}
+\DoxyCodeLine{00371\ \ \ \ \ ls\_byte\ =\ timeout\_mclks\ -\/\ 1;}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{keywordflow}{while}\ ((ls\_byte\ \&\ 0xFFFFFF00)\ >\ 0)}
+\DoxyCodeLine{00374\ \ \ \ \ \{}
+\DoxyCodeLine{00375\ \ \ \ \ \ \ ls\_byte\ >>=\ 1;}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ ms\_byte++;}
+\DoxyCodeLine{00377\ \ \ \ \ \}}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00379\ \ \ \ \ \textcolor{keywordflow}{return}\ (ms\_byte\ <<\ 8)\ |\ (ls\_byte\ \&\ 0xFF);}
+\DoxyCodeLine{00380\ \ \ \}}
+\DoxyCodeLine{00381\ \ \ \textcolor{keywordflow}{else}\ \{\ \textcolor{keywordflow}{return}\ 0;\ \}}
+\DoxyCodeLine{00382\ \}}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00384\ \textcolor{keywordtype}{bool}\ VL53L0X\_performSingleRefCalibration(I2C\_dev\_handles\ device\_handle\ ,uint8\_t\ vhv\_init\_byte)}
+\DoxyCodeLine{00385\ \{}
+\DoxyCodeLine{00386\ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSRANGE\_START,\ 0x01\ |\ vhv\_init\_byte);\ \textcolor{comment}{//\ VL53L0X\_REG\_SYSRANGE\_MODE\_START\_STOP}}
+\DoxyCodeLine{00387\ \ \ uint16\_t\ reg2;}
+\DoxyCodeLine{00388\ \ \ startTimeout();}
+\DoxyCodeLine{00389\ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{00390\ \ \ \{}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ reg2\ =\ I2C\_readRegister16bit(device\_handle,\ RESULT\_INTERRUPT\_STATUS);}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},"{}Single:\ \%"{}PRIu16"{}\ "{},reg2);}}
+\DoxyCodeLine{00393\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (checkTimeoutExpired())\ \{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00394\ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(500));}
+\DoxyCodeLine{00395\ \ \ \}\ \textcolor{keywordflow}{while}(((uint8\_t)reg2\ \&\ 0x07)\ ==\ 0);}
+\DoxyCodeLine{00396\ }
+\DoxyCodeLine{00397\ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_INTERRUPT\_CLEAR,\ 0x01);}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSRANGE\_START,\ 0x00);}
+\DoxyCodeLine{00400\ }
+\DoxyCodeLine{00401\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00402\ \}}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ uint16\_t\ VL53L0X\_readRangeSingleMillimeters(I2C\_dev\_handles\ device\_handle)}
+\DoxyCodeLine{00405\ \{}
+\DoxyCodeLine{00406\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x01);}
+\DoxyCodeLine{00407\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x01);}
+\DoxyCodeLine{00408\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x00,\ 0x00);}
+\DoxyCodeLine{00409\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x91,\ stop\_variable);}
+\DoxyCodeLine{00410\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x00,\ 0x01);}
+\DoxyCodeLine{00411\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x00);}
+\DoxyCodeLine{00412\ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x00);}
+\DoxyCodeLine{00413\ }
+\DoxyCodeLine{00414\ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSRANGE\_START,\ 0x01);}
+\DoxyCodeLine{00415\ \ \ \textcolor{comment}{//ESP\_LOGI("{}\ "{},\ "{}AICI"{});}}
+\DoxyCodeLine{00416\ \ \ \ \textcolor{comment}{//"{}Wait\ until\ start\ bit\ has\ been\ cleared"{}}}
+\DoxyCodeLine{00417\ \ \ startTimeout();}
+\DoxyCodeLine{00418\ \ \ \textcolor{keywordflow}{while}\ (((uint8\_t)(I2C\_readRegister16bit(device\_handle,\ SYSRANGE\_START)>>8)\ \&\ 0x01))}
+\DoxyCodeLine{00419\ \ \ \{}
+\DoxyCodeLine{00420\ \ \ \ \ \textcolor{keywordflow}{if}\ (checkTimeoutExpired())}
+\DoxyCodeLine{00421\ \ \ \ \ \{}
+\DoxyCodeLine{00422\ \ \ \ \ \ \ \textcolor{comment}{//did\_timeout\ =\ true;}}
+\DoxyCodeLine{00423\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 65535;}
+\DoxyCodeLine{00424\ \ \ \ \ \}}
+\DoxyCodeLine{00425\ \ \ \}}
+\DoxyCodeLine{00426\ }
+\DoxyCodeLine{00427\ \ \ \textcolor{keywordflow}{return}\ VL53L0X\_readRangeContinuousMillimeters(device\_handle);}
+\DoxyCodeLine{00428\ \}}
+\DoxyCodeLine{00429\ }
+\DoxyCodeLine{00430\ uint16\_t\ VL53L0X\_readRangeContinuousMillimeters(I2C\_dev\_handles\ device\_handle)}
+\DoxyCodeLine{00431\ \{}
+\DoxyCodeLine{00432\ \ \ startTimeout();}
+\DoxyCodeLine{00433\ \ \ uint16\_t\ range\ =\ 0;}
+\DoxyCodeLine{00434\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ start\_continuous\_back2back\_sens1\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00435\ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ start\_continuous\_back2back\_sens2\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00436\ \ \ \textcolor{keywordflow}{if}((start\_continuous\_back2back\_sens1\ ==\ \textcolor{keyword}{false}\ \&\&\ device\_handle\ ==\ I2C\_distance\_sens1\_dev\_handle)\ ||}
+\DoxyCodeLine{00437\ \ \ \ \ \ ((start\_continuous\_back2back\_sens2\ ==\ \textcolor{keyword}{false}\ \&\&\ device\_handle\ ==\ I2C\_distance\_sens2\_dev\_handle)))}
+\DoxyCodeLine{00438\ \ \ \{}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x01);}
+\DoxyCodeLine{00440\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x01);}
+\DoxyCodeLine{00441\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x00,\ 0x00);}
+\DoxyCodeLine{00442\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x91,\ stop\_variable);}
+\DoxyCodeLine{00443\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x00,\ 0x01);}
+\DoxyCodeLine{00444\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0xFF,\ 0x00);}
+\DoxyCodeLine{00445\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ 0x80,\ 0x00);}
+\DoxyCodeLine{00446\ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSRANGE\_START,\ 0x02);\ \textcolor{comment}{//\ back\ to\ back\ mode\ =\ fast\ as\ possible}}
+\DoxyCodeLine{00447\ \ \ \ \ \ \ \textcolor{keywordflow}{if}(device\_handle\ ==\ I2C\_distance\_sens1\_dev\_handle)}
+\DoxyCodeLine{00448\ \ \ \ \ \ \ start\_continuous\_back2back\_sens1\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00449\ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ start\_continuous\_back2back\_sens2\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00450\ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(20));}
+\DoxyCodeLine{00451\ \ \ \}}
+\DoxyCodeLine{00452\ }
+\DoxyCodeLine{00453\ \ \ \textcolor{keywordflow}{while}\ (((uint8\_t)(I2C\_readRegister16bit(device\_handle,\ RESULT\_INTERRUPT\_STATUS)>>8)\ \&\ 0x07)\ ==\ 0)}
+\DoxyCodeLine{00454\ \ \ \{}
+\DoxyCodeLine{00455\ \ \ \ \ \textcolor{keywordflow}{if}\ (checkTimeoutExpired())}
+\DoxyCodeLine{00456\ \ \ \ \ \{}
+\DoxyCodeLine{00457\ \ \ \ \ \ \ \textcolor{comment}{//did\_timeout\ =\ true;}}
+\DoxyCodeLine{00458\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{00459\ \ \ \ \ \}}
+\DoxyCodeLine{00460\ \ \ \}}
+\DoxyCodeLine{00461\ \ \ \textcolor{comment}{//\ assumptions:\ Linearity\ Corrective\ Gain\ is\ 1000\ (default);}}
+\DoxyCodeLine{00462\ \ \ \textcolor{comment}{//\ fractional\ ranging\ is\ not\ enabled}}
+\DoxyCodeLine{00463\ \ \ range\ =\ I2C\_readRegister16bit(device\_handle,\ RESULT\_RANGE\_STATUS\ +\ 10);}
+\DoxyCodeLine{00464\ \ \ I2C\_writeRegister8bit(device\_handle,\ SYSTEM\_INTERRUPT\_CLEAR,\ 0x01);}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ \textcolor{keywordflow}{return}\ range;}
+\DoxyCodeLine{00468\ \}}
+\DoxyCodeLine{00469\ }
+\DoxyCodeLine{00470\ \textcolor{keywordtype}{void}\ VL53L0X\_SetInterruptThresholds(I2C\_dev\_handles\ device\_handle,}
+\DoxyCodeLine{00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ ThresholdLow,}
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ ThresholdHigh)\ \{}
+\DoxyCodeLine{00473\ \ \ uint16\_t\ Threshold16;}
+\DoxyCodeLine{00474\ }
+\DoxyCodeLine{00475\ \ \ \textcolor{comment}{/*\ no\ dependency\ on\ DeviceMode\ for\ Ewok\ */}}
+\DoxyCodeLine{00476\ \ \ \textcolor{comment}{/*\ Need\ to\ divide\ by\ 2\ because\ the\ FW\ will\ apply\ a\ x2\ */}}
+\DoxyCodeLine{00477\ \ \ Threshold16\ =\ (uint16\_t)((ThresholdLow\ >>\ 17)\ \&\ 0x00fff);}
+\DoxyCodeLine{00478\ \ \ I2C\_writeRegister16bit(device\_handle,\ \ SYSTEM\_THRESH\_LOW,\ Threshold16);}
+\DoxyCodeLine{00479\ }
+\DoxyCodeLine{00480\ \ \ \textcolor{comment}{/*\ Need\ to\ divide\ by\ 2\ because\ the\ FW\ will\ apply\ a\ x2\ */}}
+\DoxyCodeLine{00481\ \ \ Threshold16\ =\ (uint16\_t)((ThresholdHigh\ >>\ 17)\ \&\ 0x00fff);}
+\DoxyCodeLine{00482\ \ \ I2C\_writeRegister16bit(device\_handle,\ \ SYSTEM\_THRESH\_HIGH,\ Threshold16);}
+\DoxyCodeLine{00483\ \ \ \textcolor{comment}{//ESP\_LOGI("{}"{},\ "{}Set\ treshold."{});}}
+\DoxyCodeLine{00484\ \}}
+\DoxyCodeLine{00485\ }
+\DoxyCodeLine{00486\ }
+\DoxyCodeLine{00487\ }
+\DoxyCodeLine{00488\ }
+\DoxyCodeLine{00489\ \textcolor{keywordtype}{void}\ VL53L0X\_setupI2CRegisters(I2C\_dev\_handles\ device\_handle)\ \{}
+\DoxyCodeLine{00490\ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ regs\_vals[][2]\ =\ \{}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x00,\ 0x00\},}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x09,\ 0x00\},\ \{0x10,\ 0x00\},\ \{0x11,\ 0x00\},}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \{0x24,\ 0x01\},\ \{0x25,\ 0xFF\},\ \{0x75,\ 0x00\},}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x4E,\ 0x2C\},\ \{0x48,\ 0x00\},\ \{0x30,\ 0x20\},}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x30,\ 0x09\},\ \{0x54,\ 0x00\},\ \{0x31,\ 0x04\},\ \{0x32,\ 0x03\},\ \{0x40,\ 0x83\},\ \{0x46,\ 0x25\},}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \{0x60,\ 0x00\},\ \{0x27,\ 0x00\},\ \{0x50,\ 0x06\},\ \{0x51,\ 0x00\},\ \{0x52,\ 0x96\},\ \{0x56,\ 0x08\},\ \{0x57,\ 0x30\},}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \{0x61,\ 0x00\},\ \{0x62,\ 0x00\},\ \{0x64,\ 0x00\},\ \{0x65,\ 0x00\},\ \{0x66,\ 0xA0\},}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x22,\ 0x32\},\ \{0x47,\ 0x14\},\ \{0x49,\ 0xFF\},\ \{0x4A,\ 0x00\},}
+\DoxyCodeLine{00499\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x7A,\ 0x0A\},\ \{0x7B,\ 0x00\},\ \{0x78,\ 0x21\},}
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x23,\ 0x34\},\ \{0x42,\ 0x00\},\ \{0x44,\ 0xFF\},\ \{0x45,\ 0x26\},\ \{0x46,\ 0x05\},}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \{0x40,\ 0x40\},\ \{0x0E,\ 0x06\},\ \{0x20,\ 0x1A\},\ \{0x43,\ 0x40\},}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x34,\ 0x03\},\ \{0x35,\ 0x44\},}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x31,\ 0x04\},\ \{0x4B,\ 0x09\},\ \{0x4C,\ 0x05\},\ \{0x4D,\ 0x04\},}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x44,\ 0x00\},\ \{0x45,\ 0x20\},\ \{0x47,\ 0x08\},\ \{0x48,\ 0x28\},\ \{0x67,\ 0x00\},}
+\DoxyCodeLine{00505\ \ \ \ \ \ \ \ \ \{0x70,\ 0x04\},\ \{0x71,\ 0x01\},\ \{0x72,\ 0xFE\},\ \{0x76,\ 0x00\},\ \{0x77,\ 0x00\},}
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x0D,\ 0x01\},}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x80,\ 0x01\},\ \{0x01,\ 0xF8\},}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x01\},\ \{0x8E,\ 0x01\},\ \{0x00,\ 0x01\},}
+\DoxyCodeLine{00509\ \ \ \ \ \ \ \ \ \{0xFF,\ 0x00\},\ \{0x80,\ 0x00\},}
+\DoxyCodeLine{00510\ \ \ \ \ \};}
+\DoxyCodeLine{00511\ \ \ \ \ writeMultipleRegisters(device\_handle,\ regs\_vals,\ \textcolor{keyword}{sizeof}(regs\_vals)\ /\ \textcolor{keyword}{sizeof}(regs\_vals[0]));}
+\DoxyCodeLine{00512\ \}}
+
+\end{DoxyCode}

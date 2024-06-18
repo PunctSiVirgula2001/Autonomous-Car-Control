@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_structpixy2_commands" xml:lang="en-US">
+<title>pixy2Commands Struct Reference</title>
+<indexterm><primary>pixy2Commands</primary></indexterm>
+<para>
+<computeroutput>#include &lt;I2C_cameraSensor.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>uint8_t <link linkend="_structpixy2_commands_1a6bab39ce3ec27c60ca9b440de6cc5e1c">computedSpeedSetpoint</link></para>
+</listitem>
+            <listitem><para>uint8_t <link linkend="_structpixy2_commands_1ac5ecf9eb16163cc0d3b89d49ae9d2838">computedSteerSetpoint</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00042">42</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_structpixy2_commands_1a6bab39ce3ec27c60ca9b440de6cc5e1c"/><section>
+    <title>computedSpeedSetpoint</title>
+<indexterm><primary>computedSpeedSetpoint</primary><secondary>pixy2Commands</secondary></indexterm>
+<indexterm><primary>pixy2Commands</primary><secondary>computedSpeedSetpoint</secondary></indexterm>
+<para><computeroutput>uint8_t computedSpeedSetpoint</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00043">43</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<anchor xml:id="_structpixy2_commands_1ac5ecf9eb16163cc0d3b89d49ae9d2838"/><section>
+    <title>computedSteerSetpoint</title>
+<indexterm><primary>computedSteerSetpoint</primary><secondary>pixy2Commands</secondary></indexterm>
+<indexterm><primary>pixy2Commands</primary><secondary>computedSteerSetpoint</secondary></indexterm>
+<para><computeroutput>uint8_t computedSteerSetpoint</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8h_source_1l00044">44</link> of file <link linkend="__i2_c__camera_sensor_8h_source">I2C_cameraSensor.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/I2C/drivers/<link linkend="__i2_c__camera_sensor_8h">I2C_cameraSensor.h</link></section>
+</section>

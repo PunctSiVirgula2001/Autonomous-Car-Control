@@ -1,0 +1,137 @@
+\doxysection{src/\+I2\+C/\+I2\+C\+\_\+sensor\+Control.c File Reference}
+\label{_i2_c__sensor_control_8c}\index{src/I2C/I2C\_sensorControl.c@{src/I2C/I2C\_sensorControl.c}}
+{\ttfamily \#include "{}I2\+C\+\_\+sensor\+Control.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+sensor\+Control.\+c\+:
+% FIG 0
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ I2\+C\+\_\+devices\+\_\+task} (void $\ast$pv\+Parameters)
+\item 
+bool \textbf{ I2\+C\+\_\+add\+And\+Initialise\+Sensors} ()
+\item 
+void \textbf{ start\+\_\+\+I2\+C\+\_\+devices\+\_\+task} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Queue\+Handle\+\_\+t \textbf{ I2\+C\+\_\+command\+Queue}
+\item 
+Queue\+Handle\+\_\+t \textbf{ autonomous\+Mode\+Control\+Pixy\+Queue}
+\item 
+bool \textbf{ I2\+C\+\_\+sensors\+\_\+initiated} = false
+\item 
+\textbf{ I2\+C\+\_\+\+COMMAND} \textbf{ i2c\+\_\+command}
+\item 
+int \textbf{ speed\+\_\+distance\+\_\+sens\+\_\+scaling}
+\item 
+\textbf{ Pixy2\+Lines} \textbf{ lines}
+\item 
+bool \textbf{ Autonomous\+Mode}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!I2C\_addAndInitialiseSensors@{I2C\_addAndInitialiseSensors}}
+\index{I2C\_addAndInitialiseSensors@{I2C\_addAndInitialiseSensors}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{I2C\_addAndInitialiseSensors()}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_a634afb850adbac31a4c7bd552156d2e0} 
+bool I2\+C\+\_\+add\+And\+Initialise\+Sensors (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 230} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!I2C\_devices\_task@{I2C\_devices\_task}}
+\index{I2C\_devices\_task@{I2C\_devices\_task}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{I2C\_devices\_task()}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_a223d018b44dccfa36c89dcbcc975bef1} 
+void I2\+C\+\_\+devices\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!start\_I2C\_devices\_task@{start\_I2C\_devices\_task}}
+\index{start\_I2C\_devices\_task@{start\_I2C\_devices\_task}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{start\_I2C\_devices\_task()}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_af25a3b4136659e2a41e7012d181ca9ad} 
+void start\+\_\+\+I2\+C\+\_\+devices\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 260} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+
+
+\doxysubsection{Variable Documentation}
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!AutonomousMode@{AutonomousMode}}
+\index{AutonomousMode@{AutonomousMode}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{AutonomousMode}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_aaa8698890fe268d44ede1ad83c711ffb} 
+bool Autonomous\+Mode\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 111} of file \textbf{ Motor\+And\+Servo\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}}
+\index{autonomousModeControlPixyQueue@{autonomousModeControlPixyQueue}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{autonomousModeControlPixyQueue}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_ae0a77b0cf83af5755b406387533338e7} 
+Queue\+Handle\+\_\+t autonomous\+Mode\+Control\+Pixy\+Queue\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ I2\+C\+\_\+camera\+Sensor.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!i2c\_command@{i2c\_command}}
+\index{i2c\_command@{i2c\_command}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{i2c\_command}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_af8709299f1795dd960e64b0f618534cc} 
+\textbf{ I2\+C\+\_\+\+COMMAND} i2c\+\_\+command}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!I2C\_commandQueue@{I2C\_commandQueue}}
+\index{I2C\_commandQueue@{I2C\_commandQueue}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{I2C\_commandQueue}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_ad6d46a9e7610ddf0423e1a5e2e9bfc4f} 
+Queue\+Handle\+\_\+t I2\+C\+\_\+command\+Queue}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!I2C\_sensors\_initiated@{I2C\_sensors\_initiated}}
+\index{I2C\_sensors\_initiated@{I2C\_sensors\_initiated}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{I2C\_sensors\_initiated}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_a6a07f60157030f413311bca2bcd05350} 
+bool I2\+C\+\_\+sensors\+\_\+initiated = false}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!lines@{lines}}
+\index{lines@{lines}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{lines}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_add0400696ecb105e7b62b89241ff69ca} 
+\textbf{ Pixy2\+Lines} lines}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_sensorControl.c@{I2C\_sensorControl.c}!speed\_distance\_sens\_scaling@{speed\_distance\_sens\_scaling}}
+\index{speed\_distance\_sens\_scaling@{speed\_distance\_sens\_scaling}!I2C\_sensorControl.c@{I2C\_sensorControl.c}}
+\doxysubsubsection{speed\_distance\_sens\_scaling}
+{\footnotesize\ttfamily \label{_i2_c__sensor_control_8c_a798a61f7f4a9d94f40e4a0c59bece8a0} 
+int speed\+\_\+distance\+\_\+sens\+\_\+scaling}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+

@@ -1,0 +1,49 @@
+\doxysection{motors\+\_\+common.\+h}
+\label{motors__common_8h_source}\index{include/motors/drivers/motors\_common.h@{include/motors/drivers/motors\_common.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ motors\_common.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 18\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ INCLUDE\_MOTORS\_DRIVERS\_MOTORS\_COMMON\_H\_}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ INCLUDE\_MOTORS\_DRIVERS\_MOTORS\_COMMON\_H\_}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}esp\_log.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}driver/ledc.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}esp\_task\_wdt.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}driver/mcpwm\_timer.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}driver/mcpwm\_cmpr.h"{}}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#include\ "{}driver/mcpwm\_oper.h"{}}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ "{}driver/mcpwm\_gen.h"{}}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}driver/pulse\_cnt.h"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}freertos/FreeRTOS.h"{}}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <stdbool.h>}\ \textcolor{comment}{//\ For\ bool\ type}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <stdlib.h>}\ \textcolor{comment}{//\ For\ atoi\ function}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <string.h>}\ \textcolor{comment}{//\ For\ strlen\ function}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ ON\ 0U}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ OFF\ 1U}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ MOTOR\_MOCK\_TEST\ OFF}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ MCPWM\ 0U}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ LEDC\ 1U}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{/*Set\ which\ pwm\ source\ to\ use:\ MCPWM\ or\ LEDC.*/}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ MOTOR\_CONTROL\ MCPWM}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{/*Pwm\ settings\ that\ are\ shared\ between\ servo\ and\ dc\ motor\ */}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ LEDC\_Motor\_And\_Servo\_MODE\ \ \ LEDC\_HIGH\_SPEED\_MODE}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ LEDC\_Motor\_And\_Servo\_FREQ\ \ \ 50\ \ \ }\textcolor{comment}{//\ 50Hz}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ INCLUDE\_MOTORS\_DRIVERS\_MOTORS\_COMMON\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,37 @@
+\doxysection{I2\+C\+\_\+temperature\+Sensor.\+h}
+\label{_i2_c__temperature_sensor_8h_source}\index{include/I2C/drivers/I2C\_temperatureSensor.h@{include/I2C/drivers/I2C\_temperatureSensor.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{\ *\ I2C\_temperatureSensor.h}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ *}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ \ Created\ on:\ 14\ iun.\ 2024}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ \ \ \ \ \ Author:\ racov}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ */}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#ifndef\ INCLUDE\_I2C\_I2C\_TEMPERATURESENSOR\_H\_}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ INCLUDE\_I2C\_I2C\_TEMPERATURESENSOR\_H\_}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}I2C\_common.h"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{comment}{/********\ BMP/BME280\ sensor\ **********/}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{struct\ }bme280\_calib\_data\ \{}
+\DoxyCodeLine{00015\ \ \ \ \ uint16\_t\ dig\_T1;}
+\DoxyCodeLine{00016\ \ \ \ \ int16\_t\ dig\_T2;}
+\DoxyCodeLine{00017\ \ \ \ \ int16\_t\ dig\_T3;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ Add\ humidity\ calibration\ data\ here\ if\ needed}}
+\DoxyCodeLine{00019\ \};}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ I2C\ temperature\ sensor\ BMP\ functions}}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ I2C\_temperatureSensor\_trigger\_measurement();}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ I2C\ pressure\ sensor\ BME\ functions}}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ I2C\_set\_pressure\_register();}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ I2C\ humidity\ sensor\ BME/BMP\ functions}}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ I2C\_set\_humidity\_register();}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ I2C\_read\_temperature(\textcolor{keywordtype}{double}\ *fine\_temp);}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ Task\ for\ I2C\ devices}}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ I2C\_devices\_task(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ INCLUDE\_I2C\_I2C\_TEMPERATURESENSOR\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

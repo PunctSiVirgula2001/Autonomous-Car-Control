@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_main_8c" xml:lang="en-US">
+<title>main/main.c File Reference</title>
+<indexterm><primary>main/main.c</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &lt;stdio.h&gt;<?linebreak?>#include &lt;stdbool.h&gt;<?linebreak?>#include &lt;unistd.h&gt;<?linebreak?>#include &quot;freertos/FreeRTOS.h&quot;<?linebreak?>#include &quot;freertos/task.h&quot;<?linebreak?>#include &quot;esp_log.h&quot;<?linebreak?>#include &quot;MotorAndServoControl.h&quot;<?linebreak?>#include &quot;PID.h&quot;<?linebreak?>#include &quot;Network.h&quot;<?linebreak?>#include &quot;../include/I2C/I2C_sensorControl.h&quot;<?linebreak?>#include &quot;UART_Jetson.h&quot;<?linebreak?></programlisting>Include dependency graph for main.c:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="main_8c__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="_main_8c_1a630544a7f0a2cc40d8a7fefab7e2fe70">app_main</link> (void)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Variables    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="_main_8c_1a7316aaeee91623cd9fcab65f302ce7be">allowed_to_send</link></para>
+</listitem>
+            <listitem><para>char <link linkend="_main_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link> [128]</para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1a731dce19cc17cfa0419781203697bf14">diagnosticModeControlQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1ae0a77b0cf83af5755b406387533338e7">autonomousModeControlPixyQueue</link></para>
+</listitem>
+            <listitem><para>QueueSetHandle_t <link linkend="_main_8c_1a35af4e2fb01eed708c67a42aad85cebf">QueueSetAutonomousOrDiagnostic</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1a745d4a6c288386e09694294a5f19410a">pulse_encoderQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1adb1f977be6734adfcc8e37d4f2659ec5">speed_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1a4c4e2a762a11fd2e1ddee7045c9bae56">steer_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1a52c196f65d55f3b464764bf630e6f05e">PID_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueHandle_t <link linkend="_main_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f">I2C_commandQueue</link></para>
+</listitem>
+            <listitem><para>QueueSetHandle_t <link linkend="_main_8c_1a5c87d10806c8bb41d42841fc2fb559d9">QueueSetPIDNecessaryCommands</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="_main_8c_1a6a07f60157030f413311bca2bcd05350">I2C_sensors_initiated</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="_main_8c_1a630544a7f0a2cc40d8a7fefab7e2fe70"/><section>
+    <title>app_main()</title>
+<indexterm><primary>app_main</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>app_main</secondary></indexterm>
+<para><computeroutput>void app_main (void )</computeroutput></para><para>
+Definition at line <link linkend="_main_8c_source_1l00058">58</link> of file <link linkend="_main_8c_source">main.c</link>.</para>
+</section>
+</section>
+<section>
+<title>Variable Documentation</title>
+<anchor xml:id="_main_8c_1a7316aaeee91623cd9fcab65f302ce7be"/><section>
+    <title>allowed_to_send</title>
+<indexterm><primary>allowed_to_send</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>allowed_to_send</secondary></indexterm>
+<para><computeroutput>bool allowed_to_send<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00002">2</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1ae0a77b0cf83af5755b406387533338e7"/><section>
+    <title>autonomousModeControlPixyQueue</title>
+<indexterm><primary>autonomousModeControlPixyQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>autonomousModeControlPixyQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t autonomousModeControlPixyQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__camera_sensor_8c_source_1l00015">15</link> of file <link linkend="__i2_c__camera_sensor_8c_source">I2C_cameraSensor.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a731dce19cc17cfa0419781203697bf14"/><section>
+    <title>diagnosticModeControlQueue</title>
+<indexterm><primary>diagnosticModeControlQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>diagnosticModeControlQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t diagnosticModeControlQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00103">103</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1ad6d46a9e7610ddf0423e1a5e2e9bfc4f"/><section>
+    <title>I2C_commandQueue</title>
+<indexterm><primary>I2C_commandQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>I2C_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t I2C_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00010">10</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a6a07f60157030f413311bca2bcd05350"/><section>
+    <title>I2C_sensors_initiated</title>
+<indexterm><primary>I2C_sensors_initiated</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>I2C_sensors_initiated</secondary></indexterm>
+<para><computeroutput>bool I2C_sensors_initiated<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__i2_c__sensor_control_8c_source_1l00012">12</link> of file <link linkend="__i2_c__sensor_control_8c_source">I2C_sensorControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a52c196f65d55f3b464764bf630e6f05e"/><section>
+    <title>PID_commandQueue</title>
+<indexterm><primary>PID_commandQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>PID_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t PID_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00107">107</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a745d4a6c288386e09694294a5f19410a"/><section>
+    <title>pulse_encoderQueue</title>
+<indexterm><primary>pulse_encoderQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>pulse_encoderQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t pulse_encoderQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="_encoder_8c_source_1l00011">11</link> of file <link linkend="_encoder_8c_source">encoder.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a35af4e2fb01eed708c67a42aad85cebf"/><section>
+    <title>QueueSetAutonomousOrDiagnostic</title>
+<indexterm><primary>QueueSetAutonomousOrDiagnostic</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>QueueSetAutonomousOrDiagnostic</secondary></indexterm>
+<para><computeroutput>QueueSetHandle_t QueueSetAutonomousOrDiagnostic<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00108">108</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a5c87d10806c8bb41d42841fc2fb559d9"/><section>
+    <title>QueueSetPIDNecessaryCommands</title>
+<indexterm><primary>QueueSetPIDNecessaryCommands</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>QueueSetPIDNecessaryCommands</secondary></indexterm>
+<para><computeroutput>QueueSetHandle_t QueueSetPIDNecessaryCommands<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00006">6</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1ac71568e7238007e8666f6ba60d8bfe35"/><section>
+    <title>rx_buffer</title>
+<indexterm><primary>rx_buffer</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>rx_buffer</secondary></indexterm>
+<para><computeroutput>char rx_buffer[128]<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__network_8c_source_1l00003">3</link> of file <link linkend="__network_8c_source">Network.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1adb1f977be6734adfcc8e37d4f2659ec5"/><section>
+    <title>speed_commandQueue</title>
+<indexterm><primary>speed_commandQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>speed_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t speed_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00105">105</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+<anchor xml:id="_main_8c_1a4c4e2a762a11fd2e1ddee7045c9bae56"/><section>
+    <title>steer_commandQueue</title>
+<indexterm><primary>steer_commandQueue</primary><secondary>main.c</secondary></indexterm>
+<indexterm><primary>main.c</primary><secondary>steer_commandQueue</secondary></indexterm>
+<para><computeroutput>QueueHandle_t steer_commandQueue<computeroutput>[extern]</computeroutput></computeroutput></para><para>
+Definition at line <link linkend="__motor_and_servo_control_8c_source_1l00106">106</link> of file <link linkend="__motor_and_servo_control_8c_source">MotorAndServoControl.c</link>.</para>
+</section>
+</section>
+</section>

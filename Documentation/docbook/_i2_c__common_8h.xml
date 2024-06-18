@@ -1,0 +1,409 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__common_8h" xml:lang="en-US">
+<title>include/I2C/drivers/I2C_common.h File Reference</title>
+<indexterm><primary>include/I2C/drivers/I2C_common.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;driver/i2c_master.h&quot;<?linebreak?>#include &quot;freertos/FreeRTOS.h&quot;<?linebreak?>#include &quot;freertos/task.h&quot;<?linebreak?>#include &quot;driver/gpio.h&quot;<?linebreak?>#include &quot;esp_log.h&quot;<?linebreak?>#include &quot;driver/i2c.h&quot;<?linebreak?>#include &quot;esp_task_wdt.h&quot;<?linebreak?>#include &quot;math.h&quot;<?linebreak?>#include &quot;Network.h&quot;<?linebreak?>#include &lt;stdbool.h&gt;<?linebreak?></programlisting>Include dependency graph for I2C_common.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__common_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__common_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1a18aefd12ad84d4c33dc97923cb821e47">I2C_SDA</link>&#160;&#160;&#160;21</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1a212ca328a6409c98f8c3dfbbe1ba561d">I2C_SCL</link>&#160;&#160;&#160;22</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1aa01619630da6d91ae0ac6877226ab056">INTERNAL_PULLUPS</link>&#160;&#160;&#160;false</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1a5abfaf2b47dd07ff9c43c9300c3a2cf1">GLITCH_IGNORE_CNT</link>&#160;&#160;&#160;7</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1a0658e1ac8d0cbe573414a682dc169abb">SCL_SPEED_FAST_MODE</link>&#160;&#160;&#160;400000</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1a80b8d904712a0d978c551f79294691cb">SCL_SPEED_SLOW_MODE</link>&#160;&#160;&#160;100000</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1a06c45257753b6f916524ef7ac1d9d17f">RST_PIN_MUX_I2C</link>&#160;&#160;&#160;23</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1aded0995a06cbb547ae74c74283a7109f">I2C_COMMAND_SIZE</link>&#160;&#160;&#160;(sizeof(<link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link>))</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__common_8h_1aefc0109bdbffec9c0d40e63654111db2">QUEUE_SIZE_I2C</link>&#160;&#160;&#160;10</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Typedefs    </title>
+        <itemizedlist>
+            <listitem><para>typedef enum <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6">I2C_devices_multiplexer</link> <link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link></para>
+</listitem>
+            <listitem><para>typedef enum <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9">I2C_devices</link> <link linkend="__i2_c__common_8h_1a311e33163393c931039f55061c6918fe">I2C_devices</link></para>
+</listitem>
+            <listitem><para>typedef enum <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> <link linkend="__i2_c__common_8h_1a559f5692b1b1a3e5c0edfa019b78bef1">I2C_dev_handles</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Enumerations    </title>
+        <itemizedlist>
+            <listitem><para>enum <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6">I2C_devices_multiplexer</link> { <?linebreak?><link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a101308220f1c2975f9c1132136c1d713">NO_MUX_SELECTED</link> = -1
+, <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a74556c047e53ea5ae5d205eb0ea15d88">I2C_distance_sens_1_mux</link> = 0
+, <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a366361b6c13f8f3072a1ffac0d249d90">I2C_distance_sens_2_mux</link> = 1
+, <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a7b6b89c137d67e25714751e50d721c6b">I2C_adxl345_sens_mux</link> = 3
+, <?linebreak?><link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6ad7b0bc85a1daf7e9a20727d4740adb24">I2C_temp_sens_mux</link> = 2
+, <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a3445811f5fe19076f86332b2ce6c780b">I2C_oled_display_096_mux</link> = 5
+, <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a08bdbe34ce8659d94b4f5e182a43d125">I2C_pixy2_camera_mux</link> = 4
+ }</para>
+</listitem>
+            <listitem><para>enum <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9">I2C_devices</link> { <?linebreak?><link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a151002e2e300f340ce5a5b83ee443594">I2C_mux_addr</link> = 0x70
+, <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a908ba691106cd1ed595bd7418581ed49">I2C_temp_sens_addr</link> = 0x76
+, <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9adea9b3d7f55d5310d0799a2692ed572b">I2C_distance_sens_addr</link> = 0x29
+, <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a4601c56c5c7a2bf4090ab788d19a167b">I2C_pixy2_camera_addr</link> = 0x54
+, <?linebreak?><link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a34fad3dd3a58959b3665dc8725c6a3b8">I2C_adxl345_sens_addr</link> = 0x53
+, <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a1d13246f35bc4f64d79a6d786c6ce98d">I2C_oled_display_096_addr</link> = 0x00
+ }</para>
+</listitem>
+            <listitem><para>enum <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> { <?linebreak?><link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a5085c8956bca4258b1de065182c1c11b">I2C_multiplexer_dev_handle</link>
+, <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93">I2C_pixy2_dev_handle</link>
+, <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>
+, <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>
+, <?linebreak?><link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c">I2C_temp_sens_dev_handle</link>
+, <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e">I2C_oled_display_096_dev_handle</link>
+, <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4">I2C_adxl345_sens_dev_handle</link>
+, <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a0465af2b7a27ff1861908447a077a156">I2C_MAX_Num_of_dev_handles</link>
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a195e5504c89aeda3a53f31710e405623">I2C_master_init</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1aef48213de5230add491038aa4c4eb05a">I2C_select_multiplexer_channel</link> (<link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link> num_channel)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, unsigned char *data, size_t write_size)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1aee26da50da18a761354c3d05c6ab0145">I2C_receive</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t *data, size_t read_size)</para>
+</listitem>
+            <listitem><para>uint8_t <link linkend="__i2_c__common_8h_1ae9d6e477c0e54827a4bb9bbf8aa301d3">I2C_readRegister8bit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg)</para>
+</listitem>
+            <listitem><para>uint16_t <link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg)</para>
+</listitem>
+            <listitem><para>uint32_t <link linkend="__i2_c__common_8h_1a6aea245d443d9090e23b331c086433b6">I2C_readRegister32bit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg, uint8_t value)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a08e5e4ac56fb1d15beeb7997e2fa97de">I2C_writeRegister16bit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg, uint16_t value)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a4ba94f60644888082c968d910dd4c20e">I2C_writeRegister32bit</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg, uint32_t value)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a12e39c7748d800e1fc75f5242b56db82">writeMultipleRegisters</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, const uint8_t(*regs_vals)[2], size_t count)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1ab80632e89563cc7cffa2bd9b6f301fcd">I2C_add_device</link> (uint8_t device_address)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a793ef527029215fa4b7539adcc14e5e0">config_rst_pin_i2c_mux</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a0606cd7138b8af0f8a5b55f87d85849e">rst_pin_i2c_mux_on</link> ()</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__common_8h_1a0ac33d5cead56645b2d38faf5ff80e05">rst_pin_i2c_mux_off</link> ()</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__i2_c__common_8h_1a5abfaf2b47dd07ff9c43c9300c3a2cf1"/><section>
+    <title>GLITCH_IGNORE_CNT</title>
+<indexterm><primary>GLITCH_IGNORE_CNT</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>GLITCH_IGNORE_CNT</secondary></indexterm>
+<para><computeroutput>#define GLITCH_IGNORE_CNT&#160;&#160;&#160;7</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00020">20</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1aded0995a06cbb547ae74c74283a7109f"/><section>
+    <title>I2C_COMMAND_SIZE</title>
+<indexterm><primary>I2C_COMMAND_SIZE</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_COMMAND_SIZE</secondary></indexterm>
+<para><computeroutput>#define I2C_COMMAND_SIZE&#160;&#160;&#160;(sizeof(<link linkend="_struct_i2_c___c_o_m_m_a_n_d">I2C_COMMAND</link>))</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00024">24</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a212ca328a6409c98f8c3dfbbe1ba561d"/><section>
+    <title>I2C_SCL</title>
+<indexterm><primary>I2C_SCL</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_SCL</secondary></indexterm>
+<para><computeroutput>#define I2C_SCL&#160;&#160;&#160;22</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00018">18</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a18aefd12ad84d4c33dc97923cb821e47"/><section>
+    <title>I2C_SDA</title>
+<indexterm><primary>I2C_SDA</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_SDA</secondary></indexterm>
+<para><computeroutput>#define I2C_SDA&#160;&#160;&#160;21</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00017">17</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1aa01619630da6d91ae0ac6877226ab056"/><section>
+    <title>INTERNAL_PULLUPS</title>
+<indexterm><primary>INTERNAL_PULLUPS</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>INTERNAL_PULLUPS</secondary></indexterm>
+<para><computeroutput>#define INTERNAL_PULLUPS&#160;&#160;&#160;false</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00019">19</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1aefc0109bdbffec9c0d40e63654111db2"/><section>
+    <title>QUEUE_SIZE_I2C</title>
+<indexterm><primary>QUEUE_SIZE_I2C</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>QUEUE_SIZE_I2C</secondary></indexterm>
+<para><computeroutput>#define QUEUE_SIZE_I2C&#160;&#160;&#160;10</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00025">25</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a06c45257753b6f916524ef7ac1d9d17f"/><section>
+    <title>RST_PIN_MUX_I2C</title>
+<indexterm><primary>RST_PIN_MUX_I2C</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>RST_PIN_MUX_I2C</secondary></indexterm>
+<para><computeroutput>#define RST_PIN_MUX_I2C&#160;&#160;&#160;23</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00023">23</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a0658e1ac8d0cbe573414a682dc169abb"/><section>
+    <title>SCL_SPEED_FAST_MODE</title>
+<indexterm><primary>SCL_SPEED_FAST_MODE</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>SCL_SPEED_FAST_MODE</secondary></indexterm>
+<para><computeroutput>#define SCL_SPEED_FAST_MODE&#160;&#160;&#160;400000</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00021">21</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a80b8d904712a0d978c551f79294691cb"/><section>
+    <title>SCL_SPEED_SLOW_MODE</title>
+<indexterm><primary>SCL_SPEED_SLOW_MODE</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>SCL_SPEED_SLOW_MODE</secondary></indexterm>
+<para><computeroutput>#define SCL_SPEED_SLOW_MODE&#160;&#160;&#160;100000</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00022">22</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Typedef Documentation</title>
+<anchor xml:id="__i2_c__common_8h_1a559f5692b1b1a3e5c0edfa019b78bef1"/><section>
+    <title>I2C_dev_handles</title>
+<indexterm><primary>I2C_dev_handles</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_dev_handles</secondary></indexterm>
+<para><computeroutput>typedef enum <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link></computeroutput></para></section>
+<anchor xml:id="__i2_c__common_8h_1a311e33163393c931039f55061c6918fe"/><section>
+    <title>I2C_devices</title>
+<indexterm><primary>I2C_devices</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_devices</secondary></indexterm>
+<para><computeroutput>typedef enum <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9">I2C_devices</link> <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9">I2C_devices</link></computeroutput></para></section>
+<anchor xml:id="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671"/><section>
+    <title>I2C_devices_mux</title>
+<indexterm><primary>I2C_devices_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_devices_mux</secondary></indexterm>
+<para><computeroutput>typedef enum <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6">I2C_devices_multiplexer</link> <link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link></computeroutput></para></section>
+</section>
+<section>
+<title>Enumeration Type Documentation</title>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812"/><section>
+    <title>I2C_dev_handles</title>
+<indexterm><primary>I2C_dev_handles</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_dev_handles</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>I2C_multiplexer_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_multiplexer_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a5085c8956bca4258b1de065182c1c11b"/>I2C_multiplexer_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_pixy2_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_pixy2_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a1ddd366fdf84b23af7a0f847a2ff0d93"/>I2C_pixy2_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_distance_sens1_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_distance_sens1_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a"/>I2C_distance_sens1_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_distance_sens2_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_distance_sens2_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741"/>I2C_distance_sens2_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_temp_sens_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_temp_sens_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a2b08684eb17f8e8bda63177ef74e255c"/>I2C_temp_sens_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_oled_display_096_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_oled_display_096_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a7744345686ffd2d8a3361e2bcdb2386e"/>I2C_oled_display_096_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_adxl345_sens_dev_handle</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_adxl345_sens_dev_handle</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a86eeffe86d3fb2233b77d782614d0bf4"/>I2C_adxl345_sens_dev_handle</entry><entry></entry></row><row><entry><indexterm><primary>I2C_MAX_Num_of_dev_handles</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_MAX_Num_of_dev_handles</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a0465af2b7a27ff1861908447a077a156"/>I2C_MAX_Num_of_dev_handles</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00048">48</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9"/><section>
+    <title>I2C_devices</title>
+<indexterm><primary>I2C_devices</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_devices</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9">I2C_devices</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>I2C_mux_addr</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_mux_addr</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a151002e2e300f340ce5a5b83ee443594"/>I2C_mux_addr</entry><entry></entry></row><row><entry><indexterm><primary>I2C_temp_sens_addr</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_temp_sens_addr</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a908ba691106cd1ed595bd7418581ed49"/>I2C_temp_sens_addr</entry><entry></entry></row><row><entry><indexterm><primary>I2C_distance_sens_addr</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_distance_sens_addr</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9adea9b3d7f55d5310d0799a2692ed572b"/>I2C_distance_sens_addr</entry><entry></entry></row><row><entry><indexterm><primary>I2C_pixy2_camera_addr</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_pixy2_camera_addr</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a4601c56c5c7a2bf4090ab788d19a167b"/>I2C_pixy2_camera_addr</entry><entry></entry></row><row><entry><indexterm><primary>I2C_adxl345_sens_addr</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_adxl345_sens_addr</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a34fad3dd3a58959b3665dc8725c6a3b8"/>I2C_adxl345_sens_addr</entry><entry></entry></row><row><entry><indexterm><primary>I2C_oled_display_096_addr</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_oled_display_096_addr</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a95a542263fbf01ce81beb07972a223b9a1d13246f35bc4f64d79a6d786c6ce98d"/>I2C_oled_display_096_addr</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00039">39</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6"/><section>
+    <title>I2C_devices_multiplexer</title>
+<indexterm><primary>I2C_devices_multiplexer</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_devices_multiplexer</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6">I2C_devices_multiplexer</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>NO_MUX_SELECTED</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>NO_MUX_SELECTED</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a101308220f1c2975f9c1132136c1d713"/>NO_MUX_SELECTED</entry><entry></entry></row><row><entry><indexterm><primary>I2C_distance_sens_1_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_distance_sens_1_mux</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a74556c047e53ea5ae5d205eb0ea15d88"/>I2C_distance_sens_1_mux</entry><entry></entry></row><row><entry><indexterm><primary>I2C_distance_sens_2_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_distance_sens_2_mux</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a366361b6c13f8f3072a1ffac0d249d90"/>I2C_distance_sens_2_mux</entry><entry></entry></row><row><entry><indexterm><primary>I2C_adxl345_sens_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_adxl345_sens_mux</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a7b6b89c137d67e25714751e50d721c6b"/>I2C_adxl345_sens_mux</entry><entry></entry></row><row><entry><indexterm><primary>I2C_temp_sens_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_temp_sens_mux</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6ad7b0bc85a1daf7e9a20727d4740adb24"/>I2C_temp_sens_mux</entry><entry></entry></row><row><entry><indexterm><primary>I2C_oled_display_096_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_oled_display_096_mux</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a3445811f5fe19076f86332b2ce6c780b"/>I2C_oled_display_096_mux</entry><entry></entry></row><row><entry><indexterm><primary>I2C_pixy2_camera_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_pixy2_camera_mux</secondary></indexterm>
+<anchor xml:id="__i2_c__common_8h_1a70c4c5f41ff220dd7e6a2819a3bcb1c6a08bdbe34ce8659d94b4f5e182a43d125"/>I2C_pixy2_camera_mux</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__common_8h_source_1l00028">28</link> of file <link linkend="__i2_c__common_8h_source">I2C_common.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__common_8h_1a793ef527029215fa4b7539adcc14e5e0"/><section>
+    <title>config_rst_pin_i2c_mux()</title>
+<indexterm><primary>config_rst_pin_i2c_mux</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>config_rst_pin_i2c_mux</secondary></indexterm>
+<para><computeroutput>void config_rst_pin_i2c_mux ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00297">297</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1ab80632e89563cc7cffa2bd9b6f301fcd"/><section>
+    <title>I2C_add_device()</title>
+<indexterm><primary>I2C_add_device</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_add_device</secondary></indexterm>
+<para><computeroutput>void I2C_add_device (uint8_t device_address)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00051">51</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a195e5504c89aeda3a53f31710e405623"/><section>
+    <title>I2C_master_init()</title>
+<indexterm><primary>I2C_master_init</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_master_init</secondary></indexterm>
+<para><computeroutput>void I2C_master_init ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00017">17</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831"/><section>
+    <title>I2C_readRegister16bit()</title>
+<indexterm><primary>I2C_readRegister16bit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_readRegister16bit</secondary></indexterm>
+<para><computeroutput>uint16_t I2C_readRegister16bit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00220">220</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a6aea245d443d9090e23b331c086433b6"/><section>
+    <title>I2C_readRegister32bit()</title>
+<indexterm><primary>I2C_readRegister32bit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_readRegister32bit</secondary></indexterm>
+<para><computeroutput>uint32_t I2C_readRegister32bit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00236">236</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1ae9d6e477c0e54827a4bb9bbf8aa301d3"/><section>
+    <title>I2C_readRegister8bit()</title>
+<indexterm><primary>I2C_readRegister8bit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_readRegister8bit</secondary></indexterm>
+<para><computeroutput>uint8_t I2C_readRegister8bit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00210">210</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1aee26da50da18a761354c3d05c6ab0145"/><section>
+    <title>I2C_receive()</title>
+<indexterm><primary>I2C_receive</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_receive</secondary></indexterm>
+<para><computeroutput>void I2C_receive (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t * data, size_t read_size)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00153">153</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1aef48213de5230add491038aa4c4eb05a"/><section>
+    <title>I2C_select_multiplexer_channel()</title>
+<indexterm><primary>I2C_select_multiplexer_channel</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_select_multiplexer_channel</secondary></indexterm>
+<para><computeroutput>void I2C_select_multiplexer_channel (<link linkend="__i2_c__common_8h_1a7eff4ae278040636bcb680cccc94c671">I2C_devices_mux</link> num_channel)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00032">32</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1acd828c8912cd4c39d94408126b8ac7db"/><section>
+    <title>I2C_transmit()</title>
+<indexterm><primary>I2C_transmit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_transmit</secondary></indexterm>
+<para><computeroutput>void I2C_transmit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, unsigned char * data, size_t write_size)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00105">105</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a08e5e4ac56fb1d15beeb7997e2fa97de"/><section>
+    <title>I2C_writeRegister16bit()</title>
+<indexterm><primary>I2C_writeRegister16bit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_writeRegister16bit</secondary></indexterm>
+<para><computeroutput>void I2C_writeRegister16bit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg, uint16_t value)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00271">271</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a4ba94f60644888082c968d910dd4c20e"/><section>
+    <title>I2C_writeRegister32bit()</title>
+<indexterm><primary>I2C_writeRegister32bit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_writeRegister32bit</secondary></indexterm>
+<para><computeroutput>void I2C_writeRegister32bit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg, uint32_t value)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00283">283</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419"/><section>
+    <title>I2C_writeRegister8bit()</title>
+<indexterm><primary>I2C_writeRegister8bit</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>I2C_writeRegister8bit</secondary></indexterm>
+<para><computeroutput>void I2C_writeRegister8bit (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, uint8_t reg, uint8_t value)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00259">259</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a0ac33d5cead56645b2d38faf5ff80e05"/><section>
+    <title>rst_pin_i2c_mux_off()</title>
+<indexterm><primary>rst_pin_i2c_mux_off</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>rst_pin_i2c_mux_off</secondary></indexterm>
+<para><computeroutput>void rst_pin_i2c_mux_off ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00306">306</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a0606cd7138b8af0f8a5b55f87d85849e"/><section>
+    <title>rst_pin_i2c_mux_on()</title>
+<indexterm><primary>rst_pin_i2c_mux_on</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>rst_pin_i2c_mux_on</secondary></indexterm>
+<para><computeroutput>void rst_pin_i2c_mux_on ( )</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00301">301</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__common_8h_1a12e39c7748d800e1fc75f5242b56db82"/><section>
+    <title>writeMultipleRegisters()</title>
+<indexterm><primary>writeMultipleRegisters</primary><secondary>I2C_common.h</secondary></indexterm>
+<indexterm><primary>I2C_common.h</primary><secondary>writeMultipleRegisters</secondary></indexterm>
+<para><computeroutput>void writeMultipleRegisters (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, const uint8_t(*) regs_vals[2], size_t count)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__common_8c_source_1l00204">204</link> of file <link linkend="__i2_c__common_8c_source">I2C_common.c</link>.</para>
+</section>
+</section>
+</section>

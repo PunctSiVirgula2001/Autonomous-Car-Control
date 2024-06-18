@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['get_5fspeed_5fdistance_5fsens_5fscaling_0',['get_speed_distance_sens_scaling',['../_p_i_d_8h.html#aabae7507a2291726cf102c305e3f02c5',1,'get_speed_distance_sens_scaling(float speed, float speed_min, float speed_max):&#160;PID.c'],['../_p_i_d_8c.html#aabae7507a2291726cf102c305e3f02c5',1,'get_speed_distance_sens_scaling(float speed, float speed_min, float speed_max):&#160;PID.c']]],
+  ['getbestvectorleft_1',['getBestVectorLeft',['../_i2_c__camera_sensor_8h.html#a159c619bbd072d296d8caf684332b02a',1,'getBestVectorLeft(Pixy2Lines *lines, Vector *vec):&#160;I2C_cameraSensor.c'],['../_i2_c__camera_sensor_8c.html#a159c619bbd072d296d8caf684332b02a',1,'getBestVectorLeft(Pixy2Lines *lines, Vector *vec):&#160;I2C_cameraSensor.c']]],
+  ['getbestvectorright_2',['getBestVectorRight',['../_i2_c__camera_sensor_8h.html#a7a16c5ef87bf82cd88751462ced8c749',1,'getBestVectorRight(Pixy2Lines *lines, Vector *vec):&#160;I2C_cameraSensor.c'],['../_i2_c__camera_sensor_8c.html#a7a16c5ef87bf82cd88751462ced8c749',1,'getBestVectorRight(Pixy2Lines *lines, Vector *vec):&#160;I2C_cameraSensor.c']]],
+  ['getpixy2lines_3',['getPixy2Lines',['../_i2_c__camera_sensor_8h.html#a59aa0718e545daa3e789822a7083071a',1,'getPixy2Lines(I2C_dev_handles pixy2_handle, uint8_t features, bool wait, Pixy2Lines *lines):&#160;I2C_cameraSensor.c'],['../_i2_c__camera_sensor_8c.html#a59aa0718e545daa3e789822a7083071a',1,'getPixy2Lines(I2C_dev_handles pixy2_handle, uint8_t features, bool wait, Pixy2Lines *lines):&#160;I2C_cameraSensor.c']]]
+];

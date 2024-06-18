@@ -1,0 +1,517 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__distance_sensor_8c_source" xml:lang="en-US">
+<title>I2C_distanceSensor.c</title>
+<indexterm><primary>src/I2C/drivers/I2C_distanceSensor.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__i2_c__distance_sensor_8c_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;I2C_distanceSensor.c</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Created&#32;on:&#32;14&#32;iun.&#32;2024</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;&#32;&#32;&#32;&#32;Author:&#32;racov</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00006"/>00006 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00007"/>00007 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00008"/>00008 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__i2_c__distance_sensor_8h">I2C_distanceSensor.h</link>&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00009"/>00009 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00010"/>00010 <emphasis role="comment">/********&#32;VLX&#32;sensor&#32;**********/</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00011"/>00011 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00012"/><link linkend="__i2_c__distance_sensor_8h_1a26fa9307118b65bff1bd9e4d1ede7564">00012</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a26fa9307118b65bff1bd9e4d1ede7564">VL53L0X_getSpadInfo</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle&#32;,uint8_t&#32;*&#32;count,&#32;<emphasis role="keywordtype">bool</emphasis>&#32;*&#32;type_is_aperture)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00013"/>00013 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00014"/>00014 &#32;&#32;uint8_t&#32;tmp;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00015"/>00015 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00016"/>00016 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00017"/>00017 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00018"/>00018 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x00,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00019"/>00019 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x06);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00020"/>00020 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x83,&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;0x83)&gt;&gt;8)&#32;|&#32;0x04);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00021"/>00021 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x07);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00022"/>00022 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x81,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00023"/>00023 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00024"/>00024 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x94,&#32;0x6b);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00025"/>00025 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x83,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00026"/>00026 &#32;&#32;uint8_t&#32;reg;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00027"/>00027 &#32;&#32;<link linkend="__i2_c__distance_sensor_8h_1a46385c6ddb246732ce8eab387abfbb1b">startTimeout</link>();
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00028"/>00028 &#32;&#32;<emphasis role="keywordflow">do</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00029"/>00029 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00030"/>00030 &#32;&#32;&#32;&#32;reg&#32;=&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;0x83)&gt;&gt;8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00031"/>00031 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__i2_c__distance_sensor_8h_1abab7c5b1cbb48c1f149d63407116b4a7">checkTimeoutExpired</link>())&#32;{&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00032"/>00032 &#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00033"/>00033 &#32;&#32;}&#32;<emphasis role="keywordflow">while</emphasis>(reg&#32;==&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00034"/>00034 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x83,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00035"/>00035 &#32;&#32;tmp&#32;=&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;0x92)&gt;&gt;8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00036"/>00036 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00037"/>00037 &#32;&#32;*count&#32;=&#32;tmp&#32;&amp;&#32;0x7f;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00038"/>00038 &#32;&#32;*type_is_aperture&#32;=&#32;(tmp&#32;&gt;&gt;&#32;7)&#32;&amp;&#32;0x01;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00039"/>00039 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00040"/>00040 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x81,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00041"/>00041 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x06);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00042"/>00042 <emphasis role="comment">//&#32;&#32;uint8_t&#32;data;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00043"/>00043 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x83,&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;0x83)&gt;&gt;8)&#32;&amp;&#32;~0x04);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00044"/>00044 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00045"/>00045 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x00,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00046"/>00046 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00047"/>00047 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00048"/>00048 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00049"/>00049 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00050"/>00050 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00051"/>00051 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00052"/><link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">00052</link> <emphasis role="keyword">typedef</emphasis>&#32;<emphasis role="keyword">enum</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00053"/>00053 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00054"/><link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4afe67d8e2b90a9d5292b4c1b4e1848f68">00054</link> &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4afe67d8e2b90a9d5292b4c1b4e1848f68">not_err</link>=0,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00055"/>00055 &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>=1
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00056"/><link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4ac16f69770bf5601fbace0a55304daa99">00056</link> }<link linkend="__i2_c__distance_sensor_8c_1a0d64dc15ca6f44f7a7e287f755af5f54">type_error</link>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00057"/>00057 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00058"/>00058 <emphasis role="keyword">static</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a0d64dc15ca6f44f7a7e287f755af5f54">type_error</link>&#32;VL53L0X_setSignalRateLimit&#32;(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;<emphasis role="keywordtype">float</emphasis>&#32;limit_Mcps)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00059"/>00059 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00060"/>00060 &#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(limit_Mcps&#32;&lt;&#32;0&#32;||&#32;limit_Mcps&#32;&gt;&#32;511.99)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00061"/>00061 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00062"/>00062 &#32;&#32;&#32;<emphasis role="comment">//&#32;Q9.7&#32;fixed&#32;point&#32;format&#32;(9&#32;integer&#32;bits,&#32;7&#32;fractional&#32;bits)</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00063"/>00063 &#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a08e5e4ac56fb1d15beeb7997e2fa97de">I2C_writeRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbaed6cc0dd98a4a25bb37e86f21d9c5917">FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT</link>,&#32;limit_Mcps&#32;*&#32;(1&#32;&lt;&lt;&#32;7));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00064"/>00064 &#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4afe67d8e2b90a9d5292b4c1b4e1848f68">not_err</link>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00065"/>00065 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00066"/>00066 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00067"/><link linkend="__i2_c__distance_sensor_8h_1acca8dcfdeb3dc0146dbc884e9daae43b">00067</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1acca8dcfdeb3dc0146dbc884e9daae43b">VL53L0X_Init</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00068"/>00068 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00069"/>00069 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>((uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbad1cc283f9cdc5b1ebcc10c45eb59aec0">IDENTIFICATION_MODEL_ID</link>)&gt;&gt;8)!=0xEE)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00071"/>00071 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00072"/>00072 &#32;&#32;&#32;&#32;&#32;&#32;uint16_t&#32;data;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00073"/>00073 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00074"/>00074 &#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&quot;Set&#32;I2C&#32;standard&#32;mode&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00075"/>00075 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0x88,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00076"/>00076 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0x80,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00077"/>00077 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0xFF,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00078"/>00078 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0x00,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00079"/>00079 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00080"/>00080 &#32;&#32;&#32;&#32;&#32;&#32;stop_variable&#32;=&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;0x91)&gt;&gt;8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00081"/>00081 &#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<emphasis role="stringliteral">&quot;&#32;&quot;</emphasis>,&#32;<emphasis role="stringliteral">&quot;stop_variable:&#32;%u&quot;</emphasis>,&#32;stop_variable);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00082"/>00082 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0x00,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00083"/>00083 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0xFF,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00084"/>00084 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,0x80,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00085"/>00085 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00086"/>00086 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;disable&#32;SIGNAL_RATE_MSRC&#32;(bit&#32;1)&#32;and&#32;SIGNAL_RATE_PRE_RANGE&#32;(bit&#32;4)&#32;limit&#32;checks</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00087"/>00087 &#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;MSRC_CONFIG&#32;=&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba960dca4b3f7f4e2a7b2a551fafbad83a">MSRC_CONFIG_CONTROL</link>)&gt;&gt;8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00088"/>00088 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba960dca4b3f7f4e2a7b2a551fafbad83a">MSRC_CONFIG_CONTROL</link>,&#32;MSRC_CONFIG&#32;|&#32;0x12)&#32;;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00089"/>00089 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00090"/>00090 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00091"/>00091 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00092"/>00092 &#32;&#32;&#32;&#32;&#32;&#32;data&#32;=&#32;VL53L0X_setSignalRateLimit&#32;(device_handle,&#32;0.25);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00093"/>00093 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00094"/>00094 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00095"/>00095 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbace84428c7128413d408e2459ed68eafd">SYSTEM_SEQUENCE_CONFIG</link>,&#32;0xFF);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00096"/>00096 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00097"/>00097 &#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;spad_count;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00098"/>00098 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">bool</emphasis>&#32;spad_type_is_aperture;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00099"/>00099 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(!<link linkend="__i2_c__distance_sensor_8c_1a26fa9307118b65bff1bd9e4d1ede7564">VL53L0X_getSpadInfo</link>(device_handle&#32;,&amp;spad_count,&#32;&amp;spad_type_is_aperture))&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00100"/>00100 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&#32;&quot;,&quot;VL53L0X_getSpadInfo&#32;false&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00101"/>00101 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00102"/>00102 &#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00103"/>00103 &#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;ref_spad_map[6];
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00104"/>00104 &#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;spad_enables_ref_0&#32;=&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbafd2f37e2c0ed6f65141ffa77090c331a">GLOBAL_CONFIG_SPAD_ENABLES_REF_0</link>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00105"/>00105 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00106"/>00106 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;&amp;spad_enables_ref_0,&#32;1);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00107"/>00107 &#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00108"/>00108 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1aee26da50da18a761354c3d05c6ab0145">I2C_receive</link>(device_handle,&#32;ref_spad_map,&#32;6);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00109"/>00109 &#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00110"/>00110 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00111"/>00111 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00112"/>00112 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbaa59c9def7b0d4c9988d4587c439f80f7">DYNAMIC_SPAD_REF_EN_START_OFFSET</link>,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00113"/>00113 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba074e077a78f07f8198e457bb47919166">DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD</link>,&#32;0x2C);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00114"/>00114 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00115"/>00115 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba7135328cd131cbb09febea6f5f97e69c">GLOBAL_CONFIG_REF_EN_START_SELECT</link>,&#32;0xB4);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00116"/>00116 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00117"/>00117 &#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;first_spad_to_enable&#32;=&#32;spad_type_is_aperture&#32;?&#32;12&#32;:&#32;0;&#32;<emphasis role="comment">//&#32;12&#32;is&#32;the&#32;first&#32;aperture&#32;spad</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00118"/>00118 &#32;&#32;&#32;&#32;&#32;&#32;uint8_t&#32;spads_enabled&#32;=&#32;0;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00119"/>00119 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00120"/>00120 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">for</emphasis>&#32;(uint8_t&#32;i&#32;=&#32;0;&#32;i&#32;&lt;&#32;48;&#32;i++)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00121"/>00121 &#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00122"/>00122 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(i&#32;&lt;&#32;first_spad_to_enable&#32;||&#32;spads_enabled&#32;==&#32;spad_count)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00123"/>00123 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00124"/>00124 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;This&#32;bit&#32;is&#32;lower&#32;than&#32;the&#32;first&#32;one&#32;that&#32;should&#32;be&#32;enabled,&#32;or</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00125"/>00125 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;(reference_spad_count)&#32;bits&#32;have&#32;already&#32;been&#32;enabled,&#32;so&#32;zero&#32;this&#32;bit</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00126"/>00126 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ref_spad_map[i&#32;/&#32;8]&#32;&amp;=&#32;~(1&#32;&lt;&lt;&#32;(i&#32;%&#32;8));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00127"/>00127 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00128"/>00128 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;((ref_spad_map[i&#32;/&#32;8]&#32;&gt;&gt;&#32;(i&#32;%&#32;8))&#32;&amp;&#32;0x1)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00129"/>00129 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00130"/>00130 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;spads_enabled++;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00131"/>00131 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00132"/>00132 &#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00133"/>00133 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;&amp;spad_enables_ref_0,&#32;1);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00134"/>00134 &#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(10));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00135"/>00135 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1acd828c8912cd4c39d94408126b8ac7db">I2C_transmit</link>(device_handle,&#32;ref_spad_map,&#32;<emphasis role="keyword">sizeof</emphasis>(ref_spad_map));&#32;<emphasis role="comment">//&#32;6</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00136"/>00136 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00137"/>00137 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a4c311642f1da537825a5d16843cbdbd8">VL53L0X_setupI2CRegisters</link>(device_handle);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00138"/>00138 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00139"/>00139 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba103217c59438b19f1a7412dfbf1852f6">SYSTEM_INTERRUPT_CONFIG_GPIO</link>,&#32;0x04);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00140"/>00140 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba69210b7ac9b6526275bab8d1d160f564">GPIO_HV_MUX_ACTIVE_HIGH</link>,&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba69210b7ac9b6526275bab8d1d160f564">GPIO_HV_MUX_ACTIVE_HIGH</link>)&gt;&gt;8)&#32;&amp;&#32;~0x10);&#32;<emphasis role="comment">//&#32;active&#32;low</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00141"/>00141 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba94dc30749a68a176dc29af24cc605def">SYSTEM_INTERRUPT_CLEAR</link>,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00142"/>00142 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00143"/>00143 &#32;&#32;&#32;&#32;&#32;&#32;&#32;measurement_timing_budget_us&#32;=&#32;<link linkend="__i2_c__distance_sensor_8c_1a9c8f3cbd359979ecde38fec6987ed195">VL53L0X_getMeasurementTimingBudget</link>(device_handle);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00144"/>00144 &#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<emphasis role="stringliteral">&quot;&#32;&quot;</emphasis>,<emphasis role="stringliteral">&quot;VL53L0X_setMeasurementTimingBudget&#32;%&quot;</emphasis>PRIu32<emphasis role="stringliteral">&quot;&#32;\n&quot;</emphasis>,&#32;measurement_timing_budget_us);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00145"/>00145 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbace84428c7128413d408e2459ed68eafd">SYSTEM_SEQUENCE_CONFIG</link>,&#32;0xE8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00146"/>00146 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(!<link linkend="__i2_c__distance_sensor_8c_1aee9fa60f3c5658bf0d738e89c43d21ab">VL53L0X_setMeasurementTimingBudget</link>(device_handle,measurement_timing_budget_us-10))&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00147"/>00147 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&#32;&quot;,&quot;VL53L0X_setMeasurementTimingBudget&#32;false&#32;\n&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00148"/>00148 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00149"/>00149 &#32;&#32;&#32;&#32;&#32;&#32;&#32;};
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00150"/>00150 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbace84428c7128413d408e2459ed68eafd">SYSTEM_SEQUENCE_CONFIG</link>,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00151"/>00151 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(!<link linkend="__i2_c__distance_sensor_8c_1a5d0bba70599f6a7974f1b373151b97b2">VL53L0X_performSingleRefCalibration</link>(device_handle,&#32;0x40))&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00152"/>00152 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&#32;&quot;,&quot;VL53L0X_performSingleRefCalibration1&#32;false&#32;\n&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00153"/>00153 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00154"/>00154 &#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00155"/>00155 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbace84428c7128413d408e2459ed68eafd">SYSTEM_SEQUENCE_CONFIG</link>,&#32;0x02);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00156"/>00156 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(!<link linkend="__i2_c__distance_sensor_8c_1a5d0bba70599f6a7974f1b373151b97b2">VL53L0X_performSingleRefCalibration</link>(device_handle,&#32;0x00))&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00157"/>00157 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;ESP_LOGI(&quot;&#32;&quot;,&quot;VL53L0X_performSingleRefCalibration2&#32;false&#32;\n&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00158"/>00158 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00159"/>00159 &#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00160"/>00160 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00161"/>00161 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbace84428c7128413d408e2459ed68eafd">SYSTEM_SEQUENCE_CONFIG</link>,&#32;0xE8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00162"/>00162 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00163"/>00163 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&#32;&quot;,&quot;VLX&#32;sensor&#32;init&#32;done!&#32;\n&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00164"/>00164 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00165"/>00165 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00166"/>00166 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00167"/><link linkend="__i2_c__distance_sensor_8h_1a9c8f3cbd359979ecde38fec6987ed195">00167</link> uint32_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a9c8f3cbd359979ecde38fec6987ed195">VL53L0X_getMeasurementTimingBudget</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00168"/>00168 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00169"/>00169 &#32;&#32;<link linkend="_struct_sequence_step_enables">SequenceStepEnables</link>&#32;enables;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00170"/>00170 &#32;&#32;<link linkend="_struct_sequence_step_timeouts">SequenceStepTimeouts</link>&#32;timeouts;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00171"/>00171 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00172"/>00172 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;StartOverhead&#32;&#32;&#32;&#32;&#32;=&#32;1910;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00173"/>00173 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;EndOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;960;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00174"/>00174 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;MsrcOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;660;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00175"/>00175 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;TccOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;590;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00176"/>00176 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;DssOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;690;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00177"/>00177 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;PreRangeOverhead&#32;&#32;&#32;=&#32;660;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00178"/>00178 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;FinalRangeOverhead&#32;=&#32;550;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00179"/>00179 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00180"/>00180 &#32;&#32;<emphasis role="comment">//&#32;&quot;Start&#32;and&#32;end&#32;overhead&#32;times&#32;always&#32;present&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00181"/>00181 &#32;&#32;uint32_t&#32;budget_us&#32;=&#32;StartOverhead&#32;+&#32;EndOverhead;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00182"/>00182 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00183"/>00183 &#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a8ee705f0be16b20143f497e07752abdc">VL53L0X_getSequenceStepEnables</link>(device_handle&#32;,&#32;&amp;enables);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00184"/>00184 &#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1ab989058cad88daf6ba4bc5ce002dc627">VL53L0X_getSequenceStepTimeouts</link>(device_handle,&#32;&amp;enables,&#32;&amp;timeouts);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00185"/>00185 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00186"/>00186 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1a9509fe1bb0b5ee2b8991f8c4e9665d51">tcc</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00187"/>00187 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00188"/>00188 &#32;&#32;&#32;&#32;budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;+&#32;TccOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00189"/>00189 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00190"/>00190 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00191"/>00191 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1aa737187fd2160f74fc9b61607f9faee2">dss</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00192"/>00192 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00193"/>00193 &#32;&#32;&#32;&#32;budget_us&#32;+=&#32;2&#32;*&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;+&#32;DssOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00194"/>00194 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00195"/>00195 &#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1ae90915b3cbbf640caf99fbe5b74106af">msrc</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00196"/>00196 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00197"/>00197 &#32;&#32;&#32;&#32;budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;+&#32;MsrcOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00198"/>00198 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00199"/>00199 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00200"/>00200 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce">pre_range</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00201"/>00201 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00202"/>00202 &#32;&#32;&#32;&#32;budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1a546676f6f14b66380474e69be858c772">pre_range_us</link>&#32;+&#32;PreRangeOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00203"/>00203 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00204"/>00204 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00205"/>00205 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1aa043fd5fccde9c81a47af77b6d1b1aa3">final_range</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00206"/>00206 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00207"/>00207 &#32;&#32;&#32;&#32;budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1a8b477925da0a79f38a8f95fc054a359e">final_range_us</link>&#32;+&#32;FinalRangeOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00208"/>00208 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00209"/>00209 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00210"/>00210 &#32;&#32;measurement_timing_budget_us&#32;=&#32;budget_us;&#32;<emphasis role="comment">//&#32;store&#32;for&#32;internal&#32;reuse</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00211"/>00211 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;budget_us;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00212"/>00212 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00213"/>00213 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00214"/><link linkend="__i2_c__distance_sensor_8h_1aee9fa60f3c5658bf0d738e89c43d21ab">00214</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1aee9fa60f3c5658bf0d738e89c43d21ab">VL53L0X_setMeasurementTimingBudget</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;uint32_t&#32;budget_us)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00215"/>00215 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00216"/>00216 &#32;&#32;<link linkend="_struct_sequence_step_enables">SequenceStepEnables</link>&#32;enables;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00217"/>00217 &#32;&#32;<link linkend="_struct_sequence_step_timeouts">SequenceStepTimeouts</link>&#32;timeouts;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00218"/>00218 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00219"/>00219 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;StartOverhead&#32;&#32;&#32;&#32;&#32;=&#32;1910;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00220"/>00220 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;EndOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;960;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00221"/>00221 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;MsrcOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;660;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00222"/>00222 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;TccOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;590;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00223"/>00223 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;DssOverhead&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;690;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00224"/>00224 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;PreRangeOverhead&#32;&#32;&#32;=&#32;660;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00225"/>00225 &#32;&#32;uint16_t&#32;<emphasis role="keyword">const</emphasis>&#32;FinalRangeOverhead&#32;=&#32;550;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00226"/>00226 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00227"/>00227 &#32;&#32;uint32_t&#32;used_budget_us&#32;=&#32;StartOverhead&#32;+&#32;EndOverhead;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00228"/>00228 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00229"/>00229 &#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a8ee705f0be16b20143f497e07752abdc">VL53L0X_getSequenceStepEnables</link>(device_handle,&amp;enables);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00230"/>00230 &#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1ab989058cad88daf6ba4bc5ce002dc627">VL53L0X_getSequenceStepTimeouts</link>(device_handle,&amp;enables,&#32;&amp;timeouts);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00231"/>00231 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00232"/>00232 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1a9509fe1bb0b5ee2b8991f8c4e9665d51">tcc</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00233"/>00233 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00234"/>00234 &#32;&#32;&#32;&#32;used_budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;+&#32;TccOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00235"/>00235 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00236"/>00236 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00237"/>00237 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1aa737187fd2160f74fc9b61607f9faee2">dss</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00238"/>00238 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00239"/>00239 &#32;&#32;&#32;&#32;used_budget_us&#32;+=&#32;2&#32;*&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;+&#32;DssOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00240"/>00240 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00241"/>00241 &#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1ae90915b3cbbf640caf99fbe5b74106af">msrc</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00242"/>00242 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00243"/>00243 &#32;&#32;&#32;&#32;used_budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;+&#32;MsrcOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00244"/>00244 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00245"/>00245 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00246"/>00246 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce">pre_range</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00247"/>00247 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00248"/>00248 &#32;&#32;&#32;&#32;used_budget_us&#32;+=&#32;(timeouts.<link linkend="_struct_sequence_step_timeouts_1a546676f6f14b66380474e69be858c772">pre_range_us</link>&#32;+&#32;PreRangeOverhead);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00249"/>00249 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00250"/>00250 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00251"/>00251 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1aa043fd5fccde9c81a47af77b6d1b1aa3">final_range</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00252"/>00252 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00253"/>00253 &#32;&#32;&#32;&#32;used_budget_us&#32;+=&#32;FinalRangeOverhead;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00254"/>00254 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00255"/>00255 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&quot;Note&#32;that&#32;the&#32;final&#32;range&#32;timeout&#32;is&#32;determined&#32;by&#32;the&#32;timing</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00256"/>00256 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;budget&#32;and&#32;the&#32;sum&#32;of&#32;all&#32;other&#32;timeouts&#32;within&#32;the&#32;sequence.</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00257"/>00257 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;If&#32;there&#32;is&#32;no&#32;room&#32;for&#32;the&#32;final&#32;range&#32;timeout,&#32;then&#32;an&#32;error</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00258"/>00258 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;will&#32;be&#32;set.&#32;Otherwise&#32;the&#32;remaining&#32;time&#32;will&#32;be&#32;applied&#32;to</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00259"/>00259 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;the&#32;final&#32;range.&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00260"/>00260 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00261"/>00261 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(used_budget_us&#32;&gt;&#32;budget_us)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00262"/>00262 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00263"/>00263 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&quot;Requested&#32;timeout&#32;too&#32;big.&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00264"/>00264 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00265"/>00265 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00266"/>00266 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00267"/>00267 &#32;&#32;&#32;&#32;uint32_t&#32;final_range_timeout_us&#32;=&#32;budget_us&#32;-&#32;used_budget_us;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00268"/>00268 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;(SequenceStepId&#32;==&#32;VL53L0X_SEQUENCESTEP_FINAL_RANGE)</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00269"/>00269 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00270"/>00270 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&quot;For&#32;the&#32;final&#32;range&#32;timeout,&#32;the&#32;pre-range&#32;timeout</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00271"/>00271 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;must&#32;be&#32;added.&#32;To&#32;do&#32;this&#32;both&#32;final&#32;and&#32;pre-range</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00272"/>00272 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;timeouts&#32;must&#32;be&#32;expressed&#32;in&#32;macro&#32;periods&#32;MClks</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00273"/>00273 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;&#32;because&#32;they&#32;have&#32;different&#32;vcsel&#32;periods.&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00274"/>00274 &#32;&#32;&#32;&#32;uint32_t&#32;final_range_timeout_mclks&#32;=
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00275"/>00275 &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a6c11730133b4d029b5c6b9fcf5e43841">VL53L0X_timeoutMicrosecondsToMclks</link>(final_range_timeout_us,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00276"/>00276 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;timeouts.<link linkend="_struct_sequence_step_timeouts_1a6dd93dfa018f47ff2dc30f87f47b2657">final_range_vcsel_period_pclks</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00277"/>00277 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00278"/>00278 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables.<link linkend="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce">pre_range</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00279"/>00279 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00280"/>00280 &#32;&#32;&#32;&#32;&#32;&#32;final_range_timeout_mclks&#32;+=&#32;timeouts.<link linkend="_struct_sequence_step_timeouts_1a37fee92b9c5509810a6b327af02f6da1">pre_range_mclks</link>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00281"/>00281 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00282"/>00282 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00283"/>00283 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba6f2484692ad584a85ce5ec3cfb0e0646">FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI</link>,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00284"/>00284 &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a1af131196086cfcf0778d02947cba96d">VL53L0X_encodeTimeout</link>(final_range_timeout_mclks));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00285"/>00285 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00286"/>00286 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;set_sequence_step_timeout()&#32;end</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00287"/>00287 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00288"/>00288 &#32;&#32;&#32;&#32;measurement_timing_budget_us&#32;=&#32;budget_us;&#32;<emphasis role="comment">//&#32;store&#32;for&#32;internal&#32;reuse</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00289"/>00289 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00290"/>00290 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00291"/>00291 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00292"/>00292 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00293"/>00293 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00294"/><link linkend="__i2_c__distance_sensor_8h_1a8ee705f0be16b20143f497e07752abdc">00294</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a8ee705f0be16b20143f497e07752abdc">VL53L0X_getSequenceStepEnables</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;<link linkend="_struct_sequence_step_enables">SequenceStepEnables</link>&#32;*&#32;enables)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00295"/>00295 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00296"/>00296 &#32;&#32;uint8_t&#32;sequence_config&#32;=&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbace84428c7128413d408e2459ed68eafd">SYSTEM_SEQUENCE_CONFIG</link>)&gt;&gt;8);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00297"/>00297 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00298"/>00298 &#32;&#32;enables-&gt;<link linkend="_struct_sequence_step_enables_1a9509fe1bb0b5ee2b8991f8c4e9665d51">tcc</link>&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;(sequence_config&#32;&gt;&gt;&#32;4)&#32;&amp;&#32;0x1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00299"/>00299 &#32;&#32;enables-&gt;<link linkend="_struct_sequence_step_enables_1aa737187fd2160f74fc9b61607f9faee2">dss</link>&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;(sequence_config&#32;&gt;&gt;&#32;3)&#32;&amp;&#32;0x1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00300"/>00300 &#32;&#32;enables-&gt;<link linkend="_struct_sequence_step_enables_1ae90915b3cbbf640caf99fbe5b74106af">msrc</link>&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;=&#32;(sequence_config&#32;&gt;&gt;&#32;2)&#32;&amp;&#32;0x1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00301"/>00301 &#32;&#32;enables-&gt;<link linkend="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce">pre_range</link>&#32;&#32;&#32;&#32;=&#32;(sequence_config&#32;&gt;&gt;&#32;6)&#32;&amp;&#32;0x1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00302"/>00302 &#32;&#32;enables-&gt;<link linkend="_struct_sequence_step_enables_1aa043fd5fccde9c81a47af77b6d1b1aa3">final_range</link>&#32;&#32;=&#32;(sequence_config&#32;&gt;&gt;&#32;7)&#32;&amp;&#32;0x1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00303"/>00303 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00304"/>00304 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00305"/><link linkend="__i2_c__distance_sensor_8h_1ab989058cad88daf6ba4bc5ce002dc627">00305</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1ab989058cad88daf6ba4bc5ce002dc627">VL53L0X_getSequenceStepTimeouts</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;<link linkend="_struct_sequence_step_enables">SequenceStepEnables</link>&#32;<emphasis role="keyword">const</emphasis>&#32;*&#32;enables,&#32;<link linkend="_struct_sequence_step_timeouts">SequenceStepTimeouts</link>&#32;*&#32;timeouts)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00306"/>00306 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00307"/>00307 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a88aaa76425e1eb13dab9fe542ec6f84e">pre_range_vcsel_period_pclks</link>&#32;=&#32;<link linkend="__i2_c__distance_sensor_8c_1a6a4808d414aea04141e02db7207aa06b">VL53L0X_getVcselPulsePeriod</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896ca74620bf5eb7a53c38ba2cd9351c5b815">VcselPeriodPreRange</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00308"/>00308 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a009d2acc62c05c623d58f75ef4e55b31">msrc_dss_tcc_mclks</link>&#32;=&#32;(uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbadec775dc79427dfc081824943bb192fc">MSRC_CONFIG_TIMEOUT_MACROP</link>)&gt;&gt;8)&#32;+&#32;1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00309"/>00309 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1ad61d245526f77491bd0ff47aca2cf725">msrc_dss_tcc_us</link>&#32;=&#32;<link linkend="__i2_c__distance_sensor_8c_1a56c3bec1b14ca5942e26cf92bcba025d">VL53L0X_timeoutMclksToMicroseconds</link>(timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a009d2acc62c05c623d58f75ef4e55b31">msrc_dss_tcc_mclks</link>,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00310"/>00310 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a88aaa76425e1eb13dab9fe542ec6f84e">pre_range_vcsel_period_pclks</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00311"/>00311 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a37fee92b9c5509810a6b327af02f6da1">pre_range_mclks</link>&#32;=&#32;<link linkend="__i2_c__distance_sensor_8c_1a742eb3eac2ef903017b22ff1ff230435">VL53L0X_decodeTimeout</link>(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba2588f85c2beeef9205f43d929a1f1287">PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI</link>));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00312"/>00312 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a546676f6f14b66380474e69be858c772">pre_range_us</link>&#32;=<link linkend="__i2_c__distance_sensor_8c_1a56c3bec1b14ca5942e26cf92bcba025d">VL53L0X_timeoutMclksToMicroseconds</link>(timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a37fee92b9c5509810a6b327af02f6da1">pre_range_mclks</link>,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00313"/>00313 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a88aaa76425e1eb13dab9fe542ec6f84e">pre_range_vcsel_period_pclks</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00314"/>00314 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a6dd93dfa018f47ff2dc30f87f47b2657">final_range_vcsel_period_pclks</link>&#32;=&#32;<link linkend="__i2_c__distance_sensor_8c_1a6a4808d414aea04141e02db7207aa06b">VL53L0X_getVcselPulsePeriod</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896ca7a7a58361fb19efc6acb72a0316b3e8b">VcselPeriodFinalRange</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00315"/>00315 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a86d1850d1cb7b68d86988e4db01b9bce">final_range_mclks</link>&#32;=
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00316"/>00316 &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a742eb3eac2ef903017b22ff1ff230435">VL53L0X_decodeTimeout</link>(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba6f2484692ad584a85ce5ec3cfb0e0646">FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI</link>));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00317"/>00317 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00318"/>00318 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(enables-&gt;<link linkend="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce">pre_range</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00319"/>00319 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00320"/>00320 &#32;&#32;&#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a86d1850d1cb7b68d86988e4db01b9bce">final_range_mclks</link>&#32;-=&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a37fee92b9c5509810a6b327af02f6da1">pre_range_mclks</link>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00321"/>00321 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00322"/>00322 &#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a8b477925da0a79f38a8f95fc054a359e">final_range_us</link>&#32;=
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00323"/>00323 &#32;&#32;&#32;&#32;<link linkend="__i2_c__distance_sensor_8c_1a56c3bec1b14ca5942e26cf92bcba025d">VL53L0X_timeoutMclksToMicroseconds</link>(timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a86d1850d1cb7b68d86988e4db01b9bce">final_range_mclks</link>,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00324"/>00324 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;timeouts-&gt;<link linkend="_struct_sequence_step_timeouts_1a6dd93dfa018f47ff2dc30f87f47b2657">final_range_vcsel_period_pclks</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00325"/>00325 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00326"/>00326 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00327"/>00327 <emphasis role="comment">//&#32;Get&#32;the&#32;VCSEL&#32;pulse&#32;period&#32;in&#32;PCLKs&#32;for&#32;the&#32;given&#32;period&#32;type.</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00328"/>00328 <emphasis role="comment">//&#32;based&#32;on&#32;VL53L0X_get_vcsel_pulse_period()</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00329"/><link linkend="__i2_c__distance_sensor_8h_1a6a4808d414aea04141e02db7207aa06b">00329</link> uint8_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a6a4808d414aea04141e02db7207aa06b">VL53L0X_getVcselPulsePeriod</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896c">vcselPeriodType</link>&#32;type)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00330"/>00330 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00331"/>00331 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(type&#32;==&#32;<link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896ca74620bf5eb7a53c38ba2cd9351c5b815">VcselPeriodPreRange</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00332"/>00332 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00333"/>00333 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8h_1a7dcb8458d7b06d003fc1c4786c492efa">decodeVcselPeriod</link>((uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba2eeaca4398d101d540728724904594e7">PRE_RANGE_CONFIG_VCSEL_PERIOD</link>)&gt;&gt;8));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00334"/>00334 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00335"/>00335 &#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;<emphasis role="keywordflow">if</emphasis>&#32;(type&#32;==&#32;<link linkend="__i2_c__distance_sensor_8h_1a55c77cf8138cbaa748bf4559ca97896ca7a7a58361fb19efc6acb72a0316b3e8b">VcselPeriodFinalRange</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00336"/>00336 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00337"/>00337 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8h_1a7dcb8458d7b06d003fc1c4786c492efa">decodeVcselPeriod</link>((uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba6076198bc73de1671b15e02296fe781b">FINAL_RANGE_CONFIG_VCSEL_PERIOD</link>)&gt;&gt;8));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00338"/>00338 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00339"/>00339 &#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;{&#32;<emphasis role="keywordflow">return</emphasis>&#32;255;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00340"/>00340 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00341"/>00341 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00342"/><link linkend="__i2_c__distance_sensor_8h_1a56c3bec1b14ca5942e26cf92bcba025d">00342</link> uint32_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a56c3bec1b14ca5942e26cf92bcba025d">VL53L0X_timeoutMclksToMicroseconds</link>(uint16_t&#32;timeout_period_mclks,&#32;uint8_t&#32;vcsel_period_pclks)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00343"/>00343 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00344"/>00344 &#32;&#32;uint32_t&#32;macro_period_ns&#32;=&#32;<link linkend="__i2_c__distance_sensor_8h_1a5f0c17e6d23211686e92570b058587f3">calcMacroPeriod</link>(vcsel_period_pclks);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00345"/>00345 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00346"/>00346 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;((timeout_period_mclks&#32;*&#32;macro_period_ns)&#32;+&#32;500)&#32;/&#32;1000;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00347"/>00347 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00348"/>00348 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00349"/><link linkend="__i2_c__distance_sensor_8h_1a742eb3eac2ef903017b22ff1ff230435">00349</link> uint16_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a742eb3eac2ef903017b22ff1ff230435">VL53L0X_decodeTimeout</link>(uint16_t&#32;reg_val)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00350"/>00350 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00351"/>00351 &#32;&#32;<emphasis role="comment">//&#32;format:&#32;&quot;(LSByte&#32;*&#32;2^MSByte)&#32;+&#32;1&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00352"/>00352 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(uint16_t)((reg_val&#32;&amp;&#32;0x00FF)&#32;&lt;&lt;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00353"/>00353 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(uint16_t)((reg_val&#32;&amp;&#32;0xFF00)&#32;&gt;&gt;&#32;8))&#32;+&#32;1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00354"/>00354 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00355"/>00355 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00356"/><link linkend="__i2_c__distance_sensor_8h_1a6c11730133b4d029b5c6b9fcf5e43841">00356</link> uint32_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a6c11730133b4d029b5c6b9fcf5e43841">VL53L0X_timeoutMicrosecondsToMclks</link>(uint32_t&#32;timeout_period_us,&#32;uint8_t&#32;vcsel_period_pclks)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00357"/>00357 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00358"/>00358 &#32;&#32;uint32_t&#32;macro_period_ns&#32;=&#32;<link linkend="__i2_c__distance_sensor_8h_1a5f0c17e6d23211686e92570b058587f3">calcMacroPeriod</link>(vcsel_period_pclks);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00359"/>00359 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(((timeout_period_us&#32;*&#32;1000)&#32;+&#32;(macro_period_ns&#32;/&#32;2))&#32;/&#32;macro_period_ns);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00360"/>00360 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00361"/>00361 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00362"/><link linkend="__i2_c__distance_sensor_8h_1a1af131196086cfcf0778d02947cba96d">00362</link> uint16_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a1af131196086cfcf0778d02947cba96d">VL53L0X_encodeTimeout</link>(uint32_t&#32;timeout_mclks)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00363"/>00363 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00364"/>00364 &#32;&#32;<emphasis role="comment">//&#32;format:&#32;&quot;(LSByte&#32;*&#32;2^MSByte)&#32;+&#32;1&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00365"/>00365 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00366"/>00366 &#32;&#32;uint32_t&#32;ls_byte&#32;=&#32;0;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00367"/>00367 &#32;&#32;uint16_t&#32;ms_byte&#32;=&#32;0;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00368"/>00368 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00369"/>00369 &#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(timeout_mclks&#32;&gt;&#32;0)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00370"/>00370 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00371"/>00371 &#32;&#32;&#32;&#32;ls_byte&#32;=&#32;timeout_mclks&#32;-&#32;1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00372"/>00372 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00373"/>00373 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;((ls_byte&#32;&amp;&#32;0xFFFFFF00)&#32;&gt;&#32;0)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00374"/>00374 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00375"/>00375 &#32;&#32;&#32;&#32;&#32;&#32;ls_byte&#32;&gt;&gt;=&#32;1;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00376"/>00376 &#32;&#32;&#32;&#32;&#32;&#32;ms_byte++;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00377"/>00377 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00378"/>00378 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00379"/>00379 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;(ms_byte&#32;&lt;&lt;&#32;8)&#32;|&#32;(ls_byte&#32;&amp;&#32;0xFF);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00380"/>00380 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00381"/>00381 &#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;{&#32;<emphasis role="keywordflow">return</emphasis>&#32;0;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00382"/>00382 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00383"/>00383 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00384"/><link linkend="__i2_c__distance_sensor_8h_1a5d0bba70599f6a7974f1b373151b97b2">00384</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a5d0bba70599f6a7974f1b373151b97b2">VL53L0X_performSingleRefCalibration</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle&#32;,uint8_t&#32;vhv_init_byte)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00385"/>00385 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00386"/>00386 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba0572317826b04e510f09d8a070b3540c">SYSRANGE_START</link>,&#32;0x01&#32;|&#32;vhv_init_byte);&#32;<emphasis role="comment">//&#32;VL53L0X_REG_SYSRANGE_MODE_START_STOP</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00387"/>00387 &#32;&#32;uint16_t&#32;reg2;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00388"/>00388 &#32;&#32;<link linkend="__i2_c__distance_sensor_8h_1a46385c6ddb246732ce8eab387abfbb1b">startTimeout</link>();
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00389"/>00389 &#32;&#32;<emphasis role="keywordflow">do</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00390"/>00390 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00391"/>00391 &#32;&#32;&#32;&#32;&#32;&#32;reg2&#32;=&#32;<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbaf0c7e8155a2e1df0ad804719cf34deb7">RESULT_INTERRUPT_STATUS</link>);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00392"/>00392 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&quot;,&quot;Single:&#32;%&quot;PRIu16&quot;&#32;&quot;,reg2);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00393"/>00393 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__i2_c__distance_sensor_8h_1abab7c5b1cbb48c1f149d63407116b4a7">checkTimeoutExpired</link>())&#32;{&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">false</emphasis>;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00394"/>00394 &#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(500));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00395"/>00395 &#32;&#32;}&#32;<emphasis role="keywordflow">while</emphasis>(((uint8_t)reg2&#32;&amp;&#32;0x07)&#32;==&#32;0);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00396"/>00396 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00397"/>00397 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba94dc30749a68a176dc29af24cc605def">SYSTEM_INTERRUPT_CLEAR</link>,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00398"/>00398 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00399"/>00399 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba0572317826b04e510f09d8a070b3540c">SYSRANGE_START</link>,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00400"/>00400 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00401"/>00401 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00402"/>00402 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00403"/>00403 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00404"/><link linkend="__i2_c__distance_sensor_8h_1a22e63225273a04aa44bf1035a3cfd42f">00404</link> uint16_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a22e63225273a04aa44bf1035a3cfd42f">VL53L0X_readRangeSingleMillimeters</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00405"/>00405 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00406"/>00406 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00407"/>00407 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00408"/>00408 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x00,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00409"/>00409 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x91,&#32;stop_variable);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00410"/>00410 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x00,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00411"/>00411 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00412"/>00412 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00413"/>00413 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00414"/>00414 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba0572317826b04e510f09d8a070b3540c">SYSRANGE_START</link>,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00415"/>00415 &#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&#32;&quot;,&#32;&quot;AICI&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00416"/>00416 &#32;&#32;&#32;<emphasis role="comment">//&quot;Wait&#32;until&#32;start&#32;bit&#32;has&#32;been&#32;cleared&quot;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00417"/>00417 &#32;&#32;<link linkend="__i2_c__distance_sensor_8h_1a46385c6ddb246732ce8eab387abfbb1b">startTimeout</link>();
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00418"/>00418 &#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(((uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba0572317826b04e510f09d8a070b3540c">SYSRANGE_START</link>)&gt;&gt;8)&#32;&amp;&#32;0x01))
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00419"/>00419 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00420"/>00420 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__i2_c__distance_sensor_8h_1abab7c5b1cbb48c1f149d63407116b4a7">checkTimeoutExpired</link>())
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00421"/>00421 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00422"/>00422 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//did_timeout&#32;=&#32;true;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00423"/>00423 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;65535;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00424"/>00424 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00425"/>00425 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00426"/>00426 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00427"/>00427 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a852c08c9a46bddf494f7ea798ff66b49">VL53L0X_readRangeContinuousMillimeters</link>(device_handle);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00428"/>00428 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00429"/>00429 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00430"/><link linkend="__i2_c__distance_sensor_8h_1a852c08c9a46bddf494f7ea798ff66b49">00430</link> uint16_t&#32;<link linkend="__i2_c__distance_sensor_8c_1a852c08c9a46bddf494f7ea798ff66b49">VL53L0X_readRangeContinuousMillimeters</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00431"/>00431 {
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00432"/>00432 &#32;&#32;<link linkend="__i2_c__distance_sensor_8h_1a46385c6ddb246732ce8eab387abfbb1b">startTimeout</link>();
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00433"/>00433 &#32;&#32;uint16_t&#32;range&#32;=&#32;0;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00434"/>00434 &#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;start_continuous_back2back_sens1&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00435"/>00435 &#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">bool</emphasis>&#32;start_continuous_back2back_sens2&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00436"/>00436 &#32;&#32;<emphasis role="keywordflow">if</emphasis>((start_continuous_back2back_sens1&#32;==&#32;<emphasis role="keyword">false</emphasis>&#32;&amp;&amp;&#32;device_handle&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>)&#32;||
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00437"/>00437 &#32;&#32;&#32;&#32;&#32;((start_continuous_back2back_sens2&#32;==&#32;<emphasis role="keyword">false</emphasis>&#32;&amp;&amp;&#32;device_handle&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812ae0cd12c1b1a40d21a031668e96790741">I2C_distance_sens2_dev_handle</link>)))
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00438"/>00438 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00439"/>00439 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00440"/>00440 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00441"/>00441 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x00,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00442"/>00442 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x91,&#32;stop_variable);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00443"/>00443 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x00,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00444"/>00444 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0xFF,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00445"/>00445 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;0x80,&#32;0x00);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00446"/>00446 &#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba0572317826b04e510f09d8a070b3540c">SYSRANGE_START</link>,&#32;0x02);&#32;<emphasis role="comment">//&#32;back&#32;to&#32;back&#32;mode&#32;=&#32;fast&#32;as&#32;possible</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00447"/>00447 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(device_handle&#32;==&#32;<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812a74f1f96531b7d4446ef85782409dde7a">I2C_distance_sens1_dev_handle</link>)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00448"/>00448 &#32;&#32;&#32;&#32;&#32;&#32;start_continuous_back2back_sens1&#32;=&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00449"/>00449 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">else</emphasis>&#32;start_continuous_back2back_sens2&#32;=&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00450"/>00450 &#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(20));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00451"/>00451 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00452"/>00452 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00453"/>00453 &#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(((uint8_t)(<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbaf0c7e8155a2e1df0ad804719cf34deb7">RESULT_INTERRUPT_STATUS</link>)&gt;&gt;8)&#32;&amp;&#32;0x07)&#32;==&#32;0)
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00454"/>00454 &#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00455"/>00455 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__i2_c__distance_sensor_8h_1abab7c5b1cbb48c1f149d63407116b4a7">checkTimeoutExpired</link>())
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00456"/>00456 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00457"/>00457 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//did_timeout&#32;=&#32;true;</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00458"/>00458 &#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;0;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00459"/>00459 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00460"/>00460 &#32;&#32;}
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00461"/>00461 &#32;&#32;<emphasis role="comment">//&#32;assumptions:&#32;Linearity&#32;Corrective&#32;Gain&#32;is&#32;1000&#32;(default);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00462"/>00462 &#32;&#32;<emphasis role="comment">//&#32;fractional&#32;ranging&#32;is&#32;not&#32;enabled</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00463"/>00463 &#32;&#32;range&#32;=&#32;<link linkend="__i2_c__common_8h_1a795f59e507c5791c2e125c2f9a34f831">I2C_readRegister16bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbac4d952d37d2014b30f624560112ce7c3">RESULT_RANGE_STATUS</link>&#32;+&#32;10);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00464"/>00464 &#32;&#32;<link linkend="__i2_c__common_8h_1a122086f1509f736c9ccde786beb5b419">I2C_writeRegister8bit</link>(device_handle,&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba94dc30749a68a176dc29af24cc605def">SYSTEM_INTERRUPT_CLEAR</link>,&#32;0x01);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00465"/>00465 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00466"/>00466 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00467"/>00467 &#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;range;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00468"/>00468 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00469"/>00469 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00470"/><link linkend="__i2_c__distance_sensor_8h_1a67d1697b468e1fabc1d23dad50737fa3">00470</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a67d1697b468e1fabc1d23dad50737fa3">VL53L0X_SetInterruptThresholds</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00471"/>00471 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uint32_t&#32;ThresholdLow,
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00472"/>00472 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;uint32_t&#32;ThresholdHigh)&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00473"/>00473 &#32;&#32;uint16_t&#32;Threshold16;
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00474"/>00474 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00475"/>00475 &#32;&#32;<emphasis role="comment">/*&#32;no&#32;dependency&#32;on&#32;DeviceMode&#32;for&#32;Ewok&#32;*/</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00476"/>00476 &#32;&#32;<emphasis role="comment">/*&#32;Need&#32;to&#32;divide&#32;by&#32;2&#32;because&#32;the&#32;FW&#32;will&#32;apply&#32;a&#32;x2&#32;*/</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00477"/>00477 &#32;&#32;Threshold16&#32;=&#32;(uint16_t)((ThresholdLow&#32;&gt;&gt;&#32;17)&#32;&amp;&#32;0x00fff);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00478"/>00478 &#32;&#32;<link linkend="__i2_c__common_8h_1a08e5e4ac56fb1d15beeb7997e2fa97de">I2C_writeRegister16bit</link>(device_handle,&#32;&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bbaf4f5e587e4253930fd43f4ccf2abd95f">SYSTEM_THRESH_LOW</link>,&#32;Threshold16);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00479"/>00479 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00480"/>00480 &#32;&#32;<emphasis role="comment">/*&#32;Need&#32;to&#32;divide&#32;by&#32;2&#32;because&#32;the&#32;FW&#32;will&#32;apply&#32;a&#32;x2&#32;*/</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00481"/>00481 &#32;&#32;Threshold16&#32;=&#32;(uint16_t)((ThresholdHigh&#32;&gt;&gt;&#32;17)&#32;&amp;&#32;0x00fff);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00482"/>00482 &#32;&#32;<link linkend="__i2_c__common_8h_1a08e5e4ac56fb1d15beeb7997e2fa97de">I2C_writeRegister16bit</link>(device_handle,&#32;&#32;<link linkend="__i2_c__distance_sensor_8h_1ab68be3b9b657a41381e5c06de09f80bba82d522e471992e8d46c4a5c79f0d05aa">SYSTEM_THRESH_HIGH</link>,&#32;Threshold16);
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00483"/>00483 &#32;&#32;<emphasis role="comment">//ESP_LOGI(&quot;&quot;,&#32;&quot;Set&#32;treshold.&quot;);</emphasis>
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00484"/>00484 }
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00485"/>00485 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00486"/>00486 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00487"/>00487 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00488"/>00488 
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00489"/><link linkend="__i2_c__distance_sensor_8h_1a4c311642f1da537825a5d16843cbdbd8">00489</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a4c311642f1da537825a5d16843cbdbd8">VL53L0X_setupI2CRegisters</link>(<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link>&#32;device_handle)&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00490"/>00490 &#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;uint8_t&#32;regs_vals[][2]&#32;=&#32;{
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00491"/>00491 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x00,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00492"/>00492 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x09,&#32;0x00},&#32;{0x10,&#32;0x00},&#32;{0x11,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00493"/>00493 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0x24,&#32;0x01},&#32;{0x25,&#32;0xFF},&#32;{0x75,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00494"/>00494 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x4E,&#32;0x2C},&#32;{0x48,&#32;0x00},&#32;{0x30,&#32;0x20},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00495"/>00495 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x30,&#32;0x09},&#32;{0x54,&#32;0x00},&#32;{0x31,&#32;0x04},&#32;{0x32,&#32;0x03},&#32;{0x40,&#32;0x83},&#32;{0x46,&#32;0x25},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00496"/>00496 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0x60,&#32;0x00},&#32;{0x27,&#32;0x00},&#32;{0x50,&#32;0x06},&#32;{0x51,&#32;0x00},&#32;{0x52,&#32;0x96},&#32;{0x56,&#32;0x08},&#32;{0x57,&#32;0x30},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00497"/>00497 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0x61,&#32;0x00},&#32;{0x62,&#32;0x00},&#32;{0x64,&#32;0x00},&#32;{0x65,&#32;0x00},&#32;{0x66,&#32;0xA0},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00498"/>00498 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x22,&#32;0x32},&#32;{0x47,&#32;0x14},&#32;{0x49,&#32;0xFF},&#32;{0x4A,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00499"/>00499 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x7A,&#32;0x0A},&#32;{0x7B,&#32;0x00},&#32;{0x78,&#32;0x21},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00500"/>00500 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x23,&#32;0x34},&#32;{0x42,&#32;0x00},&#32;{0x44,&#32;0xFF},&#32;{0x45,&#32;0x26},&#32;{0x46,&#32;0x05},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00501"/>00501 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0x40,&#32;0x40},&#32;{0x0E,&#32;0x06},&#32;{0x20,&#32;0x1A},&#32;{0x43,&#32;0x40},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00502"/>00502 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x34,&#32;0x03},&#32;{0x35,&#32;0x44},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00503"/>00503 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x31,&#32;0x04},&#32;{0x4B,&#32;0x09},&#32;{0x4C,&#32;0x05},&#32;{0x4D,&#32;0x04},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00504"/>00504 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x44,&#32;0x00},&#32;{0x45,&#32;0x20},&#32;{0x47,&#32;0x08},&#32;{0x48,&#32;0x28},&#32;{0x67,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00505"/>00505 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0x70,&#32;0x04},&#32;{0x71,&#32;0x01},&#32;{0x72,&#32;0xFE},&#32;{0x76,&#32;0x00},&#32;{0x77,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00506"/>00506 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x0D,&#32;0x01},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00507"/>00507 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x80,&#32;0x01},&#32;{0x01,&#32;0xF8},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00508"/>00508 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x01},&#32;{0x8E,&#32;0x01},&#32;{0x00,&#32;0x01},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00509"/>00509 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;{0xFF,&#32;0x00},&#32;{0x80,&#32;0x00},
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00510"/>00510 &#32;&#32;&#32;&#32;};
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00511"/>00511 &#32;&#32;&#32;&#32;<link linkend="__i2_c__common_8h_1a12e39c7748d800e1fc75f5242b56db82">writeMultipleRegisters</link>(device_handle,&#32;regs_vals,&#32;<emphasis role="keyword">sizeof</emphasis>(regs_vals)&#32;/&#32;<emphasis role="keyword">sizeof</emphasis>(regs_vals[0]));
+<anchor xml:id="__i2_c__distance_sensor_8c_source_1l00512"/>00512 }
+</programlisting></section>

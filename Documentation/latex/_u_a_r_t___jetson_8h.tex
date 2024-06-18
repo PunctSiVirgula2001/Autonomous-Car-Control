@@ -1,0 +1,231 @@
+\doxysection{include/\+UART\+\_\+\+Jetson.h File Reference}
+\label{_u_a_r_t___jetson_8h}\index{include/UART\_Jetson.h@{include/UART\_Jetson.h}}
+{\ttfamily \#include "{}Motor\+And\+Servo\+Control.\+h"{}}\newline
+{\ttfamily \#include "{}driver/uart.\+h"{}}\newline
+Include dependency graph for UART\+\_\+\+Jetson.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ command\+Received\+\_\+jetson}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ UART\+\_\+\+BAUD}~115200
+\item 
+\#define \textbf{ UART\+\_\+\+WORD\+\_\+\+LENGTH\+\_\+\+BITS}~UART\+\_\+\+DATA\+\_\+8\+\_\+\+BITS
+\item 
+\#define \textbf{ UART\+\_\+\+PORT}~UART\+\_\+\+NUM\+\_\+2
+\item 
+\#define \textbf{ UART\+\_\+\+TX}~17
+\item 
+\#define \textbf{ UART\+\_\+\+RX}~16
+\item 
+\#define \textbf{ UART\+\_\+\+BUFFER\+\_\+\+SIZE}~1024 $\ast$ 2
+\item 
+\#define \textbf{ UART\+\_\+\+Queue\+\_\+\+SIZE}~20
+\item 
+\#define \textbf{ UART\+\_\+\+RTS\+\_\+\+PIN}~18
+\item 
+\#define \textbf{ UART\+\_\+\+CTS\+\_\+\+PIN}~19
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \textbf{ Received\+State\+\_\+jetson} \{ \newline
+\textbf{ Stop\+Jetson} = 0
+, \textbf{ Green\+Jetson} = 6
+, \textbf{ Parking\+Jetson} = 1
+, \textbf{ Charging\+Station\+Jetson} = 2
+, \newline
+\textbf{ Pedestrian\+Crossing\+Jetson} = 3
+, \textbf{ Red\+Jetson} = 5
+, \textbf{ Yellow\+Jetson} = 4
+, \textbf{ Driving\+Jetson} = 7
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ Jetson\+Uart\+Config} ()
+\item 
+void \textbf{ uart\+\_\+\+Jetson\+\_\+\+Task} (void $\ast$params)
+\item 
+void \textbf{ start\+\_\+\+Uart\+Jetson\+\_\+task} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_BAUD@{UART\_BAUD}}
+\index{UART\_BAUD@{UART\_BAUD}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_BAUD}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_a1fac9153314479ad0ad495d752f0224a} 
+\#define UART\+\_\+\+BAUD~115200}
+
+
+
+Definition at line \textbf{ 9} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_BUFFER\_SIZE@{UART\_BUFFER\_SIZE}}
+\index{UART\_BUFFER\_SIZE@{UART\_BUFFER\_SIZE}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_BUFFER\_SIZE}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_a0d57378e32bf8278011460740bc29f7f} 
+\#define UART\+\_\+\+BUFFER\+\_\+\+SIZE~1024 $\ast$ 2}
+
+
+
+Definition at line \textbf{ 14} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_CTS\_PIN@{UART\_CTS\_PIN}}
+\index{UART\_CTS\_PIN@{UART\_CTS\_PIN}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_CTS\_PIN}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_a8f26ce0e19db55c2ad2c8927162e9b97} 
+\#define UART\+\_\+\+CTS\+\_\+\+PIN~19}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_PORT@{UART\_PORT}}
+\index{UART\_PORT@{UART\_PORT}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_PORT}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_aa7a5950d998e44d87137de0780bd0af3} 
+\#define UART\+\_\+\+PORT~UART\+\_\+\+NUM\+\_\+2}
+
+
+
+Definition at line \textbf{ 11} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_Queue\_SIZE@{UART\_Queue\_SIZE}}
+\index{UART\_Queue\_SIZE@{UART\_Queue\_SIZE}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_Queue\_SIZE}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_ad7d907e1b65ddd7c6a8c89d7d76ecba1} 
+\#define UART\+\_\+\+Queue\+\_\+\+SIZE~20}
+
+
+
+Definition at line \textbf{ 15} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_RTS\_PIN@{UART\_RTS\_PIN}}
+\index{UART\_RTS\_PIN@{UART\_RTS\_PIN}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_RTS\_PIN}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_af8028d96a7d355ec66a69df75ec29f1b} 
+\#define UART\+\_\+\+RTS\+\_\+\+PIN~18}
+
+
+
+Definition at line \textbf{ 16} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_RX@{UART\_RX}}
+\index{UART\_RX@{UART\_RX}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_RX}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_afd4d579b12950a4770aeaa6088400c3b} 
+\#define UART\+\_\+\+RX~16}
+
+
+
+Definition at line \textbf{ 13} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_TX@{UART\_TX}}
+\index{UART\_TX@{UART\_TX}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_TX}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_ac554053f778819e84a6234cbc100cd5d} 
+\#define UART\+\_\+\+TX~17}
+
+
+
+Definition at line \textbf{ 12} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!UART\_WORD\_LENGTH\_BITS@{UART\_WORD\_LENGTH\_BITS}}
+\index{UART\_WORD\_LENGTH\_BITS@{UART\_WORD\_LENGTH\_BITS}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{UART\_WORD\_LENGTH\_BITS}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_a509e0eb2e8b70949b4fd2c019a6a0b96} 
+\#define UART\+\_\+\+WORD\+\_\+\+LENGTH\+\_\+\+BITS~UART\+\_\+\+DATA\+\_\+8\+\_\+\+BITS}
+
+
+
+Definition at line \textbf{ 10} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\index{UART\_Jetson.h@{UART\_Jetson.h}!ReceivedState\_jetson@{ReceivedState\_jetson}}
+\index{ReceivedState\_jetson@{ReceivedState\_jetson}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{ReceivedState\_jetson}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+enum \textbf{ Received\+State\+\_\+jetson}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{StopJetson@{StopJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!StopJetson@{StopJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Stop\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{GreenJetson@{GreenJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!GreenJetson@{GreenJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Green\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ParkingJetson@{ParkingJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!ParkingJetson@{ParkingJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Parking\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ChargingStationJetson@{ChargingStationJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!ChargingStationJetson@{ChargingStationJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Charging\+Station\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PedestrianCrossingJetson@{PedestrianCrossingJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!PedestrianCrossingJetson@{PedestrianCrossingJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Pedestrian\+Crossing\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RedJetson@{RedJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!RedJetson@{RedJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Red\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{YellowJetson@{YellowJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!YellowJetson@{YellowJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Yellow\+Jetson&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DrivingJetson@{DrivingJetson}!UART\_Jetson.h@{UART\_Jetson.h}}\index{UART\_Jetson.h@{UART\_Jetson.h}!DrivingJetson@{DrivingJetson}}}\label{_u_a_r_t___jetson_8h_a5a6ac81c5b288287712ca7e703a69300} 
+Driving\+Jetson&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \textbf{ 19} of file \textbf{ UART\+\_\+\+Jetson.\+h}.
+
+
+
+\doxysubsection{Function Documentation}
+\index{UART\_Jetson.h@{UART\_Jetson.h}!JetsonUartConfig@{JetsonUartConfig}}
+\index{JetsonUartConfig@{JetsonUartConfig}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{JetsonUartConfig()}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_ae4c5f3d1df2e79904d4e12cb88ade1b9} 
+void Jetson\+Uart\+Config (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 8} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!start\_UartJetson\_task@{start\_UartJetson\_task}}
+\index{start\_UartJetson\_task@{start\_UartJetson\_task}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{start\_UartJetson\_task()}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_a95f2115a47f33b4cf7c628a79d6b914a} 
+void start\+\_\+\+Uart\+Jetson\+\_\+task (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 86} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+
+\index{UART\_Jetson.h@{UART\_Jetson.h}!uart\_Jetson\_Task@{uart\_Jetson\_Task}}
+\index{uart\_Jetson\_Task@{uart\_Jetson\_Task}!UART\_Jetson.h@{UART\_Jetson.h}}
+\doxysubsubsection{uart\_Jetson\_Task()}
+{\footnotesize\ttfamily \label{_u_a_r_t___jetson_8h_ad9e288d6023d9fc1385c3a974f95c03a} 
+void uart\+\_\+\+Jetson\+\_\+\+Task (\begin{DoxyParamCaption}\item[{void $\ast$}]{params}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 27} of file \textbf{ UART\+\_\+\+Jetson.\+c}.
+

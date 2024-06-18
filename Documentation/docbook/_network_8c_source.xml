@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__network_8c_source" xml:lang="en-US">
+<title>Network.c</title>
+<indexterm><primary>src/Network.c</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="__network_8c_source_1l00001"/>00001 <emphasis role="preprocessor">#include&#32;&quot;<link linkend="__network_8h">Network.h</link>&quot;</emphasis>
+<anchor xml:id="__network_8c_source_1l00002"/><link linkend="_main_8c_1a7316aaeee91623cd9fcab65f302ce7be">00002</link> <emphasis role="keywordtype">bool</emphasis>&#32;<link linkend="__network_8c_1a7316aaeee91623cd9fcab65f302ce7be">allowed_to_send</link>&#32;=&#32;<emphasis role="keyword">false</emphasis>;
+<anchor xml:id="__network_8c_source_1l00003"/><link linkend="_main_8c_1ac71568e7238007e8666f6ba60d8bfe35">00003</link> <emphasis role="keywordtype">char</emphasis>&#32;<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>[128];
+<anchor xml:id="__network_8c_source_1l00004"/>00004 <emphasis role="keyword">static</emphasis>&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>&#32;=&#32;<emphasis role="stringliteral">&quot;wifi_softAP&quot;</emphasis>;
+<anchor xml:id="__network_8c_source_1l00005"/><link linkend="__network_8c_1a53049234aa6eaa663203a7d6d2201e20">00005</link> <emphasis role="keyword">struct&#32;</emphasis>sockaddr_in6&#32;<link linkend="__network_8c_1a53049234aa6eaa663203a7d6d2201e20">source_addr_global</link>;&#32;<emphasis role="comment">//&#32;For&#32;IPv4&#32;or&#32;IPv6</emphasis>
+<anchor xml:id="__network_8c_source_1l00006"/><link linkend="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d">00006</link> socklen_t&#32;<link linkend="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d">addr_len_global</link>;
+<anchor xml:id="__network_8c_source_1l00007"/><link linkend="__network_8c_1a66d70c4b1933243b27cf9451b07de225">00007</link> <emphasis role="keywordtype">int</emphasis>&#32;<link linkend="__network_8c_1a66d70c4b1933243b27cf9451b07de225">sock_global</link>;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Socket&#32;descriptor</emphasis>
+<anchor xml:id="__network_8c_source_1l00008"/><link linkend="__network_8c_1a2fa235ed0bc5b7bb6f442944f98abb31">00008</link> <emphasis role="keywordtype">char</emphasis>*&#32;<link linkend="__network_8c_1a2fa235ed0bc5b7bb6f442944f98abb31">stateSendToAppStrings</link>[<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115bad7ec8301f00391890098cf55556a921d">STATE_MAX</link>]&#32;=&#32;{
+<anchor xml:id="__network_8c_source_1l00009"/>00009 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;MEASURED_VALUE&quot;</emphasis>,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Corresponds&#32;to&#32;MEASURED_VALUE</emphasis>
+<anchor xml:id="__network_8c_source_1l00010"/>00010 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;I_TERM_VALUE&quot;</emphasis>,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Corresponds&#32;to&#32;I_TERM_VALUE</emphasis>
+<anchor xml:id="__network_8c_source_1l00011"/>00011 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;OBSTACLE_DETECTED_VALUE&quot;</emphasis>,&#32;&#32;&#32;<emphasis role="comment">//&#32;Corresponds&#32;to&#32;OBSTACLE_DETECTED_VALUE</emphasis>
+<anchor xml:id="__network_8c_source_1l00012"/>00012 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ERROR_PID_VALUE&quot;</emphasis>,&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Corresponds&#32;to&#32;ERROR_PID_VALUE</emphasis>
+<anchor xml:id="__network_8c_source_1l00013"/>00013 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ACTUAL_TIME_OF_SEND&quot;</emphasis>,
+<anchor xml:id="__network_8c_source_1l00014"/>00014 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;TEMP_VALUE&quot;</emphasis>,
+<anchor xml:id="__network_8c_source_1l00015"/>00015 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DistSensFw&quot;</emphasis>,
+<anchor xml:id="__network_8c_source_1l00016"/>00016 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;DistSensBw&quot;</emphasis>,
+<anchor xml:id="__network_8c_source_1l00017"/>00017 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ADXL_ROLL&quot;</emphasis>,
+<anchor xml:id="__network_8c_source_1l00018"/>00018 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;ADXL_PITCH&quot;</emphasis>,
+<anchor xml:id="__network_8c_source_1l00019"/>00019 &#32;&#32;&#32;&#32;<emphasis role="stringliteral">&quot;NEWLINE_LOG_INFO&quot;</emphasis>
+<anchor xml:id="__network_8c_source_1l00020"/>00020 };
+<anchor xml:id="__network_8c_source_1l00021"/>00021 
+<anchor xml:id="__network_8c_source_1l00022"/>00022 <emphasis role="comment">//&#32;*&#32;00&#32;-&#32;measured&#32;speed</emphasis>
+<anchor xml:id="__network_8c_source_1l00023"/>00023 <emphasis role="comment">//&#32;*&#32;01&#32;-&#32;setpoint</emphasis>
+<anchor xml:id="__network_8c_source_1l00024"/>00024 <emphasis role="comment">//&#32;*&#32;02&#32;-&#32;temperature</emphasis>
+<anchor xml:id="__network_8c_source_1l00025"/>00025 <emphasis role="comment">//&#32;*&#32;03&#32;-&#32;obstacoll&#32;detected</emphasis>
+<anchor xml:id="__network_8c_source_1l00026"/>00026 <emphasis role="comment">//&#32;*&#32;04&#32;-&#32;I_term</emphasis>
+<anchor xml:id="__network_8c_source_1l00027"/>00027 <emphasis role="comment">//&#32;*&#32;05&#32;-&#32;error_pid</emphasis>
+<anchor xml:id="__network_8c_source_1l00028"/>00028 
+<anchor xml:id="__network_8c_source_1l00029"/>00029 
+<anchor xml:id="__network_8c_source_1l00030"/>00030 <emphasis role="comment">//Initialize&#32;a&#32;handler&#32;for&#32;blinking&#32;led</emphasis>
+<anchor xml:id="__network_8c_source_1l00031"/><link linkend="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3">00031</link> TaskHandle_t&#32;<link linkend="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3">handlerBlinkLedTask</link>&#32;=&#32;NULL;
+<anchor xml:id="__network_8c_source_1l00032"/>00032 
+<anchor xml:id="__network_8c_source_1l00033"/>00033 
+<anchor xml:id="__network_8c_source_1l00034"/><link linkend="__network_8h_1a62dddf76eb27aacde1609464b8d9ebad">00034</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a62dddf76eb27aacde1609464b8d9ebad">wifi_init_softap</link>()&#32;{
+<anchor xml:id="__network_8c_source_1l00035"/>00035 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(nvs_flash_init());
+<anchor xml:id="__network_8c_source_1l00036"/>00036 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(esp_netif_init());
+<anchor xml:id="__network_8c_source_1l00037"/>00037 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(esp_event_loop_create_default());
+<anchor xml:id="__network_8c_source_1l00038"/>00038 &#32;&#32;&#32;&#32;esp_netif_create_default_wifi_ap();
+<anchor xml:id="__network_8c_source_1l00039"/>00039 
+<anchor xml:id="__network_8c_source_1l00040"/>00040 &#32;&#32;&#32;&#32;wifi_init_config_t&#32;cfg&#32;=&#32;WIFI_INIT_CONFIG_DEFAULT();
+<anchor xml:id="__network_8c_source_1l00041"/>00041 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(esp_wifi_init(&amp;cfg));
+<anchor xml:id="__network_8c_source_1l00042"/>00042 
+<anchor xml:id="__network_8c_source_1l00043"/>00043 &#32;&#32;&#32;&#32;wifi_config_t&#32;wifi_config&#32;=&#32;{
+<anchor xml:id="__network_8c_source_1l00044"/>00044 &#32;&#32;&#32;&#32;&#32;&#32;.ap&#32;=&#32;{&#32;.ssid&#32;=&#32;<link linkend="__network_8h_1a586542b79d00e4db7e1d5a667ae83a2b">WIFI_SSID</link>,
+<anchor xml:id="__network_8c_source_1l00045"/>00045 &#32;&#32;&#32;&#32;&#32;&#32;.ssid_len&#32;=&#32;strlen(<link linkend="__network_8h_1a586542b79d00e4db7e1d5a667ae83a2b">WIFI_SSID</link>),
+<anchor xml:id="__network_8c_source_1l00046"/>00046 &#32;&#32;&#32;&#32;&#32;&#32;.password&#32;=&#32;<link linkend="__network_8h_1a3c95561b03d0fcf9048b231ae2ba90fb">WIFI_PASS</link>,
+<anchor xml:id="__network_8c_source_1l00047"/>00047 &#32;&#32;&#32;&#32;&#32;&#32;.max_connection&#32;=&#32;<link linkend="__network_8h_1a428d6fc23e06208d09595c62b0a98aa9">MAX_STA_CONN</link>,
+<anchor xml:id="__network_8c_source_1l00048"/>00048 &#32;&#32;&#32;&#32;&#32;&#32;.authmode&#32;=&#32;WIFI_AUTH_WPA_WPA2_PSK&#32;},
+<anchor xml:id="__network_8c_source_1l00049"/>00049 &#32;&#32;&#32;&#32;};
+<anchor xml:id="__network_8c_source_1l00050"/>00050 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(strlen(<link linkend="__network_8h_1a3c95561b03d0fcf9048b231ae2ba90fb">WIFI_PASS</link>)&#32;==&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00051"/>00051 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;wifi_config.ap.authmode&#32;=&#32;WIFI_AUTH_OPEN;
+<anchor xml:id="__network_8c_source_1l00052"/>00052 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00053"/>00053 
+<anchor xml:id="__network_8c_source_1l00054"/>00054 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_AP));
+<anchor xml:id="__network_8c_source_1l00055"/>00055 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_AP,&#32;&amp;wifi_config));
+<anchor xml:id="__network_8c_source_1l00056"/>00056 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(esp_wifi_start());
+<anchor xml:id="__network_8c_source_1l00057"/>00057 
+<anchor xml:id="__network_8c_source_1l00058"/>00058 &#32;&#32;&#32;&#32;<emphasis role="comment">//ESP_LOGI(TAG,&#32;&quot;wifi_init_softap&#32;finished.&#32;SSID:%s&#32;password:%s&quot;,&#32;WIFI_SSID,</emphasis>
+<anchor xml:id="__network_8c_source_1l00059"/>00059 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//WIFI_PASS);</emphasis>
+<anchor xml:id="__network_8c_source_1l00060"/>00060 }
+<anchor xml:id="__network_8c_source_1l00061"/>00061 <emphasis role="keyword">extern</emphasis>&#32;QueueHandle_t&#32;<link linkend="__network_8c_1a731dce19cc17cfa0419781203697bf14">diagnosticModeControlQueue</link>;
+<anchor xml:id="__network_8c_source_1l00062"/>00062 
+<anchor xml:id="__network_8c_source_1l00063"/>00063 
+<anchor xml:id="__network_8c_source_1l00064"/>00064 <emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;wait_for_ack(<emphasis role="keywordtype">int</emphasis>&#32;sock)&#32;{
+<anchor xml:id="__network_8c_source_1l00065"/>00065 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(1)&#32;{
+<anchor xml:id="__network_8c_source_1l00066"/>00066 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Primirea&#32;datelor</emphasis>
+<anchor xml:id="__network_8c_source_1l00067"/>00067 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">struct&#32;</emphasis>sockaddr_in6&#32;source_addr;&#32;<emphasis role="comment">//&#32;Suficient&#32;de&#32;mare&#32;pentru&#32;IPv4&#32;sau&#32;IPv6</emphasis>
+<anchor xml:id="__network_8c_source_1l00068"/>00068 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;socklen_t&#32;addr_len&#32;=&#32;<emphasis role="keyword">sizeof</emphasis>(source_addr);
+<anchor xml:id="__network_8c_source_1l00069"/>00069 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;len&#32;=&#32;recvfrom(sock,&#32;<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>,&#32;<emphasis role="keyword">sizeof</emphasis>(<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>)&#32;-&#32;1,&#32;0,
+<anchor xml:id="__network_8c_source_1l00070"/>00070 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(<emphasis role="keyword">struct</emphasis>&#32;sockaddr*)&amp;source_addr,&#32;&amp;addr_len);
+<anchor xml:id="__network_8c_source_1l00071"/>00071 
+<anchor xml:id="__network_8c_source_1l00072"/>00072 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Verificarea&#32;erorilor&#32;sau&#32;datelor&#32;primite</emphasis>
+<anchor xml:id="__network_8c_source_1l00073"/>00073 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(len&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00074"/>00074 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;recvfrom&#32;failed:&#32;errno&#32;%d&quot;</emphasis>,&#32;errno);
+<anchor xml:id="__network_8c_source_1l00075"/>00075 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">continue</emphasis>;&#32;<emphasis role="comment">//&#32;Continuă&#32;bucla&#32;în&#32;cazul&#32;unei&#32;erori</emphasis>
+<anchor xml:id="__network_8c_source_1l00076"/>00076 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__network_8c_source_1l00077"/>00077 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>[len]&#32;=&#32;<emphasis role="charliteral">&apos;\0&apos;</emphasis>;&#32;<emphasis role="comment">//&#32;Terminarea&#32;șirului&#32;de&#32;caractere&#32;primit</emphasis>
+<anchor xml:id="__network_8c_source_1l00078"/>00078 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*message&#32;=&#32;<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>;
+<anchor xml:id="__network_8c_source_1l00079"/>00079 
+<anchor xml:id="__network_8c_source_1l00080"/>00080 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Verificarea&#32;mesajului&#32;&quot;ACK&#32;9999&quot;</emphasis>
+<anchor xml:id="__network_8c_source_1l00081"/>00081 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(strcmp(message,&#32;<emphasis role="stringliteral">&quot;ACK&#32;9999&quot;</emphasis>)&#32;==&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00082"/>00082 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*response&#32;=&#32;<emphasis role="stringliteral">&quot;YES&quot;</emphasis>;&#32;<emphasis role="comment">//&#32;Răspuns&#32;specific&#32;pentru&#32;&quot;ACK&#32;9999&quot;</emphasis>
+<anchor xml:id="__network_8c_source_1l00083"/>00083 
+<anchor xml:id="__network_8c_source_1l00084"/>00084 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Actualizarea&#32;variabilelor&#32;globale&#32;cu&#32;adresa&#32;sursă&#32;și&#32;lungimea&#32;adresei</emphasis>
+<anchor xml:id="__network_8c_source_1l00085"/>00085 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a53049234aa6eaa663203a7d6d2201e20">source_addr_global</link>&#32;=&#32;source_addr;
+<anchor xml:id="__network_8c_source_1l00086"/>00086 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d">addr_len_global</link>&#32;=&#32;addr_len;
+<anchor xml:id="__network_8c_source_1l00087"/>00087 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a66d70c4b1933243b27cf9451b07de225">sock_global</link>&#32;=&#32;sock;
+<anchor xml:id="__network_8c_source_1l00088"/>00088 
+<anchor xml:id="__network_8c_source_1l00089"/>00089 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Trimiterea&#32;răspunsului</emphasis>
+<anchor xml:id="__network_8c_source_1l00090"/>00090 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a9fded88b7fb26171ee59015da76c65bb">sendMessage</link>(sock,&#32;response);
+<anchor xml:id="__network_8c_source_1l00091"/>00091 
+<anchor xml:id="__network_8c_source_1l00092"/>00092 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a7316aaeee91623cd9fcab65f302ce7be">allowed_to_send</link>&#32;=&#32;<emphasis role="keyword">true</emphasis>;
+<anchor xml:id="__network_8c_source_1l00093"/>00093 
+<anchor xml:id="__network_8c_source_1l00094"/>00094 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Distrugerea&#32;task-ului&#32;pentru&#32;LED-ul&#32;intermitent</emphasis>
+<anchor xml:id="__network_8c_source_1l00095"/>00095 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3">handlerBlinkLedTask</link>)&#32;{
+<anchor xml:id="__network_8c_source_1l00096"/>00096 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelete(<link linkend="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3">handlerBlinkLedTask</link>);
+<anchor xml:id="__network_8c_source_1l00097"/>00097 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00098"/>00098 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a07ab52c7f55179654f5630a08b8c2abd">turnOnLED_connected</link>();
+<anchor xml:id="__network_8c_source_1l00099"/>00099 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;&#32;<emphasis role="comment">//&#32;Ieșire&#32;din&#32;buclă&#32;după&#32;primirea&#32;mesajului</emphasis>
+<anchor xml:id="__network_8c_source_1l00100"/>00100 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00101"/>00101 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00102"/>00102 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00103"/>00103 }
+<anchor xml:id="__network_8c_source_1l00104"/>00104 
+<anchor xml:id="__network_8c_source_1l00105"/>00105 <emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">void</emphasis>&#32;handle_received_message(<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*message,&#32;<emphasis role="keywordtype">int</emphasis>&#32;sock,&#32;<emphasis role="keyword">struct</emphasis>&#32;sockaddr_in6&#32;source_addr,&#32;socklen_t&#32;addr_len)&#32;{
+<anchor xml:id="__network_8c_source_1l00106"/>00106 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Actualizarea&#32;variabilelor&#32;globale</emphasis>
+<anchor xml:id="__network_8c_source_1l00107"/>00107 &#32;&#32;&#32;&#32;<link linkend="__network_8c_1a53049234aa6eaa663203a7d6d2201e20">source_addr_global</link>&#32;=&#32;source_addr;
+<anchor xml:id="__network_8c_source_1l00108"/>00108 &#32;&#32;&#32;&#32;<link linkend="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d">addr_len_global</link>&#32;=&#32;addr_len;
+<anchor xml:id="__network_8c_source_1l00109"/>00109 &#32;&#32;&#32;&#32;<link linkend="__network_8c_1a66d70c4b1933243b27cf9451b07de225">sock_global</link>&#32;=&#32;sock;
+<anchor xml:id="__network_8c_source_1l00110"/>00110 
+<anchor xml:id="__network_8c_source_1l00111"/>00111 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Gestionarea&#32;mesajului&#32;primit</emphasis>
+<anchor xml:id="__network_8c_source_1l00112"/>00112 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__network_8c_1a7316aaeee91623cd9fcab65f302ce7be">allowed_to_send</link>&#32;==&#32;<emphasis role="keyword">true</emphasis>)&#32;{
+<anchor xml:id="__network_8c_source_1l00113"/>00113 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(xQueueSend(<link linkend="__network_8c_1a731dce19cc17cfa0419781203697bf14">diagnosticModeControlQueue</link>,&#32;&amp;message,&#32;portMAX_DELAY)&#32;!=&#32;pdPASS)&#32;{
+<anchor xml:id="__network_8c_source_1l00114"/>00114 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Failed&#32;to&#32;buffer&#32;the&#32;incoming&#32;data&#32;from&#32;app.&quot;</emphasis>);
+<anchor xml:id="__network_8c_source_1l00115"/>00115 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00116"/>00116 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00117"/>00117 }
+<anchor xml:id="__network_8c_source_1l00118"/>00118 
+<anchor xml:id="__network_8c_source_1l00119"/>00119 <emphasis role="comment">//&#32;Funcție&#32;pentru&#32;trimiterea&#32;unui&#32;mesaj&#32;printr-un&#32;socket</emphasis>
+<anchor xml:id="__network_8c_source_1l00120"/><link linkend="__network_8h_1a9fded88b7fb26171ee59015da76c65bb">00120</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a9fded88b7fb26171ee59015da76c65bb">sendMessage</link>(<emphasis role="keywordtype">int</emphasis>&#32;sock,&#32;<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*message)&#32;{
+<anchor xml:id="__network_8c_source_1l00121"/>00121 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(sendto(sock,&#32;message,&#32;strlen(message),&#32;0,&#32;(<emphasis role="keyword">struct</emphasis>&#32;sockaddr*)&amp;<link linkend="__network_8c_1a53049234aa6eaa663203a7d6d2201e20">source_addr_global</link>,&#32;<link linkend="__network_8c_1a469c44d5c9e380d3e6a531eb08d6ff1d">addr_len_global</link>)&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00122"/>00122 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Failed&#32;to&#32;send&#32;message:&#32;%s,&#32;errno&#32;%d&quot;</emphasis>,&#32;message,&#32;errno);
+<anchor xml:id="__network_8c_source_1l00123"/>00123 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(50));
+<anchor xml:id="__network_8c_source_1l00124"/>00124 &#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__network_8c_source_1l00125"/>00125 &#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;ESP_LOGI(TAG,&#32;&quot;Message&#32;sent:&#32;%s&quot;,&#32;message);</emphasis>
+<anchor xml:id="__network_8c_source_1l00126"/>00126 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00127"/>00127 }
+<anchor xml:id="__network_8c_source_1l00128"/>00128 
+<anchor xml:id="__network_8c_source_1l00129"/>00129 
+<anchor xml:id="__network_8c_source_1l00130"/>00130 
+<anchor xml:id="__network_8c_source_1l00131"/><link linkend="__network_8h_1a6da0cb155a639c33efc40d0582b6bb92">00131</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a6da0cb155a639c33efc40d0582b6bb92">udp_server_task</link>(<emphasis role="keywordtype">void</emphasis>&#32;*pvParameters)&#32;{
+<anchor xml:id="__network_8c_source_1l00132"/>00132 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Configurarea&#32;LED-ului&#32;de&#32;conectare</emphasis>
+<anchor xml:id="__network_8c_source_1l00133"/>00133 &#32;&#32;&#32;&#32;<link linkend="__network_8c_1a1c5ac6591ff23b206b947213055f1fd1">config_Connected_led</link>();
+<anchor xml:id="__network_8c_source_1l00134"/>00134 
+<anchor xml:id="__network_8c_source_1l00135"/>00135 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Crearea&#32;task-ului&#32;pentru&#32;LED-ul&#32;intermitent</emphasis>
+<anchor xml:id="__network_8c_source_1l00136"/>00136 &#32;&#32;&#32;&#32;xTaskCreatePinnedToCore(<link linkend="__network_8c_1a39e7a5088757fe328c0162fe25d907bf">blink_led_task</link>,&#32;<emphasis role="stringliteral">&quot;blink_led_task&quot;</emphasis>,&#32;2048,&#32;NULL,&#32;5,
+<anchor xml:id="__network_8c_source_1l00137"/>00137 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&amp;<link linkend="__network_8c_1ac048a12489340ef5b63ebdaae37e4be3">handlerBlinkLedTask</link>,&#32;0U);
+<anchor xml:id="__network_8c_source_1l00138"/>00138 
+<anchor xml:id="__network_8c_source_1l00139"/>00139 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Configurarea&#32;adresei&#32;și&#32;a&#32;protocolului</emphasis>
+<anchor xml:id="__network_8c_source_1l00140"/>00140 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>&#32;addr_str[128];
+<anchor xml:id="__network_8c_source_1l00141"/>00141 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;addr_family&#32;=&#32;AF_INET;
+<anchor xml:id="__network_8c_source_1l00142"/>00142 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;ip_protocol&#32;=&#32;IPPROTO_UDP;
+<anchor xml:id="__network_8c_source_1l00143"/>00143 
+<anchor xml:id="__network_8c_source_1l00144"/>00144 &#32;&#32;&#32;&#32;<emphasis role="keyword">struct&#32;</emphasis>sockaddr_in&#32;dest_addr;
+<anchor xml:id="__network_8c_source_1l00145"/>00145 &#32;&#32;&#32;&#32;dest_addr.sin_addr.s_addr&#32;=&#32;htonl(INADDR_ANY);&#32;<emphasis role="comment">//&#32;Legare&#32;la&#32;orice&#32;adresă</emphasis>
+<anchor xml:id="__network_8c_source_1l00146"/>00146 &#32;&#32;&#32;&#32;dest_addr.sin_family&#32;=&#32;AF_INET;
+<anchor xml:id="__network_8c_source_1l00147"/>00147 &#32;&#32;&#32;&#32;dest_addr.sin_port&#32;=&#32;htons(<link linkend="__network_8h_1a614217d263be1fb1a5f76e2ff7be19a2">PORT</link>);
+<anchor xml:id="__network_8c_source_1l00148"/>00148 
+<anchor xml:id="__network_8c_source_1l00149"/>00149 &#32;&#32;&#32;&#32;inet_ntoa_r(dest_addr.sin_addr,&#32;addr_str,&#32;<emphasis role="keyword">sizeof</emphasis>(addr_str)&#32;-&#32;1);
+<anchor xml:id="__network_8c_source_1l00150"/>00150 
+<anchor xml:id="__network_8c_source_1l00151"/>00151 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Crearea&#32;socket-ului</emphasis>
+<anchor xml:id="__network_8c_source_1l00152"/>00152 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;sock&#32;=&#32;socket(addr_family,&#32;SOCK_DGRAM,&#32;ip_protocol);
+<anchor xml:id="__network_8c_source_1l00153"/>00153 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(sock&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00154"/>00154 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Unable&#32;to&#32;create&#32;socket:&#32;errno&#32;%d&quot;</emphasis>,&#32;errno);
+<anchor xml:id="__network_8c_source_1l00155"/>00155 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelete(NULL);
+<anchor xml:id="__network_8c_source_1l00156"/>00156 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;
+<anchor xml:id="__network_8c_source_1l00157"/>00157 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00158"/>00158 &#32;&#32;&#32;&#32;ESP_LOGI(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Socket&#32;created&quot;</emphasis>);
+<anchor xml:id="__network_8c_source_1l00159"/>00159 
+<anchor xml:id="__network_8c_source_1l00160"/>00160 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Legarea&#32;socket-ului&#32;la&#32;adresa&#32;specificată</emphasis>
+<anchor xml:id="__network_8c_source_1l00161"/>00161 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>&#32;=&#32;bind(sock,&#32;(<emphasis role="keyword">struct</emphasis>&#32;sockaddr*)&amp;dest_addr,&#32;<emphasis role="keyword">sizeof</emphasis>(dest_addr));
+<anchor xml:id="__network_8c_source_1l00162"/>00162 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(<link linkend="__i2_c__distance_sensor_8c_1a52482fdd3721e7db69dc740aefee8ad4">err</link>&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00163"/>00163 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Socket&#32;unable&#32;to&#32;bind:&#32;errno&#32;%d&quot;</emphasis>,&#32;errno);
+<anchor xml:id="__network_8c_source_1l00164"/>00164 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelete(NULL);
+<anchor xml:id="__network_8c_source_1l00165"/>00165 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>;
+<anchor xml:id="__network_8c_source_1l00166"/>00166 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00167"/>00167 &#32;&#32;&#32;&#32;ESP_LOGI(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Socket&#32;bound,&#32;port&#32;%d&quot;</emphasis>,&#32;<link linkend="__network_8h_1a614217d263be1fb1a5f76e2ff7be19a2">PORT</link>);
+<anchor xml:id="__network_8c_source_1l00168"/>00168 
+<anchor xml:id="__network_8c_source_1l00169"/>00169 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Așteptarea&#32;pentru&#32;mesajul&#32;&quot;ACK&#32;9999&quot;</emphasis>
+<anchor xml:id="__network_8c_source_1l00170"/>00170 &#32;&#32;&#32;&#32;wait_for_ack(sock);
+<anchor xml:id="__network_8c_source_1l00171"/>00171 
+<anchor xml:id="__network_8c_source_1l00172"/>00172 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(1)&#32;{
+<anchor xml:id="__network_8c_source_1l00173"/>00173 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Primirea&#32;datelor</emphasis>
+<anchor xml:id="__network_8c_source_1l00174"/>00174 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keyword">struct&#32;</emphasis>sockaddr_in6&#32;source_addr;&#32;<emphasis role="comment">//&#32;Suficient&#32;de&#32;mare&#32;pentru&#32;IPv4&#32;sau&#32;IPv6</emphasis>
+<anchor xml:id="__network_8c_source_1l00175"/>00175 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;socklen_t&#32;addr_len&#32;=&#32;<emphasis role="keyword">sizeof</emphasis>(source_addr);
+<anchor xml:id="__network_8c_source_1l00176"/>00176 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;len&#32;=&#32;recvfrom(sock,&#32;<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>,&#32;<emphasis role="keyword">sizeof</emphasis>(<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>)&#32;-&#32;1,&#32;0,
+<anchor xml:id="__network_8c_source_1l00177"/>00177 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;(<emphasis role="keyword">struct</emphasis>&#32;sockaddr*)&amp;source_addr,&#32;&amp;addr_len);
+<anchor xml:id="__network_8c_source_1l00178"/>00178 
+<anchor xml:id="__network_8c_source_1l00179"/>00179 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Verificarea&#32;erorilor&#32;sau&#32;datelor&#32;primite</emphasis>
+<anchor xml:id="__network_8c_source_1l00180"/>00180 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(len&#32;&lt;&#32;0)&#32;{
+<anchor xml:id="__network_8c_source_1l00181"/>00181 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGE(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;recvfrom&#32;failed:&#32;errno&#32;%d&quot;</emphasis>,&#32;errno);
+<anchor xml:id="__network_8c_source_1l00182"/>00182 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__network_8c_source_1l00183"/>00183 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}&#32;<emphasis role="keywordflow">else</emphasis>&#32;{
+<anchor xml:id="__network_8c_source_1l00184"/>00184 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>[len]&#32;=&#32;<emphasis role="charliteral">&apos;\0&apos;</emphasis>;&#32;<emphasis role="comment">//&#32;Terminarea&#32;șirului&#32;de&#32;caractere&#32;primit</emphasis>
+<anchor xml:id="__network_8c_source_1l00185"/>00185 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;handle_received_message(<link linkend="__network_8c_1ac71568e7238007e8666f6ba60d8bfe35">rx_buffer</link>,&#32;sock,&#32;source_addr,&#32;addr_len);
+<anchor xml:id="__network_8c_source_1l00186"/>00186 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00187"/>00187 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00188"/>00188 
+<anchor xml:id="__network_8c_source_1l00189"/>00189 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Închiderea&#32;socket-ului</emphasis>
+<anchor xml:id="__network_8c_source_1l00190"/>00190 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(sock&#32;!=&#32;-1)&#32;{
+<anchor xml:id="__network_8c_source_1l00191"/>00191 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_LOGI(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;Shutting&#32;down&#32;socket&quot;</emphasis>);
+<anchor xml:id="__network_8c_source_1l00192"/>00192 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;shutdown(sock,&#32;0);
+<anchor xml:id="__network_8c_source_1l00193"/>00193 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;close(sock);
+<anchor xml:id="__network_8c_source_1l00194"/>00194 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00195"/>00195 }
+<anchor xml:id="__network_8c_source_1l00196"/>00196 
+<anchor xml:id="__network_8c_source_1l00197"/>00197 
+<anchor xml:id="__network_8c_source_1l00198"/>00198 
+<anchor xml:id="__network_8c_source_1l00199"/><link linkend="__network_8h_1abc2dbdf2bfc1c9415cdb2e5f984665ff">00199</link> <emphasis role="keywordtype">char</emphasis>*&#32;<link linkend="__network_8c_1abc2dbdf2bfc1c9415cdb2e5f984665ff">to_string</link>(<emphasis role="keywordtype">void</emphasis>*&#32;value,&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link>&#32;type)&#32;{
+<anchor xml:id="__network_8c_source_1l00200"/>00200 &#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>*&#32;strValue&#32;=&#32;malloc(20&#32;*&#32;<emphasis role="keyword">sizeof</emphasis>(<emphasis role="keywordtype">char</emphasis>));
+<anchor xml:id="__network_8c_source_1l00201"/>00201 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(strValue&#32;==&#32;NULL)&#32;{
+<anchor xml:id="__network_8c_source_1l00202"/>00202 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Handle&#32;memory&#32;allocation&#32;failure&#32;if&#32;needed</emphasis>
+<anchor xml:id="__network_8c_source_1l00203"/>00203 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;NULL;
+<anchor xml:id="__network_8c_source_1l00204"/>00204 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00205"/>00205 
+<anchor xml:id="__network_8c_source_1l00206"/>00206 &#32;&#32;&#32;&#32;<emphasis role="comment">//&#32;Convert&#32;the&#32;value&#32;to&#32;a&#32;string&#32;based&#32;on&#32;its&#32;type</emphasis>
+<anchor xml:id="__network_8c_source_1l00207"/>00207 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">switch</emphasis>&#32;(type)&#32;{
+<anchor xml:id="__network_8c_source_1l00208"/>00208 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fafd5a5f51ce25953f3db2c7e93eb7864a">INT</link>:
+<anchor xml:id="__network_8c_source_1l00209"/>00209 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;sprintf(strValue,&#32;<emphasis role="stringliteral">&quot;%d&quot;</emphasis>,&#32;*(<emphasis role="keywordtype">int</emphasis>*)value);
+<anchor xml:id="__network_8c_source_1l00210"/>00210 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__network_8c_source_1l00211"/>00211 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fa33465d1d419b1074fb259ef444609e92">DOUBLE</link>:
+<anchor xml:id="__network_8c_source_1l00212"/>00212 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;sprintf(strValue,&#32;<emphasis role="stringliteral">&quot;%.2lf&quot;</emphasis>,&#32;*(<emphasis role="keywordtype">double</emphasis>*)value);
+<anchor xml:id="__network_8c_source_1l00213"/>00213 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__network_8c_source_1l00214"/>00214 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">case</emphasis>&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2fa9cf4a0866224b0bb4a7a895da27c9c4c">FLOAT</link>:
+<anchor xml:id="__network_8c_source_1l00215"/>00215 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;sprintf(strValue,&#32;<emphasis role="stringliteral">&quot;%.2f&quot;</emphasis>,&#32;*(<emphasis role="keywordtype">float</emphasis>*)value);
+<anchor xml:id="__network_8c_source_1l00216"/>00216 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordflow">break</emphasis>;
+<anchor xml:id="__network_8c_source_1l00217"/>00217 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00218"/>00218 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">return</emphasis>&#32;strValue;
+<anchor xml:id="__network_8c_source_1l00219"/>00219 }
+<anchor xml:id="__network_8c_source_1l00220"/>00220 
+<anchor xml:id="__network_8c_source_1l00221"/><link linkend="__network_8h_1abeb264090352ce377a3c339bd3abe1fc">00221</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1abeb264090352ce377a3c339bd3abe1fc">HLD_SendMessage</link>(<emphasis role="keyword">const</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;*message)&#32;{
+<anchor xml:id="__network_8c_source_1l00222"/>00222 &#32;&#32;&#32;&#32;<link linkend="__network_8c_1a9fded88b7fb26171ee59015da76c65bb">sendMessage</link>(<link linkend="__network_8c_1a66d70c4b1933243b27cf9451b07de225">sock_global</link>,&#32;message);
+<anchor xml:id="__network_8c_source_1l00223"/>00223 }
+<anchor xml:id="__network_8c_source_1l00224"/>00224 
+<anchor xml:id="__network_8c_source_1l00225"/><link linkend="__network_8h_1a979168b4c86e45871c79ddc820763652">00225</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a979168b4c86e45871c79ddc820763652">sendCommandApp</link>(<link linkend="__network_8h_1a57a739fb3d417e5abded6e0ac98c115b">SendCommandType_app</link>&#32;commandType,&#32;<emphasis role="keywordtype">void</emphasis>*&#32;commandValue,&#32;<link linkend="__network_8h_1a05e8c8420da1c24552059209fc234b2f">data_type_to_send</link>&#32;type)
+<anchor xml:id="__network_8c_source_1l00226"/>00226 {
+<anchor xml:id="__network_8c_source_1l00227"/>00227 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>(<link linkend="__network_8c_1a7316aaeee91623cd9fcab65f302ce7be">allowed_to_send</link>&#32;==&#32;<emphasis role="keyword">true</emphasis>)
+<anchor xml:id="__network_8c_source_1l00228"/>00228 &#32;&#32;&#32;&#32;{
+<anchor xml:id="__network_8c_source_1l00229"/>00229 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>*&#32;commandTypeStr&#32;=&#32;<link linkend="__network_8c_1a2fa235ed0bc5b7bb6f442944f98abb31">stateSendToAppStrings</link>[commandType];
+<anchor xml:id="__network_8c_source_1l00230"/>00230 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>*&#32;commandValueStr&#32;=&#32;(<emphasis role="keywordtype">char</emphasis>*)<link linkend="__network_8c_1abc2dbdf2bfc1c9415cdb2e5f984665ff">to_string</link>(commandValue,&#32;type);
+<anchor xml:id="__network_8c_source_1l00231"/>00231 
+<anchor xml:id="__network_8c_source_1l00232"/>00232 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">int</emphasis>&#32;lengthNeeded&#32;=&#32;strlen(commandTypeStr)&#32;+&#32;strlen(commandValueStr)&#32;+&#32;2;&#32;<emphasis role="comment">//&#32;2&#32;=&#32;1&#32;space&#32;+&#32;1&#32;null&#32;termination</emphasis>
+<anchor xml:id="__network_8c_source_1l00233"/>00233 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<emphasis role="keywordtype">char</emphasis>*&#32;commandToSend&#32;=&#32;malloc(lengthNeeded);
+<anchor xml:id="__network_8c_source_1l00234"/>00234 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;sprintf(commandToSend,&#32;<emphasis role="stringliteral">&quot;%s&#32;%s&quot;</emphasis>,&#32;commandTypeStr,&#32;commandValueStr);
+<anchor xml:id="__network_8c_source_1l00235"/>00235 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1abeb264090352ce377a3c339bd3abe1fc">HLD_SendMessage</link>(commandToSend);
+<anchor xml:id="__network_8c_source_1l00236"/>00236 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;free(commandValueStr);
+<anchor xml:id="__network_8c_source_1l00237"/>00237 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;free(commandToSend);
+<anchor xml:id="__network_8c_source_1l00238"/>00238 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00239"/>00239 }
+<anchor xml:id="__network_8c_source_1l00240"/>00240 
+<anchor xml:id="__network_8c_source_1l00241"/><link linkend="__network_8h_1a138c349a5f4bbbc10772842474798721">00241</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a138c349a5f4bbbc10772842474798721">start_network_task</link>()&#32;{
+<anchor xml:id="__network_8c_source_1l00242"/>00242 &#32;&#32;&#32;&#32;esp_err_t&#32;ret&#32;=&#32;nvs_flash_init();
+<anchor xml:id="__network_8c_source_1l00243"/>00243 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">if</emphasis>&#32;(ret&#32;==&#32;ESP_ERR_NVS_NO_FREE_PAGES&#32;||&#32;ret&#32;==&#32;ESP_ERR_NVS_NEW_VERSION_FOUND)&#32;{
+<anchor xml:id="__network_8c_source_1l00244"/>00244 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ESP_ERROR_CHECK(nvs_flash_erase());
+<anchor xml:id="__network_8c_source_1l00245"/>00245 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;ret&#32;=&#32;nvs_flash_init();
+<anchor xml:id="__network_8c_source_1l00246"/>00246 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00247"/>00247 &#32;&#32;&#32;&#32;ESP_ERROR_CHECK(ret);
+<anchor xml:id="__network_8c_source_1l00248"/>00248 &#32;&#32;&#32;&#32;ESP_LOGI(<link linkend="__i2_c__camera_sensor_8c_1afc3d101f633a076cc1ca84b85b6224b2">TAG</link>,&#32;<emphasis role="stringliteral">&quot;ESP_WIFI_MODE_AP&quot;</emphasis>);
+<anchor xml:id="__network_8c_source_1l00249"/>00249 &#32;&#32;&#32;&#32;<link linkend="__network_8c_1a62dddf76eb27aacde1609464b8d9ebad">wifi_init_softap</link>();
+<anchor xml:id="__network_8c_source_1l00250"/>00250 &#32;&#32;&#32;&#32;xTaskCreatePinnedToCore(<link linkend="__network_8c_1a6da0cb155a639c33efc40d0582b6bb92">udp_server_task</link>,&#32;<emphasis role="stringliteral">&quot;udp_server&quot;</emphasis>,&#32;4096,&#32;NULL,&#32;5,&#32;NULL,
+<anchor xml:id="__network_8c_source_1l00251"/>00251 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;0U);
+<anchor xml:id="__network_8c_source_1l00252"/>00252 }
+<anchor xml:id="__network_8c_source_1l00253"/><link linkend="__network_8h_1a1c5ac6591ff23b206b947213055f1fd1">00253</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a1c5ac6591ff23b206b947213055f1fd1">config_Connected_led</link>()&#32;{
+<anchor xml:id="__network_8c_source_1l00254"/>00254 &#32;&#32;&#32;&#32;gpio_reset_pin(<link linkend="__network_8h_1a41641baa09fa4c4b5afa152d61918969">INBUILT_LED_CONNECTED</link>);
+<anchor xml:id="__network_8c_source_1l00255"/>00255 &#32;&#32;&#32;&#32;gpio_set_direction(<link linkend="__network_8h_1a41641baa09fa4c4b5afa152d61918969">INBUILT_LED_CONNECTED</link>,&#32;GPIO_MODE_OUTPUT);
+<anchor xml:id="__network_8c_source_1l00256"/>00256 }
+<anchor xml:id="__network_8c_source_1l00257"/>00257 
+<anchor xml:id="__network_8c_source_1l00258"/><link linkend="__network_8h_1a07ab52c7f55179654f5630a08b8c2abd">00258</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a07ab52c7f55179654f5630a08b8c2abd">turnOnLED_connected</link>()&#32;{
+<anchor xml:id="__network_8c_source_1l00259"/>00259 &#32;&#32;&#32;&#32;gpio_set_level(<link linkend="__network_8h_1a41641baa09fa4c4b5afa152d61918969">INBUILT_LED_CONNECTED</link>,&#32;1);
+<anchor xml:id="__network_8c_source_1l00260"/>00260 }
+<anchor xml:id="__network_8c_source_1l00261"/>00261 
+<anchor xml:id="__network_8c_source_1l00262"/><link linkend="__network_8h_1a905705994ae17126574c031328a39852">00262</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a905705994ae17126574c031328a39852">complement_connected_led</link>()&#32;{
+<anchor xml:id="__network_8c_source_1l00263"/>00263 &#32;&#32;&#32;&#32;<emphasis role="keyword">static</emphasis>&#32;<emphasis role="keywordtype">unsigned</emphasis>&#32;<emphasis role="keywordtype">char</emphasis>&#32;state&#32;=&#32;0;
+<anchor xml:id="__network_8c_source_1l00264"/>00264 &#32;&#32;&#32;&#32;gpio_set_level(<link linkend="__network_8h_1a41641baa09fa4c4b5afa152d61918969">INBUILT_LED_CONNECTED</link>,&#32;state);
+<anchor xml:id="__network_8c_source_1l00265"/>00265 &#32;&#32;&#32;&#32;state&#32;^=&#32;1;
+<anchor xml:id="__network_8c_source_1l00266"/>00266 }
+<anchor xml:id="__network_8c_source_1l00267"/>00267 
+<anchor xml:id="__network_8c_source_1l00268"/><link linkend="__network_8h_1a39e7a5088757fe328c0162fe25d907bf">00268</link> <emphasis role="keywordtype">void</emphasis>&#32;<link linkend="__network_8c_1a39e7a5088757fe328c0162fe25d907bf">blink_led_task</link>(<emphasis role="keywordtype">void</emphasis>&#32;*pvParameters)&#32;{
+<anchor xml:id="__network_8c_source_1l00269"/>00269 &#32;&#32;&#32;&#32;<emphasis role="keywordflow">while</emphasis>&#32;(1)&#32;{
+<anchor xml:id="__network_8c_source_1l00270"/>00270 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;<link linkend="__network_8c_1a905705994ae17126574c031328a39852">complement_connected_led</link>();
+<anchor xml:id="__network_8c_source_1l00271"/>00271 &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;vTaskDelay(pdMS_TO_TICKS(500));
+<anchor xml:id="__network_8c_source_1l00272"/>00272 &#32;&#32;&#32;&#32;}
+<anchor xml:id="__network_8c_source_1l00273"/>00273 }
+</programlisting></section>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_motors__common_8h_source" xml:lang="en-US">
+<title>motors_common.h</title>
+<indexterm><primary>include/motors/drivers/motors_common.h</primary></indexterm>
+Go to the documentation of this file.<programlisting linenumbering="unnumbered"><anchor xml:id="_motors__common_8h_source_1l00001"/>00001 <emphasis role="comment">/*</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00002"/>00002 <emphasis role="comment">&#32;*&#32;motors_common.h</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00003"/>00003 <emphasis role="comment">&#32;*</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00004"/>00004 <emphasis role="comment">&#32;*&#32;&#32;Created&#32;on:&#32;18&#32;iun.&#32;2024</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00005"/>00005 <emphasis role="comment">&#32;*&#32;&#32;&#32;&#32;&#32;&#32;Author:&#32;racov</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00006"/>00006 <emphasis role="comment">&#32;*/</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00007"/>00007 
+<anchor xml:id="_motors__common_8h_source_1l00008"/>00008 <emphasis role="preprocessor">#ifndef&#32;INCLUDE_MOTORS_DRIVERS_MOTORS_COMMON_H_</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00009"/>00009 <emphasis role="preprocessor">#define&#32;INCLUDE_MOTORS_DRIVERS_MOTORS_COMMON_H_</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00010"/>00010 
+<anchor xml:id="_motors__common_8h_source_1l00011"/>00011 <emphasis role="preprocessor">#include&#32;&quot;esp_log.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00012"/>00012 <emphasis role="preprocessor">#include&#32;&quot;driver/ledc.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00013"/>00013 <emphasis role="preprocessor">#include&#32;&quot;esp_task_wdt.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00014"/>00014 <emphasis role="preprocessor">#include&#32;&quot;driver/mcpwm_timer.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00015"/>00015 <emphasis role="preprocessor">#include&#32;&quot;driver/mcpwm_cmpr.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00016"/>00016 <emphasis role="preprocessor">#include&#32;&quot;driver/mcpwm_oper.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00017"/>00017 <emphasis role="preprocessor">#include&#32;&quot;driver/mcpwm_gen.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00018"/>00018 <emphasis role="preprocessor">#include&#32;&quot;driver/pulse_cnt.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00019"/>00019 <emphasis role="preprocessor">#include&#32;&quot;freertos/FreeRTOS.h&quot;</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00020"/>00020 
+<anchor xml:id="_motors__common_8h_source_1l00021"/>00021 <emphasis role="preprocessor">#include&#32;&lt;stdbool.h&gt;</emphasis>&#32;<emphasis role="comment">//&#32;For&#32;bool&#32;type</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00022"/>00022 <emphasis role="preprocessor">#include&#32;&lt;stdlib.h&gt;</emphasis>&#32;<emphasis role="comment">//&#32;For&#32;atoi&#32;function</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00023"/>00023 <emphasis role="preprocessor">#include&#32;&lt;string.h&gt;</emphasis>&#32;<emphasis role="comment">//&#32;For&#32;strlen&#32;function</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00024"/>00024 
+<anchor xml:id="_motors__common_8h_source_1l00025"/><link linkend="_motors__common_8h_1ad76d1750a6cdeebd506bfcd6752554d2">00025</link> <emphasis role="preprocessor">#define&#32;ON&#32;0U</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00026"/><link linkend="_motors__common_8h_1a29e413f6725b2ba32d165ffaa35b01e5">00026</link> <emphasis role="preprocessor">#define&#32;OFF&#32;1U</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00027"/>00027 
+<anchor xml:id="_motors__common_8h_source_1l00028"/><link linkend="_motors__common_8h_1a65a9263cda85cf3299a01d37a8f5edba">00028</link> <emphasis role="preprocessor">#define&#32;MOTOR_MOCK_TEST&#32;OFF</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00029"/>00029 
+<anchor xml:id="_motors__common_8h_source_1l00030"/><link linkend="_motors__common_8h_1ab95bc8e342e8e5b490a92bc3c9b40077">00030</link> <emphasis role="preprocessor">#define&#32;MCPWM&#32;0U</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00031"/><link linkend="_motors__common_8h_1a9b91c9624204fe677d2bb41dec81f95f">00031</link> <emphasis role="preprocessor">#define&#32;LEDC&#32;1U</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00032"/>00032 
+<anchor xml:id="_motors__common_8h_source_1l00033"/>00033 <emphasis role="comment">/*Set&#32;which&#32;pwm&#32;source&#32;to&#32;use:&#32;MCPWM&#32;or&#32;LEDC.*/</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00034"/><link linkend="_motors__common_8h_1acc8d4fdab6323cf3b9525cebb8acc2d1">00034</link> <emphasis role="preprocessor">#define&#32;MOTOR_CONTROL&#32;MCPWM</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00035"/>00035 
+<anchor xml:id="_motors__common_8h_source_1l00036"/>00036 <emphasis role="comment">/*Pwm&#32;settings&#32;that&#32;are&#32;shared&#32;between&#32;servo&#32;and&#32;dc&#32;motor&#32;*/</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00037"/><link linkend="_motors__common_8h_1a58fbe70544ed1f31e9286ce8fea92c6a">00037</link> <emphasis role="preprocessor">#define&#32;LEDC_Motor_And_Servo_MODE&#32;&#32;&#32;LEDC_HIGH_SPEED_MODE</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00038"/><link linkend="_motors__common_8h_1a08858e91847f0c86c5c9e9abd17403ce">00038</link> <emphasis role="preprocessor">#define&#32;LEDC_Motor_And_Servo_FREQ&#32;&#32;&#32;50&#32;&#32;&#32;</emphasis><emphasis role="comment">//&#32;50Hz</emphasis>
+<anchor xml:id="_motors__common_8h_source_1l00039"/>00039 
+<anchor xml:id="_motors__common_8h_source_1l00040"/>00040 
+<anchor xml:id="_motors__common_8h_source_1l00041"/>00041 
+<anchor xml:id="_motors__common_8h_source_1l00042"/>00042 
+<anchor xml:id="_motors__common_8h_source_1l00043"/>00043 <emphasis role="preprocessor">#endif&#32;</emphasis><emphasis role="comment">/*&#32;INCLUDE_MOTORS_DRIVERS_MOTORS_COMMON_H_&#32;*/</emphasis><emphasis role="preprocessor"></emphasis>
+</programlisting></section>

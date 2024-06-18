@@ -1,0 +1,120 @@
+\doxysection{include/motors/drivers/motors\+\_\+common.h File Reference}
+\label{motors__common_8h}\index{include/motors/drivers/motors\_common.h@{include/motors/drivers/motors\_common.h}}
+{\ttfamily \#include "{}esp\+\_\+log.\+h"{}}\newline
+{\ttfamily \#include "{}driver/ledc.\+h"{}}\newline
+{\ttfamily \#include "{}esp\+\_\+task\+\_\+wdt.\+h"{}}\newline
+{\ttfamily \#include "{}driver/mcpwm\+\_\+timer.\+h"{}}\newline
+{\ttfamily \#include "{}driver/mcpwm\+\_\+cmpr.\+h"{}}\newline
+{\ttfamily \#include "{}driver/mcpwm\+\_\+oper.\+h"{}}\newline
+{\ttfamily \#include "{}driver/mcpwm\+\_\+gen.\+h"{}}\newline
+{\ttfamily \#include "{}driver/pulse\+\_\+cnt.\+h"{}}\newline
+{\ttfamily \#include "{}freertos/\+Free\+RTOS.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+Include dependency graph for motors\+\_\+common.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \textbf{ ON}~0U
+\item 
+\#define \textbf{ OFF}~1U
+\item 
+\#define \textbf{ MOTOR\+\_\+\+MOCK\+\_\+\+TEST}~\textbf{ OFF}
+\item 
+\#define \textbf{ MCPWM}~0U
+\item 
+\#define \textbf{ LEDC}~1U
+\item 
+\#define \textbf{ MOTOR\+\_\+\+CONTROL}~\textbf{ MCPWM}
+\item 
+\#define \textbf{ LEDC\+\_\+\+Motor\+\_\+\+And\+\_\+\+Servo\+\_\+\+MODE}~LEDC\+\_\+\+HIGH\+\_\+\+SPEED\+\_\+\+MODE
+\item 
+\#define \textbf{ LEDC\+\_\+\+Motor\+\_\+\+And\+\_\+\+Servo\+\_\+\+FREQ}~50
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\index{motors\_common.h@{motors\_common.h}!LEDC@{LEDC}}
+\index{LEDC@{LEDC}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{LEDC}
+{\footnotesize\ttfamily \label{motors__common_8h_a9b91c9624204fe677d2bb41dec81f95f} 
+\#define LEDC~1U}
+
+
+
+Definition at line \textbf{ 31} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!LEDC\_Motor\_And\_Servo\_FREQ@{LEDC\_Motor\_And\_Servo\_FREQ}}
+\index{LEDC\_Motor\_And\_Servo\_FREQ@{LEDC\_Motor\_And\_Servo\_FREQ}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{LEDC\_Motor\_And\_Servo\_FREQ}
+{\footnotesize\ttfamily \label{motors__common_8h_a08858e91847f0c86c5c9e9abd17403ce} 
+\#define LEDC\+\_\+\+Motor\+\_\+\+And\+\_\+\+Servo\+\_\+\+FREQ~50}
+
+
+
+Definition at line \textbf{ 38} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!LEDC\_Motor\_And\_Servo\_MODE@{LEDC\_Motor\_And\_Servo\_MODE}}
+\index{LEDC\_Motor\_And\_Servo\_MODE@{LEDC\_Motor\_And\_Servo\_MODE}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{LEDC\_Motor\_And\_Servo\_MODE}
+{\footnotesize\ttfamily \label{motors__common_8h_a58fbe70544ed1f31e9286ce8fea92c6a} 
+\#define LEDC\+\_\+\+Motor\+\_\+\+And\+\_\+\+Servo\+\_\+\+MODE~LEDC\+\_\+\+HIGH\+\_\+\+SPEED\+\_\+\+MODE}
+
+
+
+Definition at line \textbf{ 37} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!MCPWM@{MCPWM}}
+\index{MCPWM@{MCPWM}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{MCPWM}
+{\footnotesize\ttfamily \label{motors__common_8h_ab95bc8e342e8e5b490a92bc3c9b40077} 
+\#define MCPWM~0U}
+
+
+
+Definition at line \textbf{ 30} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!MOTOR\_CONTROL@{MOTOR\_CONTROL}}
+\index{MOTOR\_CONTROL@{MOTOR\_CONTROL}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{MOTOR\_CONTROL}
+{\footnotesize\ttfamily \label{motors__common_8h_acc8d4fdab6323cf3b9525cebb8acc2d1} 
+\#define MOTOR\+\_\+\+CONTROL~\textbf{ MCPWM}}
+
+
+
+Definition at line \textbf{ 34} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!MOTOR\_MOCK\_TEST@{MOTOR\_MOCK\_TEST}}
+\index{MOTOR\_MOCK\_TEST@{MOTOR\_MOCK\_TEST}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{MOTOR\_MOCK\_TEST}
+{\footnotesize\ttfamily \label{motors__common_8h_a65a9263cda85cf3299a01d37a8f5edba} 
+\#define MOTOR\+\_\+\+MOCK\+\_\+\+TEST~\textbf{ OFF}}
+
+
+
+Definition at line \textbf{ 28} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!OFF@{OFF}}
+\index{OFF@{OFF}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{OFF}
+{\footnotesize\ttfamily \label{motors__common_8h_a29e413f6725b2ba32d165ffaa35b01e5} 
+\#define OFF~1U}
+
+
+
+Definition at line \textbf{ 26} of file \textbf{ motors\+\_\+common.\+h}.
+
+\index{motors\_common.h@{motors\_common.h}!ON@{ON}}
+\index{ON@{ON}!motors\_common.h@{motors\_common.h}}
+\doxysubsubsection{ON}
+{\footnotesize\ttfamily \label{motors__common_8h_ad76d1750a6cdeebd506bfcd6752554d2} 
+\#define ON~0U}
+
+
+
+Definition at line \textbf{ 25} of file \textbf{ motors\+\_\+common.\+h}.
+

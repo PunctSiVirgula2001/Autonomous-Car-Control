@@ -1,0 +1,67 @@
+\doxysection{PID.\+h}
+\label{_p_i_d_8h_source}\index{include/PID.h@{include/PID.h}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}esp\_freertos\_hooks.h"{}}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}MotorAndServoControl.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}I2C\_sensorControl.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{comment}{/*\ PID\ settings\ */}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#define\ PID\_MAX\_WINDUP\ 5\ }\textcolor{comment}{//\ Maximum\ windup\ value\ for\ the\ PID\ controller\ (to\ be\ tested)}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ PID\_D\_TERM\_FILTER\_COEFFICIENT\ 0.5\ }\textcolor{comment}{//\ Coefficient\ for\ filtering\ the\ derivative\ term\ (to\ be\ tested)}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ PID\_OUT\_LIMIT\_RATE\_CHANGE\ 5\ }\textcolor{comment}{//\ Maximum\ rate\ of\ change\ for\ the\ PID\ output\ (represents\ the\ difference\ between\ outputs)}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#define\ low\_pass\_filter\_derivative\_chan\ ON\ \ }\textcolor{comment}{//\ Set\ to\ ON\ or\ OFF}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ PID\ Structure}}
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{int}\ setpoint;\ \ \ \ \ \textcolor{comment}{//\ Desired\ value}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{int}\ measured;\ \ \ \ \ \textcolor{comment}{//\ Current\ value}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_error;\ \textcolor{comment}{//\ Previous\ error\ value}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{float}\ integral;\ \ \ \textcolor{comment}{//\ Integral\ term}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{float}\ Kp;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Proportional\ gain}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{float}\ Ki;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Integral\ gain}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{float}\ Kd;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Derivative\ gain}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{float}\ P\_term;\ \ \ \ \ \textcolor{comment}{//\ Proportional\ term}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{float}\ I\_term;\ \ \ \ \ \textcolor{comment}{//\ Integral\ term}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{float}\ D\_term;\ \ \ \ \ \textcolor{comment}{//\ Derivative\ term}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{int}\ Output;\ \ \ \ \ \ \ \textcolor{comment}{//\ PID\ output}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ previousOutput;}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#if\ low\_pass\_filter\_derivative\_chan\ ==\ ON}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{float}\ previous\_D\_term;\ \textcolor{comment}{//\ Add\ this\ to\ store\ the\ previous\ derivative\ term}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{float}\ alpha;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Smoothing\ factor\ for\ the\ low-\/pass\ filter}}
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00030\ \}\ PID\_t;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ PID\ Initialization}}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ PID\_Init(PID\_t\ *pid,\ \textcolor{keywordtype}{float}\ Kp,\ \textcolor{keywordtype}{float}\ Ki,\ \textcolor{keywordtype}{float}\ Kd);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ Compute\ PID}}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ PID\_Compute(PID\_t\ *pid);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{/*\ PID\ update\ params\ */}}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ PID\_UpdateParams(PID\_t\ *pid,\ \textcolor{keywordtype}{float}\ new\_Kp,\ \textcolor{keywordtype}{float}\ new\_Ki,\ \textcolor{keywordtype}{float}\ new\_Kd);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{comment}{/*\ PID\ Task\ */}}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ PIDTask(\textcolor{keywordtype}{void}\ *pvParameters);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{comment}{/*\ Sliding\ mean\ average\ settings\ */}}
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ WINDOW\_SIZE\_SMA\ 15\ }\textcolor{comment}{//\ Window\ size\ for\ sliding\ mean\ average}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*\ Sliding\ Mean\ Average\ function\ */}}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{double}\ Sliding\_Mean\_Average(\textcolor{keywordtype}{int}\ newValue);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{/*Clamp\ function\ for\ PID\ -\/\ types*/}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ clamp\_float(\textcolor{keywordtype}{float}\ *value,\ \textcolor{keywordtype}{float}\ min,\ \textcolor{keywordtype}{float}\ max);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{void}\ clamp\_int(\textcolor{keywordtype}{int}\ *value,\ \textcolor{keywordtype}{int}\ min,\ \textcolor{keywordtype}{int}\ max);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*START\ PID\ TASK\ function*/}}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{void}\ start\_PID\_task();}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{float}\ get\_speed\_distance\_sens\_scaling(\textcolor{keywordtype}{float}\ speed,\ \textcolor{keywordtype}{float}\ speed\_min,\ \textcolor{keywordtype}{float}\ speed\_max);}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{comment}{/*\ Tick\ hook\ for\ continuosly\ updating\ car's\ speed\ to\ 0\ when's\ needed.\ */}}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{void}\ speedCheckTickHook(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ init\_speedCheckTickHook(\textcolor{keywordtype}{void});}
+
+\end{DoxyCode}

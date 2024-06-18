@@ -1,0 +1,319 @@
+\doxysection{I2\+C\+\_\+common.\+c}
+\label{_i2_c__common_8c_source}\index{src/I2C/drivers/I2C\_common.c@{src/I2C/drivers/I2C\_common.c}}
+\textbf{ Go to the documentation of this file.}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ "{}Network.h"{}}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}math.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}I2C\_common.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{comment}{//i2c\ config\ structure}}
+\DoxyCodeLine{00007\ i2c\_master\_bus\_config\_t\ esp32\_i2c\_config;}
+\DoxyCodeLine{00008\ \textcolor{comment}{//i2c\ bus\ handle\ for\ the\ configuration}}
+\DoxyCodeLine{00009\ i2c\_master\_bus\_handle\_t\ bus\_handle\_esp32\_i2c\_config;}
+\DoxyCodeLine{00010\ \textcolor{comment}{//i2c\ device\ handle\ for\ the\ configuration}}
+\DoxyCodeLine{00011\ i2c\_master\_dev\_handle\_t\ device\_handle\_esp32\_i2c\_config[I2C\_MAX\_Num\_of\_dev\_handles];}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ initialize\ I2C\ for\ esp32\ as\ master}}
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{void}\ I2C\_master\_init()}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ esp32\_i2c\_config.i2c\_port\ =\ I2C\_NUM\_0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ automatically\ select\ the\ next\ available\ i2c\ port}}
+\DoxyCodeLine{00020\ \ \ \ \ esp32\_i2c\_config.sda\_io\_num\ =\ I2C\_SDA;}
+\DoxyCodeLine{00021\ \ \ \ \ esp32\_i2c\_config.scl\_io\_num\ =\ I2C\_SCL;}
+\DoxyCodeLine{00022\ \ \ \ \ esp32\_i2c\_config.clk\_source\ =\ I2C\_CLK\_SRC\_DEFAULT;}
+\DoxyCodeLine{00023\ \ \ \ \ esp32\_i2c\_config.flags.enable\_internal\_pullup\ =\ INTERNAL\_PULLUPS;\ \textcolor{comment}{//\ might\ need\ external\ pullups\ as\ well}}
+\DoxyCodeLine{00024\ \ \ \ \ esp32\_i2c\_config.trans\_queue\_depth\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ queue\ size\ when\ the\ communication\ is\ asynchronous}}
+\DoxyCodeLine{00025\ \ \ \ \ esp32\_i2c\_config.glitch\_ignore\_cnt\ =\ GLITCH\_IGNORE\_CNT;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ number\ of\ clock\ cycles\ to\ ignore\ for\ glitch\ filtering}}
+\DoxyCodeLine{00026\ \ \ \ \ esp32\_i2c\_config.intr\_priority\ =\ 0;}
+\DoxyCodeLine{00027\ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_new\_master\_bus(\&esp32\_i2c\_config,\ \&bus\_handle\_esp32\_i2c\_config));}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ switch\ the\ multiplexer\ channel}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ Function\ to\ switch\ the\ I2C\ multiplexer\ channel}}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ I2C\_select\_multiplexer\_channel(I2C\_devices\_mux\ num\_channel)}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Prepare\ the\ data\ to\ send:\ one\ byte\ where\ each\ bit\ represents\ a\ channel}}
+\DoxyCodeLine{00035\ \ \ \ \ uint8\_t\ data\ =\ 1\ <<\ num\_channel;\ \textcolor{comment}{//\ Shift\ 1\ to\ the\ correct\ bit\ position\ for\ the\ channel}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ Perform\ the\ I2C\ write\ to\ change\ the\ channel}}
+\DoxyCodeLine{00037\ \ \ \ \ esp\_err\_t\ ret\ =\ i2c\_master\_transmit(device\_handle\_esp32\_i2c\_config[I2C\_multiplexer\_dev\_handle],\ \&data,\ 1,\ -\/1);}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//\ Check\ the\ result}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//if(ret==ESP\_OK)}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//ESP\_LOGI("{}I2C"{},\ "{}Channel\ \%d\ selected"{},\ num\_channel);}}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{//\ Check\ the\ result}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ !=\ ESP\_OK)}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ ESP\_LOGI(\textcolor{stringliteral}{"{}I2C\ ERR"{}},\ \textcolor{stringliteral}{"{}ERROR\ Channel\ \%d\ not\ selected"{}},\ num\_channel);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ i2c\_master\_bus\_wait\_all\_done(bus\_handle\_esp32\_i2c\_config,\ 50);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{comment}{//i2c\_master\_bus\_reset(bus\_handle\_esp32\_i2c\_config);}}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ \}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{comment}{//\ add\ device\ to\ the\ I2C\ bus\ with\ different\ address\ and\ speed}}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ I2C\_add\_device(uint8\_t\ device\_address)}
+\DoxyCodeLine{00052\ \{}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}\ mux\_added\ =\ 0U;}
+\DoxyCodeLine{00054\ \ \ \ \ i2c\_device\_config\_t\ device\_config\ =\ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ .dev\_addr\_length\ =\ I2C\_ADDR\_BIT\_LEN\_7,}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ .device\_address\ =\ device\_address,}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ .scl\_speed\_hz\ =\ SCL\_SPEED\_FAST\_MODE}
+\DoxyCodeLine{00058\ \ \ \ \ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{switch}\ (device\_address)\ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_temp\_sens\_addr:}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(mux\_added)\{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_temp\_sens\_mux);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_temp\_sens\_dev\_handle]));}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens\_addr:}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(mux\_added)\{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_distance\_sens\_1\_mux);}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_distance\_sens1\_dev\_handle]));\ \textcolor{comment}{//\ distance\ sensors\ have\ the\ same\ addr}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_distance\_sens\_2\_mux);}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_distance\_sens2\_dev\_handle]));\ \textcolor{comment}{//\ distance\ sensors\ have\ the\ same\ addr}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_pixy2\_camera\_addr:}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(mux\_added)\{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_pixy2\_dev\_handle]));}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_oled\_display\_096\_addr:}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(mux\_added)\{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_oled\_display\_096\_mux);}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_oled\_display\_096\_dev\_handle]));}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_mux\_addr:}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ mux\_added\ =\ 1U;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_multiplexer\_dev\_handle]));}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_adxl345\_sens\_addr:}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_adxl345\_sens\_mux);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ ESP\_ERROR\_CHECK(i2c\_master\_bus\_add\_device(bus\_handle\_esp32\_i2c\_config,\ \&device\_config,\ \&device\_handle\_esp32\_i2c\_config[I2C\_adxl345\_sens\_dev\_handle]));}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00102\ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ I2C\_transmit(I2C\_dev\_handles\ device\_handle,\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ data,\ \textcolor{keywordtype}{size\_t}\ write\_size)}
+\DoxyCodeLine{00106\ \{}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{keyword}{static}\ I2C\_dev\_handles\ old\_handle=999;}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{keyword}{static}\ I2C\_dev\_handles\ current\_handle;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ current\_handle=device\_handle;}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{if}(old\_handle!=current\_handle)\{}
+\DoxyCodeLine{00112\ \ \ \ \ \textcolor{comment}{//Before\ transmitting\ choose\ the\ correct\ channel\ for\ the\ mux}}
+\DoxyCodeLine{00113\ \ \ \ \ \textcolor{keywordflow}{switch}\ (device\_handle)\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_multiplexer\_dev\_handle:}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ do\ nothing}}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_pixy2\_dev\_handle:}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_pixy2\_dev\_handle;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens1\_dev\_handle:}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_distance\_sens\_1\_mux);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_distance\_sens1\_dev\_handle;}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens2\_dev\_handle:}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_distance\_sens\_2\_mux);}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_distance\_sens2\_dev\_handle;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_temp\_sens\_dev\_handle:}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_temp\_sens\_mux);}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_temp\_sens\_dev\_handle;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_oled\_display\_096\_dev\_handle:}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_oled\_display\_096\_mux);}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_oled\_display\_096\_dev\_handle;}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_adxl345\_sens\_dev\_handle:}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_adxl345\_sens\_mux);}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_adxl345\_sens\_dev\_handle;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00142\ \ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \}}
+\DoxyCodeLine{00144\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00145\ \ \ \ \ esp\_err\_t\ ret\ =\ i2c\_master\_transmit(device\_handle\_esp32\_i2c\_config[device\_handle],\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)data,\ write\_size,\ -\/1);\ \textcolor{comment}{//\ 3rd\ argument\ =\ length\ of\ the\ data\ in\ bytes\ ==>\ only\ commands,\ 2\ bytes\ only}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ !=\ ESP\_OK)\ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}I2C\ Receive"{}},\ \textcolor{stringliteral}{"{}Failed\ to\ receive\ data:\ \%s"{}},\ esp\_err\_to\_name(ret));}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ i2c\_master\_bus\_wait\_all\_done(bus\_handle\_esp32\_i2c\_config,\ 50);}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ i2c\_master\_bus\_reset(bus\_handle\_esp32\_i2c\_config);}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00151\ \}}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{void}\ I2C\_receive(I2C\_dev\_handles\ device\_handle,\ uint8\_t*\ data,\ \textcolor{keywordtype}{size\_t}\ read\_size)}
+\DoxyCodeLine{00154\ \{}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{static}\ I2C\_dev\_handles\ old\_handle=99;}
+\DoxyCodeLine{00157\ \ \ \ \ \textcolor{keyword}{static}\ I2C\_dev\_handles\ current\_handle;}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ current\_handle=device\_handle;}
+\DoxyCodeLine{00160\ \ \ \ \ \textcolor{comment}{//\ If\ the\ channel\ is\ already\ selected,\ don't\ call\ the\ function\ for\ changing}}
+\DoxyCodeLine{00161\ \ \ \ \ \textcolor{comment}{//\ channel.}}
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordflow}{if}(old\_handle!=current\_handle)}
+\DoxyCodeLine{00163\ \ \ \ \ \textcolor{keywordflow}{switch}\ (device\_handle)\ \{}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_multiplexer\_dev\_handle:}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ do\ nothing}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_pixy2\_dev\_handle:}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_pixy2\_camera\_mux);}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_pixy2\_dev\_handle;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens1\_dev\_handle:}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_distance\_sens\_1\_mux);}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_distance\_sens1\_dev\_handle;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_distance\_sens2\_dev\_handle:}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_distance\_sens\_2\_mux);}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_distance\_sens2\_dev\_handle;}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_temp\_sens\_dev\_handle:}
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_temp\_sens\_mux);}
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_temp\_sens\_dev\_handle;}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_oled\_display\_096\_dev\_handle:}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_oled\_display\_096\_mux);}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_oled\_display\_096\_dev\_handle;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ I2C\_adxl345\_sens\_dev\_handle:}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ I2C\_select\_multiplexer\_channel(I2C\_adxl345\_sens\_mux);}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ old\_handle=I2C\_adxl345\_sens\_dev\_handle;}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00192\ \ \ \ \ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));\ \textcolor{comment}{//\ space\ for\ the\ switch\ of\ the\ channel\ to\ happen}}
+\DoxyCodeLine{00195\ \ \ \ \ esp\_err\_t\ ret\ =\ i2c\_master\_receive(device\_handle\_esp32\_i2c\_config[device\_handle],\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*)data,\ read\_size,\ -\/1);}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordflow}{if}\ (ret\ !=\ ESP\_OK)\ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ ESP\_LOGE(\textcolor{stringliteral}{"{}I2C\ Receive"{}},\ \textcolor{stringliteral}{"{}Failed\ to\ receive\ data:\ \%s"{}},\ esp\_err\_to\_name(ret));}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ i2c\_master\_bus\_wait\_all\_done(bus\_handle\_esp32\_i2c\_config,\ 100);}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{comment}{//i2c\_master\_bus\_reset(bus\_handle\_esp32\_i2c\_config);}}
+\DoxyCodeLine{00200\ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \}}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{keywordtype}{void}\ writeMultipleRegisters(I2C\_dev\_handles\ device\_handle,\ \textcolor{keyword}{const}\ uint8\_t\ (*regs\_vals)[2],\ \textcolor{keywordtype}{size\_t}\ count)\ \{}
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ count;\ i++)\ \{}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ I2C\_writeRegister8bit(device\_handle,\ regs\_vals[i][0],\ regs\_vals[i][1]);}
+\DoxyCodeLine{00207\ \ \ \ \ \}}
+\DoxyCodeLine{00208\ \}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ uint8\_t\ I2C\_readRegister8bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg)}
+\DoxyCodeLine{00211\ \{}
+\DoxyCodeLine{00212\ \ \ \ \ uint8\_t\ data;}
+\DoxyCodeLine{00213\ \ \ \ \ I2C\_transmit(device\_handle,\ \&reg,\ 1);}
+\DoxyCodeLine{00214\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00215\ \ \ \ \ I2C\_receive(device\_handle,\ \&data,\ 1);}
+\DoxyCodeLine{00216\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordflow}{return}\ data;}
+\DoxyCodeLine{00218\ \}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ uint16\_t\ I2C\_readRegister16bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg)}
+\DoxyCodeLine{00221\ \{}
+\DoxyCodeLine{00222\ \ \ \ \ uint8\_t\ data[2];}
+\DoxyCodeLine{00223\ \ \ \ \ uint16\_t\ data\_f;}
+\DoxyCodeLine{00224\ \ \ \ \ I2C\_transmit(device\_handle,\ \&reg,\ 1);}
+\DoxyCodeLine{00225\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00226\ \ \ \ \ \textcolor{comment}{//\ Read\ two\ bytes\ at\ once}}
+\DoxyCodeLine{00227\ \ \ \ \ I2C\_receive(device\_handle,\ data,\ 2);}
+\DoxyCodeLine{00228\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(10));}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \textcolor{comment}{//\ Combine\ the\ two\ bytes\ into\ one\ 16-\/bit\ value}}
+\DoxyCodeLine{00231\ \ \ \ \ data\_f\ =\ (uint16\_t)data[0]\ <<\ 8\ |\ data[1];}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordflow}{return}\ data\_f;}
+\DoxyCodeLine{00234\ \}}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ uint32\_t\ I2C\_readRegister32bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg)}
+\DoxyCodeLine{00237\ \{}
+\DoxyCodeLine{00238\ \ \ \ \ uint8\_t\ data[4];\ \ \ \textcolor{comment}{//\ Array\ to\ hold\ the\ four\ bytes\ read\ from\ the\ device}}
+\DoxyCodeLine{00239\ \ \ \ \ uint32\_t\ data\_f\ =\ 0;\ \textcolor{comment}{//\ Initialize\ the\ final\ 32-\/bit\ data\ value}}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \textcolor{comment}{//\ Send\ the\ register\ address\ from\ which\ to\ start\ the\ read}}
+\DoxyCodeLine{00242\ \ \ \ \ I2C\_transmit(device\_handle,\ \&reg,\ 1);}
+\DoxyCodeLine{00243\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ Delay\ to\ allow\ for\ address\ setup}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00245\ \ \ \ \ \textcolor{comment}{//\ Receive\ 4\ bytes\ of\ data}}
+\DoxyCodeLine{00246\ \ \ \ \ I2C\_receive(device\_handle,\ data,\ 4);}
+\DoxyCodeLine{00247\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ Delay\ to\ allow\ the\ read\ transaction\ to\ complete}}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \textcolor{comment}{//\ Convert\ the\ 4\ bytes\ into\ a\ single\ 32-\/bit\ integer\ (assume\ big-\/endian\ order)}}
+\DoxyCodeLine{00250\ \ \ \ \ data\_f\ =\ (uint32\_t)data[0]\ <<\ 24;\ \textcolor{comment}{//\ Highest\ byte}}
+\DoxyCodeLine{00251\ \ \ \ \ data\_f\ |=\ (uint32\_t)data[1]\ <<\ 16;\ \textcolor{comment}{//\ Higher\ middle\ byte}}
+\DoxyCodeLine{00252\ \ \ \ \ data\_f\ |=\ (uint32\_t)data[2]\ <<\ 8;\ \ \textcolor{comment}{//\ Lower\ middle\ byte}}
+\DoxyCodeLine{00253\ \ \ \ \ data\_f\ |=\ data[3];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lowest\ byte}}
+\DoxyCodeLine{00254\ }
+\DoxyCodeLine{00255\ \ \ \ \ \textcolor{keywordflow}{return}\ data\_f;}
+\DoxyCodeLine{00256\ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \textcolor{keywordtype}{void}\ I2C\_writeRegister8bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg,\ uint8\_t\ value)}
+\DoxyCodeLine{00260\ \{}
+\DoxyCodeLine{00261\ \ \ \ \ uint8\_t\ data[2];}
+\DoxyCodeLine{00262\ \ \ \ \ data[0]\ =\ reg;\ \ \ \textcolor{comment}{//\ First\ byte\ is\ the\ register\ address}}
+\DoxyCodeLine{00263\ \ \ \ \ data[1]\ =\ value;\ \textcolor{comment}{//\ Second\ byte\ is\ the\ data\ to\ write}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{comment}{//\ Transmit\ both\ bytes\ at\ once}}
+\DoxyCodeLine{00266\ \ \ \ \ I2C\_transmit(device\_handle,\ data,\ 2);}
+\DoxyCodeLine{00267\ \ \ \ \ \textcolor{comment}{//i2c\_manual\_stop(pdMS\_TO\_TICKS(5));}}
+\DoxyCodeLine{00268\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(5));\ \textcolor{comment}{//\ Delay\ to\ allow\ the\ transaction\ to\ complete}}
+\DoxyCodeLine{00269\ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \textcolor{keywordtype}{void}\ I2C\_writeRegister16bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg,\ uint16\_t\ value)}
+\DoxyCodeLine{00272\ \{}
+\DoxyCodeLine{00273\ \ \ \ \ uint8\_t\ data[3];\ \textcolor{comment}{//\ Array\ to\ hold\ the\ register\ and\ the\ two\ bytes\ of\ the\ value}}
+\DoxyCodeLine{00274\ \ \ \ \ data[0]\ =\ reg;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Register\ address}}
+\DoxyCodeLine{00275\ \ \ \ \ data[1]\ =\ (uint8\_t)(value\ >>\ 8);\ \textcolor{comment}{//\ High\ byte\ of\ the\ 16-\/bit\ value}}
+\DoxyCodeLine{00276\ \ \ \ \ data[2]\ =\ (uint8\_t)value;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Low\ byte\ of\ the\ 16-\/bit\ value}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ register\ address\ and\ value\ in\ one\ go}}
+\DoxyCodeLine{00279\ \ \ \ \ I2C\_transmit(device\_handle,\ data,\ 3);}
+\DoxyCodeLine{00280\ \ \ \ \ \textcolor{comment}{//vTaskDelay(pdMS\_TO\_TICKS(10));\ //\ Delay\ to\ allow\ the\ transaction\ to\ complete}}
+\DoxyCodeLine{00281\ \}}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \textcolor{keywordtype}{void}\ I2C\_writeRegister32bit(I2C\_dev\_handles\ device\_handle,\ uint8\_t\ reg,\ uint32\_t\ value)}
+\DoxyCodeLine{00284\ \{}
+\DoxyCodeLine{00285\ \ \ \ \ uint8\_t\ data[5];\ \textcolor{comment}{//\ Array\ to\ hold\ the\ register\ and\ the\ four\ bytes\ of\ the\ value}}
+\DoxyCodeLine{00286\ \ \ \ \ data[0]\ =\ reg;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Register\ address}}
+\DoxyCodeLine{00287\ \ \ \ \ data[1]\ =\ (uint8\_t)(value\ >>\ 24);\ \textcolor{comment}{//\ Highest\ byte}}
+\DoxyCodeLine{00288\ \ \ \ \ data[2]\ =\ (uint8\_t)(value\ >>\ 16);\ \textcolor{comment}{//\ Higher\ middle\ byte}}
+\DoxyCodeLine{00289\ \ \ \ \ data[3]\ =\ (uint8\_t)(value\ >>\ 8);\ \ \textcolor{comment}{//\ Lower\ middle\ byte}}
+\DoxyCodeLine{00290\ \ \ \ \ data[4]\ =\ (uint8\_t)value;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lowest\ byte}}
+\DoxyCodeLine{00291\ }
+\DoxyCodeLine{00292\ \ \ \ \ \textcolor{comment}{//\ Transmit\ the\ register\ address\ and\ value\ in\ one\ go}}
+\DoxyCodeLine{00293\ \ \ \ \ I2C\_transmit(device\_handle,\ data,\ 5);}
+\DoxyCodeLine{00294\ \ \ \ \ vTaskDelay(pdMS\_TO\_TICKS(50));\ \textcolor{comment}{//\ Delay\ to\ allow\ the\ transaction\ to\ complete}}
+\DoxyCodeLine{00295\ \}}
+\DoxyCodeLine{00296\ }
+\DoxyCodeLine{00297\ \textcolor{keywordtype}{void}\ config\_rst\_pin\_i2c\_mux()\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ gpio\_reset\_pin(RST\_PIN\_MUX\_I2C);}
+\DoxyCodeLine{00299\ \ \ \ \ gpio\_set\_direction(RST\_PIN\_MUX\_I2C,\ GPIO\_MODE\_OUTPUT);}
+\DoxyCodeLine{00300\ \}}
+\DoxyCodeLine{00301\ \textcolor{keywordtype}{void}\ rst\_pin\_i2c\_mux\_on()}
+\DoxyCodeLine{00302\ \{}
+\DoxyCodeLine{00303\ \ \ \ \ gpio\_set\_level(RST\_PIN\_MUX\_I2C,\ 1);}
+\DoxyCodeLine{00304\ \}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00306\ \textcolor{keywordtype}{void}\ rst\_pin\_i2c\_mux\_off()}
+\DoxyCodeLine{00307\ \{}
+\DoxyCodeLine{00308\ \ \ \ \ gpio\_set\_level(RST\_PIN\_MUX\_I2C,\ 0);}
+\DoxyCodeLine{00309\ \}}
+\DoxyCodeLine{00310\ }
+\DoxyCodeLine{00311\ }
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ }
+
+\end{DoxyCode}

@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_struct_p_i_d__t" xml:lang="en-US">
+<title>PID_t Struct Reference</title>
+<indexterm><primary>PID_t</primary></indexterm>
+<para>
+<computeroutput>#include &lt;PID.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>int <link linkend="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f">setpoint</link></para>
+</listitem>
+            <listitem><para>int <link linkend="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556">measured</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4">previous_error</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a1174af01b8a329a6d465ea6e0951b3e5">integral</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a09cfc766a233ad617270562cc4146d07">Kp</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a59fac16f568541187ff485c4c47b0ec5">Ki</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a98268d71502ba080d88a9b1f50fdbe80">Kd</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a60e830ee0f71c2d98c55973a6f9b7b05">P_term</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950">I_term</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6">D_term</link></para>
+</listitem>
+            <listitem><para>int <link linkend="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70">Output</link></para>
+</listitem>
+            <listitem><para>int <link linkend="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b">previousOutput</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1a03ec09eeaedd2105010cbb15a8e4f2dd">previous_D_term</link></para>
+</listitem>
+            <listitem><para>float <link linkend="_struct_p_i_d__t_1ab1551d8043c2aa4410fb7dbb1fe3be7b">alpha</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00013">13</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_struct_p_i_d__t_1ab1551d8043c2aa4410fb7dbb1fe3be7b"/><section>
+    <title>alpha</title>
+<indexterm><primary>alpha</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>alpha</secondary></indexterm>
+<para><computeroutput>float alpha</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00028">28</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1ac5a0f95bee23553dab250fd0d16a89b6"/><section>
+    <title>D_term</title>
+<indexterm><primary>D_term</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>D_term</secondary></indexterm>
+<para><computeroutput>float D_term</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00023">23</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a280250765dafe1df642b33b1243a9950"/><section>
+    <title>I_term</title>
+<indexterm><primary>I_term</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>I_term</secondary></indexterm>
+<para><computeroutput>float I_term</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00022">22</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a1174af01b8a329a6d465ea6e0951b3e5"/><section>
+    <title>integral</title>
+<indexterm><primary>integral</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>integral</secondary></indexterm>
+<para><computeroutput>float integral</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00017">17</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a98268d71502ba080d88a9b1f50fdbe80"/><section>
+    <title>Kd</title>
+<indexterm><primary>Kd</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>Kd</secondary></indexterm>
+<para><computeroutput>float Kd</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00020">20</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a59fac16f568541187ff485c4c47b0ec5"/><section>
+    <title>Ki</title>
+<indexterm><primary>Ki</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>Ki</secondary></indexterm>
+<para><computeroutput>float Ki</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00019">19</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a09cfc766a233ad617270562cc4146d07"/><section>
+    <title>Kp</title>
+<indexterm><primary>Kp</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>Kp</secondary></indexterm>
+<para><computeroutput>float Kp</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00018">18</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a4dba95b4ef2edf5118b52a3bb9913556"/><section>
+    <title>measured</title>
+<indexterm><primary>measured</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>measured</secondary></indexterm>
+<para><computeroutput>int measured</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00015">15</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1ae3c8e9801e0e0bd9cdf270f757070a70"/><section>
+    <title>Output</title>
+<indexterm><primary>Output</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>Output</secondary></indexterm>
+<para><computeroutput>int Output</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00024">24</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a60e830ee0f71c2d98c55973a6f9b7b05"/><section>
+    <title>P_term</title>
+<indexterm><primary>P_term</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>P_term</secondary></indexterm>
+<para><computeroutput>float P_term</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00021">21</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a03ec09eeaedd2105010cbb15a8e4f2dd"/><section>
+    <title>previous_D_term</title>
+<indexterm><primary>previous_D_term</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>previous_D_term</secondary></indexterm>
+<para><computeroutput>float previous_D_term</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00027">27</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a01de8920e5c316977aa9b41f4967aab4"/><section>
+    <title>previous_error</title>
+<indexterm><primary>previous_error</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>previous_error</secondary></indexterm>
+<para><computeroutput>float previous_error</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00016">16</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1a6ffcf63b1b4a6438fe0d55074206446b"/><section>
+    <title>previousOutput</title>
+<indexterm><primary>previousOutput</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>previousOutput</secondary></indexterm>
+<para><computeroutput>int previousOutput</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00025">25</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<anchor xml:id="_struct_p_i_d__t_1af92a67282f64b636796ff0120d21310f"/><section>
+    <title>setpoint</title>
+<indexterm><primary>setpoint</primary><secondary>PID_t</secondary></indexterm>
+<indexterm><primary>PID_t</primary><secondary>setpoint</secondary></indexterm>
+<para><computeroutput>int setpoint</computeroutput></para><para>
+Definition at line <link linkend="__p_i_d_8h_source_1l00014">14</link> of file <link linkend="__p_i_d_8h_source">PID.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/<link linkend="__p_i_d_8h">PID.h</link></section>
+</section>

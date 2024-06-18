@@ -1,0 +1,78 @@
+\doxysection{include/\+I2\+C/drivers/\+I2\+C\+\_\+temperature\+Sensor.h File Reference}
+\label{_i2_c__temperature_sensor_8h}\index{include/I2C/drivers/I2C\_temperatureSensor.h@{include/I2C/drivers/I2C\_temperatureSensor.h}}
+{\ttfamily \#include "{}I2\+C\+\_\+common.\+h"{}}\newline
+Include dependency graph for I2\+C\+\_\+temperature\+Sensor.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \textbf{ bme280\+\_\+calib\+\_\+data}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \textbf{ I2\+C\+\_\+temperature\+Sensor\+\_\+trigger\+\_\+measurement} ()
+\item 
+void \textbf{ I2\+C\+\_\+set\+\_\+pressure\+\_\+register} ()
+\item 
+void \textbf{ I2\+C\+\_\+set\+\_\+humidity\+\_\+register} ()
+\item 
+void \textbf{ I2\+C\+\_\+read\+\_\+temperature} (double $\ast$fine\+\_\+temp)
+\item 
+void \textbf{ I2\+C\+\_\+devices\+\_\+task} (void $\ast$pv\+Parameters)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\index{I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}!I2C\_devices\_task@{I2C\_devices\_task}}
+\index{I2C\_devices\_task@{I2C\_devices\_task}!I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}}
+\doxysubsubsection{I2C\_devices\_task()}
+{\footnotesize\ttfamily \label{_i2_c__temperature_sensor_8h_a223d018b44dccfa36c89dcbcc975bef1} 
+void I2\+C\+\_\+devices\+\_\+task (\begin{DoxyParamCaption}\item[{void $\ast$}]{pv\+Parameters}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 19} of file \textbf{ I2\+C\+\_\+sensor\+Control.\+c}.
+
+\index{I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}!I2C\_read\_temperature@{I2C\_read\_temperature}}
+\index{I2C\_read\_temperature@{I2C\_read\_temperature}!I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}}
+\doxysubsubsection{I2C\_read\_temperature()}
+{\footnotesize\ttfamily \label{_i2_c__temperature_sensor_8h_adb1e5f7b5ee5e6c3f2263b6e600603b5} 
+void I2\+C\+\_\+read\+\_\+temperature (\begin{DoxyParamCaption}\item[{double $\ast$}]{fine\+\_\+temp}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 38} of file \textbf{ I2\+C\+\_\+temperature\+Sensor.\+c}.
+
+\index{I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}!I2C\_set\_humidity\_register@{I2C\_set\_humidity\_register}}
+\index{I2C\_set\_humidity\_register@{I2C\_set\_humidity\_register}!I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}}
+\doxysubsubsection{I2C\_set\_humidity\_register()}
+{\footnotesize\ttfamily \label{_i2_c__temperature_sensor_8h_ae3ce61debefab5396fdbab660884f5ed} 
+void I2\+C\+\_\+set\+\_\+humidity\+\_\+register (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 69} of file \textbf{ I2\+C\+\_\+temperature\+Sensor.\+c}.
+
+\index{I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}!I2C\_set\_pressure\_register@{I2C\_set\_pressure\_register}}
+\index{I2C\_set\_pressure\_register@{I2C\_set\_pressure\_register}!I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}}
+\doxysubsubsection{I2C\_set\_pressure\_register()}
+{\footnotesize\ttfamily \label{_i2_c__temperature_sensor_8h_a44194928f3e30fdf7e00538e7e541b1f} 
+void I2\+C\+\_\+set\+\_\+pressure\+\_\+register (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 63} of file \textbf{ I2\+C\+\_\+temperature\+Sensor.\+c}.
+
+\index{I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}!I2C\_temperatureSensor\_trigger\_measurement@{I2C\_temperatureSensor\_trigger\_measurement}}
+\index{I2C\_temperatureSensor\_trigger\_measurement@{I2C\_temperatureSensor\_trigger\_measurement}!I2C\_temperatureSensor.h@{I2C\_temperatureSensor.h}}
+\doxysubsubsection{I2C\_temperatureSensor\_trigger\_measurement()}
+{\footnotesize\ttfamily \label{_i2_c__temperature_sensor_8h_ab6eab86afbe85c747fb125447b03042a} 
+void I2\+C\+\_\+temperature\+Sensor\+\_\+trigger\+\_\+measurement (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \textbf{ 17} of file \textbf{ I2\+C\+\_\+temperature\+Sensor.\+c}.
+

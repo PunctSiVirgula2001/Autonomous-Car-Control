@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="__i2_c__accelerometer_sensor_8h" xml:lang="en-US">
+<title>include/I2C/drivers/I2C_accelerometerSensor.h File Reference</title>
+<indexterm><primary>include/I2C/drivers/I2C_accelerometerSensor.h</primary></indexterm>
+<programlisting linenumbering="unnumbered">#include &quot;I2C_common.h&quot;<?linebreak?></programlisting>Include dependency graph for I2C_accelerometerSensor.h:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__accelerometer_sensor_8h__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+This graph shows which files directly or indirectly include this file:<para>
+    <informalfigure>
+        <mediaobject>
+            <imageobject>
+                <imagedata width="50%" align="center" valign="middle" scalefit="0" fileref="_i2_c__accelerometer_sensor_8h__dep__incl.png"></imagedata>
+            </imageobject>
+        </mediaobject>
+    </informalfigure>
+</para>
+<simplesect>
+    <title>Macros    </title>
+        <itemizedlist>
+            <listitem><para>#define <link linkend="__i2_c__accelerometer_sensor_8h_1ac8af332c74b5b3043d69274f6000220e">ADXL1345_READ_RATE</link>&#160;&#160;&#160;200.0</para>
+</listitem>
+            <listitem><para>#define <link linkend="__i2_c__accelerometer_sensor_8h_1af5abd28c44c29b7397c84f1fec4b1d84">ALPHA</link>&#160;&#160;&#160;0.8</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Typedefs    </title>
+        <itemizedlist>
+            <listitem><para>typedef enum <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07">ADXL_345_reg</link> <link linkend="__i2_c__accelerometer_sensor_8h_1a0dd61becdbde3180f6905837de61840b">ADX_345_reg</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Enumerations    </title>
+        <itemizedlist>
+            <listitem><para>enum <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07">ADXL_345_reg</link> { <?linebreak?><link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a65f0173f9548dc0486905e9969dc5a70">ADXL345_REG_BW_RATE</link> = 0x2C
+, <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07ad83cbbc650644ee82ed5bf506679e5b2">ADXL345_REG_POWER_CTL</link> = 0x2D
+, <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a0231a4c09c9ed493135c76ab19ccfba5">ADXL345_REG_DATA_FORMAT</link> = 0x31
+, <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a5edb88832857debe694b4c95d5db314a">ADXL345_REG_DATAX0</link> = 0x32
+, <?linebreak?><link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a85e200e956a726f691421bd63e807b2d">ADXL345_REG_DATAX1</link> = 0x33
+, <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07adffef7f52d5ba385c51d7a806784fbec">ADXL345_REG_DATAY0</link> = 0x34
+, <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a8d7b3a371459e4331e1cbfa51fed400d">ADXL345_REG_DATAY1</link> = 0x35
+, <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a7ffb5a75ad1a0c335264f2188b081f2b">ADXL345_REG_DATAZ0</link> = 0x36
+, <?linebreak?><link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a545e3c814f2cfe857e33a92f228fcfb9">ADXL345_REG_DATAZ1</link> = 0x37
+ }</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<simplesect>
+    <title>Functions    </title>
+        <itemizedlist>
+            <listitem><para>void <link linkend="__i2_c__accelerometer_sensor_8h_1aeac395349fd0cb9b64e9dba9799e64e9">I2C_read_adxl345_data</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double *x, double *y, double *z)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__accelerometer_sensor_8h_1af4369ee1e11eacb96049536d1b18a94e">I2C_adxl345_init</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</para>
+</listitem>
+            <listitem><para>void <link linkend="__i2_c__accelerometer_sensor_8h_1a5daa89461a8c123f61a7e7e89a799bb2">I2C_adxl345_setRate</link> (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double rate)</para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Macro Definition Documentation</title>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1ac8af332c74b5b3043d69274f6000220e"/><section>
+    <title>ADXL1345_READ_RATE</title>
+<indexterm><primary>ADXL1345_READ_RATE</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL1345_READ_RATE</secondary></indexterm>
+<para><computeroutput>#define ADXL1345_READ_RATE&#160;&#160;&#160;200.0</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8h_source_1l00014">14</link> of file <link linkend="__i2_c__accelerometer_sensor_8h_source">I2C_accelerometerSensor.h</link>.</para>
+</section>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1af5abd28c44c29b7397c84f1fec4b1d84"/><section>
+    <title>ALPHA</title>
+<indexterm><primary>ALPHA</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ALPHA</secondary></indexterm>
+<para><computeroutput>#define ALPHA&#160;&#160;&#160;0.8</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8h_source_1l00015">15</link> of file <link linkend="__i2_c__accelerometer_sensor_8h_source">I2C_accelerometerSensor.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Typedef Documentation</title>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1a0dd61becdbde3180f6905837de61840b"/><section>
+    <title>ADX_345_reg</title>
+<indexterm><primary>ADX_345_reg</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADX_345_reg</secondary></indexterm>
+<para><computeroutput>typedef enum <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07">ADXL_345_reg</link> <link linkend="__i2_c__accelerometer_sensor_8h_1a0dd61becdbde3180f6905837de61840b">ADX_345_reg</link></computeroutput></para></section>
+</section>
+<section>
+<title>Enumeration Type Documentation</title>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07"/><section>
+    <title>ADXL_345_reg</title>
+<indexterm><primary>ADXL_345_reg</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL_345_reg</secondary></indexterm>
+<para><computeroutput>enum <link linkend="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07">ADXL_345_reg</link></computeroutput></para><informaltable frame="all">
+<title>Enumerator</title>
+    <tgroup cols="2" align="left" colsep="1" rowsep="1">
+      <colspec colname='c1'/>
+      <colspec colname='c2'/>
+<tbody>
+<row><entry><indexterm><primary>ADXL345_REG_BW_RATE</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_BW_RATE</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a65f0173f9548dc0486905e9969dc5a70"/>ADXL345_REG_BW_RATE</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_POWER_CTL</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_POWER_CTL</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07ad83cbbc650644ee82ed5bf506679e5b2"/>ADXL345_REG_POWER_CTL</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATA_FORMAT</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATA_FORMAT</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a0231a4c09c9ed493135c76ab19ccfba5"/>ADXL345_REG_DATA_FORMAT</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATAX0</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATAX0</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a5edb88832857debe694b4c95d5db314a"/>ADXL345_REG_DATAX0</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATAX1</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATAX1</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a85e200e956a726f691421bd63e807b2d"/>ADXL345_REG_DATAX1</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATAY0</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATAY0</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07adffef7f52d5ba385c51d7a806784fbec"/>ADXL345_REG_DATAY0</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATAY1</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATAY1</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a8d7b3a371459e4331e1cbfa51fed400d"/>ADXL345_REG_DATAY1</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATAZ0</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATAZ0</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a7ffb5a75ad1a0c335264f2188b081f2b"/>ADXL345_REG_DATAZ0</entry><entry></entry></row><row><entry><indexterm><primary>ADXL345_REG_DATAZ1</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>ADXL345_REG_DATAZ1</secondary></indexterm>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aa287a6b30dc1c628ba7e0418d0252d07a545e3c814f2cfe857e33a92f228fcfb9"/>ADXL345_REG_DATAZ1</entry><entry></entry></row>    </tbody>
+    </tgroup>
+</informaltable>
+<para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8h_source_1l00017">17</link> of file <link linkend="__i2_c__accelerometer_sensor_8h_source">I2C_accelerometerSensor.h</link>.</para>
+</section>
+</section>
+<section>
+<title>Function Documentation</title>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1af4369ee1e11eacb96049536d1b18a94e"/><section>
+    <title>I2C_adxl345_init()</title>
+<indexterm><primary>I2C_adxl345_init</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>I2C_adxl345_init</secondary></indexterm>
+<para><computeroutput>void I2C_adxl345_init (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8c_source_1l00013">13</link> of file <link linkend="__i2_c__accelerometer_sensor_8c_source">I2C_accelerometerSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1a5daa89461a8c123f61a7e7e89a799bb2"/><section>
+    <title>I2C_adxl345_setRate()</title>
+<indexterm><primary>I2C_adxl345_setRate</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>I2C_adxl345_setRate</secondary></indexterm>
+<para><computeroutput>void I2C_adxl345_setRate (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double rate)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8c_source_1l00054">54</link> of file <link linkend="__i2_c__accelerometer_sensor_8c_source">I2C_accelerometerSensor.c</link>.</para>
+</section>
+<anchor xml:id="__i2_c__accelerometer_sensor_8h_1aeac395349fd0cb9b64e9dba9799e64e9"/><section>
+    <title>I2C_read_adxl345_data()</title>
+<indexterm><primary>I2C_read_adxl345_data</primary><secondary>I2C_accelerometerSensor.h</secondary></indexterm>
+<indexterm><primary>I2C_accelerometerSensor.h</primary><secondary>I2C_read_adxl345_data</secondary></indexterm>
+<para><computeroutput>void I2C_read_adxl345_data (<link linkend="__i2_c__common_8h_1a1aec57033a8a180b854b479b31a7a812">I2C_dev_handles</link> device_handle, double * x, double * y, double * z)</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__accelerometer_sensor_8c_source_1l00019">19</link> of file <link linkend="__i2_c__accelerometer_sensor_8c_source">I2C_accelerometerSensor.c</link>.</para>
+</section>
+</section>
+</section>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="_struct_sequence_step_enables" xml:lang="en-US">
+<title>SequenceStepEnables Struct Reference</title>
+<indexterm><primary>SequenceStepEnables</primary></indexterm>
+<para>
+<computeroutput>#include &lt;I2C_distanceSensor.h&gt;</computeroutput>
+</para>
+<simplesect>
+    <title>Data Fields    </title>
+        <itemizedlist>
+            <listitem><para>bool <link linkend="_struct_sequence_step_enables_1a9509fe1bb0b5ee2b8991f8c4e9665d51">tcc</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="_struct_sequence_step_enables_1aa737187fd2160f74fc9b61607f9faee2">dss</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="_struct_sequence_step_enables_1ae90915b3cbbf640caf99fbe5b74106af">msrc</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce">pre_range</link></para>
+</listitem>
+            <listitem><para>bool <link linkend="_struct_sequence_step_enables_1aa043fd5fccde9c81a47af77b6d1b1aa3">final_range</link></para>
+</listitem>
+        </itemizedlist>
+</simplesect>
+<section>
+<title>Detailed Description</title>
+<para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00093">93</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<section>
+<title>Field Documentation</title>
+<anchor xml:id="_struct_sequence_step_enables_1aa737187fd2160f74fc9b61607f9faee2"/><section>
+    <title>dss</title>
+<indexterm><primary>dss</primary><secondary>SequenceStepEnables</secondary></indexterm>
+<indexterm><primary>SequenceStepEnables</primary><secondary>dss</secondary></indexterm>
+<para><computeroutput>bool dss</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00096">96</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_enables_1aa043fd5fccde9c81a47af77b6d1b1aa3"/><section>
+    <title>final_range</title>
+<indexterm><primary>final_range</primary><secondary>SequenceStepEnables</secondary></indexterm>
+<indexterm><primary>SequenceStepEnables</primary><secondary>final_range</secondary></indexterm>
+<para><computeroutput>bool final_range</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00099">99</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_enables_1ae90915b3cbbf640caf99fbe5b74106af"/><section>
+    <title>msrc</title>
+<indexterm><primary>msrc</primary><secondary>SequenceStepEnables</secondary></indexterm>
+<indexterm><primary>SequenceStepEnables</primary><secondary>msrc</secondary></indexterm>
+<para><computeroutput>bool msrc</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00097">97</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_enables_1a9960317b8322d387d40cfd0940bc41ce"/><section>
+    <title>pre_range</title>
+<indexterm><primary>pre_range</primary><secondary>SequenceStepEnables</secondary></indexterm>
+<indexterm><primary>SequenceStepEnables</primary><secondary>pre_range</secondary></indexterm>
+<para><computeroutput>bool pre_range</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00098">98</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<anchor xml:id="_struct_sequence_step_enables_1a9509fe1bb0b5ee2b8991f8c4e9665d51"/><section>
+    <title>tcc</title>
+<indexterm><primary>tcc</primary><secondary>SequenceStepEnables</secondary></indexterm>
+<indexterm><primary>SequenceStepEnables</primary><secondary>tcc</secondary></indexterm>
+<para><computeroutput>bool tcc</computeroutput></para><para>
+Definition at line <link linkend="__i2_c__distance_sensor_8h_source_1l00095">95</link> of file <link linkend="__i2_c__distance_sensor_8h_source">I2C_distanceSensor.h</link>.</para>
+</section>
+<para>
+The documentation for this struct was generated from the following file:</para>
+include/I2C/drivers/<link linkend="__i2_c__distance_sensor_8h">I2C_distanceSensor.h</link></section>
+</section>
