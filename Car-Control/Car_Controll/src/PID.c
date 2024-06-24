@@ -264,14 +264,6 @@ void PIDTask(void *pvParameters) {
 		{
 			xQueueReceive(xActivatedMember, &setpoint_speed, 0);
 			motorPID.setpoint = setpoint_speed;
-
-			/* If the setpoint is set to 0 then update the Measured Value
-			 * to 0 so it will not interfere with PID updates. */
-			if (setpoint_speed == 0)
-			{
-				motorPID.measured = 0;
-				newTime_stop = xTaskGetTickCount();
-			}
 		}
 		if (xActivatedMember == PID_commandQueue) {
 			xQueueReceive(xActivatedMember, &onlyPIDValues, 0);
