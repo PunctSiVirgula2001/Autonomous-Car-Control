@@ -10,18 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;  // Updated import
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.model.Car;
 import com.conti.happysilicon.happysilicon.R;
-import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
 public class AutonomousMode extends AppCompatActivity {
     private Car carModel;
-    private TcpSocketClient tcpClient;
     private UdpSocketClient udpClient;
     private Button startButton;
     private Button stopButton;
     private TextView carBatteryTextView;
     private TextView carTemperatureTextView;
-    private TextView carChargingTextView;
     private TextView carSpeedTextView;
     private TextView carDistanceTextView;
     private final Handler handler = new Handler();
@@ -38,10 +35,10 @@ public class AutonomousMode extends AppCompatActivity {
         //reference to buttons
         startButton = findViewById(R.id.button);
         stopButton = findViewById(R.id.button2);
+
         //reference to textViews.
         carBatteryTextView = findViewById(R.id.textViewBattery);
         carTemperatureTextView = findViewById(R.id.textViewTemp);
-        carChargingTextView = findViewById(R.id.textViewDistSensFw);
         carSpeedTextView = findViewById(R.id.textViewCarSpeed);
         carDistanceTextView = findViewById(R.id.textViewDistance);
 
@@ -58,19 +55,6 @@ public class AutonomousMode extends AppCompatActivity {
         // Start the Runnable for updating UI
         MyRunnable myRunnable = new MyRunnable(handler);
         handler.post(myRunnable);
-
-        // Setup listener for receiving messages
-        udpClient.receiveMessage(new UdpSocketClient.OnMessageReceived() {
-            @Override
-            public void onMessage(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //
-                    }
-                });
-            }
-        });
     }
 
     private class MyRunnable implements Runnable {
@@ -91,11 +75,9 @@ public class AutonomousMode extends AppCompatActivity {
             carDistanceTextView.setText(String.valueOf(carModel.getDistSensFw()));
         }
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null); // Stop the handler callbacks when the activity is destroyed
-
     }
 }

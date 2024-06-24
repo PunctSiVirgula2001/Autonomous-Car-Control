@@ -36,10 +36,8 @@ public class MainActivity extends AppCompatActivity {
         // Initialize TCP Socket Client
         MyApp app = (MyApp) getApplicationContext();
         UdpSocketClient instance = app.getUdpSocketClient();
-        carModel = Car.getInstance();
-        carModel.setTimer(new SimpleTimer());
+        Car.setTimer(new SimpleTimer());
         connect_to_esp_button = findViewById(R.id.connectESP);
-        carModel.setNewDataFromEsp(false);
         connect_to_esp_button.setOnClickListener(view -> {
             instance.init(() -> {
                 runOnUiThread(() -> {
@@ -62,12 +60,10 @@ public class MainActivity extends AppCompatActivity {
                         {
                             String[] splitedValue = message.split(" ");
                             int receivedValue = Integer.parseInt(splitedValue[1]);
-                            Car.setNewDataFromEsp(true);
                             if(receivedValue != 0)
                                 carModel.setCarSpeed(sma.next(receivedValue));
                             else
                                 carModel.setCarSpeed(0);
-
 
                             if (Car.isTimerRunning()) {
                                 // Use the timer to get the elapsed time in seconds since the first sample
@@ -87,13 +83,11 @@ public class MainActivity extends AppCompatActivity {
                         {
                             String[] splitedValue = message.split(" ");
                             float receivedValue = Float.parseFloat(splitedValue[1]);
-                            //carModel.setNewDataFromEsp(true);
                             if(receivedValue != 0)
                                 carModel.setIntegralValue(receivedValue);
                             else
                                 carModel.setIntegralValue(0);
                         }
-
                         if((message).startsWith("TEMP_VALUE"))
                         {
                             String[] splitedValue = message.split(" ");

@@ -11,13 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
 import com.conti.happysilicon.happysilicon.model.Car;
-import com.conti.happysilicon.happysilicon.network.TcpSocketClient;
 import com.conti.happysilicon.happysilicon.network.UdpSocketClient;
 
 public class DiagnosisMode extends AppCompatActivity {
     int progressDCSeekBar = 0;
     private Car carModel;
-    private TcpSocketClient tcpClient;
     private UdpSocketClient udpClient;
     private Button buttonStop;
     private Button buttonForward;
@@ -35,7 +33,6 @@ public class DiagnosisMode extends AppCompatActivity {
     private TextView carSpeedTextView ;
     private TextView carRollTextView;
     private TextView carPitchTextView;
-    private TextView carCurrentTextView ;
     private TextView carMotorPwmDutyTextView ;
     private TextView carTimeElapsedTextView ;
     private TextView RxTextView;
@@ -50,12 +47,14 @@ public class DiagnosisMode extends AppCompatActivity {
         MyApp app = (MyApp) getApplicationContext();
         udpClient = app.getUdpSocketClient();
         carModel = Car.getInstance();
+
         //reference to buttons
         buttonStop = (Button)findViewById(R.id.buttonStop);
         buttonForward = (Button)findViewById(R.id.buttonForward);
         buttonBackward = (Button)findViewById(R.id.buttonBackward);
         buttonLeftLight = (Button)findViewById(R.id.buttonLeftLight);
         buttonRightLight = (Button)findViewById(R.id.buttonRightLight);
+
         //reference to textViews.
         carBatteryTextView = (TextView) findViewById(R.id.textViewBattery);
         carTemperatureTextView = (TextView) findViewById(R.id.textViewTemp);
@@ -68,6 +67,7 @@ public class DiagnosisMode extends AppCompatActivity {
         carTimeElapsedTextView = (TextView) findViewById(R.id.textViewTimeElapsed);
         RxTextView = (TextView) findViewById(R.id.rxTextView);
         TxTextView = (TextView) findViewById(R.id.txTextView);
+
         //reference to seekbars
         seekBarServoDirection = (SeekBar) findViewById(R.id.seekBarDirection);
         seekBarDcMotor = (SeekBar) findViewById(R.id.seekBarDcMotor);

@@ -41,7 +41,7 @@ typedef struct {
 
 void JetsonUartConfig();
 void uart_Jetson_Task (void *params);
-void start_UartJetson_task();
+void start_UartInit_and_UartJetson_task();
 
 
 #endif /* MAIN_UART_JETSON_H_ */

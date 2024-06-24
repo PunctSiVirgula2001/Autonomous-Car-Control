@@ -1,6 +1,6 @@
 /*Brief for on which cores are the tasks running
 	PIDTask: 		 	Core 1, Prio 7
-	CarControlTask: 	Core 0, Prio 6
+	MotorAndSteerControlTask: 	Core 0, Prio 6
 	SteerTask: 	 		Core 1, Prio 6
 	UdpAccessPointTask: Core 0, Prio 5
 	I2cTask: 		 	Core 0, Prio 7
@@ -53,11 +53,10 @@ extern QueueHandle_t I2C_commandQueue;
 extern QueueSetHandle_t QueueSetPIDNecessaryCommands;
 
 extern bool I2C_sensors_initiated;
-//#define ESP_LOGI(a,b) printf(b);
 
 void app_main(void) {
 
-
+	/* Crearea cozilor specifice fiecarui tip de mesaj neceasr controlului.*/
 	steer_commandQueue = xQueueCreate(20,QUEUE_SIZE_DATATYPE_ENCODER_PULSE);
 	diagnosticModeControlQueue = xQueueCreate(QUEUE_SIZE_CAR_COMMANDS, QUEUE_SIZE_DATATYPE_CAR_COMMANDS);
 #if (PIXY_DETECTION == OFF)
@@ -70,7 +69,7 @@ void app_main(void) {
 	PID_commandQueue = xQueueCreate(5, sizeof(CarCommand));
 	I2C_commandQueue = xQueueCreate(20, I2C_COMMAND_SIZE);
 
-	/* Create a set which would hold both Autonomous mode and Diagnostic mode queues */
+	/*Crearea setului de cozi responsabil pentru modurile : Autonomous + Diagnostic*/
 	QueueSetAutonomousOrDiagnostic = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS);
 	xQueueAddToSet(diagnosticModeControlQueue, QueueSetAutonomousOrDiagnostic);
 #if (PIXY_DETECTION == OFF)
@@ -79,33 +78,41 @@ void app_main(void) {
 	xQueueAddToSet(autonomousModeControlPixyQueue, QueueSetAutonomousOrDiagnostic);
 #endif
 
-	/* Create a set which holds data from all necessary queues. */
+	/* Crearea setului de cozi pentru task-ul de PID. */
 	QueueSetPIDNecessaryCommands = xQueueCreateSet(QUEUE_SIZE_CAR_COMMANDS + QUEUE_SIZE_ENCODER_PULSE + QUEUE_SIZE_I2C);
-	configASSERT(speed_commandQueue);
-	configASSERT(pulse_encoderQueue);
-	configASSERT(speed_commandQueue);
-	configASSERT(PID_commandQueue);
-	configASSERT(steer_commandQueue);
-	configASSERT(QueueSetPIDNecessaryCommands);
 	xQueueAddToSet(speed_commandQueue, QueueSetPIDNecessaryCommands);
 	xQueueAddToSet(pulse_encoderQueue, QueueSetPIDNecessaryCommands);
 	xQueueAddToSet(PID_commandQueue, QueueSetPIDNecessaryCommands);
 	xQueueAddToSet(I2C_commandQueue, QueueSetPIDNecessaryCommands);
 
 	/* Start application tasks */
-	carControl_init();
+
+	/*Initializare PWM motor dc + servo si pornirea
+	 * task-ului de control al directiei + parser-ul
+	 * de comenzi de la user
+	 * */
+	carControl_init_and_start_CarControl_task();
+
+	/*Initializare encoder.*/
 	initializeEncoder();
 #if (MOTOR_MOCK_TEST == OFF)
-	start_I2C_devices_task();
+	/*Pornire task-ului care citeste datele de la senzorii i2c + control Pixy*/
+	start_InitI2c_and_I2C_devices_task();
+
+	/*Se astepata initializarea senzorilor.*/
 	while(I2C_sensors_initiated == false) vTaskDelay(pdMS_TO_TICKS(50));
 #endif
-	start_network_task();
+	/*Initializarea modulului WiFi si pornirea task-ului pentru
+	 * receptionarea comenzilor de la user.*/
+	start_NetworkInit_and_network_task();
 #if (MOTOR_MOCK_TEST == OFF)
+	/*Se asteapta primirea mesajului corespunzator pentru ACK.*/
 	while(allowed_to_send == false) vTaskDelay(pdMS_TO_TICKS(50));
 #endif
+	/*Pornirea task-ului de */
 	start_PID_task();
 #if (PIXY_DETECTION == OFF)
-	start_UartJetson_task();
+	start_UartInit_and_UartJetson_task();
 #endif
 
 

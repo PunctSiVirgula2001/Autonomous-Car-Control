@@ -11,7 +11,7 @@
 #include "motors_common.h"
 
 /*Encoder*/
-#define QUEUE_SIZE_ENCODER_PULSE 		   20
+#define QUEUE_SIZE_ENCODER_PULSE 		   50
 #define QUEUE_SIZE_DATATYPE_ENCODER_PULSE (sizeof(int))
 #define PULSE_COUNT_HIGH_LIMIT 		   4 // at every 4 pulses forward the car has moved half a wheel and the callback is called
 #define PULSE_COUNT_LOW_LIMIT  		  -4// at every 4 pulses backward the car has moved half a wheel and the callback is called

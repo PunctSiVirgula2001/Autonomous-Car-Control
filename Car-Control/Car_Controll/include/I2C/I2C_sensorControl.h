@@ -51,7 +51,7 @@ typedef struct I2C_COMMAND{
   uint16_t commandValue;
 }I2C_COMMAND;
 
-void start_I2C_devices_task();
+void start_InitI2c_and_I2C_devices_task();
 bool I2C_addAndInitialiseSensors();
 void I2C_devices_task(void *pvParameters);
 

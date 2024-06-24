@@ -33,7 +33,7 @@ typedef struct {
 void PID_Init(PID_t *pid, float Kp, float Ki, float Kd);
 
 // Compute PID
-void PID_Compute(PID_t *pid);
+void PID_Compute(PID_t *pid, float dt);
 
 /* PID update params */
 void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd);

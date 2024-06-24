@@ -11,7 +11,8 @@ i2c_master_bus_handle_t bus_handle_esp32_i2c_config;
 i2c_master_dev_handle_t device_handle_esp32_i2c_config[I2C_MAX_Num_of_dev_handles];
 
 
-
+I2C_dev_handles old_handle;
+unsigned char mux_added = 0U;
 
 // initialize I2C for esp32 as master
 void I2C_master_init()
@@ -27,7 +28,6 @@ void I2C_master_init()
     ESP_ERROR_CHECK(i2c_new_master_bus(&esp32_i2c_config, &bus_handle_esp32_i2c_config));
 }
 
-// switch the multiplexer channel
 // Function to switch the I2C multiplexer channel
 void I2C_select_multiplexer_channel(I2C_devices_mux num_channel)
 {
@@ -35,67 +35,45 @@ void I2C_select_multiplexer_channel(I2C_devices_mux num_channel)
 	uint8_t data = 1 << num_channel; // Shift 1 to the correct bit position for the channel
 	// Perform the I2C write to change the channel
 	esp_err_t ret = i2c_master_transmit(device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle], &data, 1, -1);
-	// Check the result
-	//if(ret==ESP_OK)
-		//ESP_LOGI("I2C", "Channel %d selected", num_channel);
-	// Check the result
 	if (ret != ESP_OK)
 	{
 		ESP_LOGI("I2C ERR", "ERROR Channel %d not selected", num_channel);
-		i2c_master_bus_wait_all_done(bus_handle_esp32_i2c_config, 50);
-		//i2c_master_bus_reset(bus_handle_esp32_i2c_config);
+
 	}
 }
 
 // add device to the I2C bus with different address and speed
 void I2C_add_device(uint8_t device_address)
 {
-	static unsigned char mux_added = 0U;
     i2c_device_config_t device_config = {
         .dev_addr_length = I2C_ADDR_BIT_LEN_7,
         .device_address = device_address,
         .scl_speed_hz = SCL_SPEED_FAST_MODE
     };
 
+    if(mux_added == 0U)
+    {
+    	 mux_added = 1U;
+    	 ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle]));
+    	 vTaskDelay(pdMS_TO_TICKS(50));
+    	 // wait for the mux to be added.
+    }
+
     switch (device_address) {
       case I2C_temp_sens_addr:
-    	  if(mux_added){
-    	  I2C_select_multiplexer_channel(I2C_temp_sens_mux);
-    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_temp_sens_dev_handle]));
-    	  }
     	  break;
       case I2C_distance_sens_addr:
-    	  if(mux_added){
-    	  I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
-    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens1_dev_handle])); // distance sensors have the same addr
-    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-    	  I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
-    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens2_dev_handle])); // distance sensors have the same addr
-    	  }
+    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens_fw_dev_handle])); // distance sensors have the same addr
+    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_distance_sens_bw_handle])); // distance sensors have the same addr
     	  break;
       case I2C_pixy2_camera_addr:
-      	  if(mux_added){
-    	  I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
-    	  vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_pixy2_dev_handle]));
-    	  }
     	  break;
       case I2C_oled_display_096_addr:
-    	  if(mux_added){
-          I2C_select_multiplexer_channel(I2C_oled_display_096_mux);
-          vTaskDelay(pdMS_TO_TICKS(50)); // space for the switch of the channel to happen
     	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_oled_display_096_dev_handle]));
-    	  }
     	  break;
-      case I2C_mux_addr:
-    	  mux_added = 1U;
-    	  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_multiplexer_dev_handle]));
-    	break;
       case I2C_adxl345_sens_addr:
-    	  I2C_select_multiplexer_channel(I2C_adxl345_sens_mux);
 		  ESP_ERROR_CHECK(i2c_master_bus_add_device(bus_handle_esp32_i2c_config, &device_config, &device_handle_esp32_i2c_config[I2C_adxl345_sens_dev_handle]));
 		break;
       default:
@@ -104,9 +82,7 @@ void I2C_add_device(uint8_t device_address)
 
 void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t write_size)
 {
-	static I2C_dev_handles old_handle=999;
 	static I2C_dev_handles current_handle;
-
 	current_handle=device_handle;
 	if(old_handle!=current_handle){
 	//Before transmitting choose the correct channel for the mux
@@ -118,13 +94,13 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 			 I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
 			 old_handle=I2C_pixy2_dev_handle;
 		break;
-		case I2C_distance_sens1_dev_handle:
-			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
-			old_handle=I2C_distance_sens1_dev_handle;
+		case I2C_distance_sens_fw_dev_handle:
+			I2C_select_multiplexer_channel(I2C_distance_sens_fw_mux);
+			old_handle=I2C_distance_sens_fw_dev_handle;
 		break;
-		case I2C_distance_sens2_dev_handle:
-			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-			old_handle=I2C_distance_sens2_dev_handle;
+		case I2C_distance_sens_bw_handle:
+			I2C_select_multiplexer_channel(I2C_distance_sens_bw_mux);
+			old_handle=I2C_distance_sens_bw_handle;
 		break;
 		case I2C_temp_sens_dev_handle:
 			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
@@ -145,20 +121,15 @@ void I2C_transmit(I2C_dev_handles device_handle, unsigned char* data, size_t wri
 	esp_err_t ret = i2c_master_transmit(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, write_size, -1); // 3rd argument = length of the data in bytes ==> only commands, 2 bytes only
 	if (ret != ESP_OK) {
 		    ESP_LOGE("I2C Receive", "Failed to receive data: %s", esp_err_to_name(ret));
-		    i2c_master_bus_wait_all_done(bus_handle_esp32_i2c_config, 50);
-		   // i2c_master_bus_reset(bus_handle_esp32_i2c_config);
 		}
 }
 
 void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 {
-
-	static I2C_dev_handles old_handle=99;
 	static I2C_dev_handles current_handle;
 
 	current_handle=device_handle;
 	// If the channel is already selected, don't call the function for changing
-	// channel.
 	if(old_handle!=current_handle)
 	switch (device_handle) {
 		case I2C_multiplexer_dev_handle:
@@ -168,13 +139,13 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 			 I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
 			 old_handle=I2C_pixy2_dev_handle;
 		break;
-		case I2C_distance_sens1_dev_handle:
-			I2C_select_multiplexer_channel(I2C_distance_sens_1_mux);
-			old_handle=I2C_distance_sens1_dev_handle;
+		case I2C_distance_sens_fw_dev_handle:
+			I2C_select_multiplexer_channel(I2C_distance_sens_fw_mux);
+			old_handle=I2C_distance_sens_fw_dev_handle;
 		break;
-		case I2C_distance_sens2_dev_handle:
-			I2C_select_multiplexer_channel(I2C_distance_sens_2_mux);
-			old_handle=I2C_distance_sens2_dev_handle;
+		case I2C_distance_sens_bw_handle:
+			I2C_select_multiplexer_channel(I2C_distance_sens_bw_mux);
+			old_handle=I2C_distance_sens_bw_handle;
 		break;
 		case I2C_temp_sens_dev_handle:
 			I2C_select_multiplexer_channel(I2C_temp_sens_mux);
@@ -195,8 +166,6 @@ void I2C_receive(I2C_dev_handles device_handle, uint8_t* data, size_t read_size)
 	esp_err_t ret = i2c_master_receive(device_handle_esp32_i2c_config[device_handle], (unsigned char*)data, read_size, -1);
 	if (ret != ESP_OK) {
 	    ESP_LOGE("I2C Receive", "Failed to receive data: %s", esp_err_to_name(ret));
-	    i2c_master_bus_wait_all_done(bus_handle_esp32_i2c_config, 100);
-	    //i2c_master_bus_reset(bus_handle_esp32_i2c_config);
 	}
 }
 

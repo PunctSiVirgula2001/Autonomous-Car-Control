@@ -30,7 +30,7 @@ void init_motor_pwm() {
 	{
 		.channel = LEDC_MOTOR_CH1_CHANNEL, 		 // Different channel for motor
 		.duty = 0,
-		.gpio_num = LEDC_MOTOR_GPIO,  			 // Different GPIO for motor
+		.gpio_num = DC_MOTOR_GPIO,  			 // Different GPIO for motor
 		.speed_mode = LEDC_Motor_And_Servo_MODE,
 		.timer_sel = LEDC_MOTOR_TIMER,    		 // Different timer for motor
 	};
@@ -71,7 +71,7 @@ void init_motor_pwm() {
 
 	// Configure MCPWM generator
 	mcpwm_generator_config_t generator_config = {
-		.gen_gpio_num = LEDC_MOTOR_GPIO, // Set the GPIO number used by the generator
+		.gen_gpio_num = DC_MOTOR_GPIO, // Set the GPIO number used by the generator
 	};
 
 	ESP_ERROR_CHECK(mcpwm_new_generator(operator_dc_motor, &generator_config, &generator_dc_motor));
@@ -120,12 +120,9 @@ void changeMotorSpeed(int value) {
 	if (value == 0)
 		pulse_width_us = 1500;
 	else if (value >= 1) { // FORWARD
-		// Forward mode: Scale between 1545 and 1700
 		pulse_width_us = MIN_MOTOR_FW_DUTY_US + (value * (MAX_MOTOR_FW_DUTY_US - MIN_MOTOR_FW_DUTY_US) / 100);
-		//ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	} else { 			// BACKWARD
 		pulse_width_us = MAX_MOTOR_BW_DUTY_US - ((-value) * (MAX_MOTOR_BW_DUTY_US - MIN_MOTOR_BW_DUTY_US) / 100);
-		//ESP_LOGI("", "pwm_us %d", pulse_width_us);
 	}
 	update_motor_pwm(pulse_width_us);
 }

@@ -433,8 +433,8 @@ uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
   uint16_t range = 0;
   static bool start_continuous_back2back_sens1 = false;
   static bool start_continuous_back2back_sens2 = false;
-  if((start_continuous_back2back_sens1 == false && device_handle == I2C_distance_sens1_dev_handle) ||
-	 ((start_continuous_back2back_sens2 == false && device_handle == I2C_distance_sens2_dev_handle)))
+  if((start_continuous_back2back_sens1 == false && device_handle == I2C_distance_sens_fw_dev_handle) ||
+	 ((start_continuous_back2back_sens2 == false && device_handle == I2C_distance_sens_bw_handle)))
   {
 	  I2C_writeRegister8bit(device_handle, 0x80, 0x01);
 	  I2C_writeRegister8bit(device_handle, 0xFF, 0x01);
@@ -444,7 +444,7 @@ uint16_t VL53L0X_readRangeContinuousMillimeters(I2C_dev_handles device_handle)
 	  I2C_writeRegister8bit(device_handle, 0xFF, 0x00);
 	  I2C_writeRegister8bit(device_handle, 0x80, 0x00);
 	  I2C_writeRegister8bit(device_handle, SYSRANGE_START, 0x02); // back to back mode = fast as possible
-	  if(device_handle == I2C_distance_sens1_dev_handle)
+	  if(device_handle == I2C_distance_sens_fw_dev_handle)
 	  start_continuous_back2back_sens1 = true;
 	  else start_continuous_back2back_sens2 = true;
 	  vTaskDelay(pdMS_TO_TICKS(20));

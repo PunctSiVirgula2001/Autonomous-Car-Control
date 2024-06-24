@@ -109,7 +109,7 @@ QueueSetHandle_t QueueSetAutonomousOrDiagnostic = NULL;
 
 /* This variable allows the uart_task to fill Autonomous Queue for controlling the car. */
 bool AutonomousMode = false;
-void carControl_Task(void *pvParameters) {
+void CarControlTask(void *pvParameters) {
 
 #if (MOTOR_MOCK_TEST == ON)
 	while(1)
@@ -174,8 +174,6 @@ void carControl_Task(void *pvParameters) {
 
 			}
 #endif
-
-
 				switch (cmd.command) {
 				case StopReceived:
 					speed = 0;
@@ -236,17 +234,15 @@ void steer_task(void *pvParameters) {
 	}
 }
 
-void carControl_init() {
+void carControl_init_and_start_CarControl_task() {
 
 	init_servo_pwm();
 	init_motor_pwm();
 	update_servo_pwm(1500); // ESC init
 	vTaskDelay(pdMS_TO_TICKS(2000));
 	update_motor_pwm(1500);
-	//carControl_calibrate_motor();
-	//while(calib_motor_done!=true) vTaskDelay(pdMS_TO_TICKS(50));
 	vTaskDelay(pdMS_TO_TICKS(500)); // wait for init to complete
-	xTaskCreatePinnedToCore(carControl_Task, "carControl_task", 4096, NULL, 6,
+	xTaskCreatePinnedToCore(CarControlTask, "carControl_task", 4096, NULL, 6,
 	NULL, 0U);
 	xTaskCreatePinnedToCore(steer_task, "steer_task", 4096, NULL, 5,NULL, 1U);
 

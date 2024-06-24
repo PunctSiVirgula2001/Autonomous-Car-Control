@@ -24,17 +24,12 @@ public class Car {
     private int timeElapsed;
     private float batteryLevel;
     private boolean chargingState;
-    private float carSpeed;     // cm/s
+    private float carSpeed;
     private float distSensFw;
     private float distSensBw;
     private float roll;
     private float pitch;
     private CarDirectionStatus movingDirection;
-
-    // TODO traffic signs and lights to be implemented
-
-    // Exclusive to Diagnosis Mode
-    // Thermals
     private float temperature;
     private float currentDraw;
     private boolean rightLightToggle;
@@ -52,10 +47,6 @@ public class Car {
     private static boolean reset_graph = false;
     public static boolean allowed_to_receive = false;
     private static SimpleTimer timer; // Create a new timer instance
-
-
-    // TODO other sensors and camera status handling
-    // TODO any data from motor controllers and battery charger
 
     private Car(){
 
@@ -75,7 +66,6 @@ public class Car {
         actualKD = 0;
         integralValue = 0;
         measuredValue = 0;
-        //TODO update car lights state
         rightLightToggle = false;
         leftLightToggle = false;
     }
@@ -123,17 +113,6 @@ public class Car {
     public float getTimeElapsed() { return this.timeElapsed; }
     public float getTemperature() { return this.temperature; }
     public float getCurrentDraw() { return this.currentDraw; }
-    public int getCarLightsState(){
-        if(this.rightLightToggle&&this.leftLightToggle){
-            return 0;
-        }else if(this.rightLightToggle && !this.leftLightToggle){
-            return 1;
-        }else if(!this.rightLightToggle && this.leftLightToggle){
-            return 2;
-        }else{
-            return 3;
-        }
-    }
     public float getActualKP(){return this.actualKP;}
     public float getActualKI(){return this.actualKI;}
     public float getActualKD(){return this.actualKD;}
@@ -141,7 +120,6 @@ public class Car {
     public float getMeasuredValue(){return this.measuredValue;}
     public static float getTimeOfSamplingFromEsp() {return time_of_sampling_from_esp;}
     public static float getValueOfSamplingFromEsp() {return value_of_sampling_from_esp;}
-    public static boolean isNewDataFromEsp() {return new_data_from_esp;}
     public static boolean isResetGraph() {return reset_graph;}
     //get elapsed
     public static float getElapsedTimeSecs() {return timer.getElapsedTimeSecs();}

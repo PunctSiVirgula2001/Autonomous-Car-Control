@@ -63,17 +63,17 @@ void initializeEncoder() {
 
     // Set edge and level actions for the channels to handle pulse counting
     ESP_ERROR_CHECK(pcnt_channel_set_edge_action(pcntChannelA,
-        PCNT_CHANNEL_EDGE_ACTION_DECREASE,
-        PCNT_CHANNEL_EDGE_ACTION_INCREASE));
+        PCNT_CHANNEL_EDGE_ACTION_DECREASE,   // B on positive action
+        PCNT_CHANNEL_EDGE_ACTION_INCREASE)); // B on negative action
     ESP_ERROR_CHECK(pcnt_channel_set_level_action(pcntChannelA,
-        PCNT_CHANNEL_LEVEL_ACTION_KEEP,
-        PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
+        PCNT_CHANNEL_LEVEL_ACTION_KEEP,		 // A high level
+        PCNT_CHANNEL_LEVEL_ACTION_INVERSE)); // A low level
     ESP_ERROR_CHECK(pcnt_channel_set_edge_action(pcntChannelB,
-        PCNT_CHANNEL_EDGE_ACTION_INCREASE,
-        PCNT_CHANNEL_EDGE_ACTION_DECREASE));
+        PCNT_CHANNEL_EDGE_ACTION_INCREASE,   // A on positive action
+        PCNT_CHANNEL_EDGE_ACTION_DECREASE)); // A on negative action
     ESP_ERROR_CHECK(pcnt_channel_set_level_action(pcntChannelB,
-        PCNT_CHANNEL_LEVEL_ACTION_KEEP,
-        PCNT_CHANNEL_LEVEL_ACTION_INVERSE));
+        PCNT_CHANNEL_LEVEL_ACTION_KEEP,		 // B high level
+        PCNT_CHANNEL_LEVEL_ACTION_INVERSE)); // B low level
 
     // Register the ISR callback for the PCNT unit
     pcnt_event_callbacks_t pcntCallbacks = {

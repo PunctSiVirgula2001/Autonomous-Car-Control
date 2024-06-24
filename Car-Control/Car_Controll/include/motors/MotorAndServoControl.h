@@ -30,11 +30,11 @@ typedef struct {
 } CarCommand;
 
 /*Car control tasks*/
-void carControl_Task(void *pvParameters);
+void CarControlTask(void *pvParameters);
 void steer_task(void *pvParameters);
 
 /*Car control functions*/
-void carControl_init();
+void carControl_init_and_start_CarControl_task();
 void carControl_Backward_init(int break_value);
 CarCommand parseCommand(const char* commandStr);
 

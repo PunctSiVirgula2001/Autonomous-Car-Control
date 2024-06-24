@@ -83,7 +83,7 @@ void uart_Jetson_Task (void *params)
 	}
 }
 
-void start_UartJetson_task()
+void start_UartInit_and_UartJetson_task()
 {
 	JetsonUartConfig();
 	xTaskCreatePinnedToCore(uart_Jetson_Task, "uartJetson", 4096, NULL, 6, NULL,1U);

@@ -148,70 +148,62 @@ void sendMessage(int sock, const char *message) {
 
 
 
-void udp_server_task(void *pvParameters) {
-    // Configurarea LED-ului de conectare
-    config_Connected_led();
+void UdpAccessPointTask(void *pvParameters) {
+	// Configurarea LED-ului de conectare
+	config_Connected_led();
+	// Crearea task-ului pentru LED-ul intermitent
+	xTaskCreatePinnedToCore(blink_led_task, "blink_led_task", 2048, NULL, 5,
+			&handlerBlinkLedTask, 0U);
+	// Configurarea adresei și a protocolului
+	char addr_str[128];
+	int addr_family = AF_INET;
+	int ip_protocol = IPPROTO_UDP;
 
-    // Crearea task-ului pentru LED-ul intermitent
-    xTaskCreatePinnedToCore(blink_led_task, "blink_led_task", 2048, NULL, 5,
-                            &handlerBlinkLedTask, 0U);
+	struct sockaddr_in dest_addr;
+	dest_addr.sin_addr.s_addr = htonl(INADDR_ANY); // Legare la orice adresă
+	dest_addr.sin_family = AF_INET;
+	dest_addr.sin_port = htons(PORT);
 
-    // Configurarea adresei și a protocolului
-    char addr_str[128];
-    int addr_family = AF_INET;
-    int ip_protocol = IPPROTO_UDP;
-
-    struct sockaddr_in dest_addr;
-    dest_addr.sin_addr.s_addr = htonl(INADDR_ANY); // Legare la orice adresă
-    dest_addr.sin_family = AF_INET;
-    dest_addr.sin_port = htons(PORT);
-
-    inet_ntoa_r(dest_addr.sin_addr, addr_str, sizeof(addr_str) - 1);
-
-    // Crearea socket-ului
-    int sock = socket(addr_family, SOCK_DGRAM, ip_protocol);
-    if (sock < 0) {
-        ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
-        vTaskDelete(NULL);
-        return;
-    }
-    ESP_LOGI(TAG, "Socket created");
-
-    // Legarea socket-ului la adresa specificată
-    int err = bind(sock, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
-    if (err < 0) {
-        ESP_LOGE(TAG, "Socket unable to bind: errno %d", errno);
-        vTaskDelete(NULL);
-        return;
-    }
-    ESP_LOGI(TAG, "Socket bound, port %d", PORT);
-
-    // Așteptarea pentru mesajul "ACK 9999"
-    wait_for_ack(sock);
-
-    while (1) {
-        // Primirea datelor
-        struct sockaddr_in6 source_addr; // Suficient de mare pentru IPv4 sau IPv6
-        socklen_t addr_len = sizeof(source_addr);
-        int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0,
-                           (struct sockaddr*)&source_addr, &addr_len);
-
-        // Verificarea erorilor sau datelor primite
-        if (len < 0) {
-            ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
-            break;
-        } else {
-            rx_buffer[len] = '\0'; // Terminarea șirului de caractere primit
-            handle_received_message(rx_buffer, sock, source_addr, addr_len);
-        }
-    }
-
-    // Închiderea socket-ului
-    if (sock != -1) {
-        ESP_LOGI(TAG, "Shutting down socket");
-        shutdown(sock, 0);
-        close(sock);
-    }
+	inet_ntoa_r(dest_addr.sin_addr, addr_str, sizeof(addr_str) - 1);
+	// Crearea socket-ului
+	int sock = socket(addr_family, SOCK_DGRAM, ip_protocol);
+	if (sock < 0) {
+		ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
+		vTaskDelete(NULL);
+		return;
+	}
+	ESP_LOGI(TAG, "Socket created");
+	// Legarea socket-ului la adresa specificată
+	int err = bind(sock, (struct sockaddr*) &dest_addr, sizeof(dest_addr));
+	if (err < 0) {
+		ESP_LOGE(TAG, "Socket unable to bind: errno %d", errno);
+		vTaskDelete(NULL);
+		return;
+	}
+	ESP_LOGI(TAG, "Socket bound, port %d", PORT);
+	// Așteptarea pentru mesajul "ACK 9999"
+	wait_for_ack(sock);
+	while (1) {
+		// Primirea datelor
+		struct sockaddr_in6 source_addr; // Suficient de mare pentru IPv4 sau IPv6
+		socklen_t addr_len = sizeof(source_addr);
+		int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0,
+				(struct sockaddr*) &source_addr, &addr_len);
+		// Verificarea erorilor sau datelor primite
+		if (len < 0) {
+			ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
+			break;
+		} else {
+			rx_buffer[len] = '\0'; // Terminarea șirului de caractere primit
+			handle_received_message(rx_buffer, sock, source_addr, addr_len);
+		}
+	}
+	// Închiderea socket-ului
+	if (sock != -1) {
+		ESP_LOGI(TAG, "Shutting down socket");
+		shutdown(sock, 0);
+		close(sock);
+	}
 }
 
 
@@ -258,7 +250,7 @@ void sendCommandApp(SendCommandType_app commandType, void* commandValue, data_ty
 	}
 }
 
-void start_network_task() {
+void start_NetworkInit_and_network_task() {
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
 		ESP_ERROR_CHECK(nvs_flash_erase());
@@ -267,9 +259,10 @@ void start_network_task() {
 	ESP_ERROR_CHECK(ret);
 	ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
 	wifi_init_softap();
-	xTaskCreatePinnedToCore(udp_server_task, "udp_server", 4096, NULL, 5, NULL,
+	xTaskCreatePinnedToCore(UdpAccessPointTask, "udp_server", 4096, NULL, 5, NULL,
 			0U);
 }
+
 void config_Connected_led() {
 	gpio_reset_pin(INBUILT_LED_CONNECTED);
 	gpio_set_direction(INBUILT_LED_CONNECTED, GPIO_MODE_OUTPUT);
