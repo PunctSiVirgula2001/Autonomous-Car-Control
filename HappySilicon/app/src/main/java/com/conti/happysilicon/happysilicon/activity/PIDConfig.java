@@ -13,6 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.ui.graphics.Canvas;
 
 import com.conti.happysilicon.happysilicon.MyApp;
 import com.conti.happysilicon.happysilicon.R;
@@ -26,6 +27,10 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.MPPointF;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,29 +110,23 @@ public class PIDConfig extends AppCompatActivity {
             }
         });
         sendTestSTOP.setOnClickListener(view -> {   // TEST STOP BUTTON
-            carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
             udpClient.tx++;
-            start_new_command_after_reset = true;
         });
         sendTestFWD.setOnClickListener(view -> {  //TEST FORWARD BUTTON
-            carModel.setCarCommand(Car.CarCommands.FORWARD);
             udpClient.sendMessage("01");
             udpClient.tx++;
-            start_new_command_after_reset = true;
         });
         sendTestBWD.setOnClickListener(view -> { //TEST BACKWARD BUTTON
-            carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage("02");
             udpClient.tx++;
-            start_new_command_after_reset = true;
         });
 
         // Start the Runnable for updating UI
         MyRunnable myRunnable = new MyRunnable(handler);
         handler.post(myRunnable);
 
-        // Create the chart for printing current value for speed.
+        // Creare grafic.
         chart = findViewById(R.id.lineChart);;
         xAxis = chart.getXAxis();
         leftAxis = chart.getAxisLeft();
@@ -191,9 +190,9 @@ public class PIDConfig extends AppCompatActivity {
             udpClient.sendMessage(PIDString);
             udpClient.tx++;
             udpClient.sendMessage("00");
-            Car.setResetGraph(true);
-            Car.resetTimer();
-            Car.startTimer();
+            carModel.setResetGraph(true);
+            carModel.resetTimer();
+            carModel.startTimer();
         });
 
     }
@@ -215,25 +214,17 @@ public class PIDConfig extends AppCompatActivity {
                 pid_data_recovered = true;
             }
             // Update UI elements with data from carModel
-            //carBatteryTextView.setText(String.valueOf(carModel.getBatteryLevel()));
             actualKP.setText(String.valueOf(carModel.getActualKP()));
             actualKI.setText(String.valueOf(carModel.getActualKI()));
             actualKD.setText(String.valueOf(carModel.getActualKD()));
             integralValue.setText(String.valueOf(carModel.getIntegralValue()));
             measuredValue.setText(String.valueOf(carModel.getCarSpeed()));
-            float speed = carModel.getCarSpeed();
             testSeekBarTextView.setText(progressTestDCSeekBar+" Hz");
 
             if (!Car.allowed_to_receive) {
-                float time = Car.getTimeOfSamplingFromEsp();
-                float data = Car.getValueOfSamplingFromEsp();
-                buffer.add(new Entry(time, data));
-                if (buffer.size() >= BUFFER_SIZE) {
-                    for (Entry entry : buffer) {
-                        add_data_to_graph(entry.getX(), entry.getY());
-                    }
-                    buffer.clear(); // Clear the buffer after updating the chart
-                }
+                float time = carModel.getTimeOfSamplingFromEsp();
+                float data = carModel.getValueOfSamplingFromEsp();
+                add_data_to_graph(time, data);
                 Car.allowed_to_receive = true;
             }
 
@@ -251,22 +242,10 @@ public class PIDConfig extends AppCompatActivity {
                 chart.clear();
                 chart.setData(null); // Ensure chart is fully cleared
 
-                // Create the chart for printing current value for speed.
-                chart = findViewById(R.id.lineChart);;
-                xAxis = chart.getXAxis();
-                leftAxis = chart.getAxisLeft();
-                rightAxis = chart.getAxisRight();
-                xAxis.setAxisMaximum(60f); // max = 60 seconds
-                xAxis.setAxisMinimum(0f);   // min = 0 seconds
-                leftAxis.setAxisMaximum(100f); // max = 100
-                leftAxis.setAxisMinimum(0f);   // min = 0
-                rightAxis.setEnabled(false);
-
                 Car.setResetGraph(false);
 
                 Car.resetTimer();
                 Car.startTimer();
-                Log.d("ChartDebug2", "Entries count after reset: " + entries.size());
             }
 
         }

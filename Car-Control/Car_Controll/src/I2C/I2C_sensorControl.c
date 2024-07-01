@@ -32,15 +32,14 @@ void I2C_devices_task(void *pvParameters) {
 		ESP_LOGI("I2C_sensors", "Sensors successfully initiated!");
 
 	// Create structure for managing each sensor.
-	sensor_t sensors[] = { { I2C_distance_sens_fw_dev_handle,
-			I2C_distance_sens_fw_mux, distance_sens1, distance_sens1,
-			SENSOR_IDLE }, { I2C_distance_sens_bw_handle,
-			I2C_distance_sens_bw_mux, distance_sens2, distance_sens2,
-			SENSOR_IDLE }, { I2C_adxl345_sens_dev_handle, I2C_adxl345_sens_mux,
-			adxl_acc, adxl_acc, SENSOR_IDLE }, { I2C_pixy2_dev_handle,
-			I2C_pixy2_camera_mux, pixy2, pixy2, SENSOR_IDLE }, {
-			I2C_temp_sens_dev_handle, I2C_temp_sens_mux, temp_sens, temp_sens,
-			SENSOR_IDLE } };
+	sensor_t sensors[] =
+	{
+		{I2C_distance_sens_fw_dev_handle,I2C_distance_sens_fw_mux, distance_sens1, distance_sens1, SENSOR_IDLE },
+		{I2C_distance_sens_bw_handle, I2C_distance_sens_bw_mux, distance_sens2, distance_sens2,SENSOR_IDLE },
+		{I2C_adxl345_sens_dev_handle, I2C_adxl345_sens_mux, adxl_acc, adxl_acc, SENSOR_IDLE },
+		{I2C_pixy2_dev_handle, I2C_pixy2_camera_mux, pixy2, pixy2, SENSOR_IDLE },
+		{I2C_temp_sens_dev_handle, I2C_temp_sens_mux, temp_sens, temp_sens, SENSOR_IDLE }
+	};
 
 	I2C_COMMAND i2c_command = { 0, 0, 0 };
 
@@ -175,11 +174,12 @@ void I2C_devices_task(void *pvParameters) {
 				pixy2Commands commandAutonomous;
 				bool left = false;
 				bool right = false;
-				getPixy2Lines(I2C_pixy2_dev_handle, LINE_VECTOR, true, &lines); // Get all features (vectors, intersections, barcodes) with wait
+				getPixy2Lines(I2C_pixy2_dev_handle, true, &lines); // Get all features (vectors, intersections, barcodes) with wait
 				left = getBestVectorLeft(&lines, &goodVecLeft);
 				right = getBestVectorRight(&lines, &goodVecRight);
 				computeSpeedAndSteer(goodVecLeft, goodVecRight, left, right,
 						&commandAutonomous);
+				vTaskDelay(pdMS_TO_TICKS(15));
 				if (AutonomousMode == true) {
 					if (xQueueSend(autonomousModeControlPixyQueue,
 							&commandAutonomous.computedSpeedSetpoint,
@@ -216,7 +216,7 @@ void I2C_devices_task(void *pvParameters) {
 						% sensor_count;
 				current_sensor = &sensors[current_sensor_index];
 			} else {
-				current_sensor->state = SENSOR_IDLE;
+				current_sensor->state = SENSOR_READING;
 			}
 			break;
 		}
@@ -240,7 +240,7 @@ bool I2C_addAndInitialiseSensors()
 	I2C_add_device(I2C_pixy2_camera_addr);
 
 	//Check Pixy2 camera version
-	requestPixy2Version(I2C_pixy2_dev_handle);
+
 
 	//Init sensors
 	I2C_adxl345_init(I2C_adxl345_sens_dev_handle);
@@ -251,7 +251,7 @@ bool I2C_addAndInitialiseSensors()
 	dist_sens_init = false;
 	dist_sens_init = VL53L0X_Init(I2C_distance_sens_fw_dev_handle);
 	while(dist_sens_init == false) {vTaskDelay(pdMS_TO_TICKS(50));}
-
+	requestPixy2Version(I2C_pixy2_dev_handle);
 	return true;
 }
 
@@ -259,5 +259,7 @@ void start_InitI2c_and_I2C_devices_task()
 {
 	xTaskCreatePinnedToCore(I2C_devices_task, "I2C_devices_task", 4096, NULL, 7, NULL, 0);
 }
+
+
 
 

@@ -18,9 +18,6 @@ QueueHandle_t autonomousModeControlPixyQueue;
 void requestPixy2Version(I2C_dev_handles pixy2_handle) {
     uint8_t requestPacket[4] = {0xae, 0xc1, 0x0e, 0x00};
 
-    // Select the Pixy2 camera channel on the multiplexer
-    I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
-
     // Transmit the request packet to Pixy2
     I2C_transmit(pixy2_handle, requestPacket, sizeof(requestPacket));
     ESP_LOGI(TAG, "Sent request packet to Pixy2");
@@ -97,11 +94,8 @@ void setPixy2Lamp(I2C_dev_handles pixy2_handle, uint8_t upper, uint8_t lower) {
 
 #define MAX_VECTORS 100
 
-void getPixy2Lines(I2C_dev_handles pixy2_handle, uint8_t features, bool wait, Pixy2Lines *lines) {
-    uint8_t requestPacket[6] = {0xae, 0xc1, 48, 2, features, wait};
-
-    // Select the Pixy2 camera channel on the multiplexer
-    I2C_select_multiplexer_channel(I2C_pixy2_camera_mux);
+void getPixy2Lines(I2C_dev_handles pixy2_handle, bool wait, Pixy2Lines *lines) {
+    uint8_t requestPacket[6] = {0xae, 0xc1, 48, 2, LINE_VECTOR, wait};
 
     // Transmit the request packet to Pixy2
     I2C_transmit(pixy2_handle, requestPacket, sizeof(requestPacket));
@@ -151,6 +145,7 @@ void getPixy2Lines(I2C_dev_handles pixy2_handle, uint8_t features, bool wait, Pi
                     }
                 }
             }
+
             index += 2 + featureLength; // Move to the next feature
         }
     } else {
@@ -173,8 +168,7 @@ bool getBestVectorLeft(Pixy2Lines *lines, Vector *vec) {
             double length = sqrt(dx * dx + dy * dy);
             double absSlope = fabs(slope);
 
-            // Consider vectors with very low slope if they are long enough
-            if ((absSlope >= minSlopeThreshold || length > 50) && length > maxLength) {  // Arbitrary length threshold
+            if (absSlope >= minSlopeThreshold  && length > maxLength) {  // Arbitrary length threshold
                 maxLength = length;
                 *vec = v;
                 found = true;
@@ -225,7 +219,7 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
         case 0:
             // No vectors detected
             commands->computedSteerSetpoint = lastSteer;
-            commands->computedSpeedSetpoint = (uint8_t)(0.7 * 30); // Reduce speed significantly
+            commands->computedSpeedSetpoint = (uint8_t)(30); // Reduce speed significantly
             break;
 
         case 1:
@@ -233,7 +227,7 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
 		   Vector single_vec;
 		   if (existsGoodVecRight) {
 			   single_vec = vecRight;
-		   } else {
+		   } else if (existsGoodVecLeft) {
 			   single_vec = vecLeft;
 		   }
 
@@ -255,19 +249,28 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
 		   float error = (lane_center_x - frame_center) / frame_center;
 
 		   // Implement proportional-derivative control for steering
-		   float Kp = 0.8f; // Proportional gain (adjust as needed)
-		   float Kd = 0.2f; // Derivative gain (adjust as needed)
+		   float Kp = 1.0f; // Proportional gain
+		   float Kd = 0.2f; // Derivative gain
 
 		   static float last_error = 0;
 		   float derivative = error - last_error;
 		   float control_steer = -(Kp * error + Kd * derivative);
-		   //float control_steer = - Kp * error;
+
 		   // Update last_error
 		   last_error = error;
 
 		   // Make sure the steering angle is within the range [0, 100]
 		   float steer = 50 + control_steer * 50; // Map control_steer from [-1, 1] to [0, 100]
 		   commands->computedSteerSetpoint = (uint8_t)fmax(0, fmin(100, steer));
+
+		   // Adjust speed based on steer: more deviation from 50, lower the speed
+		   float steer_deviation = fabs(50.0f - (float)commands->computedSteerSetpoint);
+		   commands->computedSpeedSetpoint = (uint8_t)(60 - (steer_deviation / 50.0f) * (60 - 25));
+
+		   // Ensure the speed is within the allowable range
+		   if (commands->computedSpeedSetpoint > 65) commands->computedSpeedSetpoint = 65;
+
+
 
 		   break;
 	    }
@@ -282,28 +285,24 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
 			float new_x = (MidpointX1 - MidpointX0) / frameWidth;
 			float new_y = (MidpointY1 - MidpointY0) / frameHeight;
 
-			if (fabs(new_y) > 0.01f) { // Avoid division by zero
-				float gradient = new_x / new_y; // Calculate gradient
-				// Normalize the gradient to fit within the range of [-1, 1]
-				gradient = fmax(fmin(gradient, 1), -1); // Clamping the value to [-1, 1] if out of bounds
-				// Map gradient to steering setpoint range [0, 100]
-				commands->computedSteerSetpoint = (uint8_t)(50 - gradient * 50);
-			} else {
-				// Go straight
-				commands->computedSteerSetpoint = 50;
-			}
+			double slope = new_y == 0 ? INFINITY : new_x / new_y;
+			// Normalize the slope to fit within the range of [-1, 1]
+			slope = fmax(fmin(slope, 1), -1); // Clamping the value to [-1, 1] if out of bounds
+
+			// Map gradient to steering setpoint range [0, 100]
+			commands->computedSteerSetpoint = (uint8_t)(50 - slope * 50);
+
+			// Adjust speed based on steer: more deviation from 50, lower the speed
+			float steer_deviation = fabs(50.0f - (float)commands->computedSteerSetpoint);
+			commands->computedSpeedSetpoint = (uint8_t)(60 - (steer_deviation / 50.0f) * (60 - 25));
+
+			// Ensure the speed is within the allowable range
+			if (commands->computedSpeedSetpoint > 65) commands->computedSpeedSetpoint = 65;
 
 			break;
 		}
     }
 
-    // Adjust speed based on steer: more deviation from 50, lower the speed
-	float steer_deviation = fabs(50.0f - (float)commands->computedSteerSetpoint);
-	commands->computedSpeedSetpoint = (uint8_t)(60 - (steer_deviation / 50.0f) * (60 - 25));
-
-    // Ensure the speed is within the allowable range
-    if (commands->computedSpeedSetpoint > 65) commands->computedSpeedSetpoint = 65;
-    //if (commands->computedSpeedSetpoint < 0) commands->computedSpeedSetpoint = 0;
 
     lastSteer = commands->computedSteerSetpoint;  // Update last known steer
     lastSpeed = commands->computedSpeedSetpoint;

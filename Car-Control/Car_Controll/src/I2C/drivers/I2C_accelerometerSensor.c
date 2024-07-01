@@ -13,7 +13,7 @@
 void I2C_adxl345_init(I2C_dev_handles device_handle) {
     I2C_writeRegister8bit(device_handle, ADXL345_REG_POWER_CTL, 0x08);  // Bit 3 high to start measuring
     I2C_writeRegister8bit(device_handle, ADXL345_REG_DATA_FORMAT, 0x0B); // Plus/minus 16g, 13-bit mode
-    I2C_writeRegister8bit(device_handle, ADXL345_REG_BW_RATE, 0x0B); // Set data rate to 100 Hz (example)
+    I2C_writeRegister8bit(device_handle, ADXL345_REG_BW_RATE, 0x0B); // Set data rate to 100 Hz
 }
 
 void I2C_read_adxl345_data(I2C_dev_handles device_handle, double* x, double* y, double* z) {

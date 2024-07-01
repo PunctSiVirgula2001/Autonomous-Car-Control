@@ -44,11 +44,9 @@ public class AutonomousMode extends AppCompatActivity {
 
         // Set up button listeners
         startButton.setOnClickListener(view -> {
-            carModel.setCarCommand(Car.CarCommands.START);
             udpClient.sendMessage("07");
         });
         stopButton.setOnClickListener(view -> {
-            carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
         });
 

@@ -74,17 +74,14 @@ public class DiagnosisMode extends AppCompatActivity {
 
         // Set up button listeners
         buttonStop.setOnClickListener(view -> {   // STOP BUTTON
-            carModel.setCarCommand(Car.CarCommands.STOP);
             udpClient.sendMessage("00");
             udpClient.tx++;
         });
         buttonForward.setOnClickListener(view -> {  // FORWARD BUTTON
-            carModel.setCarCommand(Car.CarCommands.FORWARD);
             udpClient.sendMessage("01");
             udpClient.tx++;
         });
         buttonBackward.setOnClickListener(view -> { // BACKWARD BUTTON
-            carModel.setCarCommand(Car.CarCommands.BACKWARD);
             udpClient.sendMessage("02");
             udpClient.tx++;
         });

@@ -32,10 +32,12 @@ void speedCheckTickHook(void) {
         old_time = new_time;
     }
 
-    if (unchanged_ticks >= 400) { // If speed hasn't changed for 200 ticks (1 second if tick rate is 1 ms)
+    if (unchanged_ticks >= 150) { // If speed hasn't changed for 200 ticks (1 second if tick rate is 1 ms)
         motorPID.measured = 0;     // Reset measured speed to 0
-        if(motorPID.setpoint == 0)
+        if(motorPID.setpoint == 0){
         	motorPID.I_term = 0;
+        	motorPID.Output = 0;
+        }
         unchanged_ticks = 0;       // Reset the unchanged ticks counter
     }
 
@@ -74,7 +76,6 @@ void PID_Init(PID_t *pid, float Kp, float Ki, float Kd) {
 // Define constants at a global scope
 const float primarySmoothingFactor = 0.1;  // Primary EMA smoothing factor
 const float secondarySmoothingFactor = 0.05;  // Secondary EMA smoothing factor
-const float maxChangePerCycle = 5.0;  // Maximum rate of output change per cycle
 
 static float secondaryEMA = 0;  // Initialize secondary EMA output
 
@@ -110,11 +111,11 @@ void PID_Compute(PID_t *pid, float dt) {
 
     // Apply rate limiting to smooth large jumps
     float outputDifference = secondaryEMA - pid->previousOutput;
-    if (fabs(outputDifference) > maxChangePerCycle) {
+    if (fabs(outputDifference) > PID_OUT_LIMIT_RATE_CHANGE) {
         if (outputDifference > 0) {
-            pid->Output = pid->previousOutput + maxChangePerCycle;
+            pid->Output = pid->previousOutput + PID_OUT_LIMIT_RATE_CHANGE;
         } else {
-            pid->Output = pid->previousOutput - maxChangePerCycle;
+            pid->Output = pid->previousOutput - PID_OUT_LIMIT_RATE_CHANGE;
         }
     } else {
         pid->Output = secondaryEMA;
@@ -122,6 +123,22 @@ void PID_Compute(PID_t *pid, float dt) {
 
     // Ensure the output is within the allowed range
     clamp_int(&(pid->Output), -100, 100);  // Ensure Output is within bounds
+    static bool keepInPlace = false;
+    if(pid->measured == 0 && pid->Output !=0 && pid->setpoint ==0)
+    {
+    	pid->Output=0;
+    	secondaryEMA = 0;
+    	keepInPlace = true;
+    }
+    else keepInPlace = false;
+
+    if(keepInPlace == true && pid->measured < 0)
+    {
+    	pid->Output=0;
+    	secondaryEMA = 0;
+    	pid->I_term =  0;
+    	pid->D_term =  0;
+     }
 
     // Update previous values for next iteration
     pid->previousOutput = pid->Output;
@@ -134,9 +151,6 @@ void PID_Compute(PID_t *pid, float dt) {
 
 
 void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
-	// Optionally lock the task if needed to prevent concurrent access
-	// taskENTER_CRITICAL();
-
 	// Update the PID coefficients
 	pid->Kp = new_Kp;
 	pid->Ki = new_Ki;
@@ -145,11 +159,6 @@ void PID_UpdateParams(PID_t *pid, float new_Kp, float new_Ki, float new_Kd) {
 	// Reinitialize any error sums or stateful terms if necessary
 	pid->I_term = 0; // Reset integral term if needed
 	pid->previous_error = 0; // Reset the previous error if the derivative term should be reinitialized
-
-	// Optionally include anti-windup logic or re-initialize other elements here
-
-	// Optionally unlock the task if it was previously locked
-	// taskEXIT_CRITICAL();
 }
 
 /* Speed scaler for determining the correct threshold for distance of stop. */
@@ -198,10 +207,11 @@ extern QueueHandle_t I2C_commandQueue;
 extern QueueSetHandle_t QueueSetPIDNecessaryCommands;
 CarCommand onlyPIDValues;
 I2C_COMMAND I2C_command;
-double dt = 1000.0;
+double dt = 99999999999.0;
 int old_setpoint;
 TickType_t startInitialSendingTime = 0U;
 bool car_stays_stopped = false;
+
 void PIDTask(void *pvParameters) {
 
 	PID_Init(&motorPID, 0, 0, 0);
@@ -222,7 +232,7 @@ void PIDTask(void *pvParameters) {
 
 	while (1) {
 
-		xActivatedMember = xQueueSelectFromSet(QueueSetPIDNecessaryCommands, pdMS_TO_TICKS(100));
+		xActivatedMember = xQueueSelectFromSet(QueueSetPIDNecessaryCommands, pdMS_TO_TICKS(50));
 		if (xActivatedMember == pulse_encoderQueue) {
 		    // Procesare pentru pulse_encoderQueue
 		    xQueueReceive(xActivatedMember, &pulse_direction, 0);
@@ -248,7 +258,7 @@ void PIDTask(void *pvParameters) {
 		} else {
 		    // Procesare pentru alte cozi active
 		    TickType_t xCurrentTime = xTaskGetTickCount();
-		    dt += pdTICKS_TO_MS((xCurrentTime - xLastWakePulse)) / 1000.0;
+		    dt += Sliding_Mean_Average(pdTICKS_TO_MS((xCurrentTime - xLastWakePulse))) / 1000.0;
 		    xLastWakePulse = xCurrentTime;
 
 		    if (dt == 0) {
@@ -259,12 +269,13 @@ void PIDTask(void *pvParameters) {
 
 		    // Actualizează valoarea măsurată pentru alte cozi
 		    motorPID.measured = pulse_direction * SMA_frequency;
+		    //motorPID.measured =0;
 		}
-		if (xActivatedMember == speed_commandQueue)
-		{
+		if (xActivatedMember == speed_commandQueue){
 			xQueueReceive(xActivatedMember, &setpoint_speed, 0);
 			motorPID.setpoint = setpoint_speed;
 		}
+
 		if (xActivatedMember == PID_commandQueue) {
 			xQueueReceive(xActivatedMember, &onlyPIDValues, 0);
 			PID_UpdateParams(&motorPID, onlyPIDValues.KP, onlyPIDValues.KI,
@@ -302,21 +313,19 @@ void PIDTask(void *pvParameters) {
 		/* Each time a pulse has happened, the task will be notified
 		 * and PID will compute next OUTPUT value. */
 		/* If the Setpoint is crossing the backward moving zone, brake. */
-
-
-		/*If the time between pulses is too long set the measured value to 0.*/
-
+		static bool reachedZero = false;
 		PID_Compute(&motorPID,dt);
 		static bool backward = false;
 		if(motorPID.Output < 0 && backward == false)
 		{
-			carControl_Backward_init(4*motorPID.Output);
+			carControl_Backward_init(motorPID.Output);
 			backward = true;
 		}
 		else if(motorPID.Output >= 0)
 			backward = false;
 
 		changeMotorSpeed(motorPID.Output);
+
 
 		/* Send diagnostic data to phone app in order to monitor the speed and behaviour of Integral value. */
 
@@ -328,7 +337,7 @@ void PIDTask(void *pvParameters) {
 		interrupt_counter++;
 
 		/* Send only the data that is different from the one sent before, and at every 2 interrupts. */
-		if (interrupt_counter % 2 == 0) {
+		if (interrupt_counter % 4 == 0) {
 		    sendCommandApp(MEASURED_VALUE, (int*)&abs_measured, INT);
 		    sendCommandApp(I_TERM_VALUE, (float*)&abs_I_term, FLOAT);
 		    /* Reset the interrupt counter after sending the data */

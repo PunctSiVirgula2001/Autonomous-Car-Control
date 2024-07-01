@@ -6,49 +6,56 @@
 QueueSetHandle_t QueueSetPIDNecessaryCommands;
 extern QueueHandle_t autonomousModeControlPixyQueue;
 
+/* Funcția parseCommand primește un șir de caractere care reprezintă o comandă și returnează
+   o structură CarCommand care descrie această comandă într-un format ușor de utilizat în aplicație. */
 CarCommand parseCommand(const char *commandStr)
 {
-	CarCommand cmd;
-	memset(&cmd, 0, sizeof(cmd)); // Initialize the structure with zeros
-	if (strncmp(commandStr, "08", 2) == 0)
-	{
-		// Handle command "08" specifically to parse KP, KI, KD values
-		sscanf(commandStr, "08%f %f %f", &cmd.KP, &cmd.KI, &cmd.KD);
-		cmd.command = PID_Changed; // Set the command to the appropriate enum value
-		cmd.has_value = false;	   // Since KP, KI, KD are used, command_value is not relevant
-	}
-	else if (strlen(commandStr) >= 2)
-	{
-		char commandPart[3] = {commandStr[0], commandStr[1], '\0'};
-		cmd.command = atoi(commandPart);
-		// Check if there's more to the command than just the command part
-		if (strlen(commandStr) > 2)
-		{
-			cmd.has_value = true;
-			// Extract the command value, which is optional
-			char valuePart[5];					   // Assuming the value part will not exceed 4 digits
-			strncpy(valuePart, commandStr + 2, 4); // Copy the rest of the string as command value
-			valuePart[4] = '\0';				   // Null-terminate the string
-			cmd.command_value = atoi(valuePart);
-		}
-		else
-		{
-			cmd.has_value = false;
-		}
-	}
-	return cmd;
+    CarCommand cmd;
+    /* Inițializarea structurii CarCommand cu zero pentru toate câmpurile,
+       asigurând că toate valorile sunt setate la starea lor inițială. */
+    memset(&cmd, 0, sizeof(cmd));
+
+    /* Verifică dacă comanda începe cu "08", caz în care se așteaptă valori pentru KP, KI, KD. */
+    if (strncmp(commandStr, "08", 2) == 0)
+    {
+        /* Folosirea sscanf pentru a extrage valorile KP, KI, KD din șirul de caractere al comenzii. */
+        sscanf(commandStr, "08%f %f %f", &cmd.KP, &cmd.KI, &cmd.KD);
+        cmd.command = PID_Changed; // Comanda specifică pentru schimbarea parametrilor PID.
+        cmd.has_value = false;     // Indică faptul că nu este folosită o valoare suplimentară de comandă.
+    }
+    /* Dacă lungimea șirului de caractere este mai mare decât 2, procesează partea de comandă și valoare. */
+    else if (strlen(commandStr) >= 2)
+    {
+        char commandPart[3] = {commandStr[0], commandStr[1], '\0'};
+        cmd.command = atoi(commandPart); // Converteste partea de comandă într-un număr întreg.
+
+        /* Verifică dacă există o valoare după partea de comandă. */
+        if (strlen(commandStr) > 2)
+        {
+            cmd.has_value = true;
+            char valuePart[5];                     // Un buffer pentru partea de valoare.
+            strncpy(valuePart, commandStr + 2, 4); // Copiază partea de valoare din șir.
+            valuePart[4] = '\0';                   // Asigură terminarea cu NULL a șirului.
+            cmd.command_value = atoi(valuePart);   // Converteste șirul de valoare într-un număr întreg.
+        }
+        else
+        {
+            cmd.has_value = false;
+        }
+    }
+    return cmd; // Returnează structura CarCommand completată.
 }
 
 void carControl_Backward_init(int break_value)
 {
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(50));
+	vTaskDelay(pdMS_TO_TICKS(30));
 	changeMotorSpeed(break_value);
-	vTaskDelay(pdMS_TO_TICKS(50));
+	vTaskDelay(pdMS_TO_TICKS(30));
 	changeMotorSpeed(0);
-	vTaskDelay(pdMS_TO_TICKS(50));
+	vTaskDelay(pdMS_TO_TICKS(30));
 	changeMotorSpeed(break_value);
-	vTaskDelay(pdMS_TO_TICKS(50));
+	vTaskDelay(pdMS_TO_TICKS(30));
 }
 
 
@@ -114,7 +121,6 @@ void CarControlTask(void *pvParameters) {
 #if (MOTOR_MOCK_TEST == ON)
 	while(1)
 	{
-		//ESP_LOGI("AICI","fasf");
 		//mock_forward_and_backward_test_5_seconds();
 		pwm_from_1550_to_1650_step_10();
 	}
@@ -170,8 +176,6 @@ void CarControlTask(void *pvParameters) {
 					ESP_LOGI("PIXY","Steer: %d", cmd.command_value);
 					nrCmd = 0U;
 				}
-
-
 			}
 #endif
 				switch (cmd.command) {
@@ -197,8 +201,8 @@ void CarControlTask(void *pvParameters) {
 						speed = speed_multiplier * cmd.command_value;
 					else
 						speed = cmd.command_value;
-
-					xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
+					if(last_motor_speed!=cmd.command_value)
+						xQueueSend(speed_commandQueue,&speed,portMAX_DELAY);
 					last_motor_speed = cmd.command_value;
 					HLD_SendMessage("OKSPEED!");
 					break;

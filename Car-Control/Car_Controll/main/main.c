@@ -1,10 +1,11 @@
 /*Brief for on which cores are the tasks running
 	PIDTask: 		 	Core 1, Prio 7
-	MotorAndSteerControlTask: 	Core 0, Prio 6
+	UartJetsonTask		Core 1, Prio 6
 	SteerTask: 	 		Core 1, Prio 6
 	UdpAccessPointTask: Core 0, Prio 5
 	I2cTask: 		 	Core 0, Prio 7
-	UartJetsonTask		Core 1, Prio 6
+    MotorAndSteerControlTask: 	Core 0, Prio 6
+
 */
 
 /*Brief for the main function

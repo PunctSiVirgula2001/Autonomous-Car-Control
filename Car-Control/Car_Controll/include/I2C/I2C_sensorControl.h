@@ -15,7 +15,7 @@
 
 typedef enum I2C_WRR_tokens
 {
-	pixy2 = 0,
+	pixy2 = 1,
 	distance_sens1 = 0,
 	distance_sens2 = 0,
 	adxl_acc = 0,

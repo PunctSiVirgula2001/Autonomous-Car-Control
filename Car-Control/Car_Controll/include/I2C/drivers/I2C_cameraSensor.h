@@ -69,7 +69,7 @@ typedef enum {
 void requestPixy2Version(I2C_dev_handles pixy2_handle);
 void setPixy2Lamp(I2C_dev_handles pixy2_handle, uint8_t upper, uint8_t lower);
 void setPixy2LED(I2C_dev_handles pixy2_handle, uint8_t r, uint8_t g, uint8_t b);
-void getPixy2Lines(I2C_dev_handles pixy2_handle, uint8_t features, bool wait, Pixy2Lines *lines);
+void getPixy2Lines(I2C_dev_handles pixy2_handle, bool wait, Pixy2Lines *lines);
 bool getBestVectorLeft(Pixy2Lines *lines, Vector *vec);
 bool getBestVectorRight(Pixy2Lines *lines, Vector *vec);
 void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLeft, bool existsGoodVecRight, pixy2Commands *commands);
