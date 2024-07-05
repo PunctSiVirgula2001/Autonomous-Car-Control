@@ -19,12 +19,12 @@
 #define DC_MOTOR_GPIO 				(4)
 
 #define MAX_MOTOR_FW_DUTY_US 		(1650)
-#define MIN_MOTOR_FW_DUTY_US 		(1535)
+#define MIN_MOTOR_FW_DUTY_US 		(1540)
 #define MAX_MOTOR_BW_DUTY_US 		(1430)
 #define MIN_MOTOR_BW_DUTY_US 		(1200)
 
 /* Motor functions */
-#define QUEUE_SIZE_SPEED 		    20
+#define QUEUE_SIZE_SPEED 		    40
 #define QUEUE_SIZE_DATATYPE_SPEED (sizeof(int))
 
 void init_motor_pwm();

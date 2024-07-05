@@ -18,8 +18,8 @@
 #define LEDC_SERVO_DUTY_RESOLUTION  LEDC_TIMER_16_BIT
 
 /* Pwm settings for servo general*/
-#define MAX_SERVO_DUTY_US 			(1700)
-#define MIN_SERVO_DUTY_US 			(1300)
+#define MAX_SERVO_DUTY_US 			(1800)
+#define MIN_SERVO_DUTY_US 			(1200)
 
 /* Servo functions */
 void init_servo_pwm();

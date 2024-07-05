@@ -153,10 +153,35 @@ void getPixy2Lines(I2C_dev_handles pixy2_handle, bool wait, Pixy2Lines *lines) {
     }
 }
 
+static float slope(Vector lines)
+{
+	if (lines.x0 - lines.x1 == 0) {
+		return 9999.0f;
+
+	} else {
+		float x0 = (float)lines.x0;
+		float x1 = (float)lines.x1;
+		float y0 = (float)lines.y0;
+		float y1 = (float)lines.y1;
+		float panta = (y1 - y0) / (x1 - x0);
+
+		return (double)(panta);
+	}
+}
+
+static float procent_val(float panta_cur, float panta_prev)
+{
+	if ((double)(panta_cur) > (double)(panta_prev)) {
+		return (double)(panta_prev / panta_cur);
+	}
+
+	return (double)(panta_cur / panta_prev);
+}
+
 bool getBestVectorLeft(Pixy2Lines *lines, Vector *vec) {
     bool found = false;
     double maxLength = 0;
-    double minSlopeThreshold = 0.35;  // Lowered threshold to include nearly horizontal lines
+    double minSlopeThreshold = 0.20;  // Lowered threshold to include nearly horizontal lines
 
     for (int i = 0; i < lines->numVectors; i++) {
         Vector v = lines->vectors[i];
@@ -182,7 +207,7 @@ bool getBestVectorLeft(Pixy2Lines *lines, Vector *vec) {
 bool getBestVectorRight(Pixy2Lines *lines, Vector *vec) {
     bool found = false;
     double maxLength = 0;
-    double minSlopeThreshold = 0.35;  // Consistent threshold with left vector function
+    double minSlopeThreshold = 0.20;  // Consistent threshold with left vector function
 
     for (int i = 0; i < lines->numVectors; i++) {
         Vector v = lines->vectors[i];
@@ -205,21 +230,65 @@ bool getBestVectorRight(Pixy2Lines *lines, Vector *vec) {
 }
 
 
-
+static void flipVector(Vector *vec) {
+    float auxX = vec->x0;
+    float auxY = vec->y0;
+    vec->x0 = vec->x1;
+    vec->y0 = vec->y1;
+    vec->x1 = auxX;
+    vec->y1 = auxY;
+}
 void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLeft, bool existsGoodVecRight, pixy2Commands *commands) {
-    static uint8_t lastSteer = 50;  // Neutral position
+    static Vector vecLlast = {0}, vecRlast = {0};
+	static uint8_t lastSteer = 50;  // Neutral position
     static uint8_t lastSpeed = 0;
     float frameWidth = 78.0;  // Frame width assumption
     float frameHeight = 52.0;
     float frame_center = 39.0; // Central position of the frame to respect
+    static uint8_t last_index_left = 0;
+    static uint8_t last_index_right = 0;
     // Determine number of good vectors detected
     int numVectors = (existsGoodVecLeft ? 1 : 0) + (existsGoodVecRight ? 1 : 0);
+
+    // check if line is upside down
+	if (vecLeft.y1 < vecLeft.y0)
+	{
+		// swap endpoints
+		flipVector(&vecLeft);
+	}
+
+	if (vecRight.y1 < vecRight.y0)
+	{
+		// swap endpoints
+		flipVector(&vecRight);
+	}
+
+    // Apply the logic from the second function
+    if (existsGoodVecLeft) {
+        if (vecLeft.index != last_index_left && procent_val(fabs(slope(vecLeft)),fabs(slope(vecLlast))) > 0.3) {
+            vecLlast = vecLeft;
+            last_index_left = vecLeft.index;
+        } else if (procent_val( fabs(slope(vecLeft)), fabs(slope(vecLlast))) > 0.7) {
+            vecLeft = vecLlast;
+            last_index_left = 255;  // Assuming 255 means invalid index
+        }
+    }
+
+    if (existsGoodVecRight) {
+        if (vecRight.index != last_index_right && procent_val(fabs(slope(vecRight)),fabs(slope(vecRlast))) > 0.3) {
+            vecRlast = vecRight;
+            last_index_right = vecRight.index;
+        } else if (procent_val(fabs(slope(vecRight)),fabs(slope(vecRlast))) > 0.7) {
+            vecRight = vecRlast;
+            last_index_right = 255;  // Assuming 255 means invalid index
+        }
+    }
 
     switch (numVectors) {
         case 0:
             // No vectors detected
             commands->computedSteerSetpoint = lastSteer;
-            commands->computedSpeedSetpoint = (uint8_t)(30); // Reduce speed significantly
+            commands->computedSpeedSetpoint = lastSpeed; // Reduce speed significantly
             break;
 
         case 1:
@@ -250,7 +319,7 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
 
 		   // Implement proportional-derivative control for steering
 		   float Kp = 1.0f; // Proportional gain
-		   float Kd = 0.2f; // Derivative gain
+		   float Kd = 0.1f; // Derivative gain
 
 		   static float last_error = 0;
 		   float derivative = error - last_error;
@@ -265,12 +334,12 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
 
 		   // Adjust speed based on steer: more deviation from 50, lower the speed
 		   float steer_deviation = fabs(50.0f - (float)commands->computedSteerSetpoint);
-		   commands->computedSpeedSetpoint = (uint8_t)(60 - (steer_deviation / 50.0f) * (60 - 25));
+		   commands->computedSpeedSetpoint = (uint8_t)(70 - (steer_deviation / 50.0f) * (70 - 50));
 
 		   // Ensure the speed is within the allowable range
-		   if (commands->computedSpeedSetpoint > 65) commands->computedSpeedSetpoint = 65;
+		   if (commands->computedSpeedSetpoint > 70) commands->computedSpeedSetpoint = 70;
 
-
+		   lastSpeed = commands->computedSpeedSetpoint;
 
 		   break;
 	    }
@@ -288,22 +357,28 @@ void computeSpeedAndSteer(Vector vecLeft, Vector vecRight, bool existsGoodVecLef
 			double slope = new_y == 0 ? INFINITY : new_x / new_y;
 			// Normalize the slope to fit within the range of [-1, 1]
 			slope = fmax(fmin(slope, 1), -1); // Clamping the value to [-1, 1] if out of bounds
-
+			static float kp = 1.5f;
 			// Map gradient to steering setpoint range [0, 100]
-			commands->computedSteerSetpoint = (uint8_t)(50 - slope * 50);
+			commands->computedSteerSetpoint = (uint8_t)(50 - kp*slope * 50);
 
 			// Adjust speed based on steer: more deviation from 50, lower the speed
 			float steer_deviation = fabs(50.0f - (float)commands->computedSteerSetpoint);
-			commands->computedSpeedSetpoint = (uint8_t)(60 - (steer_deviation / 50.0f) * (60 - 25));
+			commands->computedSpeedSetpoint = (uint8_t)(70 - (steer_deviation / 50.0f) * (70 - 50));
 
 			// Ensure the speed is within the allowable range
-			if (commands->computedSpeedSetpoint > 65) commands->computedSpeedSetpoint = 65;
+			if (commands->computedSpeedSetpoint > 70) commands->computedSpeedSetpoint = 70;
+			lastSpeed = commands->computedSpeedSetpoint;
 
 			break;
 		}
     }
+    if(commands->computedSpeedSetpoint < 40){
+    	commands->computedSpeedSetpoint = 40;
+    	lastSpeed = commands->computedSpeedSetpoint;
+    }
 
 
-    lastSteer = commands->computedSteerSetpoint;  // Update last known steer
-    lastSpeed = commands->computedSpeedSetpoint;
+lastSteer = commands->computedSteerSetpoint;
+
+  //  lastSpeed = commands->computedSpeedSetpoint;
 }

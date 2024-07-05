@@ -258,7 +258,7 @@ void PIDTask(void *pvParameters) {
 		} else {
 		    // Procesare pentru alte cozi active
 		    TickType_t xCurrentTime = xTaskGetTickCount();
-		    dt += Sliding_Mean_Average(pdTICKS_TO_MS((xCurrentTime - xLastWakePulse))) / 1000.0;
+		    dt += 2*(Sliding_Mean_Average(pdTICKS_TO_MS((xCurrentTime - xLastWakePulse))) / 1000.0);
 		    xLastWakePulse = xCurrentTime;
 
 		    if (dt == 0) {

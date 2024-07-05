@@ -89,7 +89,8 @@ void I2C_devices_task(void *pvParameters) {
 							pdMS_TO_TICKS(5000));
 				} else if (countSendStart_sens1 == 0
 						&& readValSensor_dist1_final
-								>= (Threshold_dist * speed_distance_sens_scaling)) {
+								>= (Threshold_dist * speed_distance_sens_scaling))
+				{
 					countSendStop_sens1 = 0;
 					countSendStart_sens1++;
 					i2c_command.command = I2C_START_MOTOR;

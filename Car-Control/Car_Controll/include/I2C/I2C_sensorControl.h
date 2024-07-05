@@ -19,7 +19,7 @@ typedef enum I2C_WRR_tokens
 	distance_sens1 = 0,
 	distance_sens2 = 0,
 	adxl_acc = 0,
-	temp_sens = 1
+	temp_sens = 0
 }I2C_WRR_tokens;
 
 typedef enum {
